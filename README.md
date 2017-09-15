@@ -16,7 +16,7 @@
 - Your environment must have access to the internet !
 
 <h4>1) Clone this repository</h4>
-- `git clone https://gitlab.com/jeton/lxd-app-ci`
+- `git clone https://github.com/AdaptiveScale/lxdui.git`
     -  **NOTE:** you must have git installed to do so:
     - `sudo apt-get update -y`
     - `sudo apt-get install git -y`
