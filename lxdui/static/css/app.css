@@ -1,0 +1,112 @@
+.main-div{
+    padding-top: 50px;
+}
+.scrollable{
+    overflow: auto;
+    height: 700px;
+}
+.badge{
+    margin-left: 8px;
+}
+#loader, #loader-update-img, #btn-update-remote{
+    display: none;
+}
+#stamplike
+{
+    padding:5px;
+    border:1px dashed;
+    cursor:default;
+}
+#footer_paragraph
+{
+     position:fixed;
+     bottom:0px;
+     left:0px;
+     width:100%;
+     min-height:50px;
+     text-align:center;
+     z-index:-1;
+}
+.already-exists{
+    color: red;
+}
+.hidenele{
+    display: none;
+}
+.btn-start_container:hover
+{
+    color: #fff;
+    background-color: #5cb85c;
+    border-color: #4cae4c;
+}
+.btn-stop_container:hover
+{
+    color: #fff;
+    background-color: #337ab7;
+    border-color: #2e6da4;
+}
+.btn-restart_container:hover
+{
+    color: #fff;
+    background-color: #f0ad4e;
+    border-color: #eea236;
+}
+.btn-delete_container:hover
+{
+    color: #fff;
+    background-color: #d9534f;
+    border-color: #d43f3a;
+}
+.nav-pills>li>a>span
+{
+    padding-right:10px;
+}
+.nav-pills>li.active>a
+{
+    background:#777;
+    color:white;
+}
+.nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover
+{
+    background:#444;
+    text-decoration: none;
+}
+.nav-pills>li>a
+{
+    color:black;
+}
+.nav-pills>li>a:focus,.nav-pills>li>a:hover
+{
+    background:#FA5D26;
+    color:white;
+}
+.btn-loginlxdui
+{
+    background:#FA5D26;
+    border: 1px solid #a53c1c;
+    color:white;
+}
+.btn-loginlxdui:hover
+{
+    background:#fc8c67;
+    color:black;
+}
+
+.nav-pills>li>span
+{
+    color:#a53c1c;
+}
+.nav-pills>li.active>span
+{
+    color:white;
+}
+.netint_data
+{
+    border-left:1px solid lightgray;
+    border-top:1px solid lightgray;
+    border-bottom:1px solid lightgray;
+    margin-left:18px;
+    margin-bottom:15px;
+    padding:10px;
+    padding-left:15px;
+}

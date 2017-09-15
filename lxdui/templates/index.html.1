@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LXD-UI {%-if currentpage %} / {{currentpage|capitalize}}{%endif-%}</title>
+    <!-- FAVICONS -->
+    <link href="/static/favicon.ico" rel="shortcut icon"/>
+    <link rel="icon" type="image/png" href="/static/favicon-16x16.png" sizes="16x16"/>  
+    <link rel="icon" type="image/png" href="/static/favicon-32x32.png" sizes="32x32"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="/static/apple-touch-icon.png"/> 
+
+
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
+    <script src="/static/js/jquery-2.0.0.js"></script>
+    <script src="/static/js/bootstrap.js"></script>
+    <script src="/static/js/app.js"></script>
+    <script src="/static/js/html.js"></script>
+    {%- if currentpage[:10] == "container " %}
+    <script src="/static/js/container-details.js"></script>
+    {% else %}
+    <script src="/static/js/container.js"></script>
+    {% endif -%}
+    <script src="/static/js/images.js"></script>
+    <script src="/static/js/createcontainer.js"></script>
+    <!-- TOASTER -->
+    <link href="/static/css/toastr.css" rel="stylesheet"/>
+    <script src="/static/js/toastr.min.js"></script>
+    <script>
+
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "0",
+        "hideDuration": "100",
+        "timeOut": "5000",
+        "extendedTimeOut": "7250",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        "escapeHtml" : true
+        }
+    </script>
+
+</head>
+<body>
+    <div class="container">
+   
+    <div class="col-lg-12">
+        <div class="col-lg-2 main-div">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" style="text-align:center"><img src="/static/images/logo.jpg" width="90%"/> </li>
+                {% if LXC_installed %}
+                <li id="stamplike" role="presentation" class="label label-{{LXC_label_color}}">LXC version {{LXC_version}}</li>
+                {% else %}
+                <li id="stamplike" role="presentation" class="label label-danger">NO LXC INSTALLED</li>
+                {% endif %}
+                <li {% if currentpage == "containers" %}class="active"{% endif %} role="presentation"><a href="/containers"><span class="glyphicon glyphicon-inbox"> </span>Containers</a></li>
+                <li {% if currentpage == "network" %}class="active"{% endif %} role="presentation"><a href="/network"><span class="glyphicon glyphicon-globe"> </span>Network </a></li>
+                <li {% if currentpage == "images" %}class="active"{% endif %} role="presentation"><a href="/images"><span class="glyphicon glyphicon-film"> </span>Images</a></li>
+                <li role="presentation"><a href="/logout" style="cursor:pointer"><span class="glyphicon glyphicon-log-out"> </span>Logout !</a></li>
+                <li></li>
+            </ul>
+        </div>
+<!-- child template -->
+        <div class="col-lg-10">
+      {% block content %}{% endblock %}
+      
+        </div>
+        
+    </div>
+    <p id="footer_paragraph">
+        <a href="{{lxdui_git_url}}"  target="_blank" style="font-size:1.3em"><span style="color:black">LXDUI v</span><b style="color:#FA5D26">{{lxdui_current_version}}</b></a><br/>
+        Copyright © 2017 <a href="http://www.adaptivescale.com" target="_blank">AdaptiveScale, Inc.</a>
+    </p>
+    </div>
+</body>
+</html>

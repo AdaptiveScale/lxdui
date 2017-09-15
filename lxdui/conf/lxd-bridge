@@ -1,0 +1,48 @@
+# Whether to setup a new bridge or use an existing one
+USE_LXD_BRIDGE="true"
+
+# Bridge name
+# This is still used even if USE_LXD_BRIDGE is set to false
+# set to an empty value to fully disable
+LXD_BRIDGE="{{ BRIDGE_NAME }}"
+
+# Path to an extra dnsmasq configuration file
+LXD_CONFILE=""
+
+# DNS domain for the bridge
+LXD_DOMAIN="lxd"
+
+# IPv4
+## IPv4 address (e.g. 10.0.4.1)
+LXD_IPV4_ADDR="{{ BRIDGE_IP }}"
+
+## IPv4 netmask (e.g. 255.255.255.0)
+LXD_IPV4_NETMASK="{{ BRIDGE_NETMASK }}"
+
+## IPv4 network (e.g. 10.0.4.0/24)
+LXD_IPV4_NETWORK="{{ BRIDGE_NETWORK }}"
+
+## IPv4 DHCP range (e.g. 10.0.4.2,10.0.4.254)
+LXD_IPV4_DHCP_RANGE="{{ BRIDGE_RANGE }}"
+
+## IPv4 DHCP number of hosts (e.g. 250)
+LXD_IPV4_DHCP_MAX="253"
+
+## NAT IPv4 traffic
+LXD_IPV4_NAT="true"
+
+# IPv6
+## IPv6 address (e.g. 2001:470:b368:4242::1)
+LXD_IPV6_ADDR=""
+
+## IPv6 CIDR mask (e.g. 64)
+LXD_IPV6_MASK=""
+
+## IPv6 network (e.g. 2001:470:b368:4242::/64)
+LXD_IPV6_NETWORK=""
+
+## NAT IPv6 traffic
+LXD_IPV6_NAT="false"
+
+# Run a minimal HTTP PROXY server
+LXD_IPV6_PROXY="false"

@@ -1,0 +1,73 @@
+{% extends "index.html" %} {% block content %}
+<div class="col-lg-12 main-div">
+    {% if data_rez.error %}
+    <div class="alert alert-danger" role="alert"> CONTAINER <b>{{data_rez.c_name}}</b> : {{data_rez.message}} !</div>
+    {% else %} {% set container = data_rez.result %}
+    <script>
+        {% if auto_refresh %}
+        //one-time-refresh
+        window.history.pushState("object", document.title, "/container/{{container.name}}");
+        window.setTimeout(function(){ location.reload(); }, 2000);
+        {% endif %}
+
+        $(function () {
+            cm_this_container = single_container_manager('{{container.name}}','{{container.status}}');
+            cm_this_container.render_buttons();
+        });
+    </script>
+    <div class="col-lg-12">
+        <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'RUNNING' %}success{% else %}danger{% endif %}">{{container.status}}</legend>
+        <div id="container_details_buttons" class="form-group">
+        </div>
+
+        <div class="form-group">
+            <h5 style="display:inline">Name :</h5>
+            <b>{{container.name}}</b> {% if container.pid != 'N/A' %}
+            <span class="label label-primary"> PID: {{container.pid}}</span> {% endif %} {% if container.process_count !=
+            'N/A' %}
+            <div class="form-group pull-right">
+                <h5 style="display:inline">Currently Running Processes :</h5>
+                <span class="label label-info">{{container.process_count}}</span>
+            </div>
+            {% endif %}
+    </div>
+    <div class="form-group">
+        <h5 style="display:inline">Architecture :</h5>
+        <b>{{container.architecture}}</b>
+    </div>
+
+    <div class="form-group">
+        <h5 style="display:inline">OS Image :</h5>
+        <b>{{container.OS.name}} {{container.OS.release}} ({{container.OS.architecture}})</b>
+    </div>
+    <div class="form-group">
+        <h5 style="display:inline">Created On:</h5>
+        <b>{{container.created_at}}</b>
+    </div>
+
+    <div class="form-group">
+        <h5 style="display:inline">Profiles :</h5>
+        {% for p in container.profiles %}
+        <span class="label label-default">{{ p }}</span> {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {% if container.network_interfaces is mapping %}
+        <h5>Network Interfaces :</h5>
+        {% for key, value in container.network_interfaces.items() %}
+        <div class="netint_data">
+            IP Interface : <span class="label label-primary"> {{ key }}</span><br/> IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>            <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span><br/> MAC Address
+            : <b style="font-size:75%">{{container.MAC_addr}}</b><br/> State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
+            <hr/> {% for counterkey, counterval in value.counters.items() %} {{counterkey|upper}} : <span class="label label-default">{{counterval}}</span><br/>            {% endfor %}
+        </div>
+        {% endfor %} {% else %}
+        <h5 style="display:inline">Network Interfaces :</h5>
+        <span class="label label-default"> N/A </span> {% endif %}
+    </div>
+
+
+
+</div>
+{% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,5 @@
+recursive-include lxdui/app_metadata *
+recursive-include lxdui/helpers *
+recursive-include lxdui/conf *
+recursive-include lxdui/static *
+recursive-include lxdui/templates *

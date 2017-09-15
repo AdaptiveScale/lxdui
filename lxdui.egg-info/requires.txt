@@ -1,0 +1,5 @@
+netaddr==0.7.19
+Flask==0.12
+flask-login==0.4.0
+bs4==0.0.1
+pylxd==2.2.4

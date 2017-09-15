@@ -1,0 +1,11 @@
+{% extends "index.html" %} {% block content %}
+<div class="col-lg-12 main-div" id="set-div">
+    <div class="col-lg-12">
+        <legend>LXD Network</legend>
+        <h4 class="col-sm-12">Bridge name <span class="label label-default">lxdbr0</span></h4>
+        <h4 class="col-sm-12" style="margin-bottom:25px;">Status <span class="label label-danger">not found</span></h4>
+        <div class="clearfix"></div>
+        <div class="alert alert-danger">{{error_message|safe}}</div>
+    </div>
+</div>
+{% endblock %}
