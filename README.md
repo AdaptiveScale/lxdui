@@ -22,7 +22,7 @@ The following are the prerequisites required to run LDXUI (supported only on Ubu
     
     Make sure you initialize LXD before you can use it with `lxdui`
      - Run `sudo lxd init` 
-     - Choose the preferred settings
+     - Choose your desired settings
      - For beginners -- you can just start the daemon with its default parameters
      	-  `sudo lxd init --auto`
 
