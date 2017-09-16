@@ -1,3 +1,5 @@
+![logo](https://github.com/AdaptiveScale/lxdui/blob/master/lxdui/static/images/logo.png "LXDUI")
+
 ## Installation
 
 ### Prerequisites
