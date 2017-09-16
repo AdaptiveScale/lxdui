@@ -775,7 +775,7 @@ def container_details(container_name=None):
 #-------------------------------------------------------------------------
 def main():
 
-    parser = argparse.ArgumentParser(description='LXD-UI 1.1')
+    parser = argparse.ArgumentParser(description='lxdui v{0}'.format(LXDUI_VERSION))
 
     parser.add_argument(
             '-p', '--port',
@@ -818,11 +818,11 @@ def main():
     app.config['LXDUI_PORT'] = args.port
     
     print "="*32
-    print "Starting LXD-UI v.<{1}> on port <{0}> !".format(app.config['LXDUI_PORT'], LXDUI_VERSION)
+    print "Starting lxdui v{1} on port {0}".format(app.config['LXDUI_PORT'], LXDUI_VERSION)
     print "-"*32
-    print "DEBUG feature: <{}> !".format(debug_txt)
+    print "DEBUG feature: {}".format(debug_txt)
     print "-"*32
-    print "Credentials: <{0}:{1}> !".format(app.config['LXDUI_USERNAME'], app.config['LXDUI_PASSWORD'])
+    print "Credentials: {0}:{1}> !".format(app.config['LXDUI_USERNAME'], app.config['LXDUI_PASSWORD'])
     print "="*32
 
     app.run(host = server_target, port = args.port, debug = args.debug, threaded = True)

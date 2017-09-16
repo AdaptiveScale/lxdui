@@ -3,7 +3,7 @@ import os
 from setuptools import setup, find_packages
 #customize install
 from setuptools.command.install import install
-# lxdui/__init__.py
+# app/__init__.py
 from lxdui.app_metadata import __version__ as LXDUI_VERSION, __giturl__ as LXDUI_GITURL
 
 class CustomizedInstallCommand(install):
@@ -42,8 +42,8 @@ setup(
    cmdclass={ 'install': CustomizedInstallCommand },
    name='lxdui',
    version = LXDUI_VERSION,
-   description='LXD-UI v{}'.format(LXDUI_VERSION),
-   long_description='LXD-UI v{}'.format(LXDUI_VERSION),
+   description='lxdui v{}'.format(LXDUI_VERSION),
+   long_description='lxdui v{}'.format(LXDUI_VERSION),
    classifiers=[
        'Development Status :: 4 - Beta',
        'Programming Language :: Python :: 2.7',
@@ -57,7 +57,7 @@ setup(
        'Operating System :: POSIX :: Linux'
    ],
    keywords='lxc lxc-containers lxd',
-   author='AdaptiveScale',
+   author='AdaptiveScale, Inc.',
    author_email='info@adaptivescale.com',
    url = LXDUI_GITURL,
    license='Apache',
