@@ -74,7 +74,8 @@ To change the credentials to be used for authenticatication there are 2 alternat
     - `sudo lxdui -c admin:secret -p 5555 &`
 - To stop `lxdui`, find the **process id** using the `ps` command and issue the kill command on that process:
     -   `ps -ef | grep lxdui`  
-    	- example output:
+    	 example output:
         ```root **32488**  1062  0 10:46 pts/0    00:00:00 sudo lxdui -c admin:secret -p 5555
-        root 32489 **32488**  0 10:46 pts/0    00:00:00 /usr/bin/python /usr/local/bin/lxdui -c admin:secret -p 5555```
-    - `sudo kill 3248`
+           root 32489 **32488**  0 10:46 pts/0    00:00:00 /usr/bin/python /usr/local/bin/lxdui -c admin:secret -p 5555
+	```
+    - `sudo kill 32489`
