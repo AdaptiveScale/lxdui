@@ -1,3 +1,14 @@
+![logo](https://github.com/AdaptiveScale/lxdui/blob/master/lxdui/static/images/logo.png "LXDUI")
+
+### A web UI for Linux containers based on LXD/LXC.  
+Learn more about Linux containers and LXD/LXC here: [linuxcontainers.org](https://linuxcontainers.org/ "linuxcontainers.org")
+
+LXDUI is a Python Flask application that leverages LXD's Python client library, **pylxd** [(https://github.com/lxc/pylxd)](https://github.com/lxc/pylxd "https://github.com/lxc/pylxd"), for interacting with the LXD REST API.  
+
+##
+![screencast](https://github.com/vhajdari/testsite/blob/master/lxdui_screencast_2.gif "lxdui screencast")
+##
+
 ## Installation
 
 ### Prerequisites
@@ -74,7 +85,64 @@ To change the credentials to be used for authenticatication there are 2 alternat
     - `sudo lxdui -c admin:secret -p 5555 &`
 - To stop `lxdui`, find the **process id** using the `ps` command and issue the kill command on that process:
     -   `ps -ef | grep lxdui`  
-    	- example output:
-        	```root **32488**  1062  0 10:46 pts/0    00:00:00 sudo lxdui -c admin:secret -p 5555
-		   root 32489 **32488**  0 10:46 pts/0    00:00:00 /usr/bin/python /usr/local/bin/lxdui -c admin:secret -p 555```
+	```
+	example output:
+	
+	root 32488  1062  0 10:46 pts/0    00:00:00 sudo lxdui -c admin:secret -p 5555
+	root 32489 32488  0 10:46 pts/0    00:00:00 /usr/bin/python /usr/local/bin/lxdui -c admin:secret -p 5555
+	```
     - `sudo kill 32489`
+
+
+# LIMITATIONS
+There are a number of things that you can do with the LXC CLI that are notably missing from **lxdui**
+
+Neamely:
+- Rename Container
+- Snapshots
+- Copy/Move Containers
+- Management of storage pools
+
+For a list of available commands in **lxc** type:
+```sudo lxc -h```
+```
+  config           Change container or server configuration options
+  copy             Copy containers within or in between LXD instances
+  delete           Delete containers and snapshots
+  exec             Execute commands in containers
+  file             Manage files in containers
+  image            Manipulate container images
+  info             Show container or server information
+  launch           Create and start containers from images
+  list             List the existing containers
+  move             Move containers within or in between LXD instances
+  network          Manage and attach containers to networks
+  profile          Manage container configuration profiles
+  publish          Publish containers as images
+  remote           Manage the list of remote LXD servers
+  restart          Restart containers
+  restore          Restore containers from snapshots
+  snapshot         Create container snapshots
+  start            Start containers
+  stop             Stop containers
+  storage          Manage storage pools and volumes
+```
+# AUTHOR
+
+AdaptiveScale, Inc.
+[http://www.adaptivescale.com](http://www.adaptivescale.com)
+
+# LICENSE
+Copyright © 2017 AdaptiveScale, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+Cask is a trademark of Cask Data, Inc. All rights reserved.
+
+Apache, Apache HBase, and HBase are trademarks of The Apache Software Foundation. Used with permission. No endorsement by The Apache Software Foundation is implied by the use of these marks.
+
+For details see the file COPYING or visit: http://www.gnu.org/licenses/
