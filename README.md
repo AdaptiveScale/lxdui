@@ -89,3 +89,75 @@ To change the credentials to be used for authenticatication there are 2 alternat
         	```root **32488**  1062  0 10:46 pts/0    00:00:00 sudo lxdui -c admin:secret -p 5555
 		   root 32489 **32488**  0 10:46 pts/0    00:00:00 /usr/bin/python /usr/local/bin/lxdui -c admin:secret -p 555```
     - `sudo kill 32489`
+
+LIMITATIONS
+
+screencast currently records only display 0 and screen 0 (DISPLAY value of :0.0 - or :0), which is sufficient for single monitor environments. It may not produce the expected results when using a multi-monitor environment depending on your settings.
+
+It has been reported that screencast does not work under Wayland.
+LINKS
+
+    FFmpeg:
+        Homepage
+        Compilation guide
+        Arch Linux (AUR package) version git master with all libs including libfdk_aac
+
+    screencast packages:
+        Arch Linux (AUR package, release version)
+        Arch Linux (AUR package, git master version)
+
+# LIMITATIONS
+There are a number of things that you can do with the LXC CLI that are notably mising from **lxdui**
+
+Neamely:
+- Rename Container
+- Snapshots
+- Copy/Move Containers
+- Management of storage pools
+
+For a list of available commands in **lxc** type:
+```sudo lxc -h```
+```
+  config           Change container or server configuration options
+  copy             Copy containers within or in between LXD instances
+  delete           Delete containers and snapshots
+  exec             Execute commands in containers
+  file             Manage files in containers
+  image            Manipulate container images
+  info             Show container or server information
+  launch           Create and start containers from images
+  list             List the existing containers
+  move             Move containers within or in between LXD instances
+  network          Manage and attach containers to networks
+  profile          Manage container configuration profiles
+  publish          Publish containers as images
+  remote           Manage the list of remote LXD servers
+  restart          Restart containers
+  restore          Restore containers from snapshots
+  snapshot         Create container snapshots
+  start            Start containers
+  stop             Stop containers
+  storage          Manage storage pools and volumes
+```
+# AUTHOR
+
+AdaptiveScale, Inc.
+[http://www.adaptivescale.com](http://www.adaptivescale.com)
+
+# COPYRIGHT
+
+Copyright © 2017 AdaptiveScale, Inc.
+
+# LICENSE
+
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+Cask is a trademark of Cask Data, Inc. All rights reserved.
+
+Apache, Apache HBase, and HBase are trademarks of The Apache Software Foundation. Used with permission. No endorsement by The Apache Software Foundation is implied by the use of these marks.
+
+For details see the file COPYING or visit: http://www.gnu.org/licenses/
