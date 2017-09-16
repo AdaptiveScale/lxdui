@@ -9,7 +9,7 @@ The following are the prerequisites required to run LDXUI (supported only on Ubu
     
 	`sudo apt-get install libfontconfig libffi-dev libssl-dev build-essential python-dev python-pip python-virtualenv -y`
         
-- Your machine must have **LXC 2.3 or higher** already installed.
+- Your must have **LXD 2.3 or higher** already installed.
     
     The following commands will install the latest stable version of LXC/LXD . 
     
