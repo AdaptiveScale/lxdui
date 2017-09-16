@@ -45,13 +45,14 @@ Run the command to start the server: `sudo lxdui`
 - To start the server as a background process type: `sudo lxdui &` 
 
  **Issues you might run into during installation**
-> - **ImportError: No module named build_py**.  This is a **pip** error. 
-> 	- this is easily fixed by re-running the same install command again.
+> - **ImportError: No module named build_py**.  
+>	- This is a **pip** error, adn is easily fixed by re-running the same install command again.
 > - **ImportError: No module named connection**
-> 	- `pip show urllib3` might deceive you showing yoy that the right version is already > installed.  
 > 	- **pip** fails to install the correct **urllib3** module according to the required version of the dependencies.
->   - `lxdui` will throw the following error: **from urllib3.connection import HTTPConnection**
->   Runing `python -c "import urllib3; print urllib3.__version__;"` you can see that it actually has not.
+> 	- `pip show urllib3` might deceive you showing you that the right version is already installed.  
+> - **urllib3 version mismatch**
+>	- `lxdui` will throw the following error: **from urllib3.connection import HTTPConnection**
+>   	- `python -c "import urllib3; print urllib3.__version__;"` will show you the installed version.
 >   - Fix it by manually installing *urllib3* from the official repo 
 >   	- `git clone --branch 1.8 git://github.com/shazow/urllib3.git`
 >   	- `cd urllib3 && sudo python setup.py install`
@@ -65,7 +66,7 @@ The configuration file `config.json` found within the **conf** directory gets co
 
 To change the credentials to be used for authenticatication there are 2 alternatives:
 - Permanent via `/conf/config.json` located in python's package directory for `lxdui`
-- Temporarily via the **-c** application argument where you specifying authentication credentials via the `username`:`password` pattern.
+- Temporarily via the **-c** application argument where you specify authentication credentials via the `username`:`password` pattern.
 
 ## Helpful Info</h1>
 
