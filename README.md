@@ -44,7 +44,7 @@ Run the command to start the server: `sudo lxdui`
 - To see the available customizable arguments type: `sudo lxdui -h`
 - To start the server as a background process type: `sudo lxdui &` 
 
- **Issues you might run into, during the installation process**
+ **Issues you might run into during installation**
 > - **ImportError: No module named build_py**.  This is a **pip** error. 
 > 	- this is easily fixed by re-running the same install command again.
 > - **ImportError: No module named connection**
