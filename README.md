@@ -86,25 +86,12 @@ To change the credentials to be used for authenticatication there are 2 alternat
 - To stop `lxdui`, find the **process id** using the `ps` command and issue the kill command on that process:
     -   `ps -ef | grep lxdui`  
     	- example output:
-        	```root **32488**  1062  0 10:46 pts/0    00:00:00 sudo lxdui -c admin:secret -p 5555
-		   root 32489 **32488**  0 10:46 pts/0    00:00:00 /usr/bin/python /usr/local/bin/lxdui -c admin:secret -p 555```
+	```
+	root **32488**  1062  0 10:46 pts/0    00:00:00 sudo lxdui -c admin:secret -p 5555
+	root 32489 **32488**  0 10:46 pts/0    00:00:00 /usr/bin/python /usr/local/bin/lxdui -c admin:secret -p 5555
+	```
     - `sudo kill 32489`
 
-LIMITATIONS
-
-screencast currently records only display 0 and screen 0 (DISPLAY value of :0.0 - or :0), which is sufficient for single monitor environments. It may not produce the expected results when using a multi-monitor environment depending on your settings.
-
-It has been reported that screencast does not work under Wayland.
-LINKS
-
-    FFmpeg:
-        Homepage
-        Compilation guide
-        Arch Linux (AUR package) version git master with all libs including libfdk_aac
-
-    screencast packages:
-        Arch Linux (AUR package, release version)
-        Arch Linux (AUR package, git master version)
 
 # LIMITATIONS
 There are a number of things that you can do with the LXC CLI that are notably mising from **lxdui**
@@ -144,11 +131,8 @@ For a list of available commands in **lxc** type:
 AdaptiveScale, Inc.
 [http://www.adaptivescale.com](http://www.adaptivescale.com)
 
-# COPYRIGHT
-
-Copyright © 2017 AdaptiveScale, Inc.
-
 # LICENSE
+Copyright © 2017 AdaptiveScale, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
