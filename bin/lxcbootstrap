@@ -1,0 +1,266 @@
+#!/bin/bash
+
+ #  Author: Veton Hajdari
+ #  Copyright © 2017 AdaptiveScale, Inc.
+ # 
+ #  Licensed under the Apache License, Version 2.0 (the "License"); you may not
+ #  use this file except in compliance with the License. You may obtain a copy of
+ #  the License at
+ # 
+ #  http://www.apache.org/licenses/LICENSE-2.0
+ # 
+ #  Unless required by applicable law or agreed to in writing, software
+ #  distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ #  WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
+ #  License for the specific language governing permissions and limitations under
+ #  the License.
+ 
+
+usage () {
+	echo -e "\nLXC container bootstrapper."
+	echo "=========================="
+	echo -e "\nConfigures a cluster of LXC nodes with SSH and other goodies.\n"
+	echo -e "  Usage:"
+	echo -e "    lxcbootstrap  \"Interactive Mode\""
+	echo -e "    lxcbootstrap  [-n node_prefix] [-k ssh_public_key] [-p root_passwd] [-v] [-h] "
+	echo -e "\n    -n node_prefix \t Prefix of the container name; e.g: mycontainer-1 = mycontainer"
+	echo -e "\n    -k ssh_public_key \t Path to an SSH public key file"
+	echo -e "\n    -p root_passwd \t Password to set for the container's root account"
+	echo -e "\n    -v \t\t\t Enable Debug mode"
+	echo -e "\n    -h \t\t\t Usage information (this screen)"
+	echo -e "\n  Example:"
+	echo -e "    lxcbootstrap -n myContainer -k ~/.ssh/id_rsa.pub -p secret"
+}
+
+welcomeText () {
+	echo -e "\nWelcome to the LXC container bootstrapper."
+	echo "=========================================="
+	echo -e "\nThis script will allow you to set up a cluster\nof LXC nodes configured with SSH.\n"
+}
+
+checkInputs () {
+	if [ ! $NODE_PREFIX ] || [ $NODE_PREFIX == "" ]; then 
+		getInput
+	else
+		validate
+	fi
+	if [ ! $SSH_PUBLIC_KEY ] || [ $SSH_PUBLIC_KEY == "" ]; then
+		eval KEYPATH="~/.ssh/id_rsa.pub"
+		echo "Will use default public key: $KEYPATH"
+		log "Public key path/file = $KEYPATH" 		
+		if [ ! -f $KEYPATH ]; then
+			echo "ERROR! Could not locate a public key."
+			echo "File not found -- $KEYPATH"
+			echo -e "\nPlease provide a valid public SSH key and try again."
+			break
+		fi
+		SSH_PUBLIC_KEY=`cat $KEYPATH`
+	fi
+	if [ ! $SSHPASS ] || [ $SSHPASS == "" ]; then 
+		SSHPASS=`apg -a 0 -n 1`
+		echo "Assigning a random password => $SSHPASS"
+		#write password to file
+		echo $SSHPASS > lxc.passwd
+	fi
+}
+
+validate () {
+	#check if input is from the valid list of prefixes
+	CONTAINERS=`sudo lxc list | awk 'FNR>2 {print "\t"$2}' | sed '/^\s*$/d' | sed 's/[^a-Z]*//g' | awk '{count[$1]++} END{for (word in count) print word }' | sort`
+	log "CONTAINERS:\n$CONTAINERS"
+
+	if echo $CONTAINERS | grep -w $NODE_PREFIX > /dev/null; then
+		log " Match found...$NODE_PREFIX is in the list."
+	    return 0
+	else
+		echo -e "\n\033[0;33m\033[1m$NODE_PREFIX\033[0m is not in the list.  Please try again ...\n"
+		if [ "$INTERACTIVE" == "true" ];then 
+			getInput
+		fi
+		exit 2
+	fi
+}
+
+getInput () {
+	CHOICES=`sudo lxc list | awk 'FNR>2 {print "\t"$2}' | sed '/^\s*$/d' | sed 's/[^a-Z]*//g' | awk '{count[$1]++} END{for (word in count) print word,"\t => " count[word] " container(s)" }'  | sort`
+	echo -e "\nEnter the container prefix and press [ENTER]:\n"
+	echo -e "\nThese are your choices:"
+	echo "======================="
+	echo -e "$CHOICES"
+	echo -e "\n"
+	echo -n " > "
+	read NODE_PREFIX
+	log "NODE_PREFIX = $NODE_PREFIX"
+	validate
+}
+
+getContainers () {
+	HOSTS=`sudo lxc list | grep $NODE_PREFIX | awk '{print $6 "\t" $2".local" "\t" $2}'`
+	log "HOSTS...\n$HOSTS"
+}
+
+log () {
+	if [ "$VERBOSE" == "true" ]; then
+		echo -e "[DEBUG] $@"
+	fi
+}
+
+setup () {
+	CMD="sudo lxc exec $HOST --"
+	OS_IMAGE=`sudo lxc config show --expanded $HOST | grep image.description: | awk '{print $2}'`
+	echo "Running setup for $OS_IMAGE"
+
+	case "$OS_IMAGE" in
+		Alpine)
+			UPDATE_PM="apk update"
+			INSTALL_PKG="apk add openssh-server ntp sysfsutils"
+			RESTART_SSH="service sshd restart"
+			;;
+		Ubuntu)
+			UPDATE_PM="apt update"
+			INSTALL_PKG="apt install openssh-server ntp sysfsutils -y"
+			RESTART_SSH="service ssh restart"
+			;;
+		Debian)
+			UPDATE_PM="apt update"
+			INSTALL_PKG="apt install openssh-server ntp sysfsutils -y"
+			RESTART_SSH="service ssh restart"
+			;;
+		Centos)
+			UPDATE_PM="yum update -y"
+			INSTALL_PKG="yum install openssh-server ntp sysfsutils -y"
+			RESTART_SSH="service sshd restart"
+			;;
+		Oracle)
+			UPDATE_PM="yum update -y"
+			INSTALL_PKG="yum install openssh-server ntp sysfsutils -y"
+			RESTART_SSH="service sshd restart"
+			;;
+		Opensuse)
+			UPDATE_PM="zypper update -y"
+			INSTALL_PKG="zypper install -y openssh ntp sysfsutils"
+			RESTART_SSH="systemctl status sshd.service"
+			;;
+		Fedora)
+			UPDATE_PM="dnf update"
+			INSTALL_PKG="dnf install openssh-server ntp sysfsutils -y"
+			RESTART_SSH="systemctl restart sshd.service"
+			;;
+		 *) echo "[ERROR]  Unrecognized or unsupported OS image!"
+			break ;;
+	esac
+
+	#Install and configure SSH
+	$CMD $UPDATE_PM
+	$CMD $INSTALL_PKG
+	$CMD sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/g' /etc/ssh/sshd_config
+	$CMD sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/g' /etc/ssh/sshd_config
+	$CMD $RESTART_SSH
+	#wait for the ssh server to restart
+	sleep 1
+	
+	#Set the root password
+	log "[DEBUG]\n\nSet root password..."
+	$CMD /bin/bash -c "echo 'root:$SSHPASS' | chpasswd"
+	
+	#Copy public key to container
+	log "Copy Public SSH Key..."
+	$CMD mkdir /root/.ssh
+	$CMD /bin/bash -c "echo -e '$SSH_PUBLIC_KEY'  > /root/.ssh/authorized_keys"
+	log "Authorized Keys:"
+	$CMD cat /root/.ssh/authorized_keys
+	
+	#Add LXC Containers to hosts file
+	getContainers
+	echo -e "\n\nHOSTS..."
+	echo -e "$HOSTS\n\n"
+	$CMD /bin/bash -c "echo -e '$HOSTS' >> /etc/hosts"
+	elog "[DEBUG]\n\nHosts File..."
+	$CMD cat /etc/hosts
+
+	echo -e "\n\n\n"
+	echo "Done!"
+}
+
+run () {
+	getContainers
+	NODES=`echo -e "$HOSTS" | wc -l`
+	log "Nodes = $NODES"
+	for i in `seq 1 $NODES`; do
+		HOST=$NODE_PREFIX-$i
+		log "HOST = $HOST"
+		STATUS=`sudo lxc list -c ns | grep $HOST | awk '{print $4}'`
+		log "$HOST STATUS = $STATUS"
+		
+		echo -n "Continue [ENTER]"
+		read
+		
+		if [ "$STATUS" == "RUNNING" ]; then
+			setup $HOST
+			echo " ****************************************************"
+			echo " *                                                  *"
+			echo " * The root password has been set to ==> $SSHPASS   *"
+			echo " *                                                  *"
+			echo " ****************************************************"
+			log "NODE_PREFIX = $NODE_PREFIX"
+			log "SSH_PUBLIC_KEY = $SSH_PUBLIC_KEY"
+			log "SSHPASS = $SSHPASS"
+			# echo "NODE_PREFIX = $NODE_PREFIX"
+			# echo "SSH_PUBLIC_KEY = $SSH_PUBLIC_KEY"
+			# echo "SSHPASS = $SSHPASS"
+		else 
+			echo "Container $HOST is not running.  Please start the container and try again"
+			break	
+		fi		
+	done
+}
+
+#MAIN 
+if [ $# -eq 0 ]; then
+	INTERACTIVE="true"
+	log "Running in interactive mode"	
+	echo -e "You have not specified any parameters.\n  >> Running in Interactive Mode. <<"	
+	welcomeText
+	getInput
+	checkInputs
+	run
+fi
+
+if [ $# -gt 0 ]; then
+	NODE_PREFIX=""
+	SSH_PUBLIC_KEY=""
+	SSHPASS=""
+
+	while getopts :n:k:p:hv option; do
+	#while getopts nkph option; do
+	 case "${option}" in
+	 n) NODE_PREFIX=${OPTARG};;
+	 k) SSH_PUBLIC_KEY=${OPTARG};;
+	 p) SSHPASS=${OPTARG};;
+	 v) VERBOSE="true";;
+	 h) usage
+		exit
+		;;
+	\?) echo -e \\n"Option -${BOLD}$OPTARG${NORM} not allowed.\n"
+		usage
+		exit 2
+		;;
+
+	 :) echo -e "Invalid option: $OPTARG requires an argument.\n" 1>&2
+		usage
+		exit 2
+		;;
+	-*) echo "$0: Unrecognized option $1" >&2
+    	exit 2;;
+     *) break ;;
+	 esac	 
+	done
+	shift $((OPTIND -1))
+
+	welcomeText
+	checkInputs
+	run
+
+	log "Script finished."
+fi
+
