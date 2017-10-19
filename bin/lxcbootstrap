@@ -19,7 +19,7 @@
 usage () {
 	echo -e "\nLXC container bootstrapper."
 	echo "=========================="
-	echo -e "\nConfigures a cluster of LXC nodes with SSH and other goodies.\n"
+	echo -e "\nConfigures a cluster of LXC nodes configured with SSH and other goodies.\n"
 	echo -e "  Usage:"
 	echo -e "    lxcbootstrap  \"Interactive Mode\""
 	echo -e "    lxcbootstrap  [-n node_prefix] [-k ssh_public_key] [-p root_passwd] [-v] [-h] "
@@ -172,10 +172,10 @@ setup () {
 	
 	#Add LXC Containers to hosts file
 	getContainers
-	echo -e "\n\nHOSTS..."
-	echo -e "$HOSTS\n\n"
+	log "\n\nHOSTS..."
+	log "$HOSTS\n\n"
 	$CMD /bin/bash -c "echo -e '$HOSTS' >> /etc/hosts"
-	elog "[DEBUG]\n\nHosts File..."
+	log "[DEBUG]\n\nHosts File..."
 	$CMD cat /etc/hosts
 
 	echo -e "\n\n\n"
@@ -192,8 +192,8 @@ run () {
 		STATUS=`sudo lxc list -c ns | grep $HOST | awk '{print $4}'`
 		log "$HOST STATUS = $STATUS"
 		
-		echo -n "Continue [ENTER]"
-		read
+		# echo -n "Continue [ENTER]"
+		# read
 		
 		if [ "$STATUS" == "RUNNING" ]; then
 			setup $HOST
@@ -263,4 +263,3 @@ if [ $# -gt 0 ]; then
 
 	log "Script finished."
 fi
-
