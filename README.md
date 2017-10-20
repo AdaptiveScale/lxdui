@@ -3,7 +3,7 @@
 ### A web UI for Linux containers based on LXD/LXC.  
 Learn more about Linux containers and LXD/LXC here: [linuxcontainers.org](https://linuxcontainers.org/ "linuxcontainers.org")
 
-LXDUI is a Python Flask application that leverages LXD's Python client library, **pylxd** [(https://github.com/lxc/pylxd)](https://github.com/lxc/pylxd "https://github.com/lxc/pylxd"), for interacting with the LXD REST API.  
+LXDUI is a Python Flask application that leverages LXD's Python client library, **pylxd** [(https://github.com/lxc/pylxd)](https://github.com/lxc/pylxd "https://github.com/lxc/pylxd"), for interacting with the LXD REST API.  It allows for rapid provisioning and management of large number of containers from a web browser, and you can simultaneously create any number of containers, even from multiple images, in one step.
 
 ##
 ![screencast](https://github.com/vhajdari/testsite/blob/master/lxdui_screencast_2.gif "lxdui screencast")
