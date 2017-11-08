@@ -40,7 +40,7 @@ The following are the prerequisites required to run LDXUI (supported only on Ubu
 
 
 ### 1) Clone the repository
-`git clone https://gitlab.com/adaptivescale/lxdui.git`
+`git clone https://github.com/AdaptiveScale/lxdui.git`
 
 ### 2) Install from source
 Go into to the `lxdui` directory and execute `sudo python setup.py install`
