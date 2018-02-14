@@ -1,15 +1,18 @@
 from api.src.models.Base import Base
 
-class LXDModule(Base):
+from pylxd import Client
+
+class LXDModule():
     # Default 127.0.0.1 -> Move to Config
     def __init__(self, remoteHost='127.0.0.1'):
-        pass
+        self.client = Client()
+        self.client.authenticate('')
 
     def listContainers(self):
-        pass
+        return self.client.containers.all()
 
     def listLocalImages(self):
-        pass
+        return self.client.images.all()
 
     def listRemoteImages(self):
         pass
