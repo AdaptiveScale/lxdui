@@ -2,6 +2,9 @@ from flask import Flask
 
 app = Flask(__name__)
 
+from api.src.controllers.lxd import lxd_api
+app.register_blueprint(lxd_api, url_prefix='/api/lxd')
+
 @app.cli.command
 def run():
     startApp()
