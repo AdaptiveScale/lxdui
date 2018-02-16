@@ -35,41 +35,41 @@ def config():
     return jsonify({'status': 200, 'message': 'ok', 'data': client.config()})
 
 
-@lxd_api.route('/container/<string:alias>')
-def infoContainer(alias):
-    container = LXCContainer({'alias': alias})
+@lxd_api.route('/container/<string:name>')
+def infoContainer(name):
+    container = LXCContainer({'name': name})
     return jsonify({'status': 200, 'message': 'ok', 'data': container.info()})
 
 
-@lxd_api.route('/container/delete/<string:alias>', methods=['DELETE'])
-def deleteContainer(alias):
-    container = LXCContainer({'alias': alias})
+@lxd_api.route('/container/delete/<string:name>', methods=['DELETE'])
+def deleteContainer(name):
+    container = LXCContainer({'name': name})
     container.delete()
     return jsonify({'status': 200, 'message': 'ok', 'data': []})
 
 
-@lxd_api.route('/container/start/<string:alias>', methods=['PUT'])
-def startContainer(alias):
-    container = LXCContainer({'alias': alias})
+@lxd_api.route('/container/start/<string:name>', methods=['PUT'])
+def startContainer(name):
+    container = LXCContainer({'name': name})
     container.start()
     return jsonify({'status': 200, 'message': 'ok', 'data': []})
 
 
-@lxd_api.route('/container/stop/<string:alias>', methods=['PUT'])
-def stopContainer(alias):
-    container = LXCContainer({'alias': alias})
+@lxd_api.route('/container/stop/<string:name>', methods=['PUT'])
+def stopContainer(name):
+    container = LXCContainer({'name': name})
     container.stop()
     return jsonify({'status': 200, 'message': 'ok', 'data': []})
 
 
-@lxd_api.route('/container/restart/<string:alias>', methods=['PUT'])
-def restartContainer(alias):
-    container = LXCContainer({'alias': alias})
+@lxd_api.route('/container/restart/<string:name>', methods=['PUT'])
+def restartContainer(name):
+    container = LXCContainer({'name': name})
     container.restart()
     return jsonify({'status': 200, 'message': 'ok', 'data': []})
 
 
-@lxd_api.route('/container/snapshot/<string:alias>')
-def containerSnapshots(alias):
-    container = LXCContainer({'alias': alias})
+@lxd_api.route('/container/snapshot/<string:name>')
+def containerSnapshots(name):
+    container = LXCContainer({'name': name})
     return jsonify({'status': 200, 'message': 'ok', 'data': container.snapshot()})
