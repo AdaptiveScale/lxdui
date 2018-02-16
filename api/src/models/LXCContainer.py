@@ -3,25 +3,39 @@ from api.src.models.LXDModule import LXDModule
 class LXCContainer(LXDModule):
     def __init__(self, input):
         self.input = input
-        super.__init__(input.remoteHost)
+        self.remoteHost = '127.0.0.1'
+        if not self.input.get('alias'):
+            raise ValueError('Missing container alias.')
+        if 'remoteHost' in self.input:
+            self.remoteHost = self.input.get('remoteHost')
+
+        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
+
+    def info(self):
+        return self.client.api.containers[self.input.get('alias')].get().json()
 
     def create(self):
         pass
 
     def delete(self):
-        pass
+        container = self.client.containers.get(self.input.get('alias'))
+        #container.stop()
+        container.delete()
 
     def update(self):
         pass
 
     def start(self):
-        pass
+        container = self.client.containers.get(self.input.get('alias'))
+        container.start()
 
     def stop(self):
-        pass
+        container = self.client.containers.get(self.input.get('alias'))
+        container.stop()
 
     def restart(self):
-        pass
+        container = self.client.containers.get(self.input.get('alias'))
+        container.restart()
 
     def move(self):
         pass
@@ -30,4 +44,5 @@ class LXCContainer(LXDModule):
         pass
 
     def snapshot(self):
-        pass
+        container = self.client.containers.get(self.input.get('alias'))
+        return container.snapshots.all()
