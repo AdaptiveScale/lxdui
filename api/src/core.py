@@ -5,6 +5,9 @@ app = Flask(__name__)
 from api.src.controllers.lxd import lxd_api
 app.register_blueprint(lxd_api, url_prefix='/api/lxd')
 
+from api.src.controllers.container import container_api
+app.register_blueprint(container_api, url_prefix='/api/container')
+
 @app.cli.command
 def run():
     startApp()
