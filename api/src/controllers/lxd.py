@@ -5,11 +5,6 @@ from api.src.models.LXCContainer import LXCContainer
 
 lxd_api = Blueprint('lxd_api', __name__)
 
-@lxd_api.route('/container')
-def containers():
-    client = LXDModule()
-    return jsonify({'status': 200, 'message': 'ok', 'data': client.listContainers()})
-
 
 @lxd_api.route('/image')
 def images():
@@ -39,13 +34,6 @@ def config():
 def infoContainer(name):
     container = LXCContainer({'name': name})
     return jsonify({'status': 200, 'message': 'ok', 'data': container.info()})
-
-
-@lxd_api.route('/container/delete/<string:name>', methods=['DELETE'])
-def deleteContainer(name):
-    container = LXCContainer({'name': name})
-    container.delete()
-    return jsonify({'status': 200, 'message': 'ok', 'data': []})
 
 
 @lxd_api.route('/container/start/<string:name>', methods=['PUT'])
