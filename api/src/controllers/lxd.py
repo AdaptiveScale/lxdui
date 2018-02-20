@@ -2,62 +2,89 @@ from flask import Blueprint, abort, jsonify
 
 from api.src.models.LXDModule import LXDModule
 from api.src.models.LXCContainer import LXCContainer
+from api.src.utils import response
 
 lxd_api = Blueprint('lxd_api', __name__)
 
 
 @lxd_api.route('/image')
 def images():
-    client = LXDModule()
-    return jsonify({'status': 200, 'message': 'ok', 'data': client.listLocalImages()})
+    try:
+        client = LXDModule()
+        return jsonify({'status': 200, 'message': 'ok', 'data': client.listLocalImages()})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
 
 
 @lxd_api.route('/profile')
 def profiles():
-    client = LXDModule()
-    return jsonify({'status': 200, 'message': 'ok', 'data': client.listProfiles()})
+    try:
+        client = LXDModule()
+        return jsonify({'status': 200, 'message': 'ok', 'data': client.listProfiles()})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
 
 
 @lxd_api.route('/network')
 def networks():
-    client = LXDModule()
-    return jsonify({'status': 200, 'message': 'ok', 'data': client.listNetworks()})
+    try:
+        client = LXDModule()
+        return jsonify({'status': 200, 'message': 'ok', 'data': client.listNetworks()})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
 
 
 @lxd_api.route('/config')
 def config():
-    client = LXDModule()
-    return jsonify({'status': 200, 'message': 'ok', 'data': client.config()})
-
+    try:
+        client = LXDModule()
+        return jsonify({'status': 200, 'message': 'ok', 'data': client.config()})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
 
 @lxd_api.route('/container/<string:name>')
 def infoContainer(name):
-    container = LXCContainer({'name': name})
-    return jsonify({'status': 200, 'message': 'ok', 'data': container.info()})
+    try:
+        container = LXCContainer({'name': name})
+        return jsonify({'status': 200, 'message': 'ok', 'data': container.info()})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
 
 
 @lxd_api.route('/container/start/<string:name>', methods=['PUT'])
 def startContainer(name):
-    container = LXCContainer({'name': name})
-    container.start()
-    return jsonify({'status': 200, 'message': 'ok', 'data': []})
+    try:
+        container = LXCContainer({'name': name})
+        container.start()
+        return jsonify({'status': 200, 'message': 'ok', 'data': []})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
 
 
 @lxd_api.route('/container/stop/<string:name>', methods=['PUT'])
 def stopContainer(name):
-    container = LXCContainer({'name': name})
-    container.stop()
-    return jsonify({'status': 200, 'message': 'ok', 'data': []})
+    try:
+        container = LXCContainer({'name': name})
+        container.stop()
+        return jsonify({'status': 200, 'message': 'ok', 'data': []})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
 
 
 @lxd_api.route('/container/restart/<string:name>', methods=['PUT'])
 def restartContainer(name):
-    container = LXCContainer({'name': name})
-    container.restart()
-    return jsonify({'status': 200, 'message': 'ok', 'data': []})
+    try:
+        container = LXCContainer({'name': name})
+        container.restart()
+        return jsonify({'status': 200, 'message': 'ok', 'data': []})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
 
 
 @lxd_api.route('/container/snapshot/<string:name>')
 def containerSnapshots(name):
-    container = LXCContainer({'name': name})
-    return jsonify({'status': 200, 'message': 'ok', 'data': container.snapshot()})
+    try:
+        container = LXCContainer({'name': name})
+        return jsonify({'status': 200, 'message': 'ok', 'data': container.snapshot()})
+    except ValueError as e:
+        return response.reply(e.__str__(), 'Failed', 400)
