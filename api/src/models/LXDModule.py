@@ -66,6 +66,16 @@ class LXDModule(Base):
     def config(self):
         return self.client.api.get().json()
 
+    def hasImage(self, imageInfo):
+        lxdModule = LXDModule()
+        for image in lxdModule.listLocalImages():
+            if image.get('fingerprint') == imageInfo:
+                return 'fingerprint'
+            for alias in image.get('aliases'):
+                if alias.get('name') == imageInfo:
+                    return 'alias'
+        return None
+
 
     def info(self):
         raise NotImplementedError()
