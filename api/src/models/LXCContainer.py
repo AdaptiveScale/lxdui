@@ -1,5 +1,3 @@
-from pylxd.exceptions import LXDAPIException, NotFound
-
 from api.src.models.LXDModule import LXDModule
 from api.src.utils import response
 
@@ -77,7 +75,10 @@ class LXCContainer(LXDModule):
         self.data['config']['limits.memory.enforce'] = 'hard' if input.get('hardLimitation') else 'soft'
 
     def info(self):
-        return self.client.api.containers[self.data.get('name')].get().json()['metadata']
+        try:
+            return self.client.api.containers[self.data.get('name')].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
 
     def create(self):
         try:
@@ -85,7 +86,7 @@ class LXCContainer(LXDModule):
             self.start(waitIt=True)
             return self.info()
         except Exception as e:
-            raise ValueError(e.__str__())
+            raise ValueError(e)
 
     def delete(self, force=False):
         try:
@@ -94,22 +95,31 @@ class LXCContainer(LXDModule):
                 container.stop(wait=True)
             container.delete()
         except Exception as e:
-            raise ValueError(e.__str__())
+            raise ValueError(e)
 
     def update(self):
         pass
 
-    def start(self, waitIt=False):
-        container = self.client.containers.get(self.data.get('name'))
-        container.start(wait=waitIt)
+    def start(self, waitIt=True):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            container.start(wait=waitIt)
+        except Exception as e:
+            raise ValueError(e)
 
-    def stop(self, waitIt=False):
-        container = self.client.containers.get(self.data.get('name'))
-        container.stop(wait=waitIt)
+    def stop(self, waitIt=True):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            container.stop(wait=waitIt)
+        except Exception as e:
+            raise ValueError(e)
 
-    def restart(self):
-        container = self.client.containers.get(self.data.get('name'))
-        container.restart()
+    def restart(self, waitIt=True):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            container.restart(wait=waitIt)
+        except Exception as e:
+            raise ValueError(e)
 
     def move(self):
         pass
@@ -118,5 +128,8 @@ class LXCContainer(LXDModule):
         pass
 
     def snapshot(self):
-        container = self.client.containers.get(self.data.get('name'))
-        return container.snapshots.all()
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            return container.snapshots.all()
+        except Exception as e:
+            raise ValueError(e)

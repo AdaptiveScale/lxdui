@@ -8,18 +8,24 @@ class LXDModule(Base):
         self.client = Client()
 
     def listContainers(self):
-        results = []
-        for container in self.client.api.containers.get().json()['metadata']:
-            results.append(self.client.api.containers[container.split('/')[-1]].get().json()['metadata'])
+        try:
+            results = []
+            for container in self.client.api.containers.get().json()['metadata']:
+                results.append(self.client.api.containers[container.split('/')[-1]].get().json()['metadata'])
 
-        return results
+            return results
+        except Exception as e:
+            raise ValueError(e)
 
     def listLocalImages(self):
-        results = []
-        for image in self.client.api.images.get().json()['metadata']:
-            results.append(self.client.api.images[image.split('/')[-1]].get().json()['metadata'])
+        try:
+            results = []
+            for image in self.client.api.images.get().json()['metadata']:
+                results.append(self.client.api.images[image.split('/')[-1]].get().json()['metadata'])
 
-        return results
+            return results
+        except Exception as e:
+            raise ValueError(e)
 
     def listRemoteImages(self):
         pass
@@ -31,11 +37,14 @@ class LXDModule(Base):
         pass
 
     def listProfiles(self):
-        results = []
-        for profile in self.client.api.profiles.get().json()['metadata']:
-            results.append(self.client.api.profiles[profile.split('/')[-1]].get().json()['metadata'])
+        try:
+            results = []
+            for profile in self.client.api.profiles.get().json()['metadata']:
+                results.append(self.client.api.profiles[profile.split('/')[-1]].get().json()['metadata'])
 
-        return results
+            return results
+        except Exception as e:
+            raise ValueError(e)
 
     def createProfile(self):
         pass
@@ -47,11 +56,14 @@ class LXDModule(Base):
         pass
 
     def listNetworks(self):
-        results = []
-        for network in self.client.api.networks.get().json()['metadata']:
-            results.append(self.client.api.networks[network.split('/')[-1]].get().json()['metadata'])
+        try:
+            results = []
+            for network in self.client.api.networks.get().json()['metadata']:
+                results.append(self.client.api.networks[network.split('/')[-1]].get().json()['metadata'])
 
-        return results
+            return results
+        except Exception as e:
+            raise ValueError(e)
 
     def createNetwork(self):
         pass
@@ -64,7 +76,10 @@ class LXDModule(Base):
 
 
     def config(self):
-        return self.client.api.get().json()
+        try:
+            return self.client.api.get().json()
+        except Exception as e:
+            raise ValueError(e)
 
     def hasImage(self, imageInfo):
         lxdModule = LXDModule()
