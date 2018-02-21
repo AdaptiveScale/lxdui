@@ -43,22 +43,22 @@ class LXCContainer(LXDModule):
     def start(self):
         try:
             container = self.client.containers.get(self.input.get('name'))
-            container.start()
+            container.start(wait=True)
         except Exception as e:
             raise ValueError(e)
 
     def stop(self):
         try:
             container = self.client.containers.get(self.input.get('name'))
-            container.stop()
+            container.stop(wait=True)
         except Exception as e:
             raise ValueError(e)
 
     def restart(self):
         try:
             container = self.client.containers.get(self.input.get('name'))
-            container.restart()
-        except:
+            container.restart(wait=True)
+        except Exception as e:
             raise ValueError(e)
 
     def move(self):
