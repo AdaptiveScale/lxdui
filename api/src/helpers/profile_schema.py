@@ -2,7 +2,7 @@ from jsonschema import validate, ValidationError
 
 schema = {
     'type': 'object',
-    'required': ['name'],
+    'required': ['name', 'config', 'devices'],
     'properties': {
         'name': {
             'type': 'string',
@@ -126,9 +126,9 @@ schema = {
 }
 
 
-def doValidate(input):
+def doValidate(data):
     try:
-        validate(input, schema)
+        validate(data, schema)
         return None
     except ValidationError as e:
         return e
