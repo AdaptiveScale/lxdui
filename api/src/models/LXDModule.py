@@ -1,6 +1,9 @@
 from api.src.models.Base import Base
+from api.src.utils.remoteImageMapper import remoteImagesList
 
 from pylxd import Client
+import requests
+
 
 class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config
@@ -28,10 +31,27 @@ class LXDModule(Base):
             raise ValueError(e)
 
     def listRemoteImages(self):
-        pass
+        try:
+            #remoteClient = Client(endpoint='https://images.linuxcontainers.org')
+            #return remoteClient.api.images.get().json()['metadata']
 
-    def downloadImage(self):
-        pass
+            images = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases')
+            return remoteImagesList(images.json())
+        except Exception as e:
+            raise ValueError(e)
+
+    def downloadImage(self, image):
+        try:
+            #response = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases/{}'.format(self.data.get('image')))
+            #image_details = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/{}'.format(response.json()['metadata']['target']))
+
+            remoteClient = Client(endpoint='https://images.linuxcontainers.org')
+            remoteImage = remoteClient.images.get_by_alias(image)
+            newImage = remoteImage.copy(self.client, auto_update=False, public=False, wait=True)
+
+            return self.client.api.images[newImage.fingerprint].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
 
     def deleteImage(self):
         pass

@@ -8,6 +8,9 @@ app.register_blueprint(lxd_api, url_prefix='/api/lxd')
 from api.src.controllers.container import container_api
 app.register_blueprint(container_api, url_prefix='/api/container')
 
+from api.src.controllers.image import image_api
+app.register_blueprint(image_api, url_prefix='/api/image')
+
 from api.src.controllers.profile import profile_api
 app.register_blueprint(profile_api, url_prefix='/api/profile')
 
