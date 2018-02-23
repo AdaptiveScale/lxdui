@@ -11,6 +11,9 @@ app.register_blueprint(container_api, url_prefix='/api/container')
 from api.src.controllers.image import image_api
 app.register_blueprint(image_api, url_prefix='/api/image')
 
+from api.src.controllers.profile import profile_api
+app.register_blueprint(profile_api, url_prefix='/api/profile')
+
 @app.cli.command
 def run():
     startApp()
