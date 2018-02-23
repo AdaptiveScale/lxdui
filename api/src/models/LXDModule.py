@@ -1,5 +1,5 @@
 from api.src.models.Base import Base
-from api.src.utils.remote_image_mapper import remote_images_list
+from api.src.utils.remoteImageMapper import remoteImagesList
 
 from pylxd import Client
 import requests
@@ -36,7 +36,7 @@ class LXDModule(Base):
             #return remoteClient.api.images.get().json()['metadata']
 
             images = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases')
-            return remote_images_list(images.json())
+            return remoteImagesList(images.json())
         except Exception as e:
             raise ValueError(e)
 
