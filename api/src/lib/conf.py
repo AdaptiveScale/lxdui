@@ -58,19 +58,21 @@ class Config(object):
 
         pass
 
-    def getEnv(self):
+    def envGet(self):
         # if environment variables have not been set then set them
         env = ['LXDUI_LOG_DIR', 'LXDUI_LOG_FILE', 'LXDUI_CONF_DIR', 'LXDUI_CONF_FILE']
-        k = os.environ.keys()
-        i = os.environ.items()
-        return k, i
+        kv = os.environ.keys()
+        for k in var:
+            env =
 
-    def showEnv(self):
+        return k
+
+    def envShow(self):
         env = ['LXDUI_LOG_DIR', 'LXDUI_LOG_FILE', 'LXDUI_CONF_DIR', 'LXDUI_CONF_FILE']
         for ev in env:
             print(ev, ' = ', os.environ.get(ev))
 
-    def setEnv(self):
+    def envSet(self):
         m = __metadata__
         os.environ['LXDUI_LOG_DIR'] = os.path.abspath(m.LOG_DIR)
         os.environ['LXDUI_LOG_FILE'] = m.LOG_FILE
