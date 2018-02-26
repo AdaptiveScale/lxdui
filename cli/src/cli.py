@@ -43,6 +43,10 @@ class Init(object):
     - Generate the client certificates is they don't exist and prompt the user to
       overwrite if they do exit
 
+    If the config file does not exit or has not been provided by the user,
+     then create
+
+
     """
 
     def __init__(self, password):
@@ -97,6 +101,7 @@ class Init(object):
 
         if file_type == 'cert':
             Certificate.save(self.cert)
+
 
 class User(object):
     def __init__(self):
