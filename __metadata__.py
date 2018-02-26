@@ -9,7 +9,7 @@ AUTHOR = 'AdaptiveScale, Inc.'
 AUTHOR_URL = 'http://www.adaptivescale.com'
 CONTACT = 'info@adaptivescale.com'
 __default_config__ = """
-LXDUI]
+[LXDUI]
 lxdui.port = 15151
 lxdui.admin.user = admin
 lxdui.conf.dir = ~/.config/lxdui
