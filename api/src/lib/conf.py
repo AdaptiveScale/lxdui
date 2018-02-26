@@ -13,14 +13,15 @@ class Config(object):
     def __init__(self, **conf_file):
         # self.conf_path = os.getcwd() + '/conf/' + __metadata__.CONF_FILE
         if conf_file:
-            self.conf_path = conf_file
+            self.conf_path = conf_file.get('conf')
         else:
             self.conf_path = __metadata__.CONF_FILE
+
         self.config = self.load()
         # conf_dir = os.path.expanduser(os.path.join('~'))
 
     def load(self):
-        log.info('Loading: ' + self.conf_path)
+        log.info(self.conf_path)
         path = pathlib.Path(self.conf_path)
         if path.exists():
             try:
@@ -57,12 +58,21 @@ class Config(object):
 
         pass
 
-    def checkEnv(self):
+    def getEnv(self):
         # if environment variables have not been set then set them
-        for k, v in __metadata__:
-            os.environ["k"] = v
+        env = ['LXDUI_LOG_DIR', 'LXDUI_LOG_FILE', 'LXDUI_CONF_DIR', 'LXDUI_CONF_FILE']
+        k = os.environ.keys()
+        i = os.environ.items()
+        return k, i
 
     def showEnv(self):
-        # if environment variables have not been set then set them
-        for k, v in __metadata__:
-            print(v)
+        env = ['LXDUI_LOG_DIR', 'LXDUI_LOG_FILE', 'LXDUI_CONF_DIR', 'LXDUI_CONF_FILE']
+        for ev in env:
+            print(ev, ' = ', os.environ.get(ev))
+
+    def setEnv(self):
+        m = __metadata__
+        os.environ['LXDUI_LOG_DIR'] = os.path.abspath(m.LOG_DIR)
+        os.environ['LXDUI_LOG_FILE'] = m.LOG_FILE
+        os.environ['LXDUI_CONF_DIR'] = os.path.abspath(m.CONF_DIR)
+        os.environ['LXDUI_CONF_FILE'] = m.CONF_FILE
