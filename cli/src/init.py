@@ -9,24 +9,42 @@ logger = logging.getLogger(__name__)
 class Init(object):
     """
 
-    Generate an auth file and the client certificates to initialize the app
+    Init is intended to be run once after installation of the app.
+    Its responsibility is to create the requisite files that the
+    app will use to operate properly.
 
-    If there is no auth file create it with the provided admin user password
-    - If there is an auth file from a previous configuration, prompt the user that
-      it will be overwritten
-    - The admin username is specified in the conf file
+    Re-running init will reset the app's configuration to a clean state.
+    Make sure to back up any previous configs!
 
-    If this is the first time LXDUI is run then there should be no client certificates
-    - Check if there are certs from a previous config
-    - Generate the client certificates is they don't exist and prompt the user to
-      overwrite if they do exit
+    1) Create Log File
 
-    If the config file does not exit or has not been provided by the user,
-    - create config file with:
-    -- user provide a path to the desired config file
-        use the config settings from that file
-    -- default config settings from conf file
+        By default we'll try to use a well known location for logs:
+        /var/log/<app_name>/<app_name>.log
 
+        If we don't have permission to write to /var/log we'll fall
+        back to <app_root>/logs
+
+    2) Create Conf File
+
+        If the config file does not exit or has not been provided by the user:
+        Create config file with:
+        a) user provided path to the desired config file
+            - use the config settings from that file
+        b) default config settings from conf file
+
+    3) Create Auth File
+
+        If there is no auth file create it with the provided admin user password:
+        a) If there is an auth file from a previous configuration, prompt the user that
+          it will be overwritten
+        b) The admin username is specified in the conf file
+
+    4) Create Client Certs
+
+        If this is the first time LXDUI is run then there should be no client certificates
+        a) Check if there are certs from a previous config
+        b) Generate the client certificates is they don't exist and prompt the user to
+          overwrite if they do exit
 
     """
 
@@ -68,11 +86,16 @@ class Init(object):
         # prompt the user if the file should be deleted
         reply = input("Do you want to delete it and create a new one? [[y]/n] ")
         if reply == 'y' or reply == '':
+            # os.rename(file_path, file_path + '.bak')
             os.remove(file_path)
             self.createFile(file_type)
         else:
             print("Aborting...")
             exit()
+
+    def createConfig(self):
+        # if the config file doesn't exist create it from the metadata
+        pass
 
     def createFile(self, file_type):
         if file_type == 'auth':
