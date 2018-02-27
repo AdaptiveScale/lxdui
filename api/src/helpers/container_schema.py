@@ -69,6 +69,10 @@ schema = {
                             'description':'Set as hard limitation (soft limitation presumed on false)'
                         }
                     }
+                },
+                'autostart':{
+                    'type':'boolean',
+                    'description':'autostart instance'
                 }
             }
         }
