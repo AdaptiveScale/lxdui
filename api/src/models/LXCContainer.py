@@ -29,8 +29,8 @@ class LXCContainer(LXDModule):
         if input.get('memory'):
             self.setMemory(input.get('memory'))
 
-        if input.get('bootType'):
-            self.setBootType(input.get('bootType'))
+        if input.get('autostart'):
+            self.setBootType(input.get('autostart'))
 
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
@@ -79,7 +79,7 @@ class LXCContainer(LXDModule):
 
     def setBootType(self, input):
         self.initConfig()
-        self.data['config']['boot.autostart'] = input
+        self.data['config']['boot.autostart'] = '1' if input else '0'
 
     def info(self):
         try:
@@ -90,6 +90,7 @@ class LXCContainer(LXDModule):
     def create(self, waitIt=False):
         try:
             self.client.containers.create(self.data, wait=waitIt)
+            self.start(waitIt)
             return self.info()
         except Exception as e:
             raise ValueError(e)
