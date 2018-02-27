@@ -46,7 +46,6 @@ def createContainer():
 def deleteContainer(name):
     input = request.get_json(silent=True)
     force = False if input == None else input.get('force')
-    print(force)
     try:
         container = LXCContainer({'name': name})
         container.delete(force)

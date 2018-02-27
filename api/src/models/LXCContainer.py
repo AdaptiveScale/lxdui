@@ -29,6 +29,9 @@ class LXCContainer(LXDModule):
         if input.get('memory'):
             self.setMemory(input.get('memory'))
 
+        if input.get('bootType'):
+            self.setBootType(input.get('bootType'))
+
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
     def setImageType(self, input):
@@ -74,16 +77,19 @@ class LXCContainer(LXDModule):
         self.data['config']['limits.memory']='{}MB'.format(input.get('sizeInMB'))
         self.data['config']['limits.memory.enforce'] = 'hard' if input.get('hardLimitation') else 'soft'
 
+    def setBootType(self, input):
+        self.initConfig()
+        self.data['config']['boot.autostart'] = input
+
     def info(self):
         try:
             return self.client.api.containers[self.data.get('name')].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
 
-    def create(self):
+    def create(self, waitIt=False):
         try:
-            self.client.containers.create(self.data, wait=True)
-            self.start(waitIt=True)
+            self.client.containers.create(self.data, wait=waitIt)
             return self.info()
         except Exception as e:
             raise ValueError(e)
@@ -100,21 +106,22 @@ class LXCContainer(LXDModule):
     def update(self):
         pass
 
-    def start(self, waitIt=True):
+    def start(self, waitIt=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
+            print(self.data)
             container.start(wait=waitIt)
         except Exception as e:
             raise ValueError(e)
 
-    def stop(self, waitIt=True):
+    def stop(self, waitIt=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
             container.stop(wait=waitIt)
         except Exception as e:
             raise ValueError(e)
 
-    def restart(self, waitIt=True):
+    def restart(self, waitIt=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
             container.restart(wait=waitIt)
