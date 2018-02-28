@@ -1,6 +1,6 @@
 from api.src.models.LXDModule import LXDModule
 from api.src.utils import response
-
+from pylxd.models.container import Container
 
 class LXCContainer(LXDModule):
     def __init__(self, input):
@@ -9,7 +9,13 @@ class LXCContainer(LXDModule):
 
         if not input.get('name'):
             raise ValueError('Missing container name.')
+
         self.setName(input.get('name'))
+
+        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
+
+        if self.client.containers.exists(self.data.get('name')):
+            self.data['config'] = self.info()['config'];
 
         if input.get('image'):
             self.setImageType(input.get('image'))
@@ -29,10 +35,9 @@ class LXCContainer(LXDModule):
         if input.get('memory'):
             self.setMemory(input.get('memory'))
 
-        if input.get('autostart'):
+        if input.get('autostart') is not None:
             self.setBootType(input.get('autostart'))
 
-        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
     def setImageType(self, input):
         # Detect image type (alias or fingerprint)
@@ -105,12 +110,25 @@ class LXCContainer(LXDModule):
             raise ValueError(e)
 
     def update(self):
-        pass
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if self.data.get('config'):
+                container.config = self.data.get('config')
+
+            if self.data.get('profiles'):
+                container.profiles = self.data.get('profiles')
+
+            if self.data.get('description'):
+                container.description = self.data.get('description')
+
+            container.save(True)
+            return self.info()
+        except Exception as e:
+            raise ValueError(e)
 
     def start(self, waitIt=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
-            print(self.data)
             container.start(wait=waitIt)
         except Exception as e:
             raise ValueError(e)

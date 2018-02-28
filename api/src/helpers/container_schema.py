@@ -73,6 +73,10 @@ schema = {
                 'autostart':{
                     'type':'boolean',
                     'description':'autostart instance'
+                },
+                'description': {
+                    'type': 'string',
+                    'description': 'Description instance'
                 }
             }
         }
