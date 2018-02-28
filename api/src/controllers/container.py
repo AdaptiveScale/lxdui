@@ -41,6 +41,19 @@ def createContainer():
     except ValueError as ex:
         return response.reply(message=ex.__str__(), status=403)
 
+@container_api.route('/', methods=['PUT'])
+def updateContainer():
+    input = request.get_json(silent=True)
+    validation = doValidate(input)
+    if validation:
+        return response.reply(message=validation.message, status=403)
+
+    try:
+        client = LXCContainer(input)
+        return response.reply(client.update())
+    except ValueError as ex:
+        return response.reply(message=ex.__str__(), status=403)
+
 
 @container_api.route('/<string:name>', methods=['DELETE'])
 def deleteContainer(name):
