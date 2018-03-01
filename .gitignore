@@ -1,0 +1,5 @@
+.idea/*
+*.pyc
+venv
+lxdui.egg-info
+build
