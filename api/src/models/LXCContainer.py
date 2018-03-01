@@ -1,6 +1,4 @@
 from api.src.models.LXDModule import LXDModule
-from api.src.utils import response
-
 
 class LXCContainer(LXDModule):
     def __init__(self, input):
@@ -28,6 +26,9 @@ class LXCContainer(LXDModule):
 
         if input.get('memory'):
             self.setMemory(input.get('memory'))
+
+        if input.get('newContainer'):
+            self.setNewContainer(input.get('newContainer'))
 
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
@@ -73,6 +74,9 @@ class LXCContainer(LXDModule):
         self.initConfig()
         self.data['config']['limits.memory']='{}MB'.format(input.get('sizeInMB'))
         self.data['config']['limits.memory.enforce'] = 'hard' if input.get('hardLimitation') else 'soft'
+
+    def setNewContainer(self, input):
+        self.data['newContainer'] = input
 
     def info(self):
         try:
@@ -125,11 +129,36 @@ class LXCContainer(LXDModule):
         pass
 
     def clone(self):
-        pass
-
-    def snapshot(self):
         try:
             container = self.client.containers.get(self.data.get('name'))
-            return container.snapshots.all()
+            if container.status == 'Running':
+                container.stop(wait=True)
+
+            copyData = container.generate_migration_data()
+            copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
+            copyData['name'] = self.data.get('newContainer')
+
+            newContainer = self.client.containers.create(copyData, wait=True)
+            container.start(wait=True)
+            newContainer.start(wait=True)
+            return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+    def move(self):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if container.status == 'Running':
+                container.stop(wait=True)
+
+            copyData = container.generate_migration_data()
+            copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
+            copyData['name'] = self.data.get('newContainer')
+
+            newContainer = self.client.containers.create(copyData, wait=True)
+            newContainer.start(wait=True)
+
+            container.delete(wait=True)
+            return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
