@@ -83,6 +83,31 @@ schema = {
     }
 }
 
+copyMoveSchema = {
+    "oneOf": [
+        {"$ref": "#/definitions/singleObject"}, # plain object
+    ],
+    "definitions": {
+        "singleObject": {
+            'type':'object',
+            'required': ['newContainer'],
+            'properties':{
+                'newContainer':{
+                    'type':'string',
+                    'description':'newContainer (name)'
+                }
+            }
+        }
+    }
+}
+
+def doValidateCloneMove(input):
+    try:
+        validate(input, copyMoveSchema)
+        return None
+    except ValidationError as e:
+        return e
+
 def doValidate(input):
     try:
         validate(input, schema)
