@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from api.src.helpers.container_schema import doValidate, doValidateCloneMove
+from api.src.helpers.container_schema import doValidate, doValidateCloneMove, doValidateImageExport
 
 from api.src.models.LXCContainer import LXCContainer
 from api.src.models.LXDModule import LXDModule
@@ -121,5 +121,21 @@ def moveContainer(name):
     try:
         container = LXCContainer(input)
         return response.replySuccess(container.move())
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
+@container_api.route('/export/<string:name>', methods=['POST'])
+def exportContainer(name):
+    input = request.get_json(silent=True)
+    validation = doValidateImageExport(input)
+    if validation:
+        return response.reply(message=validation.message, status=403)
+
+    force = False if input.get('force') == None else input.get('force')
+    input['name'] = name
+    try:
+        container = LXCContainer(input)
+        return response.replySuccess(container.export(force))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
