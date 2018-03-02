@@ -86,7 +86,15 @@ class LXCContainer(LXDModule):
 
     def info(self):
         try:
-            return self.client.api.containers[self.data.get('name')].get().json()['metadata']
+            c = self.client.containers.get(self.data.get('name'))
+
+            container = self.client.api.containers[self.data.get('name')].get().json()['metadata']
+            container['cpu'] = c.state().cpu
+            container['memory'] = c.state().memory
+            container['network'] = c.state().network
+            container['processes'] = c.state().processes
+
+            return container
         except Exception as e:
             raise ValueError(e)
 
