@@ -30,6 +30,9 @@ class LXCContainer(LXDModule):
         if input.get('newContainer'):
             self.setNewContainer(input.get('newContainer'))
 
+        if input.get('imageAlias'):
+            self.setImageAlias(input.get('imageAlias'))
+
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
     def setImageType(self, input):
@@ -77,6 +80,9 @@ class LXCContainer(LXDModule):
 
     def setNewContainer(self, input):
         self.data['newContainer'] = input
+
+    def setImageAlias(self, input):
+        self.data['imageAlias'] = input
 
     def info(self):
         try:
@@ -160,5 +166,19 @@ class LXCContainer(LXDModule):
 
             container.delete(wait=True)
             return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+
+    def export(self, force=False):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if force and container.status == 'Running':
+                container.stop(wait=True)
+
+            image = container.publish(wait=True)
+            image.add_alias(self.data.get('imageAlias'), self.data.get('name'))
+            container.start(wait=True)
+            return self.client.api.images[image.fingerprint].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
