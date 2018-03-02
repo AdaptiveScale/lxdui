@@ -16,9 +16,9 @@ def containers():
     return response.reply(client.listContainers())
 
 @container_api.route('/<string:name>')
-def getContainer(name):
-    client = LXCContainer({'name':name})
-    return response.reply(client.info())
+def get_container(name):
+        client = LXCContainer({'name':name})
+        return response.reply(client.info())
 
 @container_api.route('/', methods=['POST'])
 def create_container():
