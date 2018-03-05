@@ -1,56 +1,125 @@
-from pylxd.exceptions import LXDAPIException
-
 from api.src.models.LXDModule import LXDModule
+from api.src.utils import response
+
 
 class LXCContainer(LXDModule):
     def __init__(self, input):
-        self.input = input
+        self.data = {}
         self.remoteHost = '127.0.0.1'
-        if not self.input.get('name'):
+
+        if not input.get('name'):
             raise ValueError('Missing container name.')
+        self.setName(input.get('name'))
+
+        if input.get('image'):
+            self.setImageType(input.get('image'))
+
+        if input.get('profiles'):
+            self.setProfile(input.get('profiles'))
+
+        if input.get('ephemeral'):
+            self.setEphemeral(input.get('ephemeral'))
+
+        if input.get('description'):
+            self.setDescription(input.get('description'))
+
+        if input.get('cpu'):
+            self.setCPU(input.get('cpu'))
+
+        if input.get('memory'):
+            self.setMemory(input.get('memory'))
 
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
+    def setImageType(self, input):
+        # Detect image type (alias or fingerprint)
+        tempImageType = self.hasImage(input)
+
+        if not tempImageType:
+            raise ValueError('Image with alias or fingerprint {} not found'.format(input))
+
+        if not self.data.get('source'):
+            self.data['source']={'type':'image'}
+        self.data['source'][tempImageType] = input
+
+
+    def setName(self, input):
+        self.data['name'] = input
+
+    def setDescription(self, input):
+        self.data['description'] = input
+
+    def setProfile(self, input):
+        self.data['profiles']=input
+
+    def setEphemeral(self, input):
+        self.data['ephemeral']=input
+
+    def initConfig(self):
+        if not self.data.get('config', None):
+            self.data['config']={}
+
+    def setCPU(self, input):
+        self.initConfig()
+        if input.get('count'):
+            self.data['config']['limits.cpu']=input.get('count')
+        if input.get('percentage'):
+            if input.get('hardLimitation'):
+                self.data['config']['limits.cpu.allowance']='{}ms/100ms'.format(input.get('percentage'))
+            else:
+                self.data['config']['limits.cpu.allowance'] = '{}%'.format(input.get('percentage'))
+
+    def setMemory(self, input):
+        self.initConfig()
+        self.data['config']['limits.memory']='{}MB'.format(input.get('sizeInMB'))
+        self.data['config']['limits.memory.enforce'] = 'hard' if input.get('hardLimitation') else 'soft'
+
     def info(self):
-        return self.client.api.containers[self.input.get('name')].get().json()['metadata']
+        try:
+            return self.client.api.containers[self.data.get('name')].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
 
     def create(self):
-        data = {
-            'name':self.input.get('name'),
-            'source':{
-                'type':'image',
-                'alias':self.input.get('image')
-            }
-        }
         try:
-            self.client.containers.create(data, wait=True)
-            self.start()
+            self.client.containers.create(self.data, wait=True)
+            self.start(waitIt=True)
             return self.info()
-        except LXDAPIException as e:
-            raise ValueError(e.response.json()['metadata']['err'] or e.response.json()['error'])
+        except Exception as e:
+            raise ValueError(e)
 
-    def delete(self):
-        container = self.client.containers.get(self.input.get('name'))
-        #container.stop()
+    def delete(self, force=False):
         try:
+            container = self.client.containers.get(self.data.get('name'))
+            if force and self.info().get('status') == 'Running':
+                container.stop(wait=True)
             container.delete()
-        except LXDAPIException as e:
-            raise ValueError(e.response.json()['error'])
+        except Exception as e:
+            raise ValueError(e)
 
     def update(self):
         pass
 
-    def start(self):
-        container = self.client.containers.get(self.input.get('name'))
-        container.start()
+    def start(self, waitIt=True):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            container.start(wait=waitIt)
+        except Exception as e:
+            raise ValueError(e)
 
-    def stop(self):
-        container = self.client.containers.get(self.input.get('name'))
-        container.stop()
+    def stop(self, waitIt=True):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            container.stop(wait=waitIt)
+        except Exception as e:
+            raise ValueError(e)
 
-    def restart(self):
-        container = self.client.containers.get(self.input.get('name'))
-        container.restart()
+    def restart(self, waitIt=True):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            container.restart(wait=waitIt)
+        except Exception as e:
+            raise ValueError(e)
 
     def move(self):
         pass
@@ -59,5 +128,8 @@ class LXCContainer(LXDModule):
         pass
 
     def snapshot(self):
-        container = self.client.containers.get(self.input.get('name'))
-        return container.snapshots.all()
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            return container.snapshots.all()
+        except Exception as e:
+            raise ValueError(e)
