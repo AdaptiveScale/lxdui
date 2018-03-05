@@ -28,7 +28,7 @@ class BridgeNetwork():
         p = subprocess.Popen(["sudo", "lxc" , "network" , "list"], stdout = subprocess.PIPE, stderr=subprocess.PIPE)
         output_rez, err_rez = p.communicate()
         '''
-        p = subprocess.Popen(["sudo", "lxc", "network", "show", "lxdbr0"], stdout=subprocess.PIPE,
+        p = subprocess.Popen(["lxc", "network", "show", "lxdbr0"], stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         output_rez, err_rez = p.communicate()
         return str({"ouput": output_rez, 'err': err_rez})
@@ -48,7 +48,7 @@ class BridgeNetwork():
     def get_lxd_main_bridge_config(self, name):
         tmp_start_reading = False
         used_by_containers = []
-        p = subprocess.Popen(["sudo", "lxc", "network", "show", name], stdout=subprocess.PIPE,
+        p = subprocess.Popen(["lxc", "network", "show", name], stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
         output_rez, err_rez = p.communicate()
 
@@ -61,7 +61,7 @@ class BridgeNetwork():
             return {'error': True, "message": "LXC seems to not be installed or the the LXD daemon might not running !"}
         else:
             # found
-            p2 = subprocess.Popen(["sudo", "lxc", "network", "show", name], stdout=subprocess.PIPE)
+            p2 = subprocess.Popen(["lxc", "network", "show", name], stdout=subprocess.PIPE)
             output_rez = p2.stdout.read()
             arr = str(output_rez).split("\\n")
 
@@ -144,9 +144,11 @@ class BridgeNetwork():
         return rez
 
     def _execute_LXC_NETWORK_TERMINAL(self, lines_to_exec, name):
+        p = subprocess.Popen(["lxc", "network", "create", name], stdout=subprocess.PIPE)
+        time.sleep(1)
         textline = ""
         for lxc_network_value in lines_to_exec['unset']:
-            p = subprocess.Popen(["sudo", "lxc", "network", "unset", name, lxc_network_value],
+            p = subprocess.Popen(["lxc", "network", "unset", name, lxc_network_value],
                                  stdout=subprocess.PIPE)
             textline += "LXC UNSET <{0}> ,,,".format(lxc_network_value.upper())
             # print p.stdout.read()
@@ -156,7 +158,7 @@ class BridgeNetwork():
         for l in lines_to_exec["set"]:
             LXC_NET_ATTR = list(l.keys())[0]
             LXC_NET_ATTR_VAL = l[LXC_NET_ATTR]
-            p = subprocess.Popen(["sudo", "lxc", "network", "set", name, LXC_NET_ATTR, LXC_NET_ATTR_VAL],
+            p = subprocess.Popen(["lxc", "network", "set", name, LXC_NET_ATTR, LXC_NET_ATTR_VAL],
                                  stdout=subprocess.PIPE)
             textline += "LXC SET <{0}> => <{1}> ,,,".format(LXC_NET_ATTR, LXC_NET_ATTR_VAL)
             # print p.stdout.read()
