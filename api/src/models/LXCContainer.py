@@ -1,6 +1,4 @@
 from api.src.models.LXDModule import LXDModule
-from api.src.utils import response
-
 
 class LXCContainer(LXDModule):
     def __init__(self, input):
@@ -9,7 +7,13 @@ class LXCContainer(LXDModule):
 
         if not input.get('name'):
             raise ValueError('Missing container name.')
+
         self.setName(input.get('name'))
+
+        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
+
+        if self.client.containers.exists(self.data.get('name')):
+            self.data['config'] = self.info()['config'];
 
         if input.get('image'):
             self.setImageType(input.get('image'))
@@ -29,10 +33,16 @@ class LXCContainer(LXDModule):
         if input.get('memory'):
             self.setMemory(input.get('memory'))
 
-        if input.get('autostart'):
-            self.setBootType(input.get('autostart'))
+        if input.get('newContainer'):
+            self.setNewContainer(input.get('newContainer'))
+
+        if input.get('imageAlias'):
+            self.setImageAlias(input.get('imageAlias'))
 
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
+        if input.get('autostart') is not None:
+            self.setBootType(input.get('autostart'))
+
 
     def setImageType(self, input):
         # Detect image type (alias or fingerprint)
@@ -77,13 +87,27 @@ class LXCContainer(LXDModule):
         self.data['config']['limits.memory']='{}MB'.format(input.get('sizeInMB'))
         self.data['config']['limits.memory.enforce'] = 'hard' if input.get('hardLimitation') else 'soft'
 
+    def setNewContainer(self, input):
+        self.data['newContainer'] = input
+
+    def setImageAlias(self, input):
+        self.data['imageAlias'] = input
+
     def setBootType(self, input):
         self.initConfig()
         self.data['config']['boot.autostart'] = '1' if input else '0'
 
     def info(self):
         try:
-            return self.client.api.containers[self.data.get('name')].get().json()['metadata']
+            c = self.client.containers.get(self.data.get('name'))
+
+            container = self.client.api.containers[self.data.get('name')].get().json()['metadata']
+            container['cpu'] = c.state().cpu
+            container['memory'] = c.state().memory
+            container['network'] = c.state().network
+            container['processes'] = c.state().processes
+
+            return container
         except Exception as e:
             raise ValueError(e)
 
@@ -105,12 +129,25 @@ class LXCContainer(LXDModule):
             raise ValueError(e)
 
     def update(self):
-        pass
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if self.data.get('config'):
+                container.config = self.data.get('config')
+
+            if self.data.get('profiles'):
+                container.profiles = self.data.get('profiles')
+
+            if self.data.get('description'):
+                container.description = self.data.get('description')
+
+            container.save(True)
+            return self.info()
+        except Exception as e:
+            raise ValueError(e)
 
     def start(self, waitIt=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
-            print(self.data)
             container.start(wait=waitIt)
         except Exception as e:
             raise ValueError(e)
@@ -133,11 +170,50 @@ class LXCContainer(LXDModule):
         pass
 
     def clone(self):
-        pass
-
-    def snapshot(self):
         try:
             container = self.client.containers.get(self.data.get('name'))
-            return container.snapshots.all()
+            if container.status == 'Running':
+                container.stop(wait=True)
+
+            copyData = container.generate_migration_data()
+            copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
+            copyData['name'] = self.data.get('newContainer')
+
+            newContainer = self.client.containers.create(copyData, wait=True)
+            container.start(wait=True)
+            newContainer.start(wait=True)
+            return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+    def move(self):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if container.status == 'Running':
+                container.stop(wait=True)
+
+            copyData = container.generate_migration_data()
+            copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
+            copyData['name'] = self.data.get('newContainer')
+
+            newContainer = self.client.containers.create(copyData, wait=True)
+            newContainer.start(wait=True)
+
+            container.delete(wait=True)
+            return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+
+    def export(self, force=False):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if force and container.status == 'Running':
+                container.stop(wait=True)
+
+            image = container.publish(wait=True)
+            image.add_alias(self.data.get('imageAlias'), self.data.get('name'))
+            container.start(wait=True)
+            return self.client.api.images[image.fingerprint].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)

@@ -73,11 +73,65 @@ schema = {
                 'autostart':{
                     'type':'boolean',
                     'description':'autostart instance'
+                },
+                'description': {
+                    'type': 'string',
+                    'description': 'Description instance'
                 }
             }
         }
     }
 }
+
+copyMoveSchema = {
+    "oneOf": [
+        {"$ref": "#/definitions/singleObject"}, # plain object
+    ],
+    "definitions": {
+        "singleObject": {
+            'type':'object',
+            'required': ['newContainer'],
+            'properties':{
+                'newContainer':{
+                    'type':'string',
+                    'description':'newContainer (name)'
+                }
+            }
+        }
+    }
+}
+
+exportSchema = {
+    "oneOf": [
+        {"$ref": "#/definitions/singleObject"}, # plain object
+    ],
+    "definitions": {
+        "singleObject": {
+            'type':'object',
+            'required': ['imageAlias'],
+            'properties':{
+                'imageAlias':{
+                    'type':'string',
+                    'description':'image (alias)'
+                }
+            }
+        }
+    }
+}
+
+def doValidateImageExport(input):
+    try:
+        validate(input, exportSchema)
+        return None
+    except ValidationError as e:
+        return e
+
+def doValidateCloneMove(input):
+    try:
+        validate(input, copyMoveSchema)
+        return None
+    except ValidationError as e:
+        return e
 
 def doValidate(input):
     try:

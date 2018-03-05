@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from api.src.helpers.container_schema import doValidate
+from api.src.helpers.container_schema import doValidate, doValidateCloneMove, doValidateImageExport
 
 from api.src.models.LXCContainer import LXCContainer
 from api.src.models.LXDModule import LXDModule
@@ -38,6 +38,19 @@ def createContainer():
             client = LXCContainer(container)
             result.append(client.create())
         return response.reply(result)
+    except ValueError as ex:
+        return response.reply(message=ex.__str__(), status=403)
+
+@container_api.route('/', methods=['PUT'])
+def updateContainer():
+    input = request.get_json(silent=True)
+    validation = doValidate(input)
+    if validation:
+        return response.reply(message=validation.message, status=403)
+
+    try:
+        client = LXCContainer(input)
+        return response.reply(client.update())
     except ValueError as ex:
         return response.reply(message=ex.__str__(), status=403)
 
@@ -83,11 +96,46 @@ def restartContainer(name):
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
+@container_api.route('/clone/<string:name>', methods=['POST'])
+def cloneContainer(name):
+    input = request.get_json(silent=True)
+    validation = doValidateCloneMove(input)
+    if validation:
+        return response.reply(message=validation.message, status=403)
 
-@container_api.route('/container/snapshot/<string:name>')
-def containerSnapshots(name):
+    input['name'] = name
     try:
-        container = LXCContainer({'name': name})
-        return response.replySuccess(container.info())
+        container = LXCContainer(input)
+        return response.replySuccess(container.clone())
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+@container_api.route('/move/<string:name>', methods=['POST'])
+def moveContainer(name):
+    input = request.get_json(silent=True)
+    validation = doValidateCloneMove(input)
+    if validation:
+        return response.reply(message=validation.message, status=403)
+
+    input['name'] = name
+    try:
+        container = LXCContainer(input)
+        return response.replySuccess(container.move())
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
+@container_api.route('/export/<string:name>', methods=['POST'])
+def exportContainer(name):
+    input = request.get_json(silent=True)
+    validation = doValidateImageExport(input)
+    if validation:
+        return response.reply(message=validation.message, status=403)
+
+    force = False if input.get('force') == None else input.get('force')
+    input['name'] = name
+    try:
+        container = LXCContainer(input)
+        return response.replySuccess(container.export(force))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
