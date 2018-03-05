@@ -1,0 +1,87 @@
+<div id="cmp-create-container">
+    <div class="alert alert-info">
+        <strong>Note:</strong>  Container naming uses the pattern <strong>&lt;name&gt;&lt;number&gt;</strong>.
+        <br/>E.g. <b>container[1]</b> => <i>container1</i>, <b>node-[3]</b> => <i>node-1</i>, <i>node-2</i>, <i>node-3</i>
+        <br/>To create multiple containers set the <b>Number</b> to the desired container count !
+</div>
+    <h4>New Container(s)</h4>
+    <div class="col-lg-10">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+
+        </div>
+        <div class="form-group">
+            <img id="loader" src="static/images/loader.gif" class="text-center" width="30px">
+            <button id="btn-create-container" onclick="createContainer()" class="btn btn-success"> Create</button>
+            <button id="btn-cancel" onclick="location='/images'" class="btn btn-default">Cancel</button>
+        </div>
+    </div>
+</div>
+
+<div id="cmp-container-details">
+    <div class="col-lg-12 main-div">
+        <div class="col-lg-12">
+            <h3 id="container-name"></h3>
+            <div class="form-group">
+                <button class="btn btn-default" onclick="startContainer()">
+                    Start
+                </button>
+                <button class="btn btn-default" onclick="stopContainer()">
+                    Stop
+                </button>
+                <button class="btn btn-default" onclick="restartContainer()">
+                    Restart
+                </button>
+                <button class="btn btn-default" onclick="deleteContainer()">
+                    Delete
+                </button>
+                <a class="btn btn-success pull-right" href="/images">
+                    New Instance
+                </a>
+            </div>
+        </div>
+        <div class="col-lg-12">
+            <div class="form-group">
+                <span>Name:</span> <span id="name"></span>
+            </div>
+            <div class="form-group">
+                <span>Architecture:</span> <span id="architecture"></span>
+            </div>
+            <div class="form-group">
+                <span>Created:</span> <span id="created_at"> </span>
+            </div>
+            <div class="form-group">
+                <span>Status:</span> <span id="status"></span>
+            </div>
+            <div class="form-group">
+                <span>Profile:</span> <span id="profiles"></span>
+            </div>
+            <div class="form-group">
+                <span>Pid:</span> <span id="pid" class="running"></span>
+            </div>
+            <div class="form-group">
+                <span>Processes:</span> <span id="processes" class="running"></span>
+            </div>
+            <div class="form-group">
+                <span>Ips:</span></span>
+            </div>
+            <div class="form-group">
+                <span>&nbsp;&nbsp;eth0:</span> <span id="inet" class="running">inet </span>
+            </div>
+            <div class="form-group">
+                <span>&nbsp;&nbsp;eth0:</span> <span id="inet6" class="running">inet6 </span>
+            </div>
+            <div class="form-group">
+                <span>&nbsp;&nbsp;eth0:</span> <span id="inet6-1" class="running">inet6 </span>
+            </div>
+            <div class="form-group">
+                <span>&nbsp;&nbsp;lo:</span> <span id="lo-inet" class="running">inet6 </span>
+            </div>
+            <div class="form-group">
+                <span>&nbsp;&nbsp;lo:</span> <span id="lo-inet6" class="running">inet6 </span>
+            </div>
+            <snap>Snapshots:
+                <span></span> <br>
+         </snap>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,83 @@
+{% extends "index.html" %}
+{% block content %}
+    <script>
+        (function getLocalImages(){
+            $.get(API + 'local-images', function (response) {
+                LOCAL_IMAGES = response.payload;
+                LOCAL_IMG_TOTAL = LOCAL_IMAGES.length;
+            });
+        }());
+
+    </script>
+    <div class="col-lg-12 main-div" id="set-div">
+        <div class="col-lg-12">
+            <div class="form-inline">
+                <label>OS Images: </label>
+                <div class="btn-group btn-group-s" id="imageType">
+                <button id="local_img_nr" type="button" class="btn btn-info" onclick="loadImages('local')">
+<span class="glyphicon glyphicon-hdd"> </span>
+Local <span class="badge">{{data.current_local_image_number}}</span></button>
+                <button type="button" class="btn btn-primary" onclick="loadImages('remote')">
+<span class="glyphicon glyphicon-globe"> </span>
+Remote <span class="badge">{{data.current_cached_remote_images}}</span></button>
+                </div>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+             <div class="col-lg-12">
+                <div class="form-group">
+                    <button id="btn-launch" class="btn btn-success" onclick="showCreateContainer()" style="display: none;">Launch Container(s)</button>
+                    <button id="btn-delete" class="btn btn-danger" onclick="deleteLocalImage()" style="display: none;">Delete OS Image</button>
+                    <img id="loader-update-img" src="static/images/loader.gif" class="text-center pull-right" width="30px">
+                    <button id="btn-update-remote" class="btn btn-primary pull-right" onclick="update_remote_image_list()">
+<span class="glyphicon glyphicon-refresh"> </span>
+Update</button>
+                </div>
+             </div>
+         <div class="col-lg-12">
+             <div class="col-lg-offset-4 col-lg-4">
+                 <img id="loader" src="static/images/loader.gif" class="text-center" width="150px">
+                 </div>
+            </div>
+        <div class="col-lg-12">
+            <div class="scrollable">
+                <script>
+                    $(document).ready(function(){
+                            
+                        $("#tbl-images > tbody > tr td:nth-child(7)").each(function() {
+                           $(this).html(formatBytes($(this).html()));
+                        });
+                    });
+                </script>
+                <table id="tbl-images" class="table table-bordered table-fixed">
+                    <thead>
+                    <th><input type="checkbox" id="chk-images" onchange="selectAllImages()"></th>
+                    <th>OS</th>
+                    <th>Description</th>
+                    <th>Alias</th>
+                    <th>Ver</th>
+                    <th>Arch</th>
+                    <th>Size</th>
+                    </thead>
+                    <tbody>
+                    {% for si in data.image_list %}
+                    <tr id="img_{{si.aliases.name}}">
+                        <td><input type="checkbox" class="images-check" data="{{si.aliases.name}}" display_name="{{si.properties.distribution|capitalize}} {{si.properties.release}} ({{si.properties.architecture}})" onchange="selectImage('{{si.aliases.name}}', '{{si.properties.distribution|capitalize}} {{si.properties.release}} ({{si.properties.architecture}})')"></td>
+                        <td><a style="cursor:pointer" onclick="selectImage('{{si.aliases.name}}', '{{si.properties.distribution|capitalize}} {{si.properties.release}} ({{si.properties.architecture}})'), showCreateContainer()">{{ si.properties.distribution }}</a></td>
+                        <td>{{ si.properties.description }}</td>
+                        <td>{{si.aliases.name}}</td>
+                        <td>{{ si.properties.release }}</td>
+                        <td>{{ si.properties.architecture }}</td>
+                        <td>{{ si.size }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
