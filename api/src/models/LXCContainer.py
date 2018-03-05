@@ -1,6 +1,4 @@
 from api.src.models.LXDModule import LXDModule
-from api.src.utils import response
-from pylxd.models.container import Container
 
 class LXCContainer(LXDModule):
     def __init__(self, input):
@@ -35,6 +33,13 @@ class LXCContainer(LXDModule):
         if input.get('memory'):
             self.setMemory(input.get('memory'))
 
+        if input.get('newContainer'):
+            self.setNewContainer(input.get('newContainer'))
+
+        if input.get('imageAlias'):
+            self.setImageAlias(input.get('imageAlias'))
+
+        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
         if input.get('autostart') is not None:
             self.setBootType(input.get('autostart'))
 
@@ -82,13 +87,27 @@ class LXCContainer(LXDModule):
         self.data['config']['limits.memory']='{}MB'.format(input.get('sizeInMB'))
         self.data['config']['limits.memory.enforce'] = 'hard' if input.get('hardLimitation') else 'soft'
 
+    def setNewContainer(self, input):
+        self.data['newContainer'] = input
+
+    def setImageAlias(self, input):
+        self.data['imageAlias'] = input
+
     def setBootType(self, input):
         self.initConfig()
         self.data['config']['boot.autostart'] = '1' if input else '0'
 
     def info(self):
         try:
-            return self.client.api.containers[self.data.get('name')].get().json()['metadata']
+            c = self.client.containers.get(self.data.get('name'))
+
+            container = self.client.api.containers[self.data.get('name')].get().json()['metadata']
+            container['cpu'] = c.state().cpu
+            container['memory'] = c.state().memory
+            container['network'] = c.state().network
+            container['processes'] = c.state().processes
+
+            return container
         except Exception as e:
             raise ValueError(e)
 
@@ -151,11 +170,50 @@ class LXCContainer(LXDModule):
         pass
 
     def clone(self):
-        pass
-
-    def snapshot(self):
         try:
             container = self.client.containers.get(self.data.get('name'))
-            return container.snapshots.all()
+            if container.status == 'Running':
+                container.stop(wait=True)
+
+            copyData = container.generate_migration_data()
+            copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
+            copyData['name'] = self.data.get('newContainer')
+
+            newContainer = self.client.containers.create(copyData, wait=True)
+            container.start(wait=True)
+            newContainer.start(wait=True)
+            return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+    def move(self):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if container.status == 'Running':
+                container.stop(wait=True)
+
+            copyData = container.generate_migration_data()
+            copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
+            copyData['name'] = self.data.get('newContainer')
+
+            newContainer = self.client.containers.create(copyData, wait=True)
+            newContainer.start(wait=True)
+
+            container.delete(wait=True)
+            return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+
+    def export(self, force=False):
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if force and container.status == 'Running':
+                container.stop(wait=True)
+
+            image = container.publish(wait=True)
+            image.add_alias(self.data.get('imageAlias'), self.data.get('name'))
+            container.start(wait=True)
+            return self.client.api.images[image.fingerprint].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
