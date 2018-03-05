@@ -4,7 +4,7 @@ from cli import Config, User, Init, Certificate
 
 
 APP = "LXDUI"
-
+LXD_URL = 'http://localhost:8443'
 
 '''
 Commands:
