@@ -7,7 +7,13 @@ class LXCContainer(LXDModule):
 
         if not input.get('name'):
             raise ValueError('Missing container name.')
+
         self.setName(input.get('name'))
+
+        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
+
+        if self.client.containers.exists(self.data.get('name')):
+            self.data['config'] = self.info()['config'];
 
         if input.get('image'):
             self.setImageType(input.get('image'))
@@ -34,6 +40,9 @@ class LXCContainer(LXDModule):
             self.setImageAlias(input.get('imageAlias'))
 
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
+        if input.get('autostart') is not None:
+            self.setBootType(input.get('autostart'))
+
 
     def setImageType(self, input):
         # Detect image type (alias or fingerprint)
@@ -84,6 +93,10 @@ class LXCContainer(LXDModule):
     def setImageAlias(self, input):
         self.data['imageAlias'] = input
 
+    def setBootType(self, input):
+        self.initConfig()
+        self.data['config']['boot.autostart'] = '1' if input else '0'
+
     def info(self):
         try:
             c = self.client.containers.get(self.data.get('name'))
@@ -98,10 +111,10 @@ class LXCContainer(LXDModule):
         except Exception as e:
             raise ValueError(e)
 
-    def create(self):
+    def create(self, waitIt=False):
         try:
-            self.client.containers.create(self.data, wait=True)
-            self.start(waitIt=True)
+            self.client.containers.create(self.data, wait=waitIt)
+            self.start(waitIt)
             return self.info()
         except Exception as e:
             raise ValueError(e)
@@ -116,23 +129,37 @@ class LXCContainer(LXDModule):
             raise ValueError(e)
 
     def update(self):
-        pass
+        try:
+            container = self.client.containers.get(self.data.get('name'))
+            if self.data.get('config'):
+                container.config = self.data.get('config')
 
-    def start(self, waitIt=True):
+            if self.data.get('profiles'):
+                container.profiles = self.data.get('profiles')
+
+            if self.data.get('description'):
+                container.description = self.data.get('description')
+
+            container.save(True)
+            return self.info()
+        except Exception as e:
+            raise ValueError(e)
+
+    def start(self, waitIt=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
             container.start(wait=waitIt)
         except Exception as e:
             raise ValueError(e)
 
-    def stop(self, waitIt=True):
+    def stop(self, waitIt=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
             container.stop(wait=waitIt)
         except Exception as e:
             raise ValueError(e)
 
-    def restart(self, waitIt=True):
+    def restart(self, waitIt=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
             container.restart(wait=waitIt)
