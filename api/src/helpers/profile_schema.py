@@ -121,6 +121,21 @@ schema = {
             'items': [
                 {'type': 'string'}
             ]
+        },
+        'new_name': {
+            'type': 'string',
+            'description': 'The new name to set to the profile.'
+        }
+    }
+}
+
+renameSchema = {
+    'type': 'object',
+    'required': ['new_name'],
+    'properties': {
+        'new_name': {
+            'type': 'string',
+            'description': 'The new name to set to the profile'
         }
     }
 }
@@ -129,6 +144,14 @@ schema = {
 def doValidate(data):
     try:
         validate(data, schema)
+        return None
+    except ValidationError as e:
+        return e
+
+
+def doValidateRename(data):
+    try:
+        validate(data, renameSchema)
         return None
     except ValidationError as e:
         return e

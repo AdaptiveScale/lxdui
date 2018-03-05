@@ -3,7 +3,7 @@ from flask import jsonify
 
 from api.src.models.LXDModule import LXDModule
 from api.src.models.LXCProfile import LXCProfile
-from api.src.helpers.profile_schema import doValidate
+from api.src.helpers.profile_schema import doValidate, doValidateRename
 from api.src.utils import response
 
 profile_api = Blueprint('profile_api', __name__)
@@ -52,14 +52,31 @@ def delete_profile(name):
         return response.replyFailed(message=ex.__str__())
 
 
-@profile_api.route('/', methods=['PUT'])
-def update_profile():
+@profile_api.route('/<string:name>', methods=['PUT'])
+def update_profile(name):
     data = request.get_json()
+    data['name'] = name
     validation = doValidate(data)
     if validation:
         return response.replyFailed(message=validation.message)
     try:
         profile = LXCProfile(data)
         return response.reply(profile.updateProfile())
+    except ValueError as ex:
+        return response.replyFailed(message=ex.__str__())
+
+
+@profile_api.route('/rename/<string:name>', methods=['PUT'])
+def rename(name):
+    data = request.get_json()
+    validation = doValidateRename(data)
+
+    if validation:
+        return response.replyFailed(message=validation.message)
+
+    try:
+        data['name'] = name
+        profile = LXCProfile(data)
+        return response.reply(profile.rename())
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())

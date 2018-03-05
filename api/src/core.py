@@ -17,6 +17,9 @@ app.register_blueprint(profile_api, url_prefix='/api/profile')
 from api.src.controllers.network import network_api
 app.register_blueprint(network_api, url_prefix='/api/network')
 
+from api.src.controllers.snapshot import snapshot_api
+app.register_blueprint(snapshot_api, url_prefix='/api/snapshot')
+
 @app.cli.command
 def run():
     startApp()
