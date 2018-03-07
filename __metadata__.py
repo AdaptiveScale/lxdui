@@ -3,7 +3,7 @@ VERSION = '2.0'
 GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
 LXD_URL = 'http://localhost:8443'
 CONF_DIR = '../conf'
-CONF_FILE = 'lxdui.conf.bak'
+CONF_FILE = 'lxdui.conf'
 LOG_DIR = '../logs'
 LOG_FILE = 'lxdui.log'
 LICENSE = 'Apache 2.0'
@@ -14,7 +14,7 @@ AUTHOR_EMAIL = 'info@adaptivescale.com'
 '''
 
 The following section is for the default configuration  
-that will be written to the lxdui.conf.bak file if the file 
+that will be written to the lxdui.conf file if the file 
 does not already exist.
 
 '''
@@ -24,12 +24,14 @@ __default_config__ = """
 [LXDUI]
 lxdui.port = 15151
 lxdui.admin.user = admin
-lxdui.conf.bak.dir = ~/.config/lxdui
-lxdui.auth.conf = %(lxdui.conf.bak.dir)s/auth.conf
-lxdui.ssl.cert = %(lxdui.conf.bak.dir)s/client.crt
-lxdui.ssl.key = %(lxdui.conf.bak.dir)s/client.key
-lxdui.profiles = %(lxdui.conf.bak.dir)s/profiles
-lxdui.log.dir = /var/log/lxdui
+lxdui.conf.dir = conf
+lxdui.conf.file = lxdui.conf
+lxdui.auth.conf = %(lxdui.conf.dir)s/auth.conf
+lxdui.ssl.cert = client.crt
+lxdui.ssl.key = client.key
+#lxdui.profiles = ${lxdui.conf.dir}/profiles
+#lxdui.log.dir = /var/log/lxdui
+lxdui.log.dir = logs
 lxdui.log.file = lxdui.log
 lxdui.zfs.pool.name = lxdpool
 lxdui.app.alias = LXDUI
@@ -37,7 +39,7 @@ lxdui.app.alias = LXDUI
 [LXD]
 lxd.bridge.enabled = true
 lxd.bridge.name = lxdbr0
-lxd.dns.conf.file = 
+lxd.dns.conf.file =
 lxd.dns.domain = lxd
 lxd.ipv4.addr = 10.5.5.1
 lxd.ipv4.netmask = 255.255.255.0

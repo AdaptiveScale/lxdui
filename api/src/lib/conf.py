@@ -8,16 +8,16 @@ log = logging.getLogger(__name__)
 '''
 This component is responsible for configuration management.
 
-# If this is the first time the app is run then it will create the  
-# config file, and set the system environment variables for the app
+If this is the first time the app is run then it will create the  
+config file, and set the system environment variables for the app
+
+The logic for checking the existence of the conf file
+and creating it if it's missing should be in init.py 
 
 TODO:
-    The logic for checking the existence of the conf file
-    and creating it if it's missing should be in init.py 
-    
     Add 2 more config sources
-        service - Get config from a service endpoint
-        db - Get config from a database
+    1) service - Get config from a service endpoint (JSON)
+    2) db - Get config from a database
 '''
 
 
@@ -28,29 +28,34 @@ class Config(object):
         Initialises the Config object and loads the configuration into memory.
 
           Order of operations:
-            1) if the config file has been provided then use that one
+            1) if a config file has been provided then use that one
             2) check to see if we have a local config file, and if so use that
             3) no config file found so we'll create one with defaults
 
         :param kwargs: conf=</path/to/config/file> #External source
         """
+        log_path = self.getAbsPath(meta.LOG_DIR, meta.LOG_FILE)
         ini_path = self.getAbsPath(meta.CONF_DIR, meta.CONF_FILE)
 
         # conf file specified by the caller
         if kwargs:
-            if kwargs.get('conf'):
-                self.conf_path = kwargs.get('conf')
+            file = kwargs.get('conf')
+            log.info('Loading external config file: {}'.format(file))
+            if file:
+                self.conf_path = file
                 self.config = self.load('external', self.conf_path)
-                self.updateEnv()
+                self.envSet(log=log_path, conf=ini_path)
             else:
                 raise Exception('Unsupported parameter {}'.format(kwargs))
         # no conf parameters specified so check local conf file
-        elif ini_path:
+        elif pathlib.Path(ini_path).exists():
+            log.info('Using ini config file path = {}'.format(ini_path))
             self.conf_path = ini_path
             self.config = self.load('ini', self.conf_path)
-            self.updateEnv()
+            self.envSet()
         # load the default config from meta
         elif meta.AUTO_LOAD_CONFIG:
+            log.info('Load default config (meta)')
             self.envSet()
             self.conf_path = self.envGet().get('LXDUI_CONF')
             self.config = self.load('meta', self.conf_path)
@@ -62,7 +67,7 @@ class Config(object):
     def load(self, conf_type, *file_path):
         """
         Load the configuration into memory.
-        The configuration is stored int the Config object.
+        The configuration is stored in the Config object.
 
         :param conf_type:
         :param file_path:
@@ -77,6 +82,7 @@ class Config(object):
             conf_path = os.path.abspath(conf_source)
             conf_file_path = pathlib.Path(conf_path)
             actual_path = self.findConf(conf_file_path, conf_source)
+            log.debug('actual_path = {}'.format(actual_path))
             conf = configparser.ConfigParser()
             conf.read(actual_path)
             return conf
@@ -158,22 +164,20 @@ class Config(object):
         if kwargs.get('log') and kwargs.get('conf'):
             log_path = kwargs.get('log')
             conf_path = kwargs.get('conf')
+            log.debug('Setting environment variables')
         else:
             log_path = self.getAbsPath(meta.LOG_DIR, meta.LOG_FILE)
             conf_path = self.getAbsPath(meta.CONF_DIR, meta.CONF_FILE)
 
-        os.environ['LXDUI_LOG'] = log_path
-        os.environ['LXDUI_CONF'] = conf_path
+        os.environ['{}_LOG'.format(meta.APP_NAME)] = log_path
+        os.environ['{}_CONF'.format(meta.APP_NAME)] = conf_path
 
-    def updateEnv(self):
-        """
-        Sets up the system environment variables
-
-        :return:
-        """
-        log_path = self.confElements().get('log_path')
-        conf_path = self.confElements().get('conf_path')
-        self.envSet(log=log_path, conf=conf_path)
+    def envShow(self):
+        if not self.envGet():
+            print('Environment variables for {} have not been set'.format(meta.APP_NAME))
+        else:
+            for k, v in self.envGet().items():
+                print('{} = {}'.format(k, v))
 
     def getAbsPath(self, dir, file):
         """
@@ -185,20 +189,6 @@ class Config(object):
         """
         path = os.path.join(os.path.abspath(dir), file)
         return path
-
-    def confElements(self):
-        """
-        Assemble the configuration elements into full paths.
-
-        :return: Returns a dictionary containing the paths of the log and conf files.
-        """
-        log_dir = self.config.get('LXDUI', 'lxdui.log.dir')
-        log_file = self.config.get('LXDUI', 'lxdui.log.file')
-        conf_dir = self.config.get('LXDUI', 'lxdui.conf.bak.dir')
-        conf_file = self.config.get('LXDUI', 'lxdui.conf.bak.file')
-        log_path = self.getAbsPath(log_dir,log_file)
-        conf_path = self.getAbsPath(conf_dir, conf_file)
-        return {'log_path': log_path, 'conf_path': conf_path}
 
     def getConfig(self, file):
         """
@@ -234,7 +224,7 @@ class Config(object):
             config.read(file.__str__())
             return config
         else:
-            raise Exception('File not found.')
+            raise Exception('File is empty.')
 
     @staticmethod
     def findConf(conf_file_path, conf_source):
