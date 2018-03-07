@@ -12,22 +12,26 @@ LXDUI is a Python Flask application that leverages LXD's Python client library, 
 ## Installation
 
 ### Prerequisites
-The following are the prerequisites required to run LDXUI (supported only on Ubuntu 14 & 16):
-- **Python 2.7** (lxdui has not been tested with python3).
-- **pip** and some additional modules.
+The following are the prerequisites required to run LDXUI (supported only on 16):
+- **Python 3.5** (lxdui does not support python2.7 anymore).
+- **pip3** and some additional modules.
 	
     To install **pip** run:
     
-	`sudo apt-get install libfontconfig libffi-dev libssl-dev build-essential python-dev python-pip python-virtualenv -y`
+	`sudo apt-get install -y python3-pip`
+
+	Install the following (required for development)
+
+	`sudo apt-get install build-essential libssl-dev libffi-dev python-dev`
+
         
-- Your must have **LXD 2.3 or higher** already installed.
+- Your must have **LXD 2.4.4 or higher** already installed.
     
     The following commands will install the latest stable version of LXC/LXD . 
     
-	- `sudo apt-get install software-properties-common -y`
-	- `sudo add-apt-repository ppa:ubuntu-lxc/lxd-stable -y`
-	- `sudo apt-get update -y`
-	- `sudo apt install lxd -y`
+	- `sudo apt-get update`
+	- `sudo apt-get install snap`
+	- `sudo snap install lxd`
 	
     **NOTE**:
     
