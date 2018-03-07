@@ -1,10 +1,9 @@
+import __metadata__ as meta
 import click
 import os
-from cli import Config, User, Init, Certificate
+from api.src.lib import Config, User, Init, Certificate
 
-
-APP = "LXDUI"
-LXD_URL = 'http://localhost:8443'
+APP = meta.APP_NAME
 
 '''
 Commands:
@@ -33,10 +32,12 @@ def progressBar(iterable):
     c = range(9999)
     with click.progressbar(c, label='exporting...') as bar:
         for i in bar:
-            i=None
+            i = None
 
 
 ''' Command Groups '''
+
+
 @click.group()
 def lui():
     """LXDUI CLI"""
@@ -44,6 +45,8 @@ def lui():
 
 
 ''' lui root level group of commands '''
+
+
 @lui.command()
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Password')
 def init(password):
@@ -78,7 +81,7 @@ def status():
 
 ''' 
     User level group of commands 
-    
+
     lui user list				                #list the users in the auth file
     lui user add -u <username> -p <password>    #create a new user that can access the UI
     lui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
@@ -86,11 +89,13 @@ def status():
 
 '''
 
+
 # @click.group(chain=True)
 @click.group()
 def user():
     """Work with user accounts"""
     pass
+
 
 @user.command()
 def list():
@@ -115,6 +120,7 @@ def update(username, password):
     click.echo("Change user password")
     User.update(username, password)
 
+
 @user.command()
 @click.option('-u', '--username', nargs=1, help='User Name')
 def delete(username):
@@ -125,7 +131,7 @@ def delete(username):
 
 '''
     Config commands
-    
+
     lui config show				                #print out running config to console
     lui config set lxdui.port <port>		    #set the value for a configuration key
 '''
@@ -136,10 +142,12 @@ def config():
     """List and modify configuration parameters"""
     pass
 
+
 @config.command()
 def show():
     """Show configured parameters"""
     Config.show()
+
 
 @config.command()
 @click.argument('parameter', nargs=1)
@@ -149,10 +157,9 @@ def set(parameter, value):
     Config.set('LXDUI', parameter, value)
 
 
-
 '''
     Commands for certificate management
-    
+
     lui cert create				                #generate new SSL certs (overwrite old files)
     lui cert list				                #list SSL certs
     lui cert delete 				            #remove SSL certs
@@ -164,6 +171,7 @@ def cert():
     """List and modify configuration parameters"""
     pass
 
+
 @cert.command()
 @click.option('-p', '--path', nargs=1, help='Path for certificates')
 def create(path):
@@ -172,12 +180,13 @@ def create(path):
     c.save(path + '/test.key', c.key)
     c.save(path + '/test.crt', c.cert)
 
+
 @cert.command()
 def list():
     """Show available certificates"""
-    # path = Config().get('LXDUI', 'lxdui.conf.dir')
-    key = Config().get('LXDUI', 'lxdui.ssl.key')
-    cert = Config().get('LXDUI', 'lxdui.ssl.cert')
+    # path = Config().get('LXDUI', 'lxdui.conf.bak.dir')
+    key = Config().get(APP, 'lxdui.ssl.key')
+    cert = Config().get(APP, 'lxdui.ssl.cert')
 
     path = 'conf'
     for root, dirs, files in os.walk(path):
@@ -186,12 +195,13 @@ def list():
             if ext in ['.key', '.crt']:
                 click.echo(path + '/' + file)
 
+
 @cert.command()
 def delete():
     """Delete certificates"""
     path = 'conf'
-    key = Config().get('LXDUI', 'lxdui.ssl.key')
-    cert = Config().get('LXDUI', 'lxdui.ssl.cert')
+    key = Config().get(APP, 'lxdui.ssl.key')
+    cert = Config().get(APP, 'lxdui.ssl.cert')
 
     try:
         os.remove(key)
