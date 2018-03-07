@@ -184,7 +184,7 @@ def create(path):
 @cert.command()
 def list():
     """Show available certificates"""
-    # path = Config().get('LXDUI', 'lxdui.conf.bak.dir')
+    # path = Config().get('LXDUI', 'lxdui.conf.dir')
     key = Config().get(APP, 'lxdui.ssl.key')
     cert = Config().get(APP, 'lxdui.ssl.cert')
 
