@@ -1,12 +1,13 @@
 from flask import Blueprint, abort, jsonify
+from flask_login import login_required
 
 from api.src.models.LXDModule import LXDModule
 from api.src.utils import response
 
 lxd_api = Blueprint('lxd_api', __name__)
 
-
 @lxd_api.route('/profile')
+@login_required
 def profiles():
     try:
         client = LXDModule()
