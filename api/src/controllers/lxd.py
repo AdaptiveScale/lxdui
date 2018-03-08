@@ -17,6 +17,7 @@ def profiles():
 
 
 @lxd_api.route('/network')
+@login_required
 def networks():
     try:
         client = LXDModule()
@@ -26,6 +27,7 @@ def networks():
 
 
 @lxd_api.route('/config')
+@login_required
 def config():
     try:
         client = LXDModule()

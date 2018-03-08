@@ -1,4 +1,5 @@
 from flask import Blueprint, request
+from flask_login import login_required
 
 from api.src.models.LXCImage import LXCImage
 from api.src.models.LXDModule import LXDModule
@@ -9,6 +10,7 @@ from api.src.helpers.download_image_schema import doValidate
 image_api = Blueprint('image_api', __name__)
 
 @image_api.route('/')
+@login_required
 def images():
     try:
         client = LXDModule()
@@ -18,6 +20,7 @@ def images():
 
 
 @image_api.route('/<string:fingerprint>')
+@login_required
 def image(fingerprint):
     try:
         image = LXCImage({'fingerprint': fingerprint})
@@ -27,6 +30,7 @@ def image(fingerprint):
 
 
 @image_api.route('/<string:fingerprint>', methods=['DELETE'])
+@login_required
 def delete(fingerprint):
     try:
         image = LXCImage({'fingerprint': fingerprint})
@@ -36,6 +40,7 @@ def delete(fingerprint):
 
 
 @image_api.route('/remote')
+@login_required
 def remote():
     try:
         client = LXDModule()
@@ -45,6 +50,7 @@ def remote():
 
 
 @image_api.route('/remote', methods=['POST'])
+@login_required
 def downloadImage():
     input = request.get_json(silent=True)
     validation = doValidate(input)

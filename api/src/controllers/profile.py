@@ -1,5 +1,6 @@
 from flask import Blueprint, request
 from flask import jsonify
+from flask_login import login_required
 
 from api.src.models.LXDModule import LXDModule
 from api.src.models.LXCProfile import LXCProfile
@@ -10,6 +11,7 @@ profile_api = Blueprint('profile_api', __name__)
 
 
 @profile_api.route('/')
+@login_required
 def profiles():
     try:
         client = LXDModule()
@@ -19,6 +21,7 @@ def profiles():
 
 
 @profile_api.route('/', methods=['POST'])
+@login_required
 def create_profile():
     data = request.get_json(silent=True)
     validate = doValidate(data)
@@ -34,6 +37,7 @@ def create_profile():
 
 
 @profile_api.route('/<string:name>')
+@login_required
 def get_profile(name):
     try:
         profile = LXCProfile({'name': name})
@@ -43,6 +47,7 @@ def get_profile(name):
 
 
 @profile_api.route('/<string:name>', methods=['DELETE'])
+@login_required
 def delete_profile(name):
     try:
         profile = LXCProfile({'name': name})
@@ -53,6 +58,7 @@ def delete_profile(name):
 
 
 @profile_api.route('/<string:name>', methods=['PUT'])
+@login_required
 def update_profile(name):
     data = request.get_json()
     data['name'] = name
@@ -67,6 +73,7 @@ def update_profile(name):
 
 
 @profile_api.route('/rename/<string:name>', methods=['PUT'])
+@login_required
 def rename(name):
     data = request.get_json()
     validation = doValidateRename(data)
