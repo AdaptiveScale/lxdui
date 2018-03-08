@@ -1,15 +1,26 @@
-import api.src.lib.log
+from api.src.lib import conf
+import __metadata__ as meta
+import os
+import json
+import hashlib
+import logging
+
+log = logging.getLogger(__name__)
+
 
 class User(object):
+    """
+    User Management & Authentication Module
+    """
     def __init__(self):
         try:
-            self.auth_file = Config().get(APP_NAME, 'lxdui.auth.conf')
+            self.auth_file = conf.Config().get(meta.APP_NAME, '{}.auth.conf'.format(meta.APP_NAME.lower()))
             self.users = self.load()
         except Exception('Unable to load configuration.') as e:
             log.debug(e)
 
         if self.users is None:
-            print('Please initialize {} first.  e.g: lui init '.format(APP_NAME))
+            print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
             exit()
 
     def load(self):
@@ -17,17 +28,17 @@ class User(object):
             with open(self.auth_file, 'r') as f:
                 # make sure the file is not empty
                 if os.stat(self.auth_file).st_size != 0:
-                    # log.info('Reading auth file.')
+                    log.info('Reading auth file.')
                     data = f.read()
                     return json.loads(data)
         except (FileNotFoundError, IOError) as e:
-            log.debug('Unable to open auth file: ' + self.auth_file)
+            log.info('Unable to open auth file: ' + self.auth_file)
             log.debug(e)
 
     def save(self, data):
         try:
             with open(self.auth_file, 'w') as f:
-                # log.info('Saving auth file: {}'.format(AUTH_FILE))
+                log.info('Saving auth file: {}'.format(self.auth_file))
                 f.write(json.dumps(data, indent=2))
         except (FileNotFoundError, IOError) as e:
             log.info('Unable to open file for writing.')
@@ -77,7 +88,7 @@ class User(object):
 
     def delete(self, username):
         account, err = self.get(username)
-        admin = Config().get('LXDUI', 'lxdui.admin.user')
+        admin = conf.Config().get(meta.APP_NAME, '{}.admin.user'.format(meta.APP_NAME.lower()))
 
         if account is None:
             return err
@@ -88,7 +99,7 @@ class User(object):
             print('The admin user cannot be deleted.')
             exit(1)
 
-        # remove the user from the list and safe the new auth state
+        # remove the user from the list and save the new auth state
         else:
             self.users.remove(account)
             print('User "{}" has been deleted.'.format(username))

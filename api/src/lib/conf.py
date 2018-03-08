@@ -1,7 +1,7 @@
 import __metadata__ as meta
 import configparser
 import os
-import pathlib
+from pathlib import Path
 import logging
 log = logging.getLogger(__name__)
 
@@ -48,7 +48,7 @@ class Config(object):
             else:
                 raise Exception('Unsupported parameter {}'.format(kwargs))
         # no conf parameters specified so check local conf file
-        elif pathlib.Path(ini_path).exists():
+        elif Path(ini_path).exists():
             log.info('Using ini config file path = {}'.format(ini_path))
             self.conf_path = ini_path
             self.config = self.load('ini', self.conf_path)
@@ -57,7 +57,8 @@ class Config(object):
         elif meta.AUTO_LOAD_CONFIG:
             log.info('Load default config (meta)')
             self.envSet()
-            self.conf_path = self.envGet().get('LXDUI_CONF')
+            # self.conf_path = self.envGet().get('{}_CONF'.format(meta.APP_NAME))
+            self.conf_path = ini_path
             self.config = self.load('meta', self.conf_path)
             self.save()
         else:
@@ -74,13 +75,13 @@ class Config(object):
         :return:
         """
         if conf_type == 'external':
-            conf_file_path = pathlib.Path(*file_path)
+            conf_file_path = Path(*file_path)
             config = self.getConfig(conf_file_path)
             return config
         elif conf_type == 'ini':
             conf_source = os.path.join(meta.CONF_DIR, meta.CONF_FILE)
             conf_path = os.path.abspath(conf_source)
-            conf_file_path = pathlib.Path(conf_path)
+            conf_file_path = Path(conf_path)
             actual_path = self.findConf(conf_file_path, conf_source)
             log.debug('actual_path = {}'.format(actual_path))
             conf = configparser.ConfigParser()
@@ -238,7 +239,7 @@ class Config(object):
         """
         for dir in conf_file_path.parents:
             file = os.path.join(dir.__str__(), conf_source)
-            if pathlib.Path(file).exists():
+            if Path(file).exists():
                 return file
             else:
                 raise FileNotFoundError

@@ -1,4 +1,5 @@
 APP_NAME = 'LXDUI'
+APP_CLI_CMD = 'lui'
 VERSION = '2.0'
 GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
 LXD_URL = 'http://localhost:8443'
@@ -35,6 +36,13 @@ lxdui.log.dir = logs
 lxdui.log.file = lxdui.log
 lxdui.zfs.pool.name = lxdpool
 lxdui.app.alias = LXDUI
+
+[LXDUI_CERT]
+lxdui.cert.country = US
+lxdui.cert.state = Texas
+lxdui.cert.locale = Dallas
+lxdui.cert.org = AdaptiveScale, Inc.
+lxdui.cert.ou = OU=AdaptiveScale, DN=com
 
 [LXD]
 lxd.bridge.enabled = true
