@@ -67,10 +67,10 @@ class Init(object):
               'the admin account to log in to the app.')
 
     def create(self, file_type, file_path):
-        fod = Path(file_path)
-        if fod.exists():
-            if fod.is_file():
-                if os.stat(file_path).st_size != 0:
+        file = Path(file_path)
+        if file.exists():
+            if file.is_file():
+                if file.stat() != 0:
                     print('File already exists: {}'.format(file_path))
                     self.replace(file_type, file_path)
                 else:
@@ -116,6 +116,4 @@ class Init(object):
         python3 = shutil.which('python3')
         lxd = shutil.which('lxd')
 
-    def env(self):
-        pass
 
