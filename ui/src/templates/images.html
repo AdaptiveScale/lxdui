@@ -16,10 +16,10 @@
                 <div class="btn-group btn-group-s" id="imageType">
                 <button id="local_img_nr" type="button" class="btn btn-info" onclick="loadImages('local')">
 <span class="glyphicon glyphicon-hdd"> </span>
-Local <span class="badge">{{data.current_local_image_number}}</span></button>
+Local <span class="badge"></span></button>
                 <button type="button" class="btn btn-primary" onclick="loadImages('remote')">
 <span class="glyphicon glyphicon-globe"> </span>
-Remote <span class="badge">{{data.current_cached_remote_images}}</span></button>
+Remote <span class="badge"></span></button>
                 </div>
             </div>
         </div>
@@ -42,7 +42,7 @@ Update</button>
                  </div>
             </div>
         <div class="col-lg-12">
-            <div class="scrollable">
+            <div class="">
                 <script>
                     $(document).ready(function(){
                             
@@ -62,7 +62,7 @@ Update</button>
                     <th>Size</th>
                     </thead>
                     <tbody>
-                    {% for si in data.image_list %}
+                    {% for si in localImages %}
                     <tr id="img_{{si.aliases.name}}">
                         <td><input type="checkbox" class="images-check" data="{{si.aliases.name}}" display_name="{{si.properties.distribution|capitalize}} {{si.properties.release}} ({{si.properties.architecture}})" onchange="selectImage('{{si.aliases.name}}', '{{si.properties.distribution|capitalize}} {{si.properties.release}} ({{si.properties.architecture}})')"></td>
                         <td><a style="cursor:pointer" onclick="selectImage('{{si.aliases.name}}', '{{si.properties.distribution|capitalize}} {{si.properties.release}} ({{si.properties.architecture}})'), showCreateContainer()">{{ si.properties.distribution }}</a></td>
@@ -71,6 +71,26 @@ Update</button>
                         <td>{{ si.properties.release }}</td>
                         <td>{{ si.properties.architecture }}</td>
                         <td>{{ si.size }}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                <table id="tbl-remote-images" class="table table-bordered table-fixed hidden">
+                    <thead>
+                    <th><input type="checkbox" id="chk-images1" onchange="selectAllImages()"></th>
+                    <th>Architecture</th>
+                    <th>Distribution</th>
+                    <th>Image</th>
+                    <th>Name</th>
+                    </thead>
+                    <tbody>
+                    {% for si in remoteImages %}
+                    <tr id="img1_{{si.name}}">
+                        <td><input type="checkbox" class="images-check" data="{{si.name}}" display_name="{{si.distribution|capitalize}} ({{si.architecture}})" onchange="selectImage('{{si.name}}', '{{si.distribution|capitalize}} ({{si.architecture}})')"></td>
+                        <td>{{ si.architecture }}</td>
+                        <td>{{ si.distribuion }}</td>
+                         <td>{{ si.image }}</td>
+                         <td>{{si.name}}</td>
                     </tr>
                     {% endfor %}
                     </tbody>

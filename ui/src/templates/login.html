@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <title>LXD-UI {{lxdui_current_version}} / Login</title>
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
+    <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('.static', filename='css/app.css') }}" rel="stylesheet">
     <script src="/static/js/jquery-2.0.0.js"></script>
     <script src="/static/js/app.js"></script>
     <!-- TOASTER -->
@@ -37,8 +37,9 @@
 <body style="height:100%">
     <div class="col-lg-12" style="height:100%">
         <div class="col-lg-offset-5 col-lg-3" style="position:relative;top: 50%;margin-top:-230px;border:1px solid black;padding:20px 50px 20px 50px;box-shadow: 5px 5px 2px rgba(232, 232, 232, 0.9);" >
-            <img src="/static/images/logo.png" width="100%" style="margin-bottom:20px"/>
-            <form action="login" method="POST" role="form" class="form-horizontal">
+            <!--<img src="/static/images/logo.png" width="100%" style="margin-bottom:20px"/>-->
+            <img src="{{ url_for('.static', filename='images/logo.png')}}" width="100%"/>
+            <form action="containers" method="GET" role="form" class="form-horizontal">
                 <div class="form-group">
                     <input type="text" name="username" id="username" class="form-control" placeholder="Username" autofocus />
                 </div>

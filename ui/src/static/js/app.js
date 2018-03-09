@@ -1,4 +1,4 @@
-const API = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '')+"/";
+const API = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '')+"/api/";
 
 function formatBytes(bytes){
   var kb = 1024;
@@ -21,15 +21,17 @@ function changeNumberOfContainers(index, val){
 
 function showContainers(){
     var html = '';
-    $.post(API + 'containers-list', function (response) {
-        if(response.success)
-        { 
-            response.payload.forEach(function (container) {
+
+    $.get(API + 'container', function (response) {
+        if(response.status==200)
+        {
+
+            response.data.forEach(function (container) {
             html+=`<tr id="cnt_${container.name}"><td><input type="checkbox" data="${container.name}" class="container-check" onchange="checkContainer('${container.name}')"></td>`
                   +`<td><a href="/container/${container.name}" style="cursor:pointer">${container.name}</td>`
                   +`<td class="status_${container.name}">${container.status}</td>`
                   +`<td class="ip_${container.name}">${container.ipaddress}</td>`
-                  +`<td>${container.OS.name} ${container.OS.release} (${container.OS.architecture})</td>`
+                  +`<td>${container.config['image.distribution']} ${container.config['image.release']} (${container.config['image.architecture']})</td>`
                   +`<td>${container.created_at}</td>`
                 +`</tr>`;
             })
@@ -37,7 +39,7 @@ function showContainers(){
         }
         else
         {
-            $('#tbl-containers tbody').parent().parent().append('<div class="alert alert-danger" role="alert">'+response.payload+'</div>');
+            $('#tbl-containers tbody').parent().parent().append('<div class="alert alert-danger" role="alert">'+response.data+'</div>');
         }
     })
 }
