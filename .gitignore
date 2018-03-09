@@ -3,3 +3,4 @@
 venv
 lxdui.egg-info
 build
+dist/
