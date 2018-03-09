@@ -21,13 +21,21 @@ The following are the prerequisites required to run LDXUI (supported only on Ubu
 	`sudo apt-get install libfontconfig libffi-dev libssl-dev build-essential python-dev python-pip python-virtualenv -y`
         
 - Your must have **LXD 2.3 or higher** already installed.
+    # Deoprication Notice #
+    ```
+    The LXD team has deprecated the PPA repos, so if you want to use version 1.0 of LXDUI you'll have to install LXD and LXC from the official backports in the Ubuntu archive. More information on this is available here: https://insights.ubuntu.com/2017/11/20/lxd-weekly-status-24-lxd-2-20 
+    
+    LXDUI 2.0 is under active development to fully support the latest snap version of LXD and once it is released 1.0 will be deprecated as well. I'd recommend waiting for the next release.
+    ```
+    If you are on Xenial you can install LXD and LXC via `apt install -t xenial-backports lxd lxd-client`
+    
+    More on backports here: https://help.ubuntu.com/community/UbuntuBackports
     
     The following commands will install the latest stable version of LXC/LXD . 
     
 	- `sudo apt-get install software-properties-common -y`
-	- `sudo add-apt-repository ppa:ubuntu-lxc/lxd-stable -y`
 	- `sudo apt-get update -y`
-	- `sudo apt install lxd -y`
+	- `sudo apt install -t xenial-backports lxd lxd-client`
 	
     **NOTE**:
     
@@ -57,7 +65,7 @@ Run the command to start the server: `sudo lxdui`
 
  **Issues you might run into during installation**
 > - **ImportError: No module named build_py**.  
->	- This is a **pip** error, adn is easily fixed by re-running the same install command again.
+>	- This is a **pip** error, and is easily fixed by re-running the same install command again.
 > - **ImportError: No module named connection**
 > 	- **pip** fails to install the correct **urllib3** module according to the required version of the dependencies.
 > 	- `pip show urllib3` might deceive you showing you that the right version is already installed.  
@@ -68,15 +76,12 @@ Run the command to start the server: `sudo lxdui`
 >   	- `git clone --branch 1.8 git://github.com/shazow/urllib3.git`
 >   	- `cd urllib3 && sudo python setup.py install`
 
-## Install via PIP 
-Instructions will be made available soon.
-
 ## Default configuration
 
 The configuration file `config.json` found within the **conf** directory gets copied to  the python's packages designated directory as is, upon each installation.
 
 To change the credentials to be used for authenticatication there are 2 alternatives:
-- Permanent via `/conf/config.json` located in python's package directory for `lxdui`
+- Permanently via `/conf/config.json` located in python's package directory for `lxdui`
 - Temporarily via the **-c** application argument where you specify authentication credentials via the `username`:`password` pattern.
 
 ## Helpful Info</h1>
