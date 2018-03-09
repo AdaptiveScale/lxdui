@@ -1,6 +1,11 @@
 from flask import Flask
+from flask_login import LoginManager
 
 app = Flask(__name__)
+app.secret_key = 'AC8d83&21Almnis710sds'
+
+login_manager = LoginManager()
+login_manager.init_app(app)
 
 from api.src.controllers.lxd import lxd_api
 app.register_blueprint(lxd_api, url_prefix='/api/lxd')
@@ -19,6 +24,10 @@ app.register_blueprint(network_api, url_prefix='/api/network')
 
 from api.src.controllers.snapshot import snapshot_api
 app.register_blueprint(snapshot_api, url_prefix='/api/snapshot')
+
+from api.src.controllers.user import user_api
+app.register_blueprint(user_api, url_prefix='/api/user')
+
 
 @app.cli.command
 def run():
