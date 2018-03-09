@@ -23,9 +23,15 @@ The following are the prerequisites required to run LDXUI (supported only on Ubu
 - Your must have **LXD 2.3 or higher** already installed.
     # Deoprication Notice #
     ```
-    The LXD team has deprecated the PPA repos, so if you want to use version 1.0 of LXDUI you'll have to install LXD and LXC from the official backports in the Ubuntu archive. More information on this is available here: https://insights.ubuntu.com/2017/11/20/lxd-weekly-status-24-lxd-2-20 
+    The LXD team has deprecated the PPA repos, so if you want to use version 1.0 
+    of LXDUI you'll have to install LXD and LXC from the official backports in the 
+    Ubuntu archive. More information on this is available here: 
+    https://insights.ubuntu.com/2017/11/20/lxd-weekly-status-24-lxd-2-20 
     
-    LXDUI 2.0 is under active development to fully support the latest snap version of LXD and once it is released 1.0 will be deprecated as well. I'd recommend waiting for the next release.
+    Version 2.0 of LXDUI, which is a complete rewrite, is under active development 
+    to fully support the latest snap version of LXD, and once it is released 1.0 will 
+    be deprecated as well.  The recommendtion is to wait for the next release 
+    scheduled for the end of March, 2018.
     ```
     If you are on Xenial you can install LXD and LXC via `apt install -t xenial-backports lxd lxd-client`
     
