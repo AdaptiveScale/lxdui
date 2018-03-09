@@ -5,28 +5,28 @@
     <title>LXD-UI {%-if currentpage %} / {{currentpage|capitalize}}{%endif-%}</title>
     <!-- FAVICONS -->
         <link href="" />
-    <link href="{{url_for('static', filename='favicon.ico')}}" rel="shortcut icon"/>
-    <link rel="icon" type="image/png" href="{{url_for('static', filename='favicon-16x16.png')}}" sizes="16x16"/>
-    <link rel="icon" type="image/png" href="{{url_for('static', filename='favicon-32x32.png')}}" sizes="32x32"/>
+    <link href="{{url_for('.static', filename='favicon.ico')}}" rel="shortcut icon"/>
+    <link rel="icon" type="image/png" href="{{url_for('.static', filename='favicon-16x16.png')}}" sizes="16x16"/>
+    <link rel="icon" type="image/png" href="{{url_for('.static', filename='favicon-32x32.png')}}" sizes="32x32"/>
     <link rel="apple-touch-icon" sizes="180x180" href="{{url_for('static', filename='apple-touch-icon.png')}}"/>
 
 
-    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/app.css') }}" rel="stylesheet">
-    <script src="{{ url_for('static', filename='js/jquery-2.0.0.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/bootstrap.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/app.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/html.js')}}"></script>
+    <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('.static', filename='css/app.css') }}" rel="stylesheet">
+    <script src="{{ url_for('.static', filename='js/jquery-2.0.0.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/bootstrap.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/app.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/html.js')}}"></script>
     {%- if currentpage[:10] == "container " %}
-    <script src="{{ url_for('static', filename='js/container-details.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/container-details.js')}}"></script>
     {% else %}
-    <script src="{{ url_for('static', filename='js/container.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/container.js')}}"></script>
     {% endif -%}
-    <script src="{{ url_for('static', filename='js/images.js')}}"></script>
-    <script src="{{ url_for('static', filename='js/createcontainer.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/images.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/createcontainer.js')}}"></script>
     <!-- TOASTER -->
-    <link href="{{ url_for('static', filename='css/toastr.css')}}" rel="stylesheet"/>
-    <script src="{{ url_for('static', filename='js/toastr.min.js')}}"></script>
+    <link href="{{ url_for('.static', filename='css/toastr.css')}}" rel="stylesheet"/>
+    <script src="{{ url_for('.static', filename='js/toastr.min.js')}}"></script>
     <script>
 
     toastr.options = {
@@ -56,17 +56,17 @@
     <div class="col-lg-12">
         <div class="col-lg-2 main-div">
             <ul class="nav nav-pills nav-stacked">
-                <li role="presentation" style="text-align:center"><img src="{{ url_for('static', filename='images/logo.png')}}" width="90%"/> </li>
+                <li role="presentation" style="text-align:center"><img src="{{ url_for('.static', filename='images/logo.png')}}" width="90%"/> </li>
                 {% if LXC_installed %}
                 <li id="stamplike" role="presentation" class="label label-{{LXC_label_color}}">LXC version {{LXC_version}}</li>
                 {% else %}
                 <li id="stamplike" role="presentation" class="label label-danger">NO LXC INSTALLED</li>
                 {% endif %}
-                <li {% if currentpage == "containers" %}class="active"{% endif %} role="presentation"><a href="/containers"><span class="glyphicon glyphicon-th"> </span>Containers</a></li>
-                <li {% if currentpage == "network" %}class="active"{% endif %} role="presentation"><a href="/network"><span class="glyphicon glyphicon-random"> </span>Network </a></li>
-                <li {% if currentpage == "images" %}class="active"{% endif %} role="presentation"><a href="/images"><span class="glyphicon glyphicon-hdd"> </span>Images</a></li>
+                <li {% if currentpage == "containers" %}class="active"{% endif %} role="presentation"><a href="/ui/containers"><span class="glyphicon glyphicon-th"> </span>Containers</a></li>
+                <li {% if currentpage == "images" %}class="active"{% endif %} role="presentation"><a href="/ui/images"><span class="glyphicon glyphicon-hdd"> </span>Images</a></li>
+                 <li {% if currentpage == "profiles" %}class="active"{% endif %} role="presentation"><a href="/ui/profiles"><span class="glyphicon glyphicon-th"> </span>Profiles</a></li>
+                <li {% if currentpage == "network" %}class="active"{% endif %} role="presentation"><a href="/ui/network"><span class="glyphicon glyphicon-random"> </span>Network </a></li>
                 <li role="presentation"><a href="/logout" style="cursor:pointer"><span class="glyphicon glyphicon-log-out"> </span>Logout</a></li>
-                <li></li>
             </ul>
         </div>
 <!-- child template -->
