@@ -42,6 +42,8 @@ class LXCContainer(LXDModule):
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
         if input.get('autostart') is not None:
             self.setBootType(input.get('autostart'))
+        else:
+            self.setBootType(True)
 
 
     def setImageType(self, input):
