@@ -1,6 +1,24 @@
 var selectedContainers = [];
 var tasks_required = 0;
 
+jQuery.each( [ "put", "delete" ], function( i, method ) {
+  jQuery[ method ] = function( url, data, callback, type ) {
+    if ( jQuery.isFunction( data ) ) {
+      type = type || callback;
+      callback = data;
+      data = undefined;
+    }
+
+    return jQuery.ajax({
+      url: url,
+      type: method,
+      dataType: type,
+      data: data,
+      success: callback
+    });
+  };
+});
+
 function checkAll() {
     if ($('.container-check').is(':checked') == true) {
         $('#chk-containers').prop('checked', false)
@@ -109,7 +127,7 @@ function createContainer() {
 }
 
 function refresh_ipv4_of(container_name) {
-    $.get(API + 'container-ip/' + container_name, function (response) {
+    $.get(API + 'container-ip/' +  { containerName: container }, function (response) {
         $('.ip_' + response.container_name).text(response.IP);
     })
 }
@@ -117,11 +135,15 @@ function refresh_ipv4_of(container_name) {
 //ACTIONS of container
 function startContainer() {
     selectedContainers.forEach(function (container) {
-        $.post(API + 'start', { containerName: container }, function (response) {
-            if (response.success) {
+    console.log('container', container);
+    console.log('selected containers', selectedContainers)
+        $.put(API + 'container/start/'+ container, function (response) {
+        console.log('data', data);
+            if(response.status==200) {
                 $('.status_' + response.container_name).text("Running");
                 $('.ip_' + container).text(response.ip);
                 refresh_ipv4_of(response.container_name);
+                toastr.success(response.message);
             }
             else {
                 toastr.error(response.message, "CONTAINER ERROR");
@@ -132,7 +154,7 @@ function startContainer() {
 
 function stopContainer() {
     selectedContainers.forEach(function (container) {
-        $.post(API + 'stop', { containerName: container }, function (response) {
+        $.post(API + 'container/stop' + { containerName: container }, function (response) {
             if (response.success) {
                 $('.status_' + response.container_name).text("Stopped");
                 $('.ip_' + container).text("N/A");
@@ -150,7 +172,7 @@ function restartContainer() {
 
             document.getElementById("cnt_" + container).style.backgroundColor = "rgba(89,161,255,0.1)";
 
-            $.post(API + 'restart', { containerName: container }, function (response) {
+            $.post(API + 'container/restart'+ { containerName: container }, function (response) {
                 if (response.success) {
                     $('.status_' + response.container_name).text("Running");
                     document.getElementById("cnt_" + response.container_name).style.backgroundColor = "white";
@@ -171,6 +193,6 @@ function deleteContainer() {
         target_cnt = "cnt_" + container;
         document.getElementById(target_cnt).style.backgroundColor = "rgba(178,34,34,0.1)";
 
-        $.post(API + 'delete', { containerName: container }, function (response) { document.getElementById("cnt_" + response.container_name).remove(); })
+        $.post(API + 'container/delete', { container }, function (response) { document.getElementById("cnt_" + response.container_name).remove(); })
     })
 }

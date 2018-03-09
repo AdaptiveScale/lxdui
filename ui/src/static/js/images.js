@@ -18,15 +18,18 @@ function loadImages(lxd_host){
         LOCAL_PAGE = false;
         $('#chk-images').hide();
         $('#btn-update-remote').show();
-        $.get(API + 'remote-images', displayImages);
-        
+//        $.get(API + 'remote/images', displayImages);
+        $('#tbl-remote-images').removeClass('hidden');
+        $('#tbl-images').addClass('hidden');
     }
     else
     {
         LOCAL_PAGE = true;
         $('#chk-images').show();
         $('#btn-update-remote').hide();
-        $.get(API + 'local-images', displayImages);
+//        $.get(API + 'local-images', displayImages);
+        $('#tbl-images').removeClass('hidden');
+        $('#tbl-remote-images').addClass('hidden');
     }
 }
 function capitalize(s)
