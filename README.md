@@ -21,7 +21,7 @@ The following are the prerequisites required to run LDXUI (supported only on Ubu
 	`sudo apt-get install libfontconfig libffi-dev libssl-dev build-essential python-dev python-pip python-virtualenv -y`
         
 - Your must have **LXD 2.3 or higher** already installed.
-    # Deoprication Notice #
+    # Depreciation Notice #
     ```
     The LXD team has deprecated the PPA repos, so if you want to use version 1.0 
     of LXDUI you'll have to install LXD and LXC from the official backports in the 
