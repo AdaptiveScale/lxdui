@@ -1,9 +1,6 @@
-import __metadata__ as meta
-from api.src.lib import conf, cert, log as logger
+from app.lib import log as logger, cert
 import os
 import pathlib
-import time
-import configparser
 import unittest
 import logging
 
