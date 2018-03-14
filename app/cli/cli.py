@@ -7,7 +7,7 @@ from app.cli.init import Init
 from app.lib.cert import Certificate
 
 from app.api import core
-from ui.blueprint import uiPages
+from app.ui.blueprint import uiPages
 
 APP = meta.APP_NAME
 
@@ -64,7 +64,7 @@ def init(password):
 @lui.command()
 def start():
     """Start LXDUI"""
-    click.echo("Starting %s" % APP)
+    #click.echo("Starting %s" % APP)
     core.startApp(uiPages)
 
 

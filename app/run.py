@@ -1,5 +1,5 @@
-from app.api import core
-from ui.blueprint import uiPages
+#from app.api import core
+#from ui.blueprint import uiPages
 from app.cli.cli import lui
 
 def main():
