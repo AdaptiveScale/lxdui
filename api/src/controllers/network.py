@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from flask_login import login_required
+from flask_jwt import jwt_required
 
 from api.src.models.LXDModule import LXDModule
 from api.src.helpers.BridgeNetwork import BridgeNetwork
@@ -9,7 +9,7 @@ from api.src.utils import response
 network_api = Blueprint('network_api', __name__)
 
 @network_api.route('/')
-@login_required
+@jwt_required()
 def network():
     try:
         client = LXDModule()
@@ -18,7 +18,7 @@ def network():
         return response.replyFailed(message=e.__str__())
 
 @network_api.route('/<string:name>')
-@login_required
+@jwt_required()
 def networkInfo(name):
     bridgeNet = BridgeNetwork()
     mainConfig = bridgeNet.get_lxd_main_bridge_config(name)
@@ -28,7 +28,7 @@ def networkInfo(name):
     return response.replySuccess(mainConfig['result'])
 
 @network_api.route('/<string:name>', methods=['PUT'])
-@login_required
+@jwt_required()
 def updateNetwork(name):
     input = request.get_json(silent=True)
     validation = doValidate(input)
@@ -45,7 +45,7 @@ def updateNetwork(name):
     return response.replySuccess(mainConfig['result'])
 
 @network_api.route('/<string:name>', methods=['POST'])
-@login_required
+@jwt_required()
 def creatNetwork(name):
     input = request.get_json(silent=True)
     validation = doValidate(input)

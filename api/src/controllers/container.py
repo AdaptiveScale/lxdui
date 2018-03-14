@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from flask_login import login_required
+from flask_jwt import jwt_required
 from api.src.helpers.container_schema import doValidate, doValidateCloneMove, doValidateImageExport
 
 from api.src.models.LXCContainer import LXCContainer
@@ -9,14 +9,14 @@ from api.src.utils import response
 container_api = Blueprint('container_api', __name__)
 
 @container_api.route('/')
-@login_required
+@jwt_required()
 def containers():
     client = LXDModule()
     return response.reply(client.listContainers())
 
 
 @container_api.route('/<string:name>')
-@login_required
+@jwt_required()
 def getContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -27,7 +27,7 @@ def getContainer(name):
 
 
 @container_api.route('/', methods=['POST'])
-@login_required
+@jwt_required()
 def createContainer():
     input = request.get_json(silent=True)
     validation = doValidate(input)
@@ -46,7 +46,7 @@ def createContainer():
         return response.reply(message=ex.__str__(), status=403)
 
 @container_api.route('/', methods=['PUT'])
-@login_required
+@jwt_required()
 def updateContainer():
     input = request.get_json(silent=True)
     validation = doValidate(input)
@@ -61,7 +61,7 @@ def updateContainer():
 
 
 @container_api.route('/<string:name>', methods=['DELETE'])
-@login_required
+@jwt_required()
 def deleteContainer(name):
     input = request.get_json(silent=True)
     force = False if input == None else input.get('force')
@@ -74,7 +74,7 @@ def deleteContainer(name):
 
 
 @container_api.route('/start/<string:name>', methods=['PUT'])
-@login_required
+@jwt_required()
 def startContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -85,7 +85,7 @@ def startContainer(name):
 
 
 @container_api.route('/stop/<string:name>', methods=['PUT'])
-@login_required
+@jwt_required()
 def stopContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -96,7 +96,7 @@ def stopContainer(name):
 
 
 @container_api.route('/restart/<string:name>', methods=['PUT'])
-@login_required
+@jwt_required()
 def restartContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -106,7 +106,7 @@ def restartContainer(name):
         return response.replyFailed(message=e.__str__())
 
 @container_api.route('/clone/<string:name>', methods=['POST'])
-@login_required
+@jwt_required()
 def cloneContainer(name):
     input = request.get_json(silent=True)
     validation = doValidateCloneMove(input)
@@ -121,7 +121,7 @@ def cloneContainer(name):
         return response.replyFailed(message=e.__str__())
 
 @container_api.route('/move/<string:name>', methods=['POST'])
-@login_required
+@jwt_required()
 def moveContainer(name):
     input = request.get_json(silent=True)
     validation = doValidateCloneMove(input)
@@ -137,7 +137,7 @@ def moveContainer(name):
 
 
 @container_api.route('/export/<string:name>', methods=['POST'])
-@login_required
+@jwt_required()
 def exportContainer(name):
     input = request.get_json(silent=True)
     validation = doValidateImageExport(input)
