@@ -1,68 +1,65 @@
 const API = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '')+"/api/";
+const WEB = location.protocol+'//'+location.hostname+(location.port ? ':'+location.port: '')+"/ui/";
 
-function formatBytes(bytes){
-  var kb = 1024;
-  var ndx = Math.floor( Math.log(bytes) / Math.log(kb) );
-  var fileSizeTypes = ["BYTES", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-  return (bytes / kb / kb).toFixed(2) + ' '+ fileSizeTypes[ndx];
-}
+var App = App || {
+    baseAPI: API,
+    baseWEB: WEB,
+    info:null,
+    login:null,
+    containers: null,
+    images: null,
+    loading: false,
+    notInitialized:['containers', 'images'],
+    init: function(){
+        console.log('App initializing');
+        this.setDefaultHeaders();
 
-function changeNumberOfContainers(index, val){
-    var n = parseInt($(val).val());
-    var ndz = "Node";
-    if (n > 1)
-    {
-        ndz = "Nodes";
-    }
-
-    $('.nrOfNodes_'+index).text($(val).val() + ' '+ ndz);
-}
-
-
-function showContainers(){
-    var html = '';
-
-    $.get(API + 'container', function (response) {
-        if(response.status==200)
-        {
-
-            response.data.forEach(function (container) {
-            html+=`<tr id="cnt_${container.name}"><td><input type="checkbox" data="${container.name}" class="container-check" onchange="checkContainer('${container.name}')"></td>`
-                  +`<td><a href="/container/${container.name}" style="cursor:pointer">${container.name}</td>`
-                  +`<td class="status_${container.name}">${container.status}</td>`
-                  +`<td class="ip_${container.name}">${container.ipaddress}</td>`
-                  +`<td>${container.config['image.distribution']} ${container.config['image.release']} (${container.config['image.architecture']})</td>`
-                  +`<td>${container.created_at}</td>`
-                +`</tr>`;
-            })
-            $('#tbl-containers tbody').html(html);
+        if(this.login && window.location == WEB)
+            this.login.init();
+        if(this.containers && window.location == WEB +'containers')
+            this.containers.init();
+        console.log('App initialized');
+        this.getInfo();
+    },
+    getInfo: function(){
+        $.ajax({
+            url: this.baseAPI+'lxd/config',
+            method:'GET',
+            success:$.proxy(this.getInfoSuccess, this)
+        });
+    },
+    getInfoSuccess:function(response){
+        console.log('getInfo', response);
+        this.info = response.data;
+    },
+    setDefaultHeaders: function(){
+        console.log('locaiton', window.location.href, WEB);
+        if(!localStorage.getItem('authToken') && window.location.href!==WEB){
+            console.log('Not Logged In/Token Expired - Redirecting to login');
+            return window.location = WEB;
         }
-        else
-        {
-            $('#tbl-containers tbody').parent().parent().append('<div class="alert alert-danger" role="alert">'+response.data+'</div>');
-        }
-    })
-}
-
-function showContainerDetails(name) {
-        HTML.set('containers-set-id', 'cmp-container-details', function (cb) {
-            $.post(API + 'container-details/'+name, function (response) {
-                $('#name').text(response.hostname)
-                $('#architecture').text(response.architecture)
-                $('#created_at').text(response.created_at)
-                $('#status').text(response.status)
-                $('#profiles').text(response.profiles[0])
-                if(response.network){
-                    $('#inet').text(response.network['eth0']['addresses'][0].address || 'N/A')
-                    $('#inet6').text(response.network['eth0']['addresses'][1].address)
-                    $('#inet6-1').text(response.network['eth0']['addresses'][2].address)
-                    $('#lo-inet').text(response.network['lo']['addresses'][0].address)
-                    $('#lo-inet6').text(response.network['lo']['addresses'][1].address)
-                    $('#pid').text(response.pid)
-                    $('#processes').text(response.processes)
-                }else{
-                    $('.running').text('N/A')
+        if(window.location.href!==WEB){
+            console.log('Setting Authorization header', localStorage.getItem('authToken'));
+            $.ajaxSetup({
+                headers:{
+                    Authorization:'JWT '+localStorage.getItem('authToken')
+                },
+                complete: function(response){
+                    if(response.status == 401 && window.location!== WEB){
+                        window.location = WEB;
+                    }
                 }
             });
-        })
-}
+        }
+    },
+    formatBytes:function(bytes){
+      var kb = 1024;
+      var ndx = Math.floor( Math.log(bytes) / Math.log(kb) );
+      var fileSizeTypes = ["BYTES", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+      return (bytes / kb / kb).toFixed(2) + ' '+ fileSizeTypes[ndx];
+    }
+};
+
+$(function(){
+    App.init();
+});

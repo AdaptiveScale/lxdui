@@ -15,7 +15,10 @@
     <link href="{{ url_for('.static', filename='css/app.css') }}" rel="stylesheet">
     <script src="{{ url_for('.static', filename='js/jquery-2.0.0.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/bootstrap.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/datatables.min.css')}}"/>
+    <script type="text/javascript" src="{{ url_for('.static', filename='js/datatables.min.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/app.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/login.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/html.js')}}"></script>
     {%- if currentpage[:10] == "container " %}
     <script src="{{ url_for('.static', filename='js/container-details.js')}}"></script>

@@ -6,11 +6,12 @@
     <title>LXD-UI {{lxdui_current_version}} / Login</title>
     <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
     <link href="{{ url_for('.static', filename='css/app.css') }}" rel="stylesheet">
-    <script src="/static/js/jquery-2.0.0.js"></script>
-    <script src="/static/js/app.js"></script>
+    <script src="{{ url_for('.static', filename='js/jquery-2.0.0.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/app.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/login.js')}}"></script>
     <!-- TOASTER -->
-    <link href="/static/css/toastr.css" rel="stylesheet"/>
-    <script src="/static/js/toastr.min.js"></script>
+    <link href="{{ url_for('.static', filename='css/toastr.css')}}" rel="stylesheet"/>
+    <script src="{{ url_for('.static', filename='js/toastr.min.js')}}"></script>
     <script>
     toastr.options = {
         "closeButton": false,
@@ -48,7 +49,7 @@
                 </div>
                 
                 <div class="form-group">
-                    <input class="btn btn-loginlxdui" type="submit" value="Log in">
+                    <input class="btn btn-login" type="submit" value="Log in">
                 </div>
                 {% with messages = get_flashed_messages(with_categories=true) %}
                 {% if messages %}
