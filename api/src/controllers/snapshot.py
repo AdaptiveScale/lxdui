@@ -1,5 +1,5 @@
 from flask import Blueprint, request
-from flask_login import login_required
+from flask_jwt import jwt_required
 
 from api.src.models.LXCSnapshot import LXCSnapshot
 from api.src.utils import response
@@ -7,7 +7,7 @@ from api.src.utils import response
 snapshot_api = Blueprint('snapshot_api', __name__)
 
 @snapshot_api.route('/container/<string:container>')
-@login_required
+@jwt_required()
 def containerSnapshots(container):
     try:
         snapshot = LXCSnapshot({'container': container})
@@ -17,7 +17,7 @@ def containerSnapshots(container):
 
 
 @snapshot_api.route('/<string:name>/container/<string:container>')
-@login_required
+@jwt_required()
 def snapshotInfo(name, container):
     print(name)
     try:
@@ -29,7 +29,7 @@ def snapshotInfo(name, container):
 
 
 @snapshot_api.route('/<string:name>/container/<string:container>', methods=['POST'])
-@login_required
+@jwt_required()
 def createSnapshot(name, container):
     try:
         snapshot = LXCSnapshot({'name': name, 'container': container})
@@ -39,7 +39,7 @@ def createSnapshot(name, container):
 
 
 @snapshot_api.route('/<string:name>/container/<string:container>', methods=['DELETE'])
-@login_required
+@jwt_required()
 def deleteSnapshot(name, container):
     try:
         snapshot = LXCSnapshot({'name': name, 'container': container})

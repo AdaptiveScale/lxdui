@@ -97,7 +97,7 @@ class LXDModule(Base):
 
     def config(self):
         try:
-            return self.client.api.get().json()
+            return self.client.api.get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
 
