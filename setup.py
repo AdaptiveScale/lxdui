@@ -34,7 +34,8 @@ setup(
        'netaddr==0.7.19',
        'flask-login==0.4.1',
        'Click==6.7',
-       'pyopenssl==17.5.0'
+       'pyopenssl==17.5.0',
+       'flask_jwt==0.3.2'
    ],
    entry_points={
        'console_scripts': [
