@@ -1,6 +1,6 @@
-import __metadata__ as meta
-import api.src.lib.conf as conf
-import api.src.lib.log as logger
+from app import __metadata__ as meta
+import api.lib.conf as conf
+import api.lib.log as logger
 import os
 import pathlib
 import time
