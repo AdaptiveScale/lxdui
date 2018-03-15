@@ -32,11 +32,14 @@ setup(
        'jsonschema==2.6.0',
        'requests==2.9.1',
        'netaddr==0.7.19',
-       'flask-login==0.4.1'
+       'flask-login==0.4.1',
+       'Click==6.7',
+       'pyopenssl==17.5.0'
    ],
    entry_points={
        'console_scripts': [
-           'lxdui = api.src.core:startApp'
+           #'lxdui = app.api.core:startApp',
+           'lui = app.run:lui'
        ]
    }
 )
