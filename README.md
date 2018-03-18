@@ -12,36 +12,26 @@ LXDUI is a Python Flask application that leverages LXD's Python client library, 
 ## Installation
 
 ### Prerequisites
-The following are the prerequisites required to run LDXUI (supported only on Ubuntu 14 & 16):
-- **Python 2.7** (lxdui has not been tested with python3).
-- **pip** and some additional modules.
+The following are the prerequisites required to run LDXUI (supported only on 16):
+- **Python 3.5** (lxdui does not support python2.7 anymore).
+- **pip3** and some additional modules.
 	
     To install **pip** run:
     
-	`sudo apt-get install libfontconfig libffi-dev libssl-dev build-essential python-dev python-pip python-virtualenv -y`
+	`sudo apt-get install -y python3-pip`
+
+	Install the following (required for development)
+
+	`sudo apt-get install build-essential libssl-dev libffi-dev python-dev`
+
         
-- Your must have **LXD 2.3 or higher** already installed.
-    # Depreciation Notice #
-    ```
-    The LXD team has deprecated the PPA repos, so if you want to use version 1.0 
-    of LXDUI you'll have to install LXD and LXC from the official backports in the 
-    Ubuntu archive. More information on this is available here: 
-    https://insights.ubuntu.com/2017/11/20/lxd-weekly-status-24-lxd-2-20 
-    
-    Version 2.0 of LXDUI, which is a complete rewrite, is under active development 
-    to fully support the latest snap version of LXD, and once it is released 1.0 will 
-    be deprecated as well.  The recommendtion is to wait for the next release 
-    scheduled for the end of March, 2018.
-    ```
-    If you are on Xenial you can install LXD and LXC via `apt install -t xenial-backports lxd lxd-client`
-    
-    More on backports here: https://help.ubuntu.com/community/UbuntuBackports
+- Your must have **LXD 2.4.4 or higher** already installed.
     
     The following commands will install the latest stable version of LXC/LXD . 
     
-	- `sudo apt-get install software-properties-common -y`
-	- `sudo apt-get update -y`
-	- `sudo apt install -t xenial-backports lxd lxd-client`
+	- `sudo apt-get update`
+	- `sudo apt-get install snap`
+	- `sudo snap install lxd`
 	
     **NOTE**:
     
@@ -71,7 +61,7 @@ Run the command to start the server: `sudo lxdui`
 
  **Issues you might run into during installation**
 > - **ImportError: No module named build_py**.  
->	- This is a **pip** error, and is easily fixed by re-running the same install command again.
+>	- This is a **pip** error, adn is easily fixed by re-running the same install command again.
 > - **ImportError: No module named connection**
 > 	- **pip** fails to install the correct **urllib3** module according to the required version of the dependencies.
 > 	- `pip show urllib3` might deceive you showing you that the right version is already installed.  
@@ -82,12 +72,15 @@ Run the command to start the server: `sudo lxdui`
 >   	- `git clone --branch 1.8 git://github.com/shazow/urllib3.git`
 >   	- `cd urllib3 && sudo python setup.py install`
 
+## Install via PIP 
+Instructions will be made available soon.
+
 ## Default configuration
 
 The configuration file `config.json` found within the **conf** directory gets copied to  the python's packages designated directory as is, upon each installation.
 
 To change the credentials to be used for authenticatication there are 2 alternatives:
-- Permanently via `/conf/config.json` located in python's package directory for `lxdui`
+- Permanent via `/conf/config.json` located in python's package directory for `lxdui`
 - Temporarily via the **-c** application argument where you specify authentication credentials via the `username`:`password` pattern.
 
 ## Helpful Info</h1>

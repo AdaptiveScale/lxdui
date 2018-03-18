@@ -1,7 +1,4 @@
-from app.cli.cli import lui
-
-def main():
-    lui()
-
+from api.src import core
+from ui.blueprint import uiPages
 if __name__ == '__main__':
-    main()
+    core.startApp(uiPages)
