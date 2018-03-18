@@ -1,0 +1,259 @@
+{% extends "index.html" %} {% block content %}
+<div class="col-lg-12 main-div" id="set-div">
+    <div class="col-lg-12">
+        <legend>LXD Network</legend>
+        <form id="entire_form" class="form-horizontal" method="POST" action="/network">
+
+            <h4 class="col-sm-12">Bridge name <span class="label label-default">lxdbr0</span></h4>
+            <h4 class="col-sm-12" style="margin-bottom:25px;">Status <span class="label label-success">active</span></h4>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist" class="col-lg-6">
+                <li class="nav-item active">
+                    <a class="nav-link" data-toggle="tab" href="#ip_ver_4" role="tab" style="background:#E0F7FA">IPv4 configuration</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" data-toggle="tab" href="#ip_ver_6" role="tab" style="background:#E0F2F1">IPv6 configuration</a>
+                </li>
+            </ul>
+
+
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ip_ver_4" role="tabpanel" style="padding-top:20px;;padding-bottom:20px;background:#E0F7FA">
+
+                    <div class="form-group">
+                        <label for="IPv4_ENABLED" class="col-sm-3 control-label" style="color:red">DISABLE IPv4</label>
+                        <div class="col-sm-4">
+                            <input id="IPv4_ENABLED" name="IPv4_ENABLED" type="checkbox" {% if not network[ 'IPv4_ENABLED'] %} checked {% endif %} style="margin-top:10px;cursor:pointer"
+                                value="false" onchange="disable_form(4)" />
+
+                            <span class="label label-default" id="ipv4_auto_txt" style="top:-3px;position:relative;margin-left:20px;">auto generate network-conf</span>
+                            <input id="IPv4_AUTO" name="IPv4_AUTO" type="checkbox" value="true" style="cursor:pointer;" class="form-check-input" onchange="check_auto_for(4)" />
+                        </div>
+                       
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IPv4_ADDR" class="col-sm-3 control-label">Network IP</label>
+                        <div class="col-sm-3">
+                            <input id="IPv4_ADDR" name="IPv4_ADDR" class="form-control" type="text" placeholder="IPv4 network address" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+                                title="Network IPv4 Address" value="{% if network.IPv4_ADDR %}{{ network.IPv4_ADDR }}{% endif %}"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IPv4_NETMASK" class="col-sm-3 control-label">Netmask</label>
+                        <div class="col-sm-3">
+                            <input id="IPv4_NETMASK" name="IPv4_NETMASK" class="form-control" type="text" placeholder="IPv4 netmask address" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+                                title="Netmask IPv4 Address" value="{% if network.IPv4_NETMASK %}{{ network.IPv4_NETMASK }}{% endif %}"
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="IPv4_DHCP_START" class="col-sm-3 control-label">DHCP Range Start</label>
+                        <div class="col-sm-3">
+                            <input id="IPv4_DHCP_START" name="IPv4_DHCP_START" class="form-control" type="text" placeholder="IP assignment range starts from"
+                                pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="IPv4 Address" value="{% if network.IPv4_DHCP_START %}{{ network.IPv4_DHCP_START }}{% endif %}"
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="IPv4_DHCP_END" class="col-sm-3 control-label">DHCP Range End</label>
+                        <div class="col-sm-3">
+                            <input id="IPv4_DHCP_END" name="IPv4_DHCP_END" class="form-control" type="text" placeholder="IP assignment range ends at"
+                                pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="IPv4 Address" value="{% if network.IPv4_DHCP_END %}{{ network.IPv4_DHCP_END }}{% endif %}"
+                            />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="tab-pane" id="ip_ver_6" role="tabpanel" style="padding-top:20px;padding-bottom:20px; background:#E0F2F1">
+
+                    <div class="form-group">
+                        <label for="IPv6_ENABLED" class="col-sm-3 control-label" style="color:red">DISABLE IPv6</label>
+                        <div class="col-sm-4">
+                            <input id="IPv6_ENABLED" name="IPv6_ENABLED" type="checkbox" {% if not network[ 'IPv6_ENABLED'] %} checked {% endif %}style="margin-top:10px;cursor:pointer"
+                                value="false" onchange="disable_form(6)" />
+
+                        <span class="label label-default" id="ipv6_auto_txt" style="top:-3px;position:relative;margin-left:20px;">auto generate network-conf</span>
+                        <input id="IPv6_AUTO" name="IPv6_AUTO" type="checkbox" value="true" style="cursor:pointer;" class="form-check-input" onchange="check_auto_for(6)" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IPv6_ADDR" class="col-sm-3 control-label">Network IP</label>
+                        <div class="col-sm-3">
+                            <input id="IPv6_ADDR" name="IPv6_ADDR" class="form-control" type="text" placeholder="IPv6 network address" pattern="((^|:)([0-9a-fA-F]{0,4})){1,8}$"
+                                title="Network IPv6 Address" value="{% if network.IPv6_ADDR %}{{network.IPv6_ADDR}}{% endif %}"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IPv6_NETMASK" class="col-sm-3 control-label">Netmask</label>
+                        <div class="col-sm-3">
+                            <input id="IPv6_NETMASK" name="IPv6_NETMASK" class="form-control" type="text" placeholder="(slash)0-128" title="Netmask IPv6 Address" value="/{% if network.IPv6_NETMASK %}{{network.IPv6_NETMASK}}{% endif %}" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="IPv6_DHCP_START" class="col-sm-3 control-label">DHCP Range Start</label>
+                        <div class="col-sm-3">
+                            <input id="IPv6_DHCP_START" name="IPv6_DHCP_START" class="form-control" type="text" placeholder="IP assignment starts from"
+                                pattern="((^|:)([0-9a-fA-F]{0,4})){1,8}$" title="IPv6 Address" value="{% if network.IPv6_DHCP_START %}{{network.IPv6_DHCP_START}}{% endif %}"
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="IPv6_DHCP_END" class="col-sm-3 control-label">DHCP Range End</label>
+                        <div class="col-sm-3">
+                            <input id="IPv6_DHCP_END" name="IPv6_DHCP_END" class="form-control" type="text" placeholder="IP assignment ends at" pattern="((^|:)([0-9a-fA-F]{0,4})){1,8}$"
+                                title="IPv6 Address" value="{% if network.IPv6_DHCP_END %}{{network.IPv6_DHCP_END}}{% endif %}"
+                            />
+                        </div>
+                    </div>
+                </div>
+
+
+            </div>
+            <div class="form-group">
+                <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                    <button id="qwe" type="submit" class="btn btn-primary pull-right">Update Bridge Network</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    .disableActions {
+        pointer-events: none;
+    }
+    /* The switch - the box around the slider */
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 25px;
+        margin-top: 5px;
+    }
+    /* Hide default HTML checkbox */
+
+    .switch input {
+        display: none;
+    }
+    /* The slider */
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 2px;
+        bottom: 3px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+    /* Rounded sliders */
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+</style>
+<script>
+    function disable_form(n) {
+        var n = String(n);
+        if (n == "4" || n == "6") {
+            var tmp_bool = $("#IPv" + n + "_ENABLED").prop("checked");
+            $("#IPv" + n + "_ADDR").prop("disabled", tmp_bool);
+            $("#IPv" + n + "_NETMASK").prop("disabled", tmp_bool);
+            $("#IPv" + n + "_DHCP_START").prop("disabled", tmp_bool);
+            $("#IPv" + n + "_DHCP_END").prop("disabled", tmp_bool);
+        }
+    }
+
+    function check_auto_for(n) {
+        var n = String(n);
+        if (n == "4" || n == "6") {
+            var color = "white";
+            var dhcp_color = "white";
+            if ($("#IPv" + n + "_AUTO").prop("checked")) {
+                $("#ipv" + n + "_auto_txt").removeClass('label-default').addClass('label-primary');
+                toastr.warning("No DHCP ranges can be specified with this option !\nEverything will be set accordingly from the LXD daemon !", "IPv" + n + " <AUTO>");
+                color = 'rgba(51, 122, 183, 0.6)';
+                dhcp_color = "#F89406";
+            }
+
+            else {
+                $("#ipv" + n + "_auto_txt").removeClass('label-primary').addClass('label-default');
+            }
+            $("#IPv" + n + "_NETMASK").css("background", color);
+            $("#IPv" + n + "_ADDR").css("background", color);
+            $("#IPv" + n + "_DHCP_START").css("background", dhcp_color);
+            $("#IPv" + n + "_DHCP_END").css("background", dhcp_color);
+
+        }
+    }
+
+    function initial_state_check() {
+        arr = ["4", "6"]
+        for (var i in arr) {
+            n = arr[i];
+            if ($("#IPv" + n + "_ENABLED").prop('checked')) {
+                $("#IPv" + n + "_NETMASK").prop("disabled", true);
+                $("#IPv" + n + "_ADDR").prop("disabled", true);
+                $("#IPv" + n + "_DHCP_START").prop("disabled", true);
+                $("#IPv" + n + "_DHCP_END").prop("disabled", true);
+            }
+        }
+
+    }
+    $(document).ready(function () {
+        {% with messages = get_flashed_messages(with_categories = true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        var spitout = "{{message|safe}}".replace(/,,,/g, '\n');
+        toastr['{{category}}'](spitout);
+        {% endfor %}
+        {% endif %}
+        {% endwith %}    
+        initial_state_check();
+
+        $("form#entire_form").submit(function (event) {});
+
+    });
+
+</script>
+{% endblock %}
