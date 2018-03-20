@@ -1,6 +1,6 @@
 from app import __metadata__ as meta
-import api.lib.conf as conf
-import api.lib.log as logger
+import app.lib.conf as conf
+import app.lib.log as logger
 import os
 import pathlib
 import time
@@ -76,8 +76,8 @@ class TestConfig(unittest.TestCase):
 
     def test_envGet(self):
         c = conf.Config()
-        log_path = c.getAbsPath(meta.LOG_DIR, meta.LOG_FILE)
-        conf_path = c.getAbsPath(meta.CONF_DIR, meta.CONF_FILE)
+        log_path = c.log_file
+        conf_path = c.config_file
         d1 = c.envGet()
         d2 = {'LXDUI_CONF': conf_path, 'LXDUI_LOG': log_path}
         self.assertDictEqual(d1, d2)
@@ -99,12 +99,12 @@ class TestConfig(unittest.TestCase):
         conf.Config().show()
         print('=' * 120)
 
-    def test_getAbsPath(self):
-        dir = 'conf'
-        file = 'lxdui.conf'
-        absPath = conf.Config().getAbsPath(dir, file)
-        expected_path = os.path.join(os.path.abspath(dir), file)
-        self.assertEqual(absPath, expected_path)
+    # def test_getAbsPath(self):
+    #     dir = 'conf'
+    #     file = 'lxdui.conf'
+    #     absPath = conf.Config().getAbsPath(dir, file)
+    #     expected_path = os.path.join(os.path.abspath(dir), file)
+    #     self.assertEqual(absPath, expected_path)
 
     def test_getConfig(self):
         file = pathlib.Path('../conf/lxdui.conf')
@@ -129,19 +129,19 @@ class TestConfig(unittest.TestCase):
         with self.assertRaises(Exception):
             conf.Config.parseConfig(file)
 
-    def test_findConf_(self):
-        dir = 'conf'
-        file = 'lxdui.conf'
-        absPath = conf.Config().getAbsPath(dir, file)
-        expected_path = os.path.join(os.path.abspath(dir), file)
-        self.assertEqual(absPath, expected_path)
+    # def test_findConf_(self):
+    #     dir = 'conf'
+    #     file = 'lxdui.conf'
+    #     absPath = conf.Config().getAbsPath(dir, file)
+    #     expected_path = os.path.join(os.path.abspath(dir), file)
+    #     self.assertEqual(absPath, expected_path)
 
-    def test_findConf_fnf(self):
-        # assert = FileNotFoundError
-        dir = pathlib.Path('conf')
-        file = 'lxdui.conf.bad'
-        with self.assertRaises(FileNotFoundError):
-            conf.Config().findConf(dir, file)
+    # def test_findConf_fnf(self):
+    #     # assert = FileNotFoundError
+    #     dir = pathlib.Path('conf')
+    #     file = 'lxdui.conf.bad'
+    #     with self.assertRaises(FileNotFoundError):
+    #         conf.Config().findConf(dir, file)
 
     def test_save(self):
         file = pathlib.Path('../conf/lxdui.conf')
@@ -165,9 +165,9 @@ class TestConfig(unittest.TestCase):
         port = c.config.get('LXDUI', 'lxdui.port')
         self.assertEqual(port, '9999')
 
-    def test_load_meta(self):
-        c = conf.Config().load('meta')
-        self.assertIsInstance(c, configparser.ConfigParser)
+    # def test_load_meta(self):
+    #     c = conf.Config().load('meta')
+    #     self.assertIsInstance(c, configparser.ConfigParser)
 
     def test_load_not_unknown(self):
         with self.assertRaises(Exception):

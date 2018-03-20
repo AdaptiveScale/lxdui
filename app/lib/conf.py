@@ -1,9 +1,11 @@
 from app import __metadata__ as meta
-import configparser
-import os
+from configparser import ConfigParser, ExtendedInterpolation
 from pathlib import Path
+import os
+import io
 import logging
 log = logging.getLogger(__name__)
+APP = meta.APP_NAME
 
 '''
 This component is responsible for configuration management.
@@ -19,7 +21,37 @@ TODO:
     1) service - Get config from a service endpoint (JSON)
     2) db - Get config from a database
 '''
+class MetaConf(object):
+    def __init__(self):
+        conf = ConfigParser()
+        conf.read_string(meta.__default_config__)
+        self.config = conf
+        self.resolveMacos()
+        self.log_file, self.config_file = self.getConfPaths()
 
+    def resolveMacos(self):
+        for section in self.config.sections():
+            for k in self.config.options(section):
+                v = self.config.get(section, k)
+                if '{{app_root}}' in v:
+                    v = v.replace('{{app_root}}', self.getConfRoot())
+                    self.config.set(section, k, v)
+
+    def getConfRoot(self):
+        module_dir = os.path.dirname(__file__)
+        app_dir = os.path.dirname(module_dir)
+        return os.path.dirname(app_dir)
+
+
+    def getConfPaths(self):
+        f = io.StringIO()
+        self.config.write(f)
+        c = ConfigParser(interpolation=ExtendedInterpolation())
+        f.seek(0)
+        c.read_file(f)
+        log_file = c.get(APP, '{}.log.file'.format(APP.lower()))
+        config_file = c.get(APP, '{}.conf.file'.format(APP.lower()))
+        return log_file, config_file
 
 class Config(object):
 
@@ -34,36 +66,34 @@ class Config(object):
 
         :param kwargs: conf=</path/to/config/file> #External source
         """
-        log_path = self.getAbsPath(meta.LOG_DIR, meta.LOG_FILE)
-        ini_path = self.getAbsPath(meta.CONF_DIR, meta.CONF_FILE)
+        m = MetaConf()
+
+        self.config = None
+        self.log_file = m.log_file
+        self.config_file = m.config_file
 
         # conf file specified by the caller
         if kwargs:
             file = kwargs.get('conf')
             log.info('Loading external config file: {}'.format(file))
             if file:
-                self.conf_path = file
-                self.config = self.load('external', self.conf_path)
-                self.envSet(log=log_path, conf=ini_path)
+                self.config = self.load('external', file)
+                self.envSet(log=self.log_file, conf=file)
             else:
                 raise Exception('Unsupported parameter {}'.format(kwargs))
         # no conf parameters specified so check local conf file
-        elif Path(ini_path).exists():
-            log.info('Using ini config file path = {}'.format(ini_path))
-            self.conf_path = ini_path
-            self.config = self.load('ini', self.conf_path)
+        elif Path(self.config_file).exists():
+            log.info('Using config file path = {}'.format(self.config_file))
+            self.config = self.load('ini', self.config_file)
             self.envSet()
         # load the default config from meta
         elif meta.AUTO_LOAD_CONFIG:
             log.info('Load default config (meta)')
+            self.config = m.config
             self.envSet()
-            # self.conf_path = self.envGet().get('{}_CONF'.format(meta.APP_NAME))
-            self.conf_path = ini_path
-            self.config = self.load('meta', self.conf_path)
             self.save()
         else:
             raise Exception('Unable to load the configuration.')
-
 
     def load(self, conf_type, *file_path):
         """
@@ -75,21 +105,11 @@ class Config(object):
         :return:
         """
         if conf_type == 'external':
-            conf_file_path = Path(*file_path)
-            config = self.getConfig(conf_file_path)
+            external_conf_file = Path(*file_path)
+            config = self.getConfig(external_conf_file)
             return config
         elif conf_type == 'ini':
-            conf_source = os.path.join(meta.CONF_DIR, meta.CONF_FILE)
-            conf_path = os.path.abspath(conf_source)
-            conf_file_path = Path(conf_path)
-            actual_path = self.findConf(conf_file_path, conf_source)
-            log.debug('actual_path = {}'.format(actual_path))
-            conf = configparser.ConfigParser()
-            conf.read(actual_path)
-            return conf
-        elif conf_type == 'meta':
-            conf = configparser.ConfigParser()
-            conf.read_string(meta.__default_config__)
+            conf = self.getConfig(self.config_file)
             return conf
         elif conf_type == 'service':
             raise Exception('Not implemented.')
@@ -136,7 +156,7 @@ class Config(object):
 
         :return:
         """
-        with open(self.conf_path, 'w') as f:
+        with open(self.config_file, 'w') as f:
             self.config.write(f)
 
     @staticmethod
@@ -167,40 +187,28 @@ class Config(object):
             conf_path = kwargs.get('conf')
             log.debug('Setting environment variables')
         else:
-            log_path = self.getAbsPath(meta.LOG_DIR, meta.LOG_FILE)
-            conf_path = self.getAbsPath(meta.CONF_DIR, meta.CONF_FILE)
+            log_path = self.log_file
+            conf_path = self.config_file
 
-        os.environ['{}_LOG'.format(meta.APP_NAME)] = log_path
-        os.environ['{}_CONF'.format(meta.APP_NAME)] = conf_path
+        os.environ['{}_LOG'.format(APP)] = log_path
+        os.environ['{}_CONF'.format(APP)] = conf_path
 
     def envShow(self):
         if not self.envGet():
-            print('Environment variables for {} have not been set'.format(meta.APP_NAME))
+            print('Environment variables for {} have not been set'.format(APP))
         else:
             for k, v in self.envGet().items():
                 print('{} = {}'.format(k, v))
 
-    def getAbsPath(self, dir, file):
-        """
-        Retrieve the absolute path of a given directory and a file contained within.
-
-        :param dir: The directory resolved to an absolute path
-        :param file: File name
-        :return: Returns a string representing the full path
-        """
-        path = os.path.join(os.path.abspath(dir), file)
-        return path
-
     def getConfig(self, file):
         """
-        Retrieves the contents of the config file.  Checks to ensure
-        that the file exists and that is not
+        Checks to ensure that the file exists Retrieves the contents of the config file.
 
         :param file: A string representing the path to the conf file.
         :return: Returns a config object.
         """
         # if the file exists then read the contents
-        if file.exists():
+        if Path(file).exists():
             try:
                 config = self.parseConfig(file)
                 return config
@@ -219,27 +227,10 @@ class Config(object):
         :return: Return a config object
         """
         # make sure the file is not empty
-        size = file.stat().st_size
+        size = Path(file).stat().st_size
         if size != 0:
-            config = configparser.ConfigParser()
+            config = ConfigParser(interpolation=ExtendedInterpolation())
             config.read(file.__str__())
             return config
         else:
             raise Exception('File is empty.')
-
-    @staticmethod
-    def findConf(conf_file_path, conf_source):
-        """
-        Check if the file exists.  It will search the parents up the path
-        tree to find a match.
-
-        :param conf_file_path:
-        :param conf_source:
-        :return: Return a string representing the path
-        """
-        for dir in conf_file_path.parents:
-            file = os.path.join(dir.__str__(), conf_source)
-            if Path(file).exists():
-                return file
-            else:
-                raise FileNotFoundError
