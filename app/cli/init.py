@@ -1,10 +1,10 @@
 from app.lib import conf, auth, cert
 from pathlib import Path
-from app import __metadata__
+from app import __metadata__ as meta
 import shutil
 import os
 import logging
-logger = logging.getLogger(__name__)
+log = logging.getLogger(__name__)
 
 class Init(object):
     """
@@ -48,21 +48,21 @@ class Init(object):
 
     """
 
+    APP = meta.APP_NAME
+
     def __init__(self, password):
-        m = __metadata__
         c = conf.Config()
         self.password = auth.User.sha_password(password)
-        self.username = c.get(m.APP_NAME, 'lxdui.admin.user')
-        self.auth_file = c.get(m.APP_NAME, 'lxdui.auth.conf')
-        self.cert_file = c.get(m.APP_NAME, 'lxdui.ssl.cert')
-        self.key_file = c.get(m.APP_NAME, 'lxdui.ssl.key')
+        self.username = c.get(self.APP, '{}.admin.user'.format(self.APP.lower()))
+        self.auth_file = c.get(self.APP, '{}.auth.conf'.format(self.APP.lower()))
+        self.cert_file = c.get(self.APP, '{}.ssl.cert'.format(self.APP.lower()))
+        self.key_file = c.get(self.APP, '{}.ssl.key'.format(self.APP.lower()))
         self.key, self.cert = cert.Certificate().create()
         self.account = [{'username': self.username, 'password': self.password}]
-        logger.debug('Initializing auth file with: username = {}, password = {}'
-                 .format(self.username, self.password))
         self.create('auth', self.auth_file)
         self.create('key', self.key_file)
         self.create('cert', self.cert_file)
+        log.debug('Initializing auth file with: username = {}, password = {}'.format(self.username, self.password))
         print('LXDUI is now configured.  You can now use '
               'the admin account to log in to the app.')
 

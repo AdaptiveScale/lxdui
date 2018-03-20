@@ -1,11 +1,12 @@
 from app import __metadata__ as m
+from app.lib.conf import MetaConf
 import os
 import logging.handlers
 
 
 class Log:
     def __init__(self, __name__):
-        self.log = os.path.join(m.LOG_DIR, m.LOG_FILE)
+        self.log = MetaConf().log_file
         self.configure(__name__)
 
     def configure(self, __name__):
