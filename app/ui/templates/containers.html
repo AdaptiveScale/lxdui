@@ -1,21 +1,5 @@
 {% extends "index.html" %}
 {% block content %}
-    <script>
-        showContainers();
-        {% if auto_refresh %}
-        //one-time-refresh
-        window.history.pushState("object", document.title, "/containers");
-        {% endif %}
-
-        {% with succesful = get_flashed_messages(category_filter=["success"]) %}
-        {% if succesful %}
-        //for successful login
-        {%- for msg in succesful %}
-        toastr['success']("{{msg}}");
-        {% endfor -%}
-        {% endif %}
-        {% endwith %}
-    </script>
     <div id="containers-set-id">
     <div class="col-lg-12 main-div">
         <div class="col-lg-12">
@@ -55,7 +39,8 @@
             <tbody>
             {% for container in containers %}
             <tr>
-                <td>{{loop.index}}</td>
+                <!--<td>{{loop.index}}</td>-->
+                <td></td>
                 <td>{{container.name}}</td>
                 <td>{{container.status}}</td>
                 <td>{{container.ipaddress}}</td>

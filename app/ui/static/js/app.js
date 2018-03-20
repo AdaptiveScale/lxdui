@@ -8,6 +8,7 @@ var App = App || {
     login:null,
     containers: null,
     images: null,
+    profiles: null,
     loading: false,
     notInitialized:['containers', 'images'],
     init: function(){
@@ -18,6 +19,8 @@ var App = App || {
             this.login.init();
         if(this.containers && window.location == WEB +'containers')
             this.containers.init();
+        if(this.profiles && window.location == WEB +'profiles')
+            this.profiles.init();
         console.log('App initialized');
         this.getInfo();
     },

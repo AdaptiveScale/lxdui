@@ -1,38 +1,19 @@
-App.containers = App.containers || {
+App.profiles = App.profiles || {
     data:[],
     error:false,
     errorMessage:'',
     loading:false,
-    selectedContainers: [],
 
-    dataTable:null,
     initiated:false,
     init: function(){
-        console.log('Containers init');
-        $('#tbl-containers').DataTable({
-            searching:true,
-            responsive: true,
-            select: true,
-            columnDefs: [
-                {
-                    orderable: false,
-                    className: 'select-checkbox',
-                    targets:   0
-                }
-            ],
-            select: {
-                style:    'multi',
-                selector: 'td:first-child'
-            },
-            order: [[ 1, 'asc' ]],
-        });
-//        console.log(this.dataTable.columns());
-        $('#refreshContainers').on('click', $.proxy(this.refreshContainers, this));
+        console.log('Profiles init');
+        $('#tbl-profile').DataTable();
+        $('#buttonRefresh').on('click', $.proxy(this.refreshProfiles, this));
 
         this.getData();
     },
-    refreshContainers: function(e){
-        console.log('refreshContainers');
+     refreshProfiles: function(e){
+        console.log('refreshProfiles');
         e.preventDefault();
         console.log('dataTable', this.dataTable);
         this.getData();
@@ -42,7 +23,7 @@ App.containers = App.containers || {
     },
     getData: function(){
         this.setLoading(true);
-        $.get(App.baseAPI+'container', $.proxy(this.getDataSuccess, this));
+        $.get(App.baseAPI+'profile', $.proxy(this.getDataSuccess, this));
     },
     getDataSuccess: function(response){
         console.log('success', response.data);
@@ -50,7 +31,50 @@ App.containers = App.containers || {
         this.data = response.data;
         if(!this.initiated)
             return this.initiated = true;
-        $('#tbl-containers').DataTable();
+
+        this.updateLocalTable(response.data);
+    },
+    updateLocalTable: function(jsonData){
+        this.data = jsonData;
+        $('#tbl-profile').DataTable().clear();
+        $('#tbl-profile').DataTable().destroy();
+        $('#tbl-profile').DataTable({
+            searching:true,
+            data : this.data,
+            responsive: true,
+            columns : [
+                {
+                    data : null,
+                    defaultContent:'<input type="checkbox" class="profiles-check">'
+                },
+                { data : "description"},
+                { data : "devices",  render: function(field){
+                    return Object.keys(field).map((name)=>{
+                               return '<ul>'+
+                               '<h4>'+name+'</h4>'+
+                                    Object.keys(field[name]).map((prop)=>{
+                                        return '<li>'+prop+':'+field[name][prop]+'</li>'
+                                    }).join('')+
+                               '</ul>'
+                            }).join('');
+                    }
+                },
+                { data : "name" }
+//                { data : "used_by" },
+                { data : "used_by", render: function(field){
+                    return Object.keys(field).map((name)=>{
+                               return '<ul>'+
+                               '<h4>'+name+'</h4>'+
+                                    Object.keys(field[name]).map((prop)=>{
+                                        return '<li>'+prop+':'+field[name][prop]+'</li>'
+                                    }).join('')+
+                               '</ul>'
+                            }).join('');
+                    }
+                }
+
+            ]
+        });
     }
 
 
