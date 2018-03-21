@@ -7,28 +7,34 @@ App.containers = App.containers || {
 
     dataTable:null,
     initiated:false,
+    tableSettings: {
+        rowId:'name',
+        searching:true,
+        responsive: true,
+        select: true,
+        columnDefs: [
+            {
+                orderable: false,
+                className: 'select-checkbox',
+                targets:   0
+            }
+        ],
+        select: {
+            style:    'multi',
+            selector: 'td:first-child'
+        },
+        order: [[ 1, 'asc' ]],
+    },
     init: function(){
         console.log('Containers init');
-        $('#tbl-containers').DataTable({
-            searching:true,
-            responsive: true,
-            select: true,
-            columnDefs: [
-                {
-                    orderable: false,
-                    className: 'select-checkbox',
-                    targets:   0
-                }
-            ],
-            select: {
-                style:    'multi',
-                selector: 'td:first-child'
-            },
-            order: [[ 1, 'asc' ]],
-        });
-//        console.log(this.dataTable.columns());
+        this.dataTable = $('#tableContainers').DataTable(this.tableSettings);
         $('#refreshContainers').on('click', $.proxy(this.refreshContainers, this));
-
+        $('#buttonStart').on('click', $.proxy(this.startContainer, this));
+        $('#buttonStop').on('click', $.proxy(this.stopContainer, this));
+        $('#buttonRestart').on('click', $.proxy(this.restartContainer, this));
+        $('#buttonDelete').on('click', $.proxy(this.deleteContainer, this));
+        this.dataTable.on('select', $.proxy(this.onRowSelected, this));
+        this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
         this.getData();
     },
     refreshContainers: function(e){
@@ -50,10 +56,101 @@ App.containers = App.containers || {
         this.data = response.data;
         if(!this.initiated)
             return this.initiated = true;
-        $('#tbl-containers').DataTable();
-    }
+        this.dataTable.clear();
+        this.dataTable.destroy();
+        this.dataTable=$('#tableContainers').DataTable(App.mergeProps(this.tableSettings, {
+            data:this.data,
+            columns : [
+                { title:'Select', data: null, defaultContent:''},
+                { title:'Name', data : 'name'},
+                { title:'Status', data : 'status' },
+                { title:'IP Address', data : 'ipaddress', defaultContent:''},
+                { title:'OS Image', data : 'config',
+                    render:function(field){
+                        return field['image.distribution'];
+                    }
+                },
+                { title:'Create at', data : 'created_at' }
+            ]
+        }));
+    },
+    onRowSelected: function(e, dt, type, indexes ){
+        var state = this.dataTable.rows({selected:true}).count()>0?'visible':'hidden';
+        $('#buttonStart').css('visibility',state);
+        $('#buttonStop').css('visibility',state);
+        $('#buttonRestart').css('visibility',state);
+        $('#buttonDelete').css('visibility',state);
+    },
+    startContainer: function(){
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'container/start/' + row['name'],
+                type: 'PUT',
+                success: $.proxy(this.onStartSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+    onStartSuccess: function(name){
+        $('.success-msg').text('Container ' + name + 'has been started')
+        var parent = $('.success-msg').parent().toggleClass('hidden');
+        setTimeout(function(){
+          parent.toggleClass('hidden');
+        }, 10000)
+    },
+    stopContainer: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'container/stop/' + row['name'],
+                type: 'PUT',
+                success: $.proxy(this.onStopSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+    onStopSuccess: function(name){
+        $('.success-msg').text('Container ' + name + ' has been stopped');
+        var parent = $('.success-msg').parent().toggleClass('hidden');
 
+        setTimeout(function(){
+          parent.toggleClass('hidden');
+        }, 10000);
+    },
+    restartContainer: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'container/restart/' + row['name'],
+                type: 'PUT',
+                success: $.proxy(this.onRestartSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+    onRestartSuccess: function(name){
+        $('.success-msg').text('Container ' + name + ' has been restarted');
+        var parent = $('.success-msg').parent().toggleClass('hidden');
 
+        setTimeout(function(){
+          parent.toggleClass('hidden');
+        }, 10000);
+    },
+    deleteContainer: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'container/' + row['name'],
+                type: 'DELETE',
+                success: $.proxy(this.onDeleteSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+
+    onDeleteSuccess: function(name){
+        this.dataTable.row("#"+name).remove().draw();
+        $('.success-msg').text('Container ' + name + ' has been removed');
+        var parent = $('.success-msg').parent().toggleClass('hidden');
+
+        setTimeout(function(){
+          parent.toggleClass('hidden');
+        }, 10000);
+
+    },
 }
 
 //var selectedContainers = [];

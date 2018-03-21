@@ -13,7 +13,7 @@ def remoteImagesList(images):
 def prepRemoteImageObject(alias, aliasesDetails):
     image = {
         'name': aliasesDetails[0].__str__(),
-        'distribuion': aliasesDetails[1].__str__(),
+        'distribution': aliasesDetails[1].__str__(),
         'architecture': aliasesDetails[2].__str__(),
         'image': alias
     }

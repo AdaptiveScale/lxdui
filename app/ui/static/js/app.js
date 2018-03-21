@@ -8,7 +8,6 @@ var App = App || {
     login:null,
     containers: null,
     images: null,
-    profiles: null,
     loading: false,
     notInitialized:['containers', 'images'],
     init: function(){
@@ -17,9 +16,11 @@ var App = App || {
 
         if(this.login && window.location == WEB)
             this.login.init();
-        if(this.containers && window.location == WEB +'containers')
+        if(this.containers && window.location.href.startsWith(WEB +'containers'))
             this.containers.init();
-        if(this.profiles && window.location == WEB +'profiles')
+        if(this.containers && window.location.href.startsWith(WEB +'images'))
+            this.images.init();
+        if(this.containers && window.location.href.startsWith(WEB +'profiles'))
             this.profiles.init();
         console.log('App initialized');
         this.getInfo();
@@ -32,7 +33,6 @@ var App = App || {
         });
     },
     getInfoSuccess:function(response){
-        console.log('getInfo', response);
         this.info = response.data;
     },
     setDefaultHeaders: function(){
@@ -60,6 +60,12 @@ var App = App || {
       var ndx = Math.floor( Math.log(bytes) / Math.log(kb) );
       var fileSizeTypes = ["BYTES", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
       return (bytes / kb / kb).toFixed(2) + ' '+ fileSizeTypes[ndx];
+    },
+    mergeProps:function(source, destination){
+         for(var prop in source){
+             destination[prop]=source[prop]
+         }
+         return destination;
     }
 };
 
