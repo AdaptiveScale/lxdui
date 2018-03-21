@@ -1,13 +1,11 @@
+from app.lib.auth import User
 from datetime import timedelta
-
 from flask_jwt import JWT
-
 from app.api.utils import converters
 
-# TODO implement proper auth checking
 def authenticate(username, password):
-    if username == 'admin' and password == 'admin':
-        return converters.json2obj('{"id": 1, "username": "admin", "password": "admin"}')
+    if User().authenticate(username, password)[0]:
+        return converters.json2obj('{"id": 1, "username": "'+username+'", "password": "'+password+'"}')
 
 
 def identity(payload):

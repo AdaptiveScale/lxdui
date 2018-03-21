@@ -1,13 +1,15 @@
 from app import __metadata__ as meta
-import click
-import os
 from app.lib.conf import Config
 from app.lib.auth import User
 from app.cli.init import Init
 from app.lib.cert import Certificate
-
 from app.api import core
 from app.ui.blueprint import uiPages
+import click
+import os
+import sys
+import logging
+log = logging.getLogger(__name__)
 
 APP = meta.APP_NAME
 
@@ -20,7 +22,9 @@ lui stop					                #stop the app
 lui restart					                #restart the app
 lui status					                #show the pid and the http endpoint for the UI <http://hostname:port> 
 lui config show				                #print out running config to console
-lui config set lxdui.port <port>		    #set the value for a configuration key
+lui config set -c <path_to_conf_file>       #use external conf file
+lui config set <key> <value>    		    #set the value for a configuration key
+lui cert add     				            #add existing certs from file path
 lui cert create				                #generate new SSL certs (overwrite old files)
 lui cert list				                #list SSL certs
 lui cert delete 				            #remove SSL certs
@@ -29,16 +33,6 @@ lui user update -u <username> -p <password> #the user specified in lxdui.admin.u
 lui user delete -u <username>			    #remove a user from the auth file
 lui user list				                #list the users in the auth file
 '''
-
-
-# click.clear()
-
-
-def progressBar(iterable):
-    c = range(9999)
-    with click.progressbar(c, label='exporting...') as bar:
-        for i in bar:
-            i = None
 
 
 ''' Command Groups '''
@@ -62,10 +56,17 @@ def init(password):
 
 
 @lui.command()
+# @click.option('-d', '--daemon', nargs=0, help='Starts the app in the background.')
 def start():
     """Start LXDUI"""
+    '''
+    TODO:  add -d option to start the server as a daemon
+    '''
+    # if daemon:
+    #     #start in the background
     #click.echo("Starting %s" % APP)
     core.startApp(uiPages)
+
 
 
 @lui.command()
@@ -85,6 +86,29 @@ def status():
     """Check the status of LXDUI"""
     click.echo("%s Status" % APP)
 
+@lui.command()
+def cwd():
+    """Check the status of LXDUI"""
+    click.echo(os.getcwd())
+    click.echo(os.path.dirname(__file__))
+    click.echo(os.path.dirname(os.path.abspath(__file__)))
+
+    # click.echo(os.path.abspath(__file__))
+    # click.echo(sys.modules[__name__].__file__)
+    # click.echo(os.path.abspath(__file__))
+    # click.echo(os.path.realpath(__file__))
+    # import inspect
+    # click.echo(inspect.getfile(Config()))
+    # click.echo(sys.path)
+    from configparser import ConfigParser, ExtendedInterpolation
+    # c = ConfigParser()
+    c = ConfigParser(interpolation=ExtendedInterpolation())
+    c.read('/Users/vetoni/PycharmProjects/lxdui/conf/lxdui.conf')
+    cd = c.get(APP, 'lxdui.conf.dir')
+    a = c.get(APP, 'lxdui.auth.conf')
+    click.echo(cd)
+    click.echo(a)
+    click.echo('{{app_path}}' in a)
 
 ''' 
     User level group of commands 
@@ -140,7 +164,7 @@ def delete(username):
     Config commands
 
     lui config show				                #print out running config to console
-    lui config set lxdui.port <port>		    #set the value for a configuration key
+    lui config set <key> <value>		    #set the value for a configuration key
 '''
 
 
@@ -161,7 +185,7 @@ def show():
 @click.argument('value', nargs=1)
 def set(parameter, value):
     """Set a configuration parameter"""
-    Config().set('LXDUI', parameter, value)
+    Config().set(APP, parameter, value)
 
 
 '''
@@ -175,40 +199,55 @@ def set(parameter, value):
 
 @click.group()
 def cert():
-    """List and modify configuration parameters"""
+    """Work with certificates"""
     pass
 
 
 @cert.command()
-@click.option('-p', '--path', nargs=1, help='Path for certificates')
-def create(path):
+@click.option('-c', '--cert', nargs=1, help='Path to the certificate file')
+@click.option('-k', '--key', nargs=1, help='Path to the key file')
+def add(cert, key):
+    """Add preexisting certificates"""
+    if (os.path.exists(key) and os.path.exists(cert)) and (os.path.isfile(key) and os.path.isfile(cert)):
+        conf = Config()
+        conf.set(APP, '{}.ssl.key'.format(APP.lower()), key)
+        conf.set(APP, '{}.ssl.cert'.format(APP.lower()), cert)
+        conf.save()
+    else:
+        log.info("Error reading user provided key and certificate. key={} cert={} ".format(key, cert))
+        raise Exception("Please check your paths and try again")
+
+
+@cert.command()
+def create():
     """Create client certificates"""
     c = Certificate()
-    c.save(path + '/test.key', c.key)
-    c.save(path + '/test.crt', c.cert)
+    key, crt = c.create()
+    c.save(key)
+    c.save(crt)
 
 
 @cert.command()
 def list():
     """Show available certificates"""
     # path = Config().get('LXDUI', 'lxdui.conf.dir')
-    key = Config().get(APP, 'lxdui.ssl.key')
-    cert = Config().get(APP, 'lxdui.ssl.cert')
+    key = Config().get(APP, '{}.ssl.key'.format(APP.lower()))
+    cert = Config().get(APP, '{}.ssl.cert'.format(APP.lower()))
 
     path = 'conf'
     for root, dirs, files in os.walk(path):
         for file in files:
             name, ext = os.path.splitext(file)
             if ext in ['.key', '.crt']:
-                click.echo(path + '/' + file)
+                click.echo(os.path.join(path, file))
 
 
 @cert.command()
 def delete():
     """Delete certificates"""
     path = 'conf'
-    key = Config().get(APP, 'lxdui.ssl.key')
-    cert = Config().get(APP, 'lxdui.ssl.cert')
+    key = Config().get(APP, '{}.ssl.key'.format(APP.lower()))
+    cert = Config().get(APP, '{}.ssl.cert'.format(APP.lower()))
 
     try:
         os.remove(key)
@@ -226,8 +265,10 @@ lui.add_command(status)
 lui.add_command(user)
 lui.add_command(config)
 lui.add_command(cert)
-# user.add_command(add)
-# user.add_command(update)
+
+########################
+lui.add_command(init)
+
 
 if __name__ == '__main__':
     lui()

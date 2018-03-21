@@ -3,14 +3,11 @@ APP_CLI_CMD = 'lui'
 VERSION = '2.0'
 GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
 LXD_URL = 'http://localhost:8443'
-CONF_DIR = '../conf'
-CONF_FILE = 'lxdui.conf'
-LOG_DIR = '../logs'
-LOG_FILE = 'lxdui.log'
 LICENSE = 'Apache 2.0'
 AUTHOR = 'AdaptiveScale, Inc.'
 AUTHOR_URL = 'http://www.adaptivescale.com'
 AUTHOR_EMAIL = 'info@adaptivescale.com'
+KEYWORDS = 'lxc lxc-containers lxd'
 
 '''
 
@@ -25,18 +22,21 @@ __default_config__ = """
 [LXDUI]
 lxdui.port = 15151
 lxdui.admin.user = admin
-lxdui.conf.dir = conf
-lxdui.conf.file = lxdui.conf
-lxdui.auth.conf = ../%(lxdui.conf.dir)s/auth.conf
-lxdui.ssl.cert = client.crt
-lxdui.ssl.key = client.key
-#lxdui.profiles = ${lxdui.conf.dir}/profiles
-#lxdui.log.dir = /var/log/lxdui
-lxdui.log.dir = logs
-lxdui.log.file = lxdui.log
+lxdui.conf.dir = {{app_root}}/conf
+lxdui.conf.file = ${lxdui.conf.dir}/lxdui.conf
+lxdui.auth.conf = ${lxdui.conf.dir}/auth.conf
+lxdui.ssl.cert = ${lxdui.conf.dir}/client.crt
+lxdui.ssl.key = ${lxdui.conf.dir}/client.key
+lxdui.log.dir =  {{app_root}}/logs
+lxdui.log.file = ${lxdui.log.dir}/lxdui.log
+#lxdui.log.rotate = true
+#lxdui.log.max = 10M
+#lxdui.log.keep.generations = 5
+lxdui.profiles = ${lxdui.conf.dir}/profiles
 lxdui.zfs.pool.name = lxdpool
 lxdui.app.alias = LXDUI
-
+lxdui.cli = lui
+        
 [LXDUI_CERT]
 lxdui.cert.country = US
 lxdui.cert.state = Texas
@@ -47,7 +47,7 @@ lxdui.cert.ou = OU=AdaptiveScale, DN=com
 [LXD]
 lxd.bridge.enabled = true
 lxd.bridge.name = lxdbr0
-lxd.dns.conf.file =
+lxd.dns.conf.file = 
 lxd.dns.domain = lxd
 lxd.ipv4.addr = 10.5.5.1
 lxd.ipv4.netmask = 255.255.255.0
@@ -61,3 +61,4 @@ lxd.ipv6.network = 2001:470:b368:4242::/64
 lxd.ipv6.nat = false
 lxd.ipv6.proxy = false
 """
+
