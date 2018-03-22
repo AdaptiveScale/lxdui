@@ -2,14 +2,11 @@ App.network = App.network || {
     error: false,
     loading: false,
     data: [],
-
     tableSettings: {
+        rowId:'name',
         searching:true,
-        responsive: {
-            details: false
-        },
+        responsive: true,
         select: true,
-        autoWidth: true,
         columnDefs: [
             {
                 orderable: false,
@@ -21,10 +18,11 @@ App.network = App.network || {
             style:    'multi',
             selector: 'td:first-child'
         },
-        order: [[ 1, 'asc' ]]
+        order: [[ 1, 'asc' ]],
     },
     init: function(opts){
         console.log('Network initialized')
+        this.dataTable = $('#tableNetworks').DataTable(this.tableSettings);
         $('#buttonUpdateNetwork').on('click', $.proxy(this.updateNetwork, this));
     },
     setLoading: function(state){
