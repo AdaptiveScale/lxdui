@@ -8,8 +8,9 @@ var App = App || {
     login:null,
     containers: null,
     images: null,
+    network: null,
     loading: false,
-    notInitialized:['containers', 'images'],
+    notInitialized:['containers', 'images', 'network'],
     init: function(){
         console.log('App initializing');
         this.setDefaultHeaders();
@@ -22,6 +23,8 @@ var App = App || {
             this.images.init();
         if(this.containers && window.location.href.startsWith(WEB +'profiles'))
             this.profiles.init();
+        if(this.containers && window.location.href.startsWith(WEB +'network'))
+            this.network.init();
         console.log('App initialized');
         this.getInfo();
     },
