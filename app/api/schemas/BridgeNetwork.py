@@ -148,7 +148,7 @@ class BridgeNetwork():
         time.sleep(1)
         textline = ""
         for lxc_network_value in lines_to_exec['unset']:
-            p = subprocess.Popen(["sudo", "lxc", "network", "unset", name, lxc_network_value],
+            p = subprocess.Popen(["lxc", "network", "unset", name, lxc_network_value],
                                  stdout=subprocess.PIPE)
             textline += "LXC UNSET <{0}> ,,,".format(lxc_network_value.upper())
             # print p.stdout.read()
@@ -158,7 +158,7 @@ class BridgeNetwork():
         for l in lines_to_exec["set"]:
             LXC_NET_ATTR = list(l.keys())[0]
             LXC_NET_ATTR_VAL = l[LXC_NET_ATTR]
-            p = subprocess.Popen(["sudo", "lxc", "network", "set", name, LXC_NET_ATTR, LXC_NET_ATTR_VAL],
+            p = subprocess.Popen(["lxc", "network", "set", name, LXC_NET_ATTR, LXC_NET_ATTR_VAL],
                                  stdout=subprocess.PIPE)
             textline += "LXC SET <{0}> => <{1}> ,,,".format(LXC_NET_ATTR, LXC_NET_ATTR_VAL)
             # print p.stdout.read()
