@@ -1,0 +1,51 @@
+{% extends "index.html" %}
+{% block content %}
+    <script>
+        (function getLocalImages(){
+            $.get(API + 'local-images', function (response) {
+                LOCAL_IMAGES = response.payload;
+                LOCAL_IMG_TOTAL = LOCAL_IMAGES.length;
+            });
+        }());
+
+    </script>
+    <div class="col-lg-12 main-div" id="set-div">
+         <div class="col-lg-12">
+             <div class="col-lg-offset-4 col-lg-4">
+                 <img id="loader" src="static/images/loader.gif" class="text-center" width="150px">
+                 </div>
+            </div>
+        <div class="col-lg-12">
+            <div class="">
+                <table class="table table-bordered table-fixed">
+                    <thead>
+                    <th><input type="checkbox" id="chk-images" onchange="selectAllImages()"></th>
+
+                    <th>Description</th>
+                    <th>Devices</th>
+                    <th>Name</th>
+                    <th>Used by</th>
+
+                    </thead>
+                    <tbody>
+                    {% for profile in profiles %}
+                    <tr id="img_{{profile.name}}">
+                        <td><input type="checkbox" class="images-check" data="{{profile.name}}" display_name="{{profile.name}}"></td>
+                        <td>{{ profile.description }}</td>
+                        <td>
+                            {{profile.devices.root.pool}}<br>
+                            {{profile.devices.root.path}}<br>
+                            {{profile.devices.root.type}}
+                        </td>
+                        <td>{{profile.name}}</td>
+                        <td>{{profile.used_by[0]}}, <br> {{profile.used_by[1]}}</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+
+    </div>
+{% endblock %}
