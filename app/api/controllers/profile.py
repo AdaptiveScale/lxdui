@@ -23,14 +23,13 @@ def profiles():
 @profile_api.route('/', methods=['POST'])
 @jwt_required()
 def create_profile():
-    data = request.get_json(silent=True)
-    validate = doValidate(data)
-
-    if validate:
-        return response.replyFailed(message=validate.message, status=403)
+    input = request.get_json(silent=True)
+    validation = doValidate(input)
+    if validation:
+        return response.replyFailed(message=validation.message)
 
     try:
-        profile = LXCProfile(data)
+        profile = LXCProfile(input)
         return jsonify(profile.createProfile())
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
