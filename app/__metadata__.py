@@ -7,6 +7,7 @@ LICENSE = 'Apache 2.0'
 AUTHOR = 'AdaptiveScale, Inc.'
 AUTHOR_URL = 'http://www.adaptivescale.com'
 AUTHOR_EMAIL = 'info@adaptivescale.com'
+KEYWORDS = 'lxc lxc-containers lxd'
 
 '''
 
