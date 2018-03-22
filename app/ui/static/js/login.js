@@ -60,11 +60,19 @@ App.login = App.login || {
 //        $.post(App.baseAPI+'user/login', data, $.proxy(this.doLoginSuccess, this), 'json');
     },
     doLoginSuccess: function(response){
-        console.log('loginSuccess', response);
+        console.log('loginSuccess', response, this, App);
         localStorage.setItem('authToken', response.access_token);
-        window.location = WEB + 'containers'
+
+        window.location = App.baseWEB + 'containers';
     },
     doLoginError: function(error){
-        console.log('loginError', error);
+        if(error.status == 401) {
+            $('.msg').text('Check username and password');
+            var parent = $('.msg').parent().toggleClass('hidden');
+        }
+    },
+    doLogout: function() {
+        localStorage.removeItem('authToken');
+        window.location = App.baseWEB;
     }
 }

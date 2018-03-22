@@ -27,6 +27,8 @@ var App = App || {
             this.network.init();
         console.log('App initialized');
         this.getInfo();
+        $('.buttonLogout').on('click', $.proxy(this.login.doLogout, this.login));
+
     },
     getInfo: function(){
         $.ajax({
