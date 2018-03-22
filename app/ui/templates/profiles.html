@@ -15,10 +15,9 @@
                 <table class="table table-bordered table-fixed" id="tbl-profile">
                     <thead>
                     <th><input type="checkbox" id="chk-images"></th>
-
+                    <th>Name</th>
                     <th>Description</th>
                     <th>Devices</th>
-                    <th>Name</th>
                     <th>Used by</th>
 
                     </thead>
@@ -26,6 +25,7 @@
                     {% for profile in profiles %}
                     <tr id="img_{{profile.name}}">
                         <td><input type="checkbox" class="images-check" data="{{profile.name}}" display_name="{{profile.name}}"></td>
+                        <td>{{profile.name}}</td>
                         <td>{{ profile.description }}</td>
                         <td>
                              {% for device in profile.devices %}
@@ -38,17 +38,12 @@
                             </ul>
                              {% endfor %}
                         </td>
-                        <td>{{profile.name}}</td>
-                        <td>test</td>
-                        <!--<td>-->
-                         <!--{% for used in profile.used_by %}-->
-                            <!--<li>{{used}}</li>-->
-                            <!--{% for key, value in profile.used_by[used].items() %}-->
-                                <!--<li>{{key}}: {{value}}</li>-->
-                                <!--<li>print({{key}}), print({{value}})</li>-->
-                            <!--{% endfor %}-->
-                         <!--{% endfor %}-->
-                        <!--</td>-->
+                        <td>
+                         {% for used in profile.used_by %}
+                            <li>{{used}}</li>
+                         {% endfor %}
+                        </td>
+
                     </tr>
                     {% endfor %}
                     </tbody>
