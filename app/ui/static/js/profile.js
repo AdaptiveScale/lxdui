@@ -3,11 +3,28 @@ App.profiles = App.profiles || {
     error:false,
     errorMessage:'',
     loading:false,
-
     initiated:false,
+    tableSettings: {
+        rowId:'name',
+        searching:true,
+        responsive: true,
+        select: true,
+        columnDefs: [
+            {
+                orderable: false,
+                className: 'select-checkbox',
+                targets:   0
+            }
+        ],
+        select: {
+            style:    'multi',
+            selector: 'td:first-child'
+        },
+        order: [[ 1, 'asc' ]],
+    },
     init: function(){
         console.log('Profiles init');
-        $('#tbl-profile').DataTable();
+        this.dataTable = $('#tableProfiles').DataTable(this.tableSettings);
         $('#buttonRefresh').on('click', $.proxy(this.refreshProfiles, this));
 
         this.getData();
