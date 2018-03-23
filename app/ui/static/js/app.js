@@ -59,8 +59,21 @@ var App = App || {
                     if(response.status == 401 && window.location!== WEB){
                         window.location = WEB;
                     }
+                    if(window.location!== WEB){
+                        App.triggerAlert(response, this.type    , this.url);
+                    }
                 }
             });
+        }
+    },
+    triggerAlert: function(response, method, url){
+        if([undefined, 'GET'].indexOf(method)>-1)
+            return;
+        var tempResp = response.responseJSON || response;
+        if(response.status !== 200){
+            toastr.error(response.data || 'Unknown error', response.message||'Error');
+        }else{
+            toastr.success(response.message,'Success');
         }
     },
     formatBytes:function(bytes){
