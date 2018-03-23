@@ -22,8 +22,15 @@ App.profiles = App.profiles || {
         },
         order: [[ 1, 'asc' ]],
     },
+    configEditor:null,
+    devicesEditor:null,
+
     init: function(){
         console.log('Profiles init');
+        this.configEditor = ace.edit('configEditor');
+        this.devicesEditor = ace.edit('devicesEditor');
+        this.configEditor.session.setMode('ace/mode/json');
+        this.devicesEditor.session.setMode('ace/mode/json');
         this.dataTable = $('#tableProfiles').DataTable(this.tableSettings);
         $('#buttonNewProfile').on('click', $.proxy(this.showNewProfile, this));
         $('#backProfile').on('click', $.proxy(this.backToProfiles, this));
@@ -94,15 +101,28 @@ App.profiles = App.profiles || {
     },
     createProfile: function() {
         console.log('Create Profile...');
+        if (this.configEditor.getValue() === '') {
+            configValue = {};
+        }
+        else {
+            configValue = JSON.parse(this.configEditor.getValue());
+        }
+        if (this.devicesEditor.getValue() === '') {
+            devicesValue = {};
+        }
+        else {
+            devicesValue = JSON.parse(this.devicesEditor.getValue());
+        }
+
         $.ajax({
             url:App.baseAPI+'profile/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-                name: $('#name').val(),
-                config: {},
-                devices: {},
+                "name": $('#name').val(),
+                "config": configValue,
+                "devices": devicesValue,
             }),
             success: $.proxy(this.onProfileCreate, this)
         });

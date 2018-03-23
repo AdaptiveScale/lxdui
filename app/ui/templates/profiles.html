@@ -28,6 +28,7 @@
                 <th>#</th>
                 <th>Name</th>
                 <th>Description</th>
+                <th>Config</th>
                 <th>Devices</th>
                 <th>Used by</th>
 
@@ -48,6 +49,14 @@
                             {% endfor %}
                         </ul>
                          {% endfor %}
+                    </td>
+                    <td>
+                        <ul>
+                            {% for key, value in profile.config.items() %}
+
+                            {{key}}: {{value}}<br>
+                            {% endfor %}
+                        </ul>
                     </td>
                     <td>
                      {% for used in profile.used_by %}
@@ -84,16 +93,22 @@
                         <input id="name" name="name" class="form-control" type="text" placeholder="Profile Name" title="Profile Name" required/>
                     </div>
                 </div>
+                <!--<div class="form-group">-->
+                    <!--<label for="description" class="col-sm-3 control-label">Profile Description</label>-->
+                    <!--<div class="col-sm-3">-->
+                        <!--<input id="description" name="description" class="form-control" type="text" placeholder="Profile Description" title="Profile Description"/>-->
+                    <!--</div>-->
+                <!--</div>-->
                 <div class="form-group">
-                    <label for="config" class="col-sm-3 control-label">Config</label>
+                    <label for="configEditor" class="col-sm-3 control-label">Config (JSON)</label>
                     <div class="col-sm-3">
-                        <input id="config" name="config" class="form-control" type="text" placeholder="Config" title="Config"/>
+                        <div id="configEditor" style="width: 300px; height:200px; position:relative;"></div>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="devices" class="col-sm-3 control-label">Devices</label>
+                    <label for="devicesEditor" class="col-sm-3 control-label">Devices (JSON)</label>
                     <div class="col-sm-3">
-                        <input id="devices" name="devices" class="form-control" type="text" placeholder="Devices" title="Devices" />
+                        <div id="devicesEditor" name="devicesEditor" style="width: 300px; height:200px; position:relative;"></div>
                     </div>
                 </div>
                 <div class="form-group">
