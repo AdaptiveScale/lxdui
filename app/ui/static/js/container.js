@@ -69,7 +69,13 @@ App.containers = App.containers || {
                 { title:'Select', data: null, defaultContent:''},
                 { title:'Name', data : 'name'},
                 { title:'Status', data : 'status' },
-                { title:'IP Address', data : 'ipaddress', defaultContent:''},
+                { title:'IP Address', data : 'network',
+                    render: function(field) {
+                        if (!field) return 'N/A';
+                        console.log(field);
+                        return field['eth0']['addresses'][0]['address'];
+                    }
+                },
                 { title:'OS Image', data : 'config',
                     render:function(field){
                         return field['image.distribution'];
