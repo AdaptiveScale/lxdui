@@ -11,8 +11,11 @@ def index():
 @uiPages.route('/containers')
 def container():
     containers = LXDModule().listContainers()
+    images = LXDModule().listLocalImages()
     return render_template('containers.html', currentpage='Containers',
-                           containers=containers, lxdui_current_version='2.0')
+                           containers=containers,
+                           images = images,
+                           lxdui_current_version='2.0')
 
 @uiPages.route('/profiles')
 def profile():
