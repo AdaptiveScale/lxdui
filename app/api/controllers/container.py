@@ -12,7 +12,12 @@ container_api = Blueprint('container_api', __name__)
 @jwt_required()
 def containers():
     client = LXDModule()
-    return response.reply(client.listContainers())
+    result = []
+    containers = client.listContainers()
+    for container in containers:
+        c = LXCContainer({'name': container.get('name')})
+        result.append(c.info())
+    return response.reply(result)
 
 
 @container_api.route('/<string:name>')
