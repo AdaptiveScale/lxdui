@@ -1,7 +1,25 @@
 {% extends "index.html" %} {% block content %}
 <div class="col-lg-12 main-div" id="set-div">
-    <div class="col-lg-12">
+    <div class="col-lg-12" id="networkList">
         <legend>LXD Network</legend>
+        <div>
+            <div class="form-group">
+                <button id="buttonNewNetwork" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                         New Bridge Network
+                </button>
+                <button class="btn btn-danger btn-delete_container" id="buttonDeleteProfile" disabled>
+                    <span class="glyphicon glyphicon-remove-sign"> </span> Delete
+                </button>
+            </div>
+            <div>
+                <div class="alert alert-success fade in alert-dismissible hidden">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                  <strong>Success!</strong> <span class="success-msg"></span>
+                </div>
+            </div>
+        </div>
+
         <div class="">
             <table class="table table-bordered table-fixed" id="tableNetworks">
                 <thead>
@@ -10,6 +28,7 @@
                     <th>Type</th>
                     <th>Config</th>
                     <th>Used by</th>
+                    <th>Action</th>
                 </thead>
                 <tbody>
                 {% for net in network %}
@@ -32,6 +51,11 @@
                         <li>{{used}}</li>
                      {% endfor %}
                     </td>
+                    <td>
+                        <button class="btn" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork({{net.name}}));">
+                            <span class="glyphicon"> </span> Update Bridge
+                        </button>
+                    </td>
                 </tr>
                 {% endif %}
                 {% endfor %}
@@ -40,11 +64,27 @@
         </div>
     </div>
 
-    <div class="col-lg-12">
+    <div class="col-lg-12" id="newUpdateNetwork" hidden>
+        <legend>LXD Network</legend>
+        <div>
+            <div class="form-group">
+                <button id="backNetwork" class="btn">
+                        <span class="glyphicon glyphicon-chevron-left"> </span>
+                         Back
+                </button>
+            </div>
+        </div>
         <form id="entire_form" class="form-horizontal">
 
-            <h4 class="col-sm-12">Bridge name <span class="label label-default">{{ network[0].name }}</span></h4>
-            <h4 class="col-sm-12" style="margin-bottom:25px;">Status <span class="label label-success">active</span></h4>
+            <!--<h4 class="col-sm-12">Bridge name <span class="label label-default">{{ network[0].name }}</span></h4>-->
+            <div class="form-group">
+                <label for="name" class="col-sm-3 control-label">Network Bridge Name</label>
+                <div class="col-sm-3">
+                    <input id="name" name="name" class="form-control" type="text" placeholder="IPv4 network address" title="Name"
+                    />
+                </div>
+            </div>
+            <!--<h4 class="col-sm-12" style="margin-bottom:25px;">Status <span class="label label-success">active</span></h4>-->
 
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist" class="col-lg-6">
@@ -59,7 +99,7 @@
                         <label for="IPv4_ADDR" class="col-sm-3 control-label">Network IP</label>
                         <div class="col-sm-3">
                             <input id="IPv4_ADDR" name="IPv4_ADDR" class="form-control" type="text" placeholder="IPv4 network address" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
-                                title="Network IPv4 Address" value="{{ network[0].config['ipv4.address'] }}"
+                                title="Network IPv4 Address"
                             />
                         </div>
                     </div>
@@ -68,7 +108,7 @@
                         <label for="IPv4_NETMASK" class="col-sm-3 control-label">Netmask</label>
                         <div class="col-sm-3">
                             <input id="IPv4_NETMASK" name="IPv4_NETMASK" class="form-control" type="text" placeholder="IPv4 netmask address" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
-                                title="Netmask IPv4 Address" value="{% if network[0].config['ipv4.netmask'] %}{{ network[0].config['ipv4.netmask'] }}{% else %}255.255.255.0{% endif %}"
+                                title="Netmask IPv4 Address"
                             />
                         </div>
                     </div>
@@ -76,7 +116,7 @@
                         <label for="IPv4_DHCP_START" class="col-sm-3 control-label">DHCP Range Start</label>
                         <div class="col-sm-3">
                             <input id="IPv4_DHCP_START" name="IPv4_DHCP_START" class="form-control" type="text" placeholder="IP assignment range starts from"
-                                pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="IPv4 Address" value="{% if network[0].config['ipv4.dhcp.ranges'] %}{{ network[0].config['ipv4.dhcp.ranges'].split('-')[0] }}{% endif %}"
+                                pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="IPv4 Address"
                             />
                         </div>
                     </div>
@@ -84,7 +124,7 @@
                         <label for="IPv4_DHCP_END" class="col-sm-3 control-label">DHCP Range End</label>
                         <div class="col-sm-3">
                             <input id="IPv4_DHCP_END" name="IPv4_DHCP_END" class="form-control" type="text" placeholder="IP assignment range ends at"
-                                pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="IPv4 Address" value="{% if network[0].config['ipv4.dhcp.ranges'] %}{{ network[0].config['ipv4.dhcp.ranges'].split('-')[1] }}{% endif %}"
+                                pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="IPv4 Address"
                             />
                         </div>
                     </div>
@@ -94,7 +134,8 @@
             </div>
             <div class="form-group">
                 <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                    <button id="buttonUpdateNetwork" class="btn btn-primary pull-right">Update Bridge Network</button>
+                    <button id="buttonUpdateNetwork" class="btn btn-primary pull-right" hidden>Update Bridge Network</button>
+                    <button id="buttonCreateNetwork" class="btn btn-primary pull-right">New Bridge Network</button>
                 </div>
             </div>
         </form>
