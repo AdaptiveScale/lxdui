@@ -1,23 +1,23 @@
 {% extends "index.html" %}
 {% block content %}
-    <div id="containers-set-id">
+    <div id="containers">
     <div class="col-lg-12 main-div">
         <div>
             <div class="form-group">
-                <button class="btn btn-success btn-start_container" id="buttonStart">
+                <button class="btn btn-success btn-start_container" id="buttonStart" style="visibility:hidden;">
                     <span class="glyphicon glyphicon-play"> </span> Start
                 </button>
-                <button class="btn btn-danger btn-stop_container" id="buttonStop">
+                <button class="btn btn-danger btn-stop_container" id="buttonStop" style="visibility:hidden;">
                     <span class="glyphicon glyphicon-stop"> </span> Stop
                 </button>
-                <button class="btn btn-warning btn-restart_container" id="buttonRestart">
+                <button class="btn btn-warning btn-restart_container" id="buttonRestart" style="visibility:hidden;">
                     <span class="glyphicon glyphicon-repeat"> </span> Restart
                 </button>
-                <button class="btn btn-danger btn-delete_container" id="buttonDelete">
+                <button class="btn btn-danger btn-delete_container" id="buttonDelete" style="visibility:hidden;">
                     <span class="glyphicon glyphicon-remove-sign"> </span> Delete
                 </button>
                 <!--- right -->
-                <a class="btn btn-success pull-right" href="/images">
+                <a class="btn btn-success pull-right" id="buttonNewInstance">
                         <span class="glyphicon glyphicon-plus-sign"> </span>
                          New Instance
                 </a>
@@ -59,4 +59,62 @@
         </table>
     </div>
     </div>
+
+<div id="createContainerForm" style="display:none;">
+    <div class="col-lg-12 main-div">
+        <div>
+            <div class="form-group">
+                <button class="btn btn-defult" id="buttonBack">
+                    <span class="glyphicon glyphicon-chevron-left"> </span> Back
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <form id="newContainerForm">
+            <div class="form-group">
+                <label for="containerName">Name</label>
+                <input type="text" class="form-control" id="containerName" aria-describedby="name"
+                       placeholder="Enter container name" name="name" required>
+            </div>
+             <div class="form-group">
+              <label for="containerImage">Select image:</label>
+              <select class="form-control" id="containerImage" name="image">
+                  {% for image in images %}
+                    <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
+                  {% endfor %}
+              </select>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
+                <label class="form-check-label" for="containerStateful">Stateful</label>
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">
+                <label class="form-check-label" for="containerAutostart">Autostart</label>
+            </div>
+            <div class="form-group">
+                <label for="containerCPUPercentage">CPU usage in %:</label>
+                <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
+                       min="5" max="100" value="30">
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">
+                <label class="form-check-label" for="containerCPUHardLimit">Hard Limit</label>
+            </div>
+            <div class="form-group">
+                <label for="containerMemoryPercentage">Memory usage in MB:</label>
+                <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
+                       min="32" value="32">
+            </div>
+            <div class="form-check">
+                <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
+                <label class="form-check-label" for="containerMemoryHardLimit">Hard Limit</label>
+            </div>
+            <button type="submit" class="btn btn-primary pull-right">Submit</button>
+        </form>
+    </div>
+</div>
 {% endblock %}
+
+<!-- Default form contact -->

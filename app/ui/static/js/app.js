@@ -48,7 +48,8 @@ var App = App || {
             console.log('Setting Authorization header', localStorage.getItem('authToken'));
             $.ajaxSetup({
                 headers:{
-                    Authorization:'JWT '+localStorage.getItem('authToken')
+                    Authorization:'JWT '+localStorage.getItem('authToken'),
+                    'Content-Type':'application/json'
                 },
                 complete: function(response){
                     if(response.status == 401 && window.location!== WEB){
