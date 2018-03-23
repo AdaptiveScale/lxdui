@@ -4,8 +4,10 @@ from flask_jwt import JWT
 from app.api.utils import converters
 
 def authenticate(username, password):
-    if User().authenticate(username, password)[0]:
+    if User().authenticate(username, password)[0] == True:
         return converters.json2obj('{"id": 1, "username": "'+username+'", "password": "'+password+'"}')
+    else:
+        return False
 
 
 def identity(payload):
