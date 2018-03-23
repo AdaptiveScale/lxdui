@@ -59,9 +59,9 @@ class Init(object):
         self.key_file = c.get(self.APP, '{}.ssl.key'.format(self.APP.lower()))
         self.key, self.cert = cert.Certificate().create()
         self.account = [{'username': self.username, 'password': self.password}]
-        self.create('auth', self.auth_file)
-        self.create('key', self.key_file)
-        self.create('cert', self.cert_file)
+        #self.create('auth', self.auth_file)
+        #self.create('key', self.key_file)
+        #self.create('cert', self.cert_file)
         log.debug('Initializing auth file with: username = {}, password = {}'.format(self.username, self.password))
         print('LXDUI is now configured.  You can now use '
               'the admin account to log in to the app.')
