@@ -50,7 +50,11 @@
                 <td></td>
                 <td>{{container.name}}</td>
                 <td>{{container.status}}</td>
-                <td>{{container.ipaddress}}</td>
+                {% if container.network != None %}
+                    <td>{{container['network']['eth0']['addresses'][0]['address']}}</td>
+                {% else %}
+                    <td>N/A</td>
+                {% endif %}
                 <td>{{container.config['image.distribution']}} {{container.config['image.release']}} {{container.config['image.architecture']}}</td>
                 <td>{{container.created_at}}</td>
             </tr>
