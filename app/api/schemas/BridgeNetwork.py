@@ -144,7 +144,7 @@ class BridgeNetwork():
         return rez
 
     def _execute_LXC_NETWORK_TERMINAL(self, lines_to_exec, name):
-        #p = subprocess.Popen(["lxc", "network", "create", name], stdout=subprocess.PIPE)
+        p = subprocess.Popen(["lxc", "network", "create", name], stdout=subprocess.PIPE)
         time.sleep(1)
         textline = ""
         for lxc_network_value in lines_to_exec['unset']:
