@@ -47,17 +47,15 @@ The following are the prerequisites required to run LDXUI (supported only on 16)
 `git clone https://github.com/AdaptiveScale/lxdui.git`
 
 ### 2) Install from source
-Go into to the `lxdui` directory and execute `sudo python setup.py install`
+Go into to the `lxdui` directory and execute `sudo python3 setup.py install`
    
 
 ### 3) Run the app
-	
-Run the command to start the server: `sudo lxdui`
 
-**NOTE:**
-- `lxdui` requires privileged execution (**sudo**)
-- To see the available customizable arguments type: `sudo lxdui -h`
-- To start the server as a background process type: `sudo lxdui &` 
+Run the command to configure the server `lui init`
+Run the command to start the server: `lui start`
+
+- To start the server as a background process type: `lui start &`
 
  **Issues you might run into during installation**
 > - **ImportError: No module named build_py**.  
@@ -75,25 +73,15 @@ Run the command to start the server: `sudo lxdui`
 ## Install via PIP 
 Instructions will be made available soon.
 
-## Default configuration
-
-The configuration file `config.json` found within the **conf** directory gets copied to  the python's packages designated directory as is, upon each installation.
-
-To change the credentials to be used for authenticatication there are 2 alternatives:
-- Permanent via `/conf/config.json` located in python's package directory for `lxdui`
-- Temporarily via the **-c** application argument where you specify authentication credentials via the `username`:`password` pattern.
-
 ## Helpful Info</h1>
 
-- To start the server on a different port with custom authentication credentials use the following command:
-    - `sudo lxdui -c admin:secret -p 5555 &`
-- To stop `lxdui`, find the **process id** using the `ps` command and issue the kill command on that process:
-    -   `ps -ef | grep lxdui`  
+- To stop `lui`, find the **process id** using the `ps` command and issue the kill command on that process:
+    -   `ps -ef | grep lui`
 	```
 	example output:
 	
-	root 32488  1062  0 10:46 pts/0    00:00:00 sudo lxdui -c admin:secret -p 5555
-	root 32489 32488  0 10:46 pts/0    00:00:00 /usr/bin/python /usr/local/bin/lxdui -c admin:secret -p 5555
+	root 32488  1062  0 10:46 pts/0    00:00:00 lui start
+	root 32489 32488  0 10:46 pts/0    00:00:00 /usr/bin/python3 /usr/local/bin/lui
 	```
     - `sudo kill 32489`
 
