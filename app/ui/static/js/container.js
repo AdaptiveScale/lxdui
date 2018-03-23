@@ -174,12 +174,18 @@ App.containers = App.containers || {
             memory:{
                 sizeInMB: Number(formData.memory.sizeInMB),
                 hardLimitation: formData.memory['hardLimitation']?true:false
-            }
+            },
+            profiles:formData.profiles
         };
     },
     doCreateContainer: function(e){
         e.preventDefault();
-        var tempJSON = this.generateRequest(this.newContainerForm.serializeJSON());
+        //Workaround for multiselect input
+        var jsonForm = this.newContainerForm.serializeJSON();
+        if($('#containerProfiles').val())
+            jsonForm['profiles'] = $('#containerProfiles').val()
+
+        var tempJSON = this.generateRequest(jsonForm);
         $.ajax({
             url: App.baseAPI +'container/',
             type:'POST',
