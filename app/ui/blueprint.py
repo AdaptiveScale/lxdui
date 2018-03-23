@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect
-from app.api.models.LXCContainer import LXDModule
+from app.api.models.LXCContainer import LXDModule, LXCContainer
 
 uiPages = Blueprint('uiPages', __name__, template_folder='./templates',
                     static_folder='./static')
@@ -11,9 +11,13 @@ def index():
 @uiPages.route('/containers')
 def container():
     containers = LXDModule().listContainers()
+    result = []
+    for container in containers:
+        c = LXCContainer({'name': container.get('name')})
+        result.append(c.info())
     images = LXDModule().listLocalImages()
     return render_template('containers.html', currentpage='Containers',
-                           containers=containers,
+                           containers=result,
                            images = images,
                            lxdui_current_version='2.0')
 
