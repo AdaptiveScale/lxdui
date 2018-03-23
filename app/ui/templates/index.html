@@ -33,6 +33,8 @@
     <!-- TOASTER -->
     <link href="{{ url_for('.static', filename='css/toastr.css')}}" rel="stylesheet"/>
     <script src="{{ url_for('.static', filename='js/toastr.min.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/ace.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/mode-json.js')}}"></script>
     <script>
 
     toastr.options = {
@@ -63,11 +65,7 @@
         <div class="col-lg-2 main-div">
             <ul class="nav nav-pills nav-stacked">
                 <li role="presentation" style="text-align:center"><img src="{{ url_for('.static', filename='images/logo.png')}}" width="90%"/> </li>
-                {% if LXC_installed %}
-                <li id="" role="presentation" class="label label-{{LXC_label_color}}">LXC version {{LXC_version}}</li>
-                {% else %}
-                <li id="" role="presentation" class="label label-danger">NO LXC INSTALLED</li>
-                {% endif %}
+                <li id="stamplike" role="presentation" class="label label-danger"></li>
                 <li {% if currentpage == "containers" %}class="active"{% endif %} role="presentation"><a href="/ui/containers"><span class="glyphicon glyphicon-th"> </span>Containers</a></li>
                 <li {% if currentpage == "images" %}class="active"{% endif %} role="presentation"><a href="/ui/images"><span class="glyphicon glyphicon-hdd"> </span>Images</a></li>
                  <li {% if currentpage == "profiles" %}class="active"{% endif %} role="presentation"><a href="/ui/profiles"><span class="glyphicon glyphicon-th"> </span>Profiles</a></li>

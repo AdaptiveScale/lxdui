@@ -5,6 +5,7 @@ var App = App || {
     baseAPI: API,
     baseWEB: WEB,
     info:null,
+    lxdVersion: 'NO LXC INSTALLED',
     login:null,
     containers: null,
     images: null,
@@ -34,11 +35,12 @@ var App = App || {
         $.ajax({
             url: this.baseAPI+'lxd/config',
             method:'GET',
-            success:$.proxy(this.getInfoSuccess, this)
+            success: $.proxy(this.getInfoSuccess, this)
         });
     },
     getInfoSuccess:function(response){
         this.info = response.data;
+        $('#stamplike').text('LXD Version: ' + this.info.environment.server_version);
     },
     setDefaultHeaders: function(){
         console.log('locaiton', window.location.href, WEB);
