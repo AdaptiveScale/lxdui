@@ -22,10 +22,20 @@ App.profiles = App.profiles || {
         },
         order: [[ 1, 'asc' ]],
     },
+    configEditor:null,
+    devicesEditor:null,
+
     init: function(){
         console.log('Profiles init');
+        this.configEditor = ace.edit('configEditor');
+        this.devicesEditor = ace.edit('devicesEditor');
+        this.configEditor.session.setMode('ace/mode/json');
+        this.devicesEditor.session.setMode('ace/mode/json');
         this.dataTable = $('#tableProfiles').DataTable(this.tableSettings);
-        $('#buttonRefresh').on('click', $.proxy(this.refreshProfiles, this));
+        $('#buttonNewProfile').on('click', $.proxy(this.showNewProfile, this));
+        $('#backProfile').on('click', $.proxy(this.backToProfiles, this));
+        $('#buttonCreateProfile').on('click', $.proxy(this.createProfile, this));
+        $('#buttonDeleteProfile').on('click', $.proxy(this.deleteProfile, this));
 
         this.getData();
     },
@@ -53,9 +63,9 @@ App.profiles = App.profiles || {
     },
     updateLocalTable: function(jsonData){
         this.data = jsonData;
-        $('#tbl-profile').DataTable().clear();
-        $('#tbl-profile').DataTable().destroy();
-        $('#tbl-profile').DataTable({
+        $('#tableProfiles').DataTable().clear();
+        $('#tableProfiles').DataTable().destroy();
+        $('#tableProfiles').DataTable({
             searching:true,
             data : this.data,
             responsive: true,
@@ -69,7 +79,7 @@ App.profiles = App.profiles || {
                 { data : "devices",  render: function(field){
                     return Object.keys(field).map((name)=>{
                                return '<ul>'+
-                               '<h4>'+name+'</h4>'+
+                               '<h5>'+name+'</h5>'+
                                     Object.keys(field[name]).map((prop)=>{
                                         return '<li>'+prop+':'+field[name][prop]+'</li>'
                                     }).join('')+
@@ -77,8 +87,67 @@ App.profiles = App.profiles || {
                             }).join('');
                     }
                 },
-                { data : "used_by" },
+                { data : 'used_by' },
             ]
         });
-    }
+    },
+    showNewProfile: function() {
+        $('#newProfile').show();
+        $('#profileList').hide();
+    },
+    backToProfiles: function() {
+        $('#newProfile').hide();
+        $('#profileList').show();
+    },
+    createProfile: function() {
+        console.log('Create Profile...');
+        if (this.configEditor.getValue() === '') {
+            configValue = {};
+        }
+        else {
+            configValue = JSON.parse(this.configEditor.getValue());
+        }
+        if (this.devicesEditor.getValue() === '') {
+            devicesValue = {};
+        }
+        else {
+            devicesValue = JSON.parse(this.devicesEditor.getValue());
+        }
+
+        $.ajax({
+            url:App.baseAPI+'profile/',
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                "name": $('#name').val(),
+                "config": configValue,
+                "devices": devicesValue,
+            }),
+            success: $.proxy(this.onProfileCreate, this)
+        });
+    },
+    onProfileCreate: function(response) {
+        console.log(response);
+        console.log('updateSuccess:', 'TODO - add alert and refresh local data');
+    },
+    deleteProfile: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'profile/' + row['name'],
+                type: 'DELETE',
+                success: $.proxy(this.onDeleteSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+    onDeleteSuccess: function(name){
+        this.dataTable.row("#"+name).remove().draw();
+        $('.success-msg').text('Profile ' + name + ' has been removed');
+        var parent = $('.success-msg').parent().toggleClass('hidden');
+
+        setTimeout(function(){
+          parent.toggleClass('hidden');
+        }, 10000);
+
+    },
 }
