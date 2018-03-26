@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, redirect
 from app.api.models.LXCContainer import LXDModule, LXCContainer
+import json
 
 uiPages = Blueprint('uiPages', __name__, template_folder='./templates',
                     static_folder='./static')
@@ -42,4 +43,6 @@ def images():
         # TODO - log exception
     return render_template('images.html', currentpage='Images',
                            localImages=localImages,
-                           remoteImages=remoteImages, lxdui_current_version='2.0')
+                           remoteImages=remoteImages,
+                           jsData = {'local': json.dumps(localImages), 'remote':json.dumps(remoteImages)},
+                           lxdui_current_version='2.0')
