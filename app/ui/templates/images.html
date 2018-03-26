@@ -1,5 +1,10 @@
 {% extends "index.html" %}
 {% block content %}
+<script>
+    var constLocalImages = {{jsData.local|safe}} || {};
+    var constRemoteImages = {{jsData.remote|safe}} || {};
+</script>
+
 <div class="col-lg-12 main-div" id="set-div">
         <legend>Images</legend>
         <div class="col-lg-12">
@@ -8,89 +13,175 @@
                 <div class="btn-group btn-group-s" id="imageType">
                 <button id="btnLocalImages" type="button" class="btn btn-info">
                     <span class="glyphicon glyphicon-hdd"> </span>
-                        Local <span class="badge"></span>
+                    Local <span class="badge"></span>
                 </button>
                 <button type="button" id="btnRemoteImages" class="btn btn-primary">
                     <span class="glyphicon glyphicon-globe"> </span>
-                        Remote <span class="badge"></span>
+                    Remote <span class="badge"></span>
                 </button>
-                </div>
             </div>
         </div>
-        <br>
-        <br>
-        <br>
-             <div class="col-lg-12">
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class="col-lg-12">
+        <div class="form-group">
+            <!--<button id="buttonLaunch" class="btn btn-success" style="visibility: hidden;">Launch Container(s)</button>-->
+            <button id="buttonDelete" class="btn btn-danger" style="visibility: hidden;">Delete OS Image</button>
+            <button id="buttonLaunchContainers" class="btn btn-success" style="visibility: hidden">Launch Container(s)
+            </button>
+            <button id="buttonDownload" class="btn btn-success" style="visibility: hidden;">Download Image</button>
+            <button id="buttonUpdate" class="btn btn-primary pull-right">
+                <span class="glyphicon glyphicon-refresh"> </span>
+                Update
+            </button>
+        </div>
+    </div>
+    <div class="col-lg-12" id="loader" style="display:none;">
+        <div class="col-lg-offset-4 col-lg-4">
+            <img src="static/images/loader.gif" class="text-center" width="150px">
+        </div>
+    </div>
+    <div class="col-lg-12" id="tableImagesLocalWrapper">
+        <div class="">
+            <table id="tableImagesLocal" class="table table-bordered table-fixed">
+                <thead>
+                <th>Select</th>
+                <th>OS</th>
+                <th>Description</th>
+                <th>Alias/Fingerprint</th>
+                <th>Ver</th>
+                <th>Arch</th>
+                <th>Size</th>
+                </thead>
+                <tbody>
+                {% for image in localImages %}
+                <tr id="{{image.fingerprint}}">
+                    <td></td>
+                    <td>
+                        <a style="cursor:pointer"
+                           onClick="$.proxy(App.containers.createContainer, App.containers, image);">{{image.properties.os}}</a>
+                    </td>
+                    <td>{{ image.properties.description }}</td>
+                    <td>{{ image.aliases}}</td>
+                    <td>{{ image.properties.release }}</td>
+                    <td>{{ image.properties.architecture }}</td>
+                    <td>{{ image.size }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">
+        <div class="">
+            <table id="tableImagesRemote" class="table table-bordered table-fixed">
+                <thead>
+                <th>Select</th>
+                <th>Architecture</th>
+                <th>Distribution</th>
+                <th>Image</th>
+                <th>Name</th>
+                </thead>
+                <tbody>
+                {% for image in remoteImages %}
+                <tr id="{{image.image}}">
+                    <td></td>
+                    <td>{{ image.architecture }}</td>
+                    <td>{{ image.distribution }}</td>
+                    <td>{{ image.image }}</td>
+                    <td>{{ image.name}}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="createMultipleContainersForm" style="display:none;">
+        <div class="col-lg-12 main-div">
+            <div>
                 <div class="form-group">
-                    <!--<button id="buttonLaunch" class="btn btn-success" style="visibility: hidden;">Launch Container(s)</button>-->
-                    <button id="buttonDelete" class="btn btn-danger" style="visibility: hidden;">Delete OS Image</button>
-                    <button id="buttonDownload" class="btn btn-success" style="visibility: hidden;">Download Image</button>
-                    <button id="buttonUpdate" class="btn btn-primary pull-right">
-                        <span class="glyphicon glyphicon-refresh"> </span>
-                        Update
+                    <button class="btn btn-defult" id="buttonBack">
+                        <span class="glyphicon glyphicon-chevron-left"> </span> Back
                     </button>
                 </div>
-             </div>
-         <div class="col-lg-12" id="loader" style="display:none;">
-             <div class="col-lg-offset-4 col-lg-4">
-                 <img src="static/images/loader.gif" class="text-center" width="150px">
-                 </div>
-            </div>
-        <div class="col-lg-12" id="tableImagesLocalWrapper">
-            <div class="">
-                <table id="tableImagesLocal" class="table table-bordered table-fixed">
-                    <thead>
-                        <th>Select</th>
-                        <th>OS</th>
-                        <th>Description</th>
-                        <th>Alias/Fingerprint</th>
-                        <th>Ver</th>
-                        <th>Arch</th>
-                        <th>Size</th>
-                    </thead>
-                    <tbody>
-                    {% for image in localImages %}
-                    <tr id="{{image.fingerprint}}">
-                        <td></td>
-                        <td>
-                            <a style="cursor:pointer" onClick="$.proxy(App.containers.createContainer, App.containers, image);">{{image.properties.os}}</a>
-                        </td>
-                        <td>{{ image.properties.description }}</td>
-                        <td>{{ image.aliases}}</td>
-                        <td>{{ image.properties.release }}</td>
-                        <td>{{ image.properties.architecture }}</td>
-                        <td>{{ image.size }}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
-
-            </div>
-        </div>
-        <div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">
-            <div class="">
-                <table id="tableImagesRemote" class="table table-bordered table-fixed">
-                    <thead>
-                    <th>Select</th>
-                    <th>Architecture</th>
-                    <th>Distribution</th>
-                    <th>Image</th>
-                    <th>Name</th>
-                    </thead>
-                    <tbody>
-                    {% for image in remoteImages %}
-                    <tr id="{{image.image}}">
-                        <td></td>
-                        <td>{{ image.architecture }}</td>
-                        <td>{{ image.distribution }}</td>
-                        <td>{{ image.image }}</td>
-                        <td>{{ image.name}}</td>
-                    </tr>
-                    {% endfor %}
-                    </tbody>
-                </table>
             </div>
         </div>
 
+        <div class="col-lg-12">
+            <form id="newContainerForm">
+                <div class="form-group" id="multiContainerSection">
+
+                </div>
+
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked
+                           value="true">
+                    <label class="form-check-label" for="containerStateful">Stateful</label>
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked
+                           value="true">
+                    <label class="form-check-label" for="containerAutostart">Autostart</label>
+                </div>
+                <div class="form-group">
+                    <label for="containerCPUPercentage">CPU usage in %:</label>
+                    <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
+                           min="5" max="100" value="30">
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="containerCPUHardLimit"
+                           name="cpu[hardLimitation]"
+                           value="true">
+                    <label class="form-check-label" for="containerCPUHardLimit">Hard Limit</label>
+                </div>
+                <div class="form-group">
+                    <label for="containerMemoryPercentage">Memory usage in MB:</label>
+                    <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
+                           min="32" value="32">
+                </div>
+                <div class="form-check">
+                    <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit"
+                           name="memory[hardLimitation]" value="true">
+                    <label class="form-check-label" for="containerMemoryHardLimit">Hard Limit</label>
+                </div>
+                <button type="submit" class="btn btn-primary pull-right">Submit</button>
+            </form>
+        </div>
     </div>
+</div>
+<div class="panel panel-default multiContainerTemplate" style="display:none;">
+    <div class="panel-heading" role="tab">
+        <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" aria-expanded="true"
+               aria-controls="collapseOne"> <span id="description"></span>
+                <span>
+                    <label class="imageName">Caja</label>
+                    <label class="pull-right nodeCount">1 Node</label>
+                </span>
+            </a>
+        </h4>
+    </div>
+    <div id="${i}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="${i}">
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Container Name</label>
+                <label class="col-sm-3 control-label">Number</label>
+                <div class="clearfix"></div>
+                <div class="col-sm-4">
+                    <input type="text" class="containerName form-control" value="cnt-"
+                           placeholder="container name prefix" name="name" required/>
+                </div>
+                <div class="col-sm-3">
+                    <input type="number" class="cntNrs form-control" min="1" value="1" name="count" style="width:60px">
+                </div>
+            </div>
+        </div>
+        <input class="imageNameInput" type="hidden" name="image" value="">
+    </div>
+</div>
+</div>
+
 {% endblock %}
