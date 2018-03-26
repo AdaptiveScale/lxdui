@@ -2,25 +2,26 @@
 {% block content %}
 <div id="profileList">
     <div class="col-lg-12 main-div" id="set-div">
-        <div class="col-lg-12 main-div">
+        <legend>Profiles</legend>
+
+        <div>
+            <div class="form-group">
+                <button id="buttonNewProfile" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                         New Profile
+                </button>
+                <button class="btn btn-danger btn-delete_container" id="buttonDeleteProfile">
+                    <span class="glyphicon glyphicon-remove-sign"> </span> Delete
+                </button>
+            </div>
             <div>
-                <div class="form-group">
-                    <button id="buttonNewProfile" class="btn btn-success">
-                            <span class="glyphicon glyphicon-plus-sign"> </span>
-                             New Profile
-                    </button>
-                    <button class="btn btn-danger btn-delete_container" id="buttonDeleteProfile">
-                        <span class="glyphicon glyphicon-remove-sign"> </span> Delete
-                    </button>
-                </div>
-                <div>
-                    <div class="alert alert-success fade in alert-dismissible hidden">
-                        <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-                      <strong>Success!</strong> <span class="success-msg"></span>
-                    </div>
+                <div class="alert alert-success fade in alert-dismissible hidden">
+                    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
+                  <strong>Success!</strong> <span class="success-msg"></span>
                 </div>
             </div>
         </div>
+
 
         <div class="col-lg-12">
             <table class="table table-bordered" id="tableProfiles">
@@ -74,16 +75,17 @@
 
 <div id="newProfile" hidden>
     <div class="col-lg-12 main-div" id="set-div">
-        <div class="col-lg-12 main-div">
-            <div>
-                <div class="form-group">
-                    <button id="backProfile" class="btn">
-                            <span class="glyphicon glyphicon-chevron-left"> </span>
-                             Back
-                    </button>
-                </div>
+        <legend>Profiles</legend>
+
+        <div>
+            <div class="form-group">
+                <button id="backProfile" class="btn">
+                        <span class="glyphicon glyphicon-chevron-left"> </span>
+                         Back
+                </button>
             </div>
         </div>
+
 
         <div class="col-lg-12">
             <form id="profileForm" class="form-horizontal">

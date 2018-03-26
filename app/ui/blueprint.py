@@ -17,9 +17,11 @@ def container():
         c = LXCContainer({'name': container.get('name')})
         result.append(c.info())
     images = LXDModule().listLocalImages()
+    profiles = LXDModule().listProfiles()
     return render_template('containers.html', currentpage='Containers',
                            containers=result,
                            images = images,
+                           profiles = profiles,
                            lxdui_current_version='2.0')
 
 @uiPages.route('/profiles')

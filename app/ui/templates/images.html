@@ -4,11 +4,13 @@
     var constLocalImages = {{jsData.local|safe}} || {};
     var constRemoteImages = {{jsData.remote|safe}} || {};
 </script>
+
 <div class="col-lg-12 main-div" id="set-div">
-    <div class="col-lg-12">
-        <div class="form-inline">
-            <label>OS Images: </label>
-            <div class="btn-group btn-group-s" id="imageType">
+        <legend>Images</legend>
+        <div class="col-lg-12">
+            <div class="form-inline">
+                <label>OS Images: </label>
+                <div class="btn-group btn-group-s" id="imageType">
                 <button id="btnLocalImages" type="button" class="btn btn-info">
                     <span class="glyphicon glyphicon-hdd"> </span>
                     Local <span class="badge"></span>

@@ -1,7 +1,8 @@
 {% extends "index.html" %}
 {% block content %}
-    <div id="containers">
+<div id="containers">
     <div class="col-lg-12 main-div">
+        <legend>Containers</legend>
         <div>
             <div class="form-group">
                 <button class="btn btn-success btn-start_container" id="buttonStart" style="visibility:hidden;">
@@ -66,6 +67,7 @@
 
 <div id="createContainerForm" style="display:none;">
     <div class="col-lg-12 main-div">
+        <legend>Containers</legend>
         <div>
             <div class="form-group">
                 <button class="btn btn-defult" id="buttonBack">
@@ -115,6 +117,15 @@
                 <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
                 <label class="form-check-label" for="containerMemoryHardLimit">Hard Limit</label>
             </div>
+            <div class="form-group">
+                <label for="containerProfiles">Profiles:</label>
+                <select class="selectpicker" multiple id="containerProfiles" name="profiles">
+                 {% for profile in profiles %}
+                    <option>{{profile.name}}</option>
+                 {% endfor %}
+                </select>
+            </div>
+
             <button type="submit" class="btn btn-primary pull-right">Submit</button>
         </form>
     </div>
