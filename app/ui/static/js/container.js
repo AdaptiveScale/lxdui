@@ -66,7 +66,7 @@ App.containers = App.containers || {
         this.dataTable=$('#tableContainers').DataTable(App.mergeProps(this.tableSettings, {
             data:this.data,
             columns : [
-                { title:'Select', data: null, defaultContent:''},
+                { title:'#', data: null, defaultContent:''},
                 { title:'Name', data : 'name'},
                 { title:'Status', data : 'status' },
                 { title:'IP Address', data : 'network',
