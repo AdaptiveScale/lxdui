@@ -147,13 +147,13 @@ class BridgeNetwork():
         p = subprocess.Popen(["lxc", "network", "create", name], stdout=subprocess.PIPE)
         time.sleep(1)
         textline = ""
-        for lxc_network_value in lines_to_exec['unset']:
-            p = subprocess.Popen(["lxc", "network", "unset", name, lxc_network_value],
-                                 stdout=subprocess.PIPE)
-            textline += "LXC UNSET <{0}> ,,,".format(lxc_network_value.upper())
-            # print p.stdout.read()
-            # ----------------
-            time.sleep(0.5)
+        # for lxc_network_value in lines_to_exec['unset']:
+        #     p = subprocess.Popen(["lxc", "network", "unset", name, lxc_network_value],
+        #                          stdout=subprocess.PIPE)
+        #     textline += "LXC UNSET <{0}> ,,,".format(lxc_network_value.upper())
+        #     # print p.stdout.read()
+        #     # ----------------
+        #     time.sleep(0.5)
 
         for l in lines_to_exec["set"]:
             LXC_NET_ATTR = list(l.keys())[0]

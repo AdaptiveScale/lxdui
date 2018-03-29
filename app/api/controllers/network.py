@@ -2,6 +2,7 @@ from flask import Blueprint, request
 from flask_jwt import jwt_required
 
 from app.api.models.LXDModule import LXDModule
+from app.api.models.LXCContainer import LXCContainer
 from app.api.schemas.BridgeNetwork import BridgeNetwork
 from app.api.schemas.networkSchema import doValidate
 from app.api.utils import response
@@ -42,6 +43,8 @@ def updateNetwork(name):
 
     # Restart Containers
     mainConfig = bridgeNet.get_lxd_main_bridge_config(name)
+    for container in mainConfig['used_by']:
+        LXCContainer({'name': container}).restart()
     return response.replySuccess(mainConfig['result'])
 
 @network_api.route('/<string:name>', methods=['POST'])
