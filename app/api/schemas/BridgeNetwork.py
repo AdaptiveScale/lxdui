@@ -143,6 +143,11 @@ class BridgeNetwork():
 
         return rez
 
+
+    def delete_network(self, name):
+        p = subprocess.Popen(['lxc', 'network', 'delete', name], stdout=subprocess.PIPE)
+        return {'completed': True}
+
     def _execute_LXC_NETWORK_TERMINAL(self, lines_to_exec, name):
         p = subprocess.Popen(["lxc", "network", "create", name], stdout=subprocess.PIPE)
         time.sleep(1)

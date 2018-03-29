@@ -41,7 +41,6 @@ def updateNetwork(name):
     lxcTask = bridgeNet._form_to_LXC_SET_TASK(input)
     bridgeNet._execute_LXC_NETWORK_TERMINAL(lxcTask, name)
 
-    # Restart Containers
     mainConfig = bridgeNet.get_lxd_main_bridge_config(name)
     for container in mainConfig['used_by']:
         LXCContainer({'name': container}).restart()
@@ -60,6 +59,16 @@ def creatNetwork(name):
     lxcTask = bridgeNet._form_to_LXC_SET_TASK(input)
     bridgeNet._execute_LXC_NETWORK_TERMINAL(lxcTask, name)
 
-    #Restart Containers
     mainConfig = bridgeNet.get_lxd_main_bridge_config(name)
+    for container in mainConfig['used_by']:
+        LXCContainer({'name': container}).restart()
     return response.replySuccess(mainConfig['result'])
+
+@network_api.route('/<string:name>', methods=['DELETE'])
+@jwt_required()
+def deleteNetwork(name):
+    bridgeNet = BridgeNetwork()
+    bridgeNet.delete_network(name)
+
+    client = LXDModule()
+    return response.replySuccess(client.listNetworks())

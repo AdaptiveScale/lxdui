@@ -8,7 +8,7 @@
                         <span class="glyphicon glyphicon-plus-sign"> </span>
                          New Bridge Network
                 </button>
-                <button class="btn btn-danger btn-delete_container" id="buttonDeleteProfile" disabled>
+                <button class="btn btn-danger btn-delete_container" id="buttonDeleteNetwork">
                     <span class="glyphicon glyphicon-remove-sign"> </span> Delete
                 </button>
             </div>
@@ -33,7 +33,7 @@
                 <tbody>
                 {% for net in network %}
                 {% if net.type == 'bridge' %}
-                <tr>
+                <tr id="{{net.name}}">
                     <td></td>
                     <td>{{ net.name }}</td>
                     <td>{{ net.type }}</td>
