@@ -66,13 +66,12 @@ App.containers = App.containers || {
         this.dataTable=$('#tableContainers').DataTable(App.mergeProps(this.tableSettings, {
             data:this.data,
             columns : [
-                { title:'Select', data: null, defaultContent:''},
+                { title:'#', data: null, defaultContent:''},
                 { title:'Name', data : 'name'},
                 { title:'Status', data : 'status' },
                 { title:'IP Address', data : 'network',
                     render: function(field) {
-                        if (!field) return 'N/A';
-                        console.log(field);
+                        if (!field || field['eth0']['addresses'].length === 0) return 'N/A';
                         return field['eth0']['addresses'][0]['address'];
                     }
                 },
