@@ -50,8 +50,9 @@ App.containers = App.containers || {
     },
     refreshContainers: function(e){
         console.log('refreshContainers');
-        e.preventDefault();
-        this.getData();
+        location.reload();
+        //e.preventDefault();
+        //this.getData();
     },
     setLoading: function(state){
         this.loading=true;
@@ -81,10 +82,15 @@ App.containers = App.containers || {
                 },
                 { title:'OS Image', data : 'config',
                     render:function(field){
-                        return field['image.distribution'];
+                        return field['image.distribution'] + ' ' + field['image.release'] + ' ' + field['image.architecture'];
                     }
                 },
-                { title:'Create at', data : 'created_at' }
+                { title:'Create at', data : 'created_at' },
+                { title:'Actions', data : 'name',
+                    render: function(field) {
+                        return '<a><i id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('+field+'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>';
+                    }
+                },
             ]
         }));
     },
