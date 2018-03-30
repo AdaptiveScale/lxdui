@@ -38,6 +38,7 @@ def network():
 @uiPages.route('/images')
 def images():
     localImages = LXDModule().listLocalImages()
+    profiles = LXDModule().listProfiles()
     try:
         remoteImages = LXDModule().listRemoteImages()
     except:
@@ -46,5 +47,9 @@ def images():
     return render_template('images.html', currentpage='Images',
                            localImages=localImages,
                            remoteImages=remoteImages,
-                           jsData = {'local': json.dumps(localImages), 'remote':json.dumps(remoteImages)},
+                           profiles=profiles,
+                           jsData = {
+                               'local': json.dumps(localImages),
+                               'remote':json.dumps(remoteImages),
+                           },
                            lxdui_current_version='2.0')
