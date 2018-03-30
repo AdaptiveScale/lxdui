@@ -19,11 +19,12 @@
 }
 #footer_paragraph
 {
+     position: fixed;
      bottom:0px;
-     left:0px;
-     width:100%;
-     text-align:center;
+     left:25px;
+     width:20%;
      background: white;
+     font-size: 14px;
 }
 .already-exists{
     color: red;
@@ -141,3 +142,7 @@
 .legend {
     padding-bottom:15px;
 }
+
+.bootstrap-select {
+    width: 196px !important;
+    }

@@ -113,11 +113,7 @@ App.containers = App.containers || {
         }.bind(this));
     },
     onStartSuccess: function(name){
-        $('.success-msg').text('Container ' + name + 'has been started')
-        var parent = $('.success-msg').parent().toggleClass('hidden');
-        setTimeout(function(){
-          parent.toggleClass('hidden');
-        }, 10000)
+        console.log('onStartSuccess', name);
     },
     stopContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -128,14 +124,9 @@ App.containers = App.containers || {
             });
         }.bind(this));
     },
-    onStopSuccess: function(name){
-        $('.success-msg').text('Container ' + name + ' has been stopped');
-        var parent = $('.success-msg').parent().toggleClass('hidden');
-
-        setTimeout(function(){
-          parent.toggleClass('hidden');
-        }, 10000);
-    },
+        onStopSuccess: function(name){
+            console.log('onStopSuccess', name);
+        },
     restartContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
             $.ajax({
@@ -146,12 +137,7 @@ App.containers = App.containers || {
         }.bind(this));
     },
     onRestartSuccess: function(name){
-        $('.success-msg').text('Container ' + name + ' has been restarted');
-        var parent = $('.success-msg').parent().toggleClass('hidden');
-
-        setTimeout(function(){
-          parent.toggleClass('hidden');
-        }, 10000);
+        console.log('onRestartSuccess', name);
     },
     deleteContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -166,13 +152,6 @@ App.containers = App.containers || {
 
     onDeleteSuccess: function(name){
         this.dataTable.row("#"+name).remove().draw();
-        $('.success-msg').text('Container ' + name + ' has been removed');
-        var parent = $('.success-msg').parent().toggleClass('hidden');
-
-        setTimeout(function(){
-          parent.toggleClass('hidden');
-        }, 10000);
-
     },
     switchView: function(view){
         $('#createContainerForm')[view=='form'?'show':'hide']();
