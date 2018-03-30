@@ -29,12 +29,6 @@ padding-top: 10px;"><label class="loader"></label></span>
                          New Instance
                 </a>
             </div>
-            <div>
-                <div class="alert alert-success fade in alert-dismissible hidden">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-                  <strong>Success!</strong> <span class="success-msg"></span>
-                </div>
-            </div>
         </div>
     </div>
     <div class="col-lg-12">
@@ -90,57 +84,79 @@ padding-top: 10px;"><label class="loader"></label></span>
             </div>
         </div>
     </div>
+
     <div class="col-lg-12">
-        <form id="newContainerForm">
+        <form id="newContainerForm" class="form-horizontal">
             <div class="form-group">
-                <label for="containerName">Name</label>
-                <input type="text" class="form-control" id="containerName" aria-describedby="name"
+                <label class="col-md-2 control-label" for="containerName">Name</label>
+                 <div class="col-md-3">
+                        <input type="text" class="form-control" id="containerName" aria-describedby="name"
                        placeholder="Enter container name" name="name" required>
+                 </div>
             </div>
              <div class="form-group">
-              <label for="containerImage">Select image:</label>
-              <select class="form-control" id="containerImage" name="image">
+              <label class="col-md-2 control-label" for="containerImage">Select image:</label>
+              <div class="col-md-3">
+                 <select class="form-control" id="containerImage" name="image">
                   {% for image in images %}
                     <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
                   {% endfor %}
               </select>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
-                <label class="form-check-label" for="containerStateful">Stateful</label>
-            </div>
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">
-                <label class="form-check-label" for="containerAutostart">Autostart</label>
+              </div>
             </div>
             <div class="form-group">
-                <label for="containerCPUPercentage">CPU usage in %:</label>
-                <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
+                <label class="form-check-label col-md-2 control-label" for="containerStateful">Stateful</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-check-label col-md-2 control-label" for="containerAutostart">Autostart</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="containerCPUPercentage">CPU usage in %:</label>
+                <div class="col-md-3">
+                    <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
                        min="5" max="100" value="30">
-            </div>
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">
-                <label class="form-check-label" for="containerCPUHardLimit">Hard Limit</label>
+                </div>
             </div>
             <div class="form-group">
-                <label for="containerMemoryPercentage">Memory usage in MB:</label>
-                <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
+                <label class="form-check-label col-md-2 control-label" for="containerCPUHardLimit">Hard Limit</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">
+                </div>
+                </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="containerMemoryPercentage">Memory usage in MB:</label>
+                <div class="col-md-3">
+                    <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
                        min="32" value="32">
-            </div>
-            <div class="form-check">
-                <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
-                <label class="form-check-label" for="containerMemoryHardLimit">Hard Limit</label>
+                </div>
             </div>
             <div class="form-group">
-                <label for="containerProfiles">Profiles:</label>
-                <select class="selectpicker" multiple id="containerProfiles" name="profiles">
-                 {% for profile in profiles %}
-                    <option>{{profile.name}}</option>
-                 {% endfor %}
-                </select>
+                 <label class="form-check-label col-md-2 control-label" for="containerMemoryHardLimit">Hard Limit</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
+                </div>
             </div>
-
-            <button type="submit" class="btn btn-primary pull-right">Submit</button>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="containerProfiles">Profiles:</label>
+                <div class="col-md-3">
+                    <select class="selectpicker" multiple id="containerProfiles" name="profiles">
+                     {% for profile in profiles %}
+                        <option>{{profile.name}}</option>
+                     {% endfor %}
+                    </select>
+                </div>
+            </div>
+        <div class="form-group">
+            <div class="col-md-5">
+                <button type="submit" class="btn btn-primary pull-right">Submit</button>
+            </div>
+        </div>
         </form>
     </div>
 </div>
