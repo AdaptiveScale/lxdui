@@ -216,18 +216,30 @@ App.containers = App.containers || {
     showCloneContainer: function(name) {
         $('#selectedClone').text('Clone Container: ' + name);
         this.selectedContainer = name;
-        $('#cloneContainerForm').show();
+        if ($('#cloneContainerForm').is(':visible')) {
+            $('#cloneContainerForm').hide();
+        }
+        else {
+            $('#cloneContainerForm').show();
+        }
         $('#moveContainerForm').hide();
         $('#snapshotContainerForm').hide();
         $('#exportContainerForm').hide();
+        $('#snapshotList').hide();
     },
     showMoveContainer: function(name) {
         $('#selectedMove').text('Move Container: ' + name);
         this.selectedContainer = name;
         $('#cloneContainerForm').hide();
-        $('#moveContainerForm').show();
+        if ($('#moveContainerForm').is(':visible')) {
+            $('#moveContainerForm').hide();
+        }
+        else {
+            $('#moveContainerForm').show();
+        }
         $('#snapshotContainerForm').hide();
         $('#exportContainerForm').hide();
+        $('#snapshotList').hide();
     },
     showExportContainer: function(name) {
         $('#selectedExport').text('Export Image from Container: ' + name);
@@ -235,15 +247,55 @@ App.containers = App.containers || {
         $('#cloneContainerForm').hide();
         $('#moveContainerForm').hide();
         $('#snapshotContainerForm').hide();
-        $('#exportContainerForm').show();
+        if ($('#exportContainerForm').is(':visible')) {
+            $('#exportContainerForm').hide();
+        }
+        else {
+            $('#exportContainerForm').show();
+        }
+        $('#snapshotList').hide();
     },
     showSnapshotContainer: function(name) {
         $('#selectedSnapshot').text('Create Snapshot from Container: ' + name);
         this.selectedContainer = name;
         $('#cloneContainerForm').hide();
         $('#moveContainerForm').hide();
-        $('#snapshotContainerForm').show();
+        if ($('#snapshotContainerForm').is(':visible')) {
+            $('#snapshotContainerForm').hide();
+        }
+        else {
+            $('#snapshotContainerForm').show();
+        }
         $('#exportContainerForm').hide();
+        $('#snapshotList').hide();
+    },
+    showSnapshotList: function(name) {
+        $('#selectedSnapshotList').text('List of Snapshots for Container: ' + name);
+        this.selectedContainer = name;
+        if ($('#snapshotList').is(':visible')) {
+            $('#snapshotList').hide();
+        }
+        else {
+            $('#snapshotList').show();
+        }
+        $('#cloneContainerForm').hide();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
+        this.getSnapshotList(name);
+    },
+    getSnapshotList: function(name){
+        this.setLoading(true);
+        $.get(App.baseAPI+'snapshot/container/'+name, $.proxy(this.getSnapshotSuccess, this));
+    },
+    getSnapshotSuccess: function (response){
+        $('#snapshotList li').remove();
+        $('#snapshotList br').remove();
+        $.each(response.data, function(index, value) {
+            $('#snapshotList').append('<li>'+value+'</li>');
+        });
+        $('#snapshotList').append('<br><br>');
+
     },
     cloneContainer: function() {
         $.ajax({
