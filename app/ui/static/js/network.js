@@ -29,6 +29,7 @@ App.network = App.network || {
         $('#buttonNewNetwork').on('click', $.proxy(this.showNewUpdateNetwork, this));
         $('#backNetwork').on('click', $.proxy(this.backToNetworks, this));
         App.setActiveLink('network');
+        $('#buttonDeleteNetwork').on('click', $.proxy(this.deleteNetwork, this));
 
     },
     setLoading: function(state){
@@ -112,5 +113,25 @@ App.network = App.network || {
     onNetworkCreateSuccess: function(response){
          console.log(response);
          console.log('createdSuccess:', 'TODO - add alert and refresh local data');
-    }
+    },
+    deleteNetwork: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'network/' + row['name'],
+                type: 'DELETE',
+                success: $.proxy(this.onDeleteSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+    onDeleteSuccess: function(name){
+        this.dataTable.row("#"+name).remove().draw();
+        $('.success-msg').text('Network ' + name + ' has been removed');
+        var parent = $('.success-msg').parent().toggleClass('hidden');
+
+        setTimeout(function(){
+          parent.toggleClass('hidden');
+        }, 10000);
+
+    },
+
 }

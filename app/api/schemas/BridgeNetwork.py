@@ -143,6 +143,11 @@ class BridgeNetwork():
 
         return rez
 
+
+    def delete_network(self, name):
+        p = subprocess.Popen(['lxc', 'network', 'delete', name], stdout=subprocess.PIPE)
+        return {'completed': True}
+
     def _execute_LXC_NETWORK_TERMINAL(self, lines_to_exec, name):
         p = subprocess.Popen(["lxc", "network", "create", name], stdout=subprocess.PIPE)
         time.sleep(1)
@@ -151,8 +156,7 @@ class BridgeNetwork():
             p = subprocess.Popen(["lxc", "network", "unset", name, lxc_network_value],
                                  stdout=subprocess.PIPE)
             textline += "LXC UNSET <{0}> ,,,".format(lxc_network_value.upper())
-            # print p.stdout.read()
-            # ----------------
+
             time.sleep(0.5)
 
         for l in lines_to_exec["set"]:
@@ -161,14 +165,10 @@ class BridgeNetwork():
             p = subprocess.Popen(["lxc", "network", "set", name, LXC_NET_ATTR, LXC_NET_ATTR_VAL],
                                  stdout=subprocess.PIPE)
             textline += "LXC SET <{0}> => <{1}> ,,,".format(LXC_NET_ATTR, LXC_NET_ATTR_VAL)
-            # print p.stdout.read()
-            # ----------------
+
             time.sleep(0.5)
 
         return {"completed": True, "spitout": textline.replace('"', r'\"')}
-
-    # p = subprocess.Popen(["sudo", "lxc" , "network" , "set", "lxdbr0", LXC_NET_ATTR, LXC_NET_ATTR_VAL], stdout = subprocess.PIPE)
-    # output_rez = p.stdout.read()
 
     def _form_to_LXC_SET_TASK(self, data):
         TO_DOS = {"set": [], "unset": []}
