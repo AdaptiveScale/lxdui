@@ -4,7 +4,7 @@ App.containers = App.containers || {
     errorMessage:'',
     loading:false,
     selectedContainers: [],
-
+    selectedContainer: null,
     dataTable:null,
     initiated:false,
     tableSettings: {
@@ -36,6 +36,10 @@ App.containers = App.containers || {
         $('#buttonDelete').on('click', $.proxy(this.deleteContainer, this));
         $('#buttonNewInstance').on('click', $.proxy(this.switchView, this, 'form'));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'list'));
+        $('#buttonCloneContainer').on('click', $.proxy(this.cloneContainer, this));
+        $('#buttonMoveContainer').on('click', $.proxy(this.moveContainer, this));
+        $('#buttonExportContainer').on('click', $.proxy(this.exportContainer, this));
+        $('#buttonSnapshotContainer').on('click', $.proxy(this.snapshotContainer, this));
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
         this.getData();
@@ -208,5 +212,99 @@ App.containers = App.containers || {
     },
     onCreateFailed: function(response){
         console.log('createContainerFailed', response);
-    }
+    },
+    showCloneContainer: function(name) {
+        $('#selectedClone').text('Clone Container: ' + name);
+        this.selectedContainer = name;
+        $('#cloneContainerForm').show();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
+    },
+    showMoveContainer: function(name) {
+        $('#selectedMove').text('Move Container: ' + name);
+        this.selectedContainer = name;
+        $('#cloneContainerForm').hide();
+        $('#moveContainerForm').show();
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
+    },
+    showExportContainer: function(name) {
+        $('#selectedExport').text('Export Image from Container: ' + name);
+        this.selectedContainer = name;
+        $('#cloneContainerForm').hide();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').show();
+    },
+    showSnapshotContainer: function(name) {
+        $('#selectedSnapshot').text('Create Snapshot from Container: ' + name);
+        this.selectedContainer = name;
+        $('#cloneContainerForm').hide();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').show();
+        $('#exportContainerForm').hide();
+    },
+    cloneContainer: function() {
+        $.ajax({
+            url:App.baseAPI+'container/clone/'+this.selectedContainer,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                newContainer: $('#newContainerClone').val()
+            }),
+            success: $.proxy(this.onCloneSuccess, this)
+        });
+    },
+    onCloneSuccess: function(response){
+         console.log(response);
+         console.log('clonedSuccess:', 'TODO - add alert and refresh local data');
+    },
+    moveContainer: function() {
+        $.ajax({
+            url:App.baseAPI+'container/move/'+this.selectedContainer,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                newContainer: $('#newContainerMove').val()
+            }),
+            success: $.proxy(this.onMoveSuccess, this)
+        });
+    },
+    onMoveSuccess: function(response){
+         console.log(response);
+         console.log('Moved Success:', 'TODO - add alert and refresh local data');
+    },
+    exportContainer: function() {
+        $.ajax({
+            url:App.baseAPI+'container/export/'+this.selectedContainer,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                imageAlias: $('#imageAlias').val(),
+                force: true
+            }),
+            success: $.proxy(this.onExportSuccess, this)
+        });
+    },
+    onExportSuccess: function(response){
+         console.log(response);
+         console.log('Export Success:', 'TODO - add alert and refresh local data');
+    },
+    snapshotContainer: function() {
+        $.ajax({
+            url:App.baseAPI+'snapshot/' + $('#snapshotName').val() + '/container/'+this.selectedContainer,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: $.proxy(this.onSnapshotSuccess, this)
+        });
+    },
+    onSnapshotSuccess: function(response){
+         console.log(response);
+         console.log('Snapshot Success:', 'TODO - add alert and refresh local data');
+    },
 }

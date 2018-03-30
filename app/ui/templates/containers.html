@@ -43,13 +43,14 @@
             <th>IP Address</th>
             <th>OS image</th>
             <th>Created On</th>
+            <th>Actions</th>
             </thead>
             <tbody>
             {% for container in containers %}
             <tr id="{{container.name}}">
                 <!--<td>{{loop.index}}</td>-->
                 <td></td>
-                <td>{{container.name}}</td>
+                <td><a href="#">{{container.name}}</a></td>
                 <td>{{container.status}}</td>
                 {% if container.network != None %}
                     {% if container['network']['eth0']['addresses']|length != 0 %}
@@ -62,6 +63,13 @@
                 {% endif %}
                 <td>{{container.config['image.distribution']}} {{container.config['image.release']}} {{container.config['image.architecture']}}</td>
                 <td>{{container.created_at}}</td>
+                <td>
+                    <a><i id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>
+                    <a><i id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" class="glyphicon glyphicon-share-alt btn btn-sm btn-default"></i></a>
+                    <a><i id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot" class="glyphicon glyphicon-save btn btn-sm btn-default"></i></a>
+                    <a><i id="exportContainer" onClick="$.proxy(App.containers.showExportContainer('{{container.name}}'));" title="Export Image from Container" class="glyphicon glyphicon-export btn btn-sm btn-default"></i></a>
+
+                </td>
             </tr>
             {% endfor %}
             </tbody>
@@ -133,6 +141,76 @@
             <button type="submit" class="btn btn-primary pull-right">Submit</button>
         </form>
     </div>
+</div>
+
+
+
+<div id="cloneContainerForm" hidden>
+    <h4 id="selectedClone">Clone Container - test</h4>
+    <form id="cloneForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
+            <div class="col-sm-3">
+                <input id="newContainerClone" name="newContainer" class="form-control" type="text" placeholder="Clone Name" title="Clone Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <button id="buttonCloneContainer" class="btn btn-primary">Clone Container</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="moveContainerForm" hidden>
+    <h4 id="selectedMove">Move Container - test</h4>
+    <form id="moveForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
+            <div class="col-sm-3">
+                <input id="newContainerMove" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Move Container Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <button id="buttonMoveContainer" class="btn btn-primary">Move Container</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="exportContainerForm" hidden>
+    <h4 id="selectedExport">Export Container - test</h4>
+    <form id="exportForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
+            <div class="col-sm-3">
+                <input id="imageAlias" name="imageAlias" class="form-control" type="text" placeholder="Image Alias" title="Image Alias" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <button id="buttonExportContainer" class="btn btn-primary">Export Container</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="snapshotContainerForm" hidden>
+    <h4 id="selectedSnapshot">Create Snapshot from Container - test</h4>
+    <form id="snapshotForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
+            <div class="col-sm-3">
+                <input id="snapshotName" name="snapshotName" class="form-control" type="text" placeholder="Snapshot Name" title="Snapshot Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <button id="buttonSnapshotContainer" class="btn btn-primary">Snapshot</button>
+            </div>
+        </div>
+    </form>
 </div>
 {% endblock %}
 
