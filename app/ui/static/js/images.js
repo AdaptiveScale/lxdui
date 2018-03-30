@@ -188,15 +188,27 @@ App.images = App.images || {
     generateContainerFormSection: function(image, pos){
         var tempSection = this.containerTemplate.clone();
         tempSection.prop('id',image.fingerprint);
-        tempSection.find('input[name="name"]').prop('name', 'image['+pos+'][name]');
-        tempSection.find('input[name="image['+pos+'][name]"]').val(image.properties.os.toLowerCase()+'-');
+        tempSection.find('input[name="name"]').prop('name', 'containers['+pos+'][name]');
+        tempSection.find('input[name="containers['+pos+'][name]"]').val(image.properties.os.toLowerCase()+'-');
 
-        tempSection.find('input[name="image"]').prop('name', 'image['+pos+'][image]');
-        tempSection.find('input[name="image['+pos+'][image]"]').val(image.fingerprint);
+        tempSection.find('input[name="image"]').prop('name', 'containers['+pos+'][image]');
+        tempSection.find('input[name="containers['+pos+'][image]"]').val(image.fingerprint);
 
-        tempSection.find('input[name="count"]').prop('name', 'image['+pos+'][count]');
-        tempSection.find('input[name="image['+pos+'][count]"]').on('change', $.proxy(this.onCountChange, this, tempSection.find('.nodeCount')));
+        tempSection.find('input[name="count"]').prop('name', 'containers['+pos+'][count]');
+        tempSection.find('input[name="containers['+pos+'][count]"]').on('change', $.proxy(this.onCountChange, this, tempSection.find('.nodeCount')));
 
+        tempSection.find('input[name="cpu[percentage]"]').prop('name', 'containers['+pos+'][cpu[percentage]]');
+        tempSection.find('input[name="cpu[hardLimitation]"]').prop('name', 'containers['+pos+'][cpu[hardLimitation]]');
+
+        tempSection.find('input[name="memory[sizeInMB]"]').prop('name', 'containers['+pos+'][memory[sizeInMB]]');
+        tempSection.find('input[name="memory[hardLimitation]"]').prop('name', 'containers['+pos+'][memory[hardLimitation]]');
+
+        tempSection.find('input[name="autostart"]').prop('name', 'containers['+pos+'][autostart]');
+        tempSection.find('input[name="stateful"]').prop('name', 'containers['+pos+'][stateful]');
+
+        tempSection.find('select[name="profiles"]').prop('name', 'containers['+pos+'][profiles]');
+        tempSection.find('select[name="containers['+pos+'][profiles]"]').addClass('selectpicker');
+        tempSection.find('select[name="containers['+pos+'][profiles]"]').prop('id', image.fingerprint+'_profiles');
 
         tempSection.find('.imageName').text(image.properties.description);
         tempSection.show();
@@ -219,6 +231,8 @@ App.images = App.images || {
             $('#multiContainerSection').append(tempForm);
             count+=1;
         }.bind(this));
+        //initialize profile pickers
+        $('.selectpicker').selectpicker();
         this.switchView('form');
     },
     switchView: function(view){
@@ -229,35 +243,38 @@ App.images = App.images || {
             $('#multiContainerSection').empty();
         }
     },
-    generateContainer: function(name, image, specs){
+    generateContainer: function(name, formData){
         return {
-            name:name,
-            image:image.image,
-            ...specs
+            ...formData,
+            name:name
         }
     },
-    generateImageContainers: function(jsonImage, specs){
+    generateImageContainers: function(formData){
         var imageContainers = [];
-        for(var i=0;i<=Number(jsonImage.count)-1;i++){
-            imageContainers.push(this.generateContainer(jsonImage.name+(i+1), jsonImage, specs));
+        var tempData = this.cleanupFormData($.extend({}, true,formData));
+        for(var i=0;i<=Number(formData.count)-1;i++){
+            imageContainers.push(this.generateContainer(tempData.name+(i+1),tempData));
         }
         return imageContainers;
     },
     cleanupFormData(specs){
-        delete specs['image'];
+        delete specs['count'];
         specs['cpu']['percentage']=Number(specs['cpu']['percentage']);
         specs['cpu']['hardLimitation']=Boolean(specs['cpu']['hardLimitation']) || false;
         specs['memory']['sizeInMB']=Number(specs['memory']['sizeInMB']);
         specs['memory']['hardLimitation']=Boolean(specs['memory']['hardLimitation']) || false;
         specs['stateful']=Boolean(specs['stateful']) || true;
         specs['autostart']=Boolean(specs['autostart']) || true;
+        if($('#'+specs.image+'_profiles').val()){
+            specs['profiles'] = $('#'+specs.image+'_profiles').val();
+        }
         return specs;
     },
     generateRequest: function(inputJSON){
         var tempRequest = [];
-        var tempSpecs = this.cleanupFormData($.extend({}, true, inputJSON));
-        for(item in inputJSON.image){
-            var tempData = this.generateImageContainers(inputJSON.image[item], tempSpecs);
+        var containerArray = $.map(inputJSON.containers, function(val, ind){ return [val]; });
+        for(var i=containerArray.length-1, container; container=containerArray[i];i--){
+            var tempData = this.generateImageContainers(container);
             tempRequest=tempRequest.concat(tempData);
         }
         return tempRequest;
