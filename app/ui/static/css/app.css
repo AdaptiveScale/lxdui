@@ -61,7 +61,7 @@
 }
 .nav-pills>li.active>a
 {
-    background:#777;
+    background: #FA5D26;
     color:white;
 }
 .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover
@@ -78,6 +78,35 @@
     background:#FA5D26;
     color:white;
 }
+
+.loader {
+  border: 2px solid #f3f3f3;
+  border-radius: 50%;
+  border-top: 2px solid #3498db;
+  width: 18px;
+  height: 18px;
+  -webkit-animation: spin 1s linear infinite; /* Safari */
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.table tr td ul li, .table tr td li {
+    list-style: none;
+}
+
+.progress {
+    height: 4px;
+    margin-bottom: 0px;
+    position: absolute;
+    width: 96%;
+    bottom: 62px;
+}
+
+
 .btn-loginlxdui
 {
     background:#FA5D26;
@@ -107,4 +136,8 @@
     margin-bottom:15px;
     padding:10px;
     padding-left:15px;
+}
+
+.legend {
+    padding-bottom:15px;
 }

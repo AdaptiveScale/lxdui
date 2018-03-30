@@ -28,6 +28,7 @@ App.network = App.network || {
         $('#buttonCreateNetwork').on('click', $.proxy(this.createNetwork, this));
         $('#buttonNewNetwork').on('click', $.proxy(this.showNewUpdateNetwork, this));
         $('#backNetwork').on('click', $.proxy(this.backToNetworks, this));
+        App.setActiveLink('network');
         $('#buttonDeleteNetwork').on('click', $.proxy(this.deleteNetwork, this));
 
     },

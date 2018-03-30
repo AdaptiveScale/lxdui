@@ -6,7 +6,15 @@
 </script>
 
 <div class="col-lg-12 main-div" id="set-div">
-        <legend>Images</legend>
+        <legend class="legend">
+            <span>Images </span><span style="vertical-align: middle;
+padding-top: 10px;"><label class="loader"></label></span>
+            <button id="buttonUpdate" class="btn btn-primary pull-right">
+                <span class="glyphicon glyphicon-refresh"> </span>
+                Refresh list
+            </button>
+        </legend>
+    <div>
         <div class="col-lg-12">
             <div class="form-inline">
                 <label>OS Images: </label>
@@ -15,28 +23,33 @@
                     <span class="glyphicon glyphicon-hdd"> </span>
                     Local <span class="badge"></span>
                 </button>
-                <button type="button" id="btnRemoteImages" class="btn btn-primary">
+                <button type="button" id="btnRemoteImages" class="btn btn-primary" style="width:108px;text-align:left;">
                     <span class="glyphicon glyphicon-globe"> </span>
                     Remote <span class="badge"></span>
                 </button>
             </div>
+                 <div class="form-group pull-right">
+                     <button id="buttonLaunchContainers" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Launch Container(s)
+            </button>
+            <!--<button id="buttonLaunch" class="btn btn-success" style="visibility: hidden;">Launch Container(s)</button>-->
+            <button id="buttonDelete" class="btn btn-danger pull-right" style="visibility: hidden;margin-right:5px;">Delete OS Image</button>
+
+            <button id="buttonDownload" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Download Image</button>
+        </div>
         </div>
     </div>
     <br>
     <br>
     <br>
-    <div class="col-lg-12">
-        <div class="form-group">
-            <button id="buttonDelete" class="btn btn-danger" style="visibility: hidden;">Delete OS Image</button>
-            <button id="buttonLaunchContainers" class="btn btn-success" style="visibility: hidden">Launch Container(s)
-            </button>
-            <button id="buttonDownload" class="btn btn-success" style="visibility: hidden;">Download Image</button>
-            <button id="buttonUpdate" class="btn btn-primary pull-right">
-                <span class="glyphicon glyphicon-refresh"> </span>
-                Update
-            </button>
-        </div>
-    </div>
+    <!--<div class="col-lg-12">-->
+        <!--<div class="form-group">-->
+            <!--&lt;!&ndash;<button id="buttonLaunch" class="btn btn-success" style="visibility: hidden;">Launch Container(s)</button>&ndash;&gt;-->
+            <!--<button id="buttonDelete" class="btn btn-danger" style="visibility: hidden;">Delete OS Image</button>-->
+            <!--<button id="buttonLaunchContainers" class="btn btn-success" style="visibility: hidden">Launch Container(s)-->
+            <!--</button>-->
+            <!--<button id="buttonDownload" class="btn btn-success" style="visibility: hidden;">Download Image</button>-->
+        <!--</div>-->
+    <!--</div>-->
     <div class="col-lg-12" id="loader" style="display:none;">
         <div class="col-lg-offset-4 col-lg-4">
             <img src="static/images/loader.gif" class="text-center" width="150px">
@@ -76,7 +89,7 @@
     </div>
     <div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">
         <div class="">
-            <table id="tableImagesRemote" class="table table-bordered table-fixed">
+            <table id="tableImagesRemote" class="table table-bordered table-responsive table-fixed" style="width:100%">
                 <thead>
                 <th>Select</th>
                 <th>Architecture</th>

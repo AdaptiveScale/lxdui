@@ -2,26 +2,26 @@
 {% block content %}
 <div id="profileList">
     <div class="col-lg-12 main-div" id="set-div">
-        <legend>Profiles</legend>
+        <legend class="legend">
+            <span>Profiles </span><span style="vertical-align: middle;
+padding-top: 10px;"><label class="loader"></label></span>
+        </legend>
 
-        <div>
+        <div class="col-lg-12">
             <div class="form-group">
-                <button id="buttonNewProfile" class="btn btn-success">
+                <button id="buttonNewProfile" class="btn btn-success pull-right">
                         <span class="glyphicon glyphicon-plus-sign"> </span>
                          New Profile
                 </button>
-                <button class="btn btn-danger btn-delete_container" id="buttonDeleteProfile">
+                <button class="btn btn-danger btn-delete_container pull-right" style="margin-right:5px;" id="buttonDeleteProfile">
                     <span class="glyphicon glyphicon-remove-sign"> </span> Delete
                 </button>
             </div>
-            <div>
-                <div class="alert alert-success fade in alert-dismissible hidden">
-                    <a href="#" class="close" data-dismiss="alert" aria-label="close" title="close">×</a>
-                  <strong>Success!</strong> <span class="success-msg"></span>
-                </div>
-            </div>
-        </div>
 
+        </div>
+        <br>
+        <br>
+        <br>
 
         <div class="col-lg-12">
             <table class="table table-bordered" id="tableProfiles">

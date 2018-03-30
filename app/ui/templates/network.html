@@ -1,10 +1,13 @@
 {% extends "index.html" %} {% block content %}
 <div class="col-lg-12 main-div" id="set-div">
     <div class="col-lg-12" id="networkList">
-        <legend>LXD Network</legend>
-        <div>
+        <legend class="legend">
+        <span>LXD Network </span><span style="vertical-align: middle;
+padding-top: 10px;"><label class="loader"></label></span>
+        </legend>
+        <div class="col-lg-12">
             <div class="form-group">
-                <button id="buttonNewNetwork" class="btn btn-success">
+                <button id="buttonNewNetwork" class="btn btn-success pull-right">
                         <span class="glyphicon glyphicon-plus-sign"> </span>
                          New Bridge Network
                 </button>
@@ -19,7 +22,9 @@
                 </div>
             </div>
         </div>
-
+        <br>
+        <br>
+        <br>
         <div class="">
             <table class="table table-bordered table-fixed" id="tableNetworks">
                 <thead>
@@ -89,12 +94,12 @@
             <!-- Nav tabs -->
             <ul class="nav nav-tabs" role="tablist" class="col-lg-6">
                 <li class="nav-item active">
-                    <a class="nav-link" data-toggle="tab" href="#ip_ver_4" role="tab" style="background:#E0F7FA">IPv4 configuration</a>
+                    <a class="nav-link" data-toggle="tab" href="#ip_ver_4" role="tab" style="background:#F2F1F0;">IPv4 configuration</a>
                 </li>
             </ul>
             <!-- Tab panes -->
             <div class="tab-content">
-                <div class="tab-pane active" id="ip_ver_4" role="tabpanel" style="padding-top:20px;;padding-bottom:20px;background:#E0F7FA">
+                <div class="tab-pane active" id="ip_ver_4" role="tabpanel" style="padding-top:20px;;padding-bottom:20px;background:#F2F1F0;">
                     <div class="form-group">
                         <label for="IPv4_ADDR" class="col-sm-3 control-label">Network IP</label>
                         <div class="col-sm-3">

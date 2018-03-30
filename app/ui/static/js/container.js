@@ -36,6 +36,8 @@ App.containers = App.containers || {
         $('#buttonDelete').on('click', $.proxy(this.deleteContainer, this));
         $('#buttonNewInstance').on('click', $.proxy(this.switchView, this, 'form'));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'list'));
+        App.setActiveLink('container');
+
         $('#buttonCloneContainer').on('click', $.proxy(this.cloneContainer, this));
         $('#buttonMoveContainer').on('click', $.proxy(this.moveContainer, this));
         $('#buttonExportContainer').on('click', $.proxy(this.exportContainer, this));
