@@ -36,11 +36,14 @@ App.containers = App.containers || {
         $('#buttonDelete').on('click', $.proxy(this.deleteContainer, this));
         $('#buttonNewInstance').on('click', $.proxy(this.switchView, this, 'form'));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'list'));
+        App.setActiveLink('container');
+
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
         this.getData();
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
+
         if(window.location.hash && window.location.hash=='#createContainer')
             this.switchView('form')
     },

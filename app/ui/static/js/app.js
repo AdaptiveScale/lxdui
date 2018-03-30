@@ -10,6 +10,7 @@ var App = App || {
     containers: null,
     images: null,
     network: null,
+    location: null,
     loading: false,
     notInitialized:['containers', 'images', 'network'],
     init: function(){
@@ -55,6 +56,9 @@ var App = App || {
                     Authorization:'JWT '+localStorage.getItem('authToken'),
                     'Content-Type':'application/json'
                 },
+                beforeSend: function() {
+                    $('.loader').show();
+                },
                 complete: function(response){
                     if(response.status == 401 && window.location!== WEB){
                         window.location = WEB;
@@ -62,9 +66,14 @@ var App = App || {
                     if(window.location!== WEB){
                         App.triggerAlert(response, this.type    , this.url);
                     }
+                    $('.loader').hide();
                 }
             });
         }
+    },
+    setActiveLink: function(name) {
+        $('.nav li').removeClass('active');
+        $('.'+name+'-menu').addClass('active');
     },
     triggerAlert: function(response, method, url){
         if([undefined, 'GET'].indexOf(method)>-1)

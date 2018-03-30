@@ -41,6 +41,8 @@ App.images = App.images || {
         $('#buttonDownload').on('click', $.proxy(this.doDownload, this));
         $('#buttonLaunchContainers').on('click', $.proxy(this.launchContainers, this));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'localList'));
+        $('.image').on('click', $.proxy(this.setActive, this));
+        App.setActiveLink('image');
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
         this.initLocalTable();

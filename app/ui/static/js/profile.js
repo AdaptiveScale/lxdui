@@ -36,7 +36,7 @@ App.profiles = App.profiles || {
         $('#backProfile').on('click', $.proxy(this.backToProfiles, this));
         $('#buttonCreateProfile').on('click', $.proxy(this.createProfile, this));
         $('#buttonDeleteProfile').on('click', $.proxy(this.deleteProfile, this));
-
+        App.setActiveLink('profile');
         this.getData();
     },
      refreshProfiles: function(e){

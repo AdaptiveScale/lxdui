@@ -21,11 +21,8 @@
     <script src="{{ url_for('.static', filename='js/app.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/login.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/html.js')}}"></script>
-    {%- if currentpage[:10] == "container " %}
     <script src="{{ url_for('.static', filename='js/container-details.js')}}"></script>
-    {% else %}
     <script src="{{ url_for('.static', filename='js/container.js')}}"></script>
-    {% endif -%}
     <script src="{{ url_for('.static', filename='js/images.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/createcontainer.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/profile.js')}}"></script>
@@ -70,10 +67,10 @@
             <ul class="nav nav-pills nav-stacked">
                 <li role="presentation" style="text-align:center"><img src="{{ url_for('.static', filename='images/logo.png')}}" width="90%"/> </li>
                 <li id="stamplike" role="presentation" class="label label-danger"></li>
-                <li {% if currentpage == "containers" %}class="active"{% endif %} role="presentation"><a href="/ui/containers"><span class="glyphicon glyphicon-th"> </span>Containers</a></li>
-                <li {% if currentpage == "images" %}class="active"{% endif %} role="presentation"><a href="/ui/images"><span class="glyphicon glyphicon-hdd"> </span>Images</a></li>
-                 <li {% if currentpage == "profiles" %}class="active"{% endif %} role="presentation"><a href="/ui/profiles"><span class="glyphicon glyphicon-th"> </span>Profiles</a></li>
-                <li {% if currentpage == "network" %}class="active"{% endif %} role="presentation"><a href="/ui/network"><span class="glyphicon glyphicon-random"> </span>Network </a></li>
+                <li class="container-menu" role="presentation"><a href="/ui/containers"><span class="glyphicon glyphicon-th"> </span>Containers</a></li>
+                <li class="image-menu" role="presentation"><a href="/ui/images"><span class="glyphicon glyphicon-hdd"> </span>Images</a></li>
+                <li class="profile-menu" role="presentation"><a href="/ui/profiles"><span class="glyphicon glyphicon-th"> </span>Profiles</a></li>
+                <li class="network-menu" role="presentation"><a href="/ui/network"><span class="glyphicon glyphicon-random"> </span>Network </a></li>
                 <li role="presentation"><a class="buttonLogout" style="cursor:pointer"><span class="glyphicon glyphicon-log-out"> </span>Logout</a></li>
             </ul>
         </div>
@@ -86,7 +83,7 @@
     </div>
     <p id="footer_paragraph">
         <a href="{{lxdui_git_url}}"  target="_blank" style="font-size:1.0em"><span style="color:black">LXDUI v</span><b style="color:#FA5D26">{{lxdui_current_version}}</b></a><br/>
-        Copyright © 2017 <a href="http://www.adaptivescale.com" target="_blank">AdaptiveScale, Inc.</a>
+        Copyright © 2018 <a href="http://www.adaptivescale.com" target="_blank">AdaptiveScale, Inc.</a>
     </p>
     </div>
 </body>
