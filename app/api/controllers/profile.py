@@ -26,7 +26,6 @@ def create_profile():
     input = request.get_json(silent=True)
     validation = doValidate(input)
     if validation:
-        print(validation.message)
         return response.replyFailed(message=validation.message)
 
     try:
