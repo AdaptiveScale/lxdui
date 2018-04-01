@@ -80,7 +80,8 @@ var App = App || {
             return;
         var tempResp = response.responseJSON || response;
         if(response.status !== 200){
-            toastr.error(response.data || 'Unknown error', response.message||'Error');
+            console.log(response);
+            toastr.error(response.responseJSON.message || 'Unknown error', response.statusText||'Error');
         }else{
             toastr.success(response.message,'Success');
         }

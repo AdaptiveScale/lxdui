@@ -25,7 +25,8 @@ class LXCProfile(LXDModule):
         try:
             self.client.profiles.create(self.input.get('name'), config=self.input.get('config'),
                                         devices=self.input.get('devices'))
-            return self.info()
+
+            return self.client.api.profiles[self.input.get('name')].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
 

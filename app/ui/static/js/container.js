@@ -195,7 +195,7 @@ App.containers = App.containers || {
     onCreateSuccess: function(response){
         this.switchView('list');
         this.newContainerForm.trigger('reset');
-        this.getData();
+        this.refreshContainers();
     },
     onCreateFailed: function(response){
         console.log('createContainerFailed', response);
