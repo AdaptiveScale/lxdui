@@ -2,8 +2,7 @@
 {% block content %}
 <div id="containers">
     <div class="col-lg-12 main-div">
-        <legend class="legend"><span>Containers </span><span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span>
+        <legend class="legend"><span>Containers </span> <span class="glyphicon glyphicon-refresh spinning loader"></span>
                  <button class="btn btn-primary pull-right" href="#" id="refreshContainers" style="margin-right:5px;">
                    <span class="glyphicon glyphicon-refresh"> </span> Refresh List
                 </button>
@@ -63,7 +62,7 @@ padding-top: 10px;"><label class="loader"></label></span>
                 <td>
                     <a><i id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>
                     <a><i id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" class="glyphicon glyphicon-share-alt btn btn-sm btn-default"></i></a>
-                    <a><i id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot" class="glyphicon glyphicon-save btn btn-sm btn-default"></i></a>
+                    <a><i id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot" class="glyphicon glyphicon-camera btn btn-sm btn-default"></i></a>
                     <a><i id="exportContainer" onClick="$.proxy(App.containers.showExportContainer('{{container.name}}'));" title="Export Image from Container" class="glyphicon glyphicon-export btn btn-sm btn-default"></i></a>
                 </td>
             </tr>
@@ -75,8 +74,7 @@ padding-top: 10px;"><label class="loader"></label></span>
 
 <div id="createContainerForm" style="display:none;">
     <div class="col-lg-12 main-div">
-        <legend class="legend"><span>Containers </span><span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></legend>
+        <legend class="legend"><span>Containers </span> <span class="glyphicon glyphicon-refresh spinning loader"></span></legend>
         <div>
             <div class="form-group">
                 <button class="btn btn-defult" id="buttonBack">
@@ -118,7 +116,7 @@ padding-top: 10px;"><label class="loader"></label></span></legend>
                 </div>
             </div>
             <div class="form-group">
-                <label class="col-md-2 control-label" for="containerCPUPercentage">CPU usage in %:</label>
+                <label class="col-md-2 control-label" for="containerCPUPercentage">CPU allocation (%):</label>
                 <div class="col-md-3">
                     <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
                        min="5" max="100" value="30">
@@ -131,7 +129,7 @@ padding-top: 10px;"><label class="loader"></label></span></legend>
                 </div>
                 </div>
             <div class="form-group">
-                <label class="col-md-2 control-label" for="containerMemoryPercentage">Memory usage in MB:</label>
+                <label class="col-md-2 control-label" for="containerMemoryPercentage">Memory allocation (MB):</label>
                 <div class="col-md-3">
                     <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
                        min="32" value="32">
@@ -155,8 +153,7 @@ padding-top: 10px;"><label class="loader"></label></span></legend>
             </div>
         <div class="form-group">
             <div class="col-md-5">
-                <button type="submit" class="btn btn-primary pull-right">Submit <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+                <button type="submit" class="btn btn-primary pull-right">Submit <span class="glyphicon glyphicon-refresh spinning loader"></span> </button>
 
             </div>
         </div>
