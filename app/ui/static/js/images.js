@@ -116,12 +116,14 @@ App.images = App.images || {
         }.bind(this));
     },
     onDownloadSuccess: function(imageName, response){
+         location.reload();
          console.log('downloadSuccess:', 'TODO - add alert and refresh local data');
     },
     getData: function(){
-        this.setLoading(true);
+        //this.setLoading(true);
         if(this.activeTab=='local')
-            return $.get(App.baseAPI+'image', $.proxy(this.getDataSuccess, this));
+            location.reload();
+            //return $.get(App.baseAPI+'image', $.proxy(this.getDataSuccess, this));
         if(this.activeTab=='remote')
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
     },

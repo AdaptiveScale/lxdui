@@ -36,12 +36,17 @@ var App = App || {
         $.ajax({
             url: this.baseAPI+'lxd/config',
             method:'GET',
-            success: $.proxy(this.getInfoSuccess, this)
+            success: $.proxy(this.getInfoSuccess, this),
+            error: $.proxy(this.getInfoError, this),
         });
     },
     getInfoSuccess:function(response){
         this.info = response.data;
         $('#stamplike').text('LXD Version: ' + this.info.environment.server_version);
+        $('#stamplike').removeClass('label-danger').addClass('label-success');
+    },
+    getInfoError:function(response) {
+        $('#stamplike').text('LXD is not Installed').removeClass('label-success').addClass('label-danger');
     },
     setDefaultHeaders: function(){
         console.log('locaiton', window.location.href, WEB);
