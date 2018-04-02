@@ -120,9 +120,9 @@ App.profiles = App.profiles || {
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
-                "name": $('#name').val(),
-                "config": configValue,
-                "devices": devicesValue,
+                name: $('#name').val(),
+                config: configValue,
+                devices: devicesValue,
             }),
             success: $.proxy(this.onProfileCreate, this)
         });

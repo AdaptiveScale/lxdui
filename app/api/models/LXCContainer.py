@@ -113,7 +113,7 @@ class LXCContainer(LXDModule):
         except Exception as e:
             raise ValueError(e)
 
-    def create(self, waitIt=False):
+    def create(self, waitIt=True):
         try:
             self.client.containers.create(self.data, wait=waitIt)
             self.start(waitIt)
