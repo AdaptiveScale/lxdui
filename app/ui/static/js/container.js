@@ -114,6 +114,7 @@ App.containers = App.containers || {
     },
     onStartSuccess: function(name){
         console.log('onStartSuccess', name);
+        this.getData();
     },
     stopContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -124,9 +125,10 @@ App.containers = App.containers || {
             });
         }.bind(this));
     },
-        onStopSuccess: function(name){
-            console.log('onStopSuccess', name);
-        },
+    onStopSuccess: function(name){
+        console.log('onStopSuccess', name);
+        this.getData();
+    },
     restartContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
             $.ajax({
@@ -138,6 +140,7 @@ App.containers = App.containers || {
     },
     onRestartSuccess: function(name){
         console.log('onRestartSuccess', name);
+        this.getData();
     },
     deleteContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -149,7 +152,6 @@ App.containers = App.containers || {
             });
         }.bind(this));
     },
-
     onDeleteSuccess: function(name){
         this.dataTable.row("#"+name).remove().draw();
     },
