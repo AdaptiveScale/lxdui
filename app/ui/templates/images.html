@@ -7,8 +7,7 @@
 
 <div class="col-lg-12 main-div" id="set-div">
         <legend class="legend">
-            <span>Images </span><span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span>
+            <span>Images </span><span class="glyphicon glyphicon-refresh spinning loader"></span>
             <button id="buttonUpdate" class="btn btn-primary pull-right">
                 <span class="glyphicon glyphicon-refresh"> </span>
                 Refresh list
@@ -23,7 +22,7 @@ padding-top: 10px;"><label class="loader"></label></span>
                     <span class="glyphicon glyphicon-hdd"> </span>
                     Local <span class="badge"></span>
                 </button>
-                <button type="button" id="btnRemoteImages" class="btn btn-primary" style="width:108px;text-align:left;">
+                <button type="button" id="btnRemoteImages" class="btn btn-primary">
                     <span class="glyphicon glyphicon-globe"> </span>
                     Remote <span class="badge"></span>
                 </button>
@@ -32,11 +31,9 @@ padding-top: 10px;"><label class="loader"></label></span>
                      <button id="buttonLaunchContainers" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Launch Container(s)
             </button>
             <!--<button id="buttonLaunch" class="btn btn-success" style="visibility: hidden;">Launch Container(s)</button>-->
-            <button id="buttonDelete" class="btn btn-danger pull-right" style="visibility: hidden;margin-right:5px;">Delete OS Image <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+            <button id="buttonDelete" class="btn btn-danger pull-right" style="visibility: hidden;margin-right:5px;">Delete OS Image </button>
 
-            <button id="buttonDownload" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Download Image <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+            <button id="buttonDownload" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Download Image</button>
         </div>
         </div>
     </div>
@@ -93,20 +90,20 @@ padding-top: 10px;"><label class="loader"></label></span></button>
         <div class="">
             <table id="tableImagesRemote" class="table table-bordered table-responsive table-fixed" style="width:100%">
                 <thead>
-                <th>Select</th>
-                <th>Architecture</th>
-                <th>Distribution</th>
-                <th>Image</th>
-                <th>Name</th>
-                </thead>
+                    <th>Select</th>
+                    <th>Os</th>
+                    <th>Architecture</th>
+                    <th>Distribution</th>
+                    <th>Image</th>
+                    </thead>
                 <tbody>
                 {% for image in remoteImages %}
                 <tr id="{{image.image}}">
                     <td></td>
+                    <td>{{ image.name}}</td>
                     <td>{{ image.architecture }}</td>
                     <td>{{ image.distribution }}</td>
                     <td>{{ image.image }}</td>
-                    <td>{{ image.name}}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -129,8 +126,9 @@ padding-top: 10px;"><label class="loader"></label></span></button>
                 <div class="form-group" id="multiContainerSection">
 
                 </div>
-                <button type="submit" class="btn btn-primary pull-right">Submit <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+                <div class="col-lg-3" style="margin:20px;">
+                    <button type="submit" class="btn btn-primary">Save <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                </div>
             </form>
         </div>
     </div>
