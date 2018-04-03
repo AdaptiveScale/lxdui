@@ -9,6 +9,7 @@ var App = App || {
     login:null,
     containers: null,
     images: null,
+    ongoingOperation: 0,
     network: null,
     location: null,
     loading: false,
@@ -62,16 +63,19 @@ var App = App || {
                     'Content-Type':'application/json'
                 },
                 beforeSend: function() {
+                    App.ongoingOperation +=1;
                     $('.loader').show();
                 },
                 complete: function(response){
+                    App.ongoingOperation -=1;
                     if(response.status == 401 && window.location!== WEB){
                         window.location = WEB;
                     }
                     if(window.location!== WEB){
                         App.triggerAlert(response, this.type    , this.url);
                     }
-                    $('.loader').hide();
+                    if(App.ongoingOperation ==0)
+                        $('.loader').hide();
                 }
             });
         }
