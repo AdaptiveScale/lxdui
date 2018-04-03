@@ -300,5 +300,9 @@ App.images = App.images || {
     onCreateSuccess: function(response){
         this.switchView('localList');
         window.location = App.baseWEB +'containers';
+    },
+    launchContainer:function(fingerprint){
+        this.tableLocal.row('#'+fingerprint).select();
+        this.launchContainers();
     }
 }
