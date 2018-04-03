@@ -29,7 +29,7 @@ setup(
    zip_safe=False,
    install_requires=[
        'Flask==0.12.2',
-       'pylxd==2.2.5',
+       'pylxd==2.2.6',
        'jsonschema==2.6.0',
        'requests==2.9.1',
        'netaddr==0.7.19',
