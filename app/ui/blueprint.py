@@ -2,9 +2,14 @@ from flask import Blueprint, render_template, redirect
 from app.api.models.LXCContainer import LXDModule, LXCContainer
 from app.__metadata__ import VERSION
 import json
+import os
 
 uiPages = Blueprint('uiPages', __name__, template_folder='./templates',
                     static_folder='./static')
+
+def memory():
+    mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
+    return int(mem_bytes / (1024. ** 2)) # convert to mb
 
 @uiPages.route('/')
 def index():
@@ -24,12 +29,14 @@ def container():
                                containers=result,
                                images = images,
                                profiles = profiles,
+                               memory=memory(),
                                lxdui_current_version=VERSION)
     except:
         return render_template('containers.html', currentpage='Containers',
                                containers=[],
                                images=[],
                                profiles=[],
+                               memory=memory(),
                                lxdui_current_version=VERSION)
 
 @uiPages.route('/profiles')
@@ -66,6 +73,7 @@ def images():
                                    'local': json.dumps(localImages),
                                    'remote': json.dumps(remoteImages),
                                },
+                               memory=memory(),
                                lxdui_current_version=VERSION)
     except:
         # TODO - log exception
@@ -77,4 +85,5 @@ def images():
                                    'local': json.dumps([]),
                                    'remote': json.dumps([]),
                                },
+                               memory=memory(),
                                lxdui_current_version=VERSION)

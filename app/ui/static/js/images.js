@@ -47,6 +47,10 @@ App.images = App.images || {
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
         this.initLocalTable();
         this.initRemoteTable();
+        $('.imageSize').each(this.convertImageSize);
+    },
+    convertImageSize:function(index, item){
+        $(item).text(App.formatBytes($(item).text()));
     },
     setLoading: function(state){
         var tempLoaderState = state?'show':'hide';
@@ -128,6 +132,8 @@ App.images = App.images || {
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
     },
     onSwitchToggle: function(screen){
+        this.tableLocal.rows({selected:true}).deselect();
+        this.tableRemote.rows({selected:true}).deselect();
         if(screen==='local'){
             $('#tableImagesLocalWrapper').show();
             $('#tableImagesRemoteWrapper').hide();
@@ -157,7 +163,11 @@ App.images = App.images || {
                 { title:'Aliases', data : 'aliases'},
                 { title:'Release', data : 'properties.release' },
                 { title:'Architecture', data : 'properties.architecture' },
-                { title:'Size', data : 'size' }
+                { title:'Size', data : 'size',
+                    render:function(field){
+                        return App.formatBytes(field);
+                    }
+                }
             ]
         }));
     },

@@ -78,7 +78,7 @@
                     <td>{{ image.aliases}}</td>
                     <td>{{ image.properties.release }}</td>
                     <td>{{ image.properties.architecture }}</td>
-                    <td>{{ image.size }}</td>
+                    <td class="imageSize">{{ image.size }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -184,11 +184,11 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label class="col-sm-4 control-label">Memory usage in MB:</label>
+                <label class="col-sm-4 control-label">Memory usage in MB:<br /> (Max: {{memory}} MB)</label>
                 <label class="col-sm-4 form-check-label">Hard Limit</label>
                 <div class="clearfix"></div>
                 <div class="col-sm-4">
-                    <input type="number" class="form-control" name="memory[sizeInMB]" min="32" value="32">
+                    <input type="number" class="form-control" name="memory[sizeInMB]" min="32" max="{{memory}}" value="32">
                 </div>
                 <div class="col-sm-4">
                     <input type="checkbox" class="form-check-input" name="memory[hardLimitation]"
