@@ -72,7 +72,7 @@
                     <td></td>
                     <td>
                         <a style="cursor:pointer"
-                           onClick="$.proxy(App.containers.createContainer, App.containers, image);">{{image.properties.os}}</a>
+                           onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
                     </td>
                     <td>{{ image.properties.description }}</td>
                     <td>{{ image.aliases}}</td>
