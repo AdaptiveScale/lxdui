@@ -13,7 +13,7 @@ var App = App || {
     network: null,
     location: null,
     loading: false,
-    notInitialized:['containers', 'images', 'network'],
+    notInitialized:['containers', 'images', 'network', 'containerDetails'],
     init: function(){
         console.log('App initializing');
         this.setDefaultHeaders();
@@ -28,6 +28,8 @@ var App = App || {
             this.profiles.init();
         if(this.containers && window.location.href.startsWith(WEB +'network'))
             this.network.init();
+        if(this.containers && window.location.href.startsWith(WEB +'containers/'))
+            this.containerDetails.init();
         console.log('App initialized');
         this.getInfo();
         $('.buttonLogout').on('click', $.proxy(this.login.doLogout, this.login));
