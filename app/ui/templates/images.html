@@ -76,15 +76,20 @@
                         <a style="cursor:pointer"
                            onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
                     </td>
+                    <td>{{image.aliases[0].description}}</td>
                      {% else %}
                     <td>
                         <a style="cursor:pointer"
                            onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
                     </td>
-                     {% endif %}
-                    
                     <td>{{ image.properties.description }}</td>
-                    <td>{{ image.aliases}}</td>
+                     {% endif %}
+
+                    <td>
+                        {% for alias in image.aliases %}
+                            <li>{{alias.name}}</li>
+                        {% endfor %}
+                    </td>
                     <td>{{ image.properties.release }}</td>
                     <td>{{ image.properties.architecture }}</td>
                     <td class="imageSize">{{ image.size }}</td>
