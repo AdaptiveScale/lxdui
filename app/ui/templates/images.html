@@ -70,10 +70,19 @@
                 {% for image in localImages %}
                 <tr id="{{image.fingerprint}}">
                     <td></td>
+
+                    {% if image.properties.get('description') == None %}
+                    <td>
+                        <a style="cursor:pointer"
+                           onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
+                    </td>
+                     {% else %}
                     <td>
                         <a style="cursor:pointer"
                            onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
                     </td>
+                     {% endif %}
+                    
                     <td>{{ image.properties.description }}</td>
                     <td>{{ image.aliases}}</td>
                     <td>{{ image.properties.release }}</td>
