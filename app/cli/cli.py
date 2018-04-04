@@ -65,8 +65,14 @@ def start():
     # if daemon:
     #     #start in the background
     #click.echo("Starting %s" % APP)
-    core.startApp(uiPages)
+    port = 5000
+    try:
+        port = int(Config().get('LXDUI', 'lxdui.port'))
+    except:
+        print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
+        exit()
 
+    core.startApp(port, uiPages)
 
 
 @lui.command()
