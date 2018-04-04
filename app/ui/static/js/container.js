@@ -114,7 +114,8 @@ App.containers = App.containers || {
     },
     onStartSuccess: function(name){
         console.log('onStartSuccess', name);
-        this.getData();
+        location.reload();
+        //this.getData();
     },
     stopContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -127,7 +128,8 @@ App.containers = App.containers || {
     },
     onStopSuccess: function(name){
         console.log('onStopSuccess', name);
-        this.getData();
+        location.reload();
+        //this.getData();
     },
     restartContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -140,7 +142,8 @@ App.containers = App.containers || {
     },
     onRestartSuccess: function(name){
         console.log('onRestartSuccess', name);
-        this.getData();
+        location.reload();
+        //this.getData();
     },
     deleteContainer: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){

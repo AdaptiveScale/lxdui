@@ -59,7 +59,7 @@
                 {% endif %}
                 <td>{{container.config['image.distribution']}} {{container.config['image.release']}} {{container.config['image.architecture']}}</td>
                 <td>{{container.created_at}}</td>
-                <td>
+                <td style="width:157px !important;">
                     <a><i id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>
                     <a><i id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" class="glyphicon glyphicon-share-alt btn btn-sm btn-default"></i></a>
                     <a><i id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot" class="glyphicon glyphicon-camera btn btn-sm btn-default"></i></a>
