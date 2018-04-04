@@ -62,12 +62,12 @@
 }
 .nav-pills>li.active>a
 {
-    background: #FA5D26;
+    background:#444;
     color:white;
 }
 .nav-pills>li.active>a:focus, .nav-pills>li.active>a:hover
 {
-    background:#444;
+    background: #FA5D26;
     text-decoration: none;
 }
 .nav-pills>li>a
