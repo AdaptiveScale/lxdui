@@ -204,8 +204,7 @@ App.containers = App.containers || {
     },
     showCloneContainer: function(name) {
         $('#selectedClone').text('Clone Container: ' + name);
-        this.selectedContainer = name;
-        if ($('#cloneContainerForm').is(':visible')) {
+        if ($('#cloneContainerForm').is(':visible') && this.selectedContainer === name) {
             $('#cloneContainerForm').hide();
         }
         else {
@@ -215,12 +214,13 @@ App.containers = App.containers || {
         $('#snapshotContainerForm').hide();
         $('#exportContainerForm').hide();
         $('#snapshotList').hide();
+        this.selectedContainer = name;
     },
     showMoveContainer: function(name) {
         $('#selectedMove').text('Move Container: ' + name);
-        this.selectedContainer = name;
+
         $('#cloneContainerForm').hide();
-        if ($('#moveContainerForm').is(':visible')) {
+        if ($('#moveContainerForm').is(':visible') && this.selectedContainer === name) {
             $('#moveContainerForm').hide();
         }
         else {
@@ -229,27 +229,28 @@ App.containers = App.containers || {
         $('#snapshotContainerForm').hide();
         $('#exportContainerForm').hide();
         $('#snapshotList').hide();
+        this.selectedContainer = name;
     },
     showExportContainer: function(name) {
         $('#selectedExport').text('Export Image from Container: ' + name);
-        this.selectedContainer = name;
+
         $('#cloneContainerForm').hide();
         $('#moveContainerForm').hide();
         $('#snapshotContainerForm').hide();
-        if ($('#exportContainerForm').is(':visible')) {
+        if ($('#exportContainerForm').is(':visible') && this.selectedContainer === name) {
             $('#exportContainerForm').hide();
         }
         else {
             $('#exportContainerForm').show();
         }
         $('#snapshotList').hide();
+        this.selectedContainer = name;
     },
     showSnapshotContainer: function(name) {
         $('#selectedSnapshot').text('Create Snapshot from Container: ' + name);
-        this.selectedContainer = name;
         $('#cloneContainerForm').hide();
         $('#moveContainerForm').hide();
-        if ($('#snapshotContainerForm').is(':visible')) {
+        if ($('#snapshotContainerForm').is(':visible') && this.selectedContainer === name) {
             $('#snapshotContainerForm').hide();
         }
         else {
@@ -257,11 +258,11 @@ App.containers = App.containers || {
         }
         $('#exportContainerForm').hide();
         $('#snapshotList').hide();
+        this.selectedContainer = name;
     },
     showSnapshotList: function(name) {
         $('#selectedSnapshotList').text('List of Snapshots for Container: ' + name);
-        this.selectedContainer = name;
-        if ($('#snapshotList').is(':visible')) {
+        if ($('#snapshotList').is(':visible') && this.selectedContainer === name) {
             $('#snapshotList').hide();
         }
         else {
@@ -271,6 +272,7 @@ App.containers = App.containers || {
         $('#moveContainerForm').hide();
         $('#snapshotContainerForm').hide();
         $('#exportContainerForm').hide();
+        this.selectedContainer = name;
         this.getSnapshotList(name);
     },
     getSnapshotList: function(name){
