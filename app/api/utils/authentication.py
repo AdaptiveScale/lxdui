@@ -3,6 +3,7 @@ from app.lib.conf import Config
 from datetime import timedelta
 from flask_jwt import JWT
 from app.api.utils import converters
+import app.__metadata__ as meta
 
 def authenticate(username, password):
     if User().authenticate(username, password)[0] == True:
@@ -16,7 +17,8 @@ def identity(payload):
 
 
 def initAuth(app):
-    tokenExpiration = int(Config().get('LXDUI', 'lxdui.token.expiration'))
+    APP = meta.APP_NAME
+    tokenExpiration = int(Config().get(APP, '{}.token.expiration'.format(APP.lower())))
     if (tokenExpiration == None):
         tokenExpiration = 1200
 
