@@ -1,4 +1,5 @@
 from app.lib.auth import User
+from app.lib.conf import Config
 from datetime import timedelta
 from flask_jwt import JWT
 from app.api.utils import converters
@@ -15,8 +16,11 @@ def identity(payload):
 
 
 def initAuth(app):
-    # TODO move to config
+    tokenExpiration = int(Config().get('LXDUI', 'lxdui.token.expiration'))
+    if (tokenExpiration == None):
+        tokenExpiration = 1200
+
     app.config['SECRET_KEY'] = 'AC8d83&21Almnis710sds'
     app.config['JWT_AUTH_URL_RULE'] = '/api/user/login'
-    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=1200)
+    app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=tokenExpiration)
     JWT(app, authenticate, identity)
