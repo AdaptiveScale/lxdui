@@ -29,9 +29,9 @@ app.register_blueprint(snapshot_api, url_prefix='/api/snapshot')
 def run():
     startApp()
 
-def startApp(uiPages=None):
+def startApp(port, uiPages=None):
     if uiPages is not None:
         app.register_blueprint(uiPages, url_prefix='/ui')
     else:
         print('ui not included')
-    app.run(debug=True, host='0.0.0.0')
+    app.run(debug=True, host='0.0.0.0', port=port)
