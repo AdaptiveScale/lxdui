@@ -36,6 +36,9 @@ App.profiles = App.profiles || {
         $('#backProfile').on('click', $.proxy(this.backToProfiles, this));
         $('#buttonCreateProfile').on('click', $.proxy(this.createProfile, this));
         $('#buttonDeleteProfile').on('click', $.proxy(this.deleteProfile, this));
+        $('#selectAllProfiles').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
+        this.dataTable.on('select', $.proxy(this.onItemSelectChange, this));
+        this.dataTable.on('deselect', $.proxy(this.onItemSelectChange, this));
         App.setActiveLink('profile');
         this.getData();
     },
@@ -148,6 +151,16 @@ App.profiles = App.profiles || {
         setTimeout(function(){
           parent.toggleClass('hidden');
         }, 10000);
-
     },
+    toggleSelectAll:function(name, event){
+        if(event.target.checked){
+            this.dataTable.rows().select();
+        }else{
+            this.dataTable.rows().deselect();
+        }
+    },
+    onItemSelectChange : function(e, dt, type, indexes ){
+        var state = this.dataTable.rows({selected:true}).count()>0;
+        $('#selectAllProfiles').prop('checked', state);
+    }
 }

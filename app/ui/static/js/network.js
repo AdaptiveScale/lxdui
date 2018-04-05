@@ -30,6 +30,9 @@ App.network = App.network || {
         $('#backNetwork').on('click', $.proxy(this.backToNetworks, this));
         App.setActiveLink('network');
         $('#buttonDeleteNetwork').on('click', $.proxy(this.deleteNetwork, this));
+        $('#selectAllNetworks').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
+        this.dataTable.on('select', $.proxy(this.onItemSelectChange, this));
+        this.dataTable.on('deselect', $.proxy(this.onItemSelectChange, this));
 
     },
     setLoading: function(state){
@@ -133,5 +136,15 @@ App.network = App.network || {
         }, 10000);
 
     },
-
+    toggleSelectAll:function(name, event){
+        if(event.target.checked){
+            this.dataTable.rows().select();
+        }else{
+            this.dataTable.rows().deselect();
+        }
+    },
+    onItemSelectChange : function(e, dt, type, indexes ){
+        var state = this.dataTable.rows({selected:true}).count()>0;
+        $('#selectAllNetworks').prop('checked', state);
+    }
 }
