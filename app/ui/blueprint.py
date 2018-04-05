@@ -39,6 +39,22 @@ def container():
                                memory=memory(),
                                lxdui_current_version=VERSION)
 
+@uiPages.route('/containers/<string:name>')
+def containerDetails(name):
+    try:
+        container = LXCContainer({'name': name})
+        return render_template('container-details.html', currentpage='Container Details',
+                               container=container.info(),
+                               lxdui_current_version=VERSION)
+    except ValueError as ex:
+        return render_template('container-details.html', currentpage='Container Details',
+                               container=None,
+                               name=name,
+                               message=ex.__str__(),
+                               lxdui_current_version=VERSION)
+
+
+
 @uiPages.route('/profiles')
 def profile():
     try:

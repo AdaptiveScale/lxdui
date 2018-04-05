@@ -44,7 +44,7 @@ App.containers = App.containers || {
         $('#buttonSnapshotContainer').on('click', $.proxy(this.snapshotContainer, this));
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
-        this.getData();
+        //this.getData();
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
         $('#selectAllContainers').on('change', $.proxy(this.toggleSelectAll, this));
@@ -162,6 +162,12 @@ App.containers = App.containers || {
         this.dataTable.row("#"+name).remove().draw();
     },
     switchView: function(view){
+        $('#cloneContainerForm').hide();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
+        $('#snapshotList').hide();
+
         $('#createContainerForm')[view=='form'?'show':'hide']();
         $('#containers')[view=='list'?'show':'hide']();
     },

@@ -45,7 +45,7 @@
             {% for container in containers %}
             <tr id="{{container.name}}">
                 <td></td>
-                <td><a onClick="$.proxy(App.containers.showSnapshotList('{{container.name}}'));" href="#">{{container.name}}</a></td>
+                <td><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
                 <td>{{container.status}}</td>
                 {% if container.network != None and container.network.get('eth0') != None %}
                     {% if container['network']['eth0']['addresses']|length != 0 %}
