@@ -135,7 +135,10 @@ class LXCContainer(LXDModule):
     def delete(self, force=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
-            if force and self.info().get('status') == 'Running':
+            if self.info().get('ephemeral'):
+                container.stop(wait=True)
+                return
+            elif force and self.info().get('status') == 'Running':
                 container.stop(wait=True)
             container.delete()
         except Exception as e:
