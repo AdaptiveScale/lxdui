@@ -66,12 +66,12 @@ App.login = App.login || {
         window.location = App.baseWEB + 'containers';
     },
     doLoginError: function(error){
-        if(!$('.alert').hasClass('hidden')) {
-            $('.alert').addClass('hidden');
+        if(!$('.error-div').hasClass('hidden')) {
+            $('.error-div').addClass('hidden');
         }
         if(error.status == 401) {
             $('.msg').text('Check username and password');
-            var parent = $('.msg').parent().removeClass('hidden');
+            var parent = $('.msg').parent().parent().removeClass('hidden');
         }
     },
     doLogout: function() {
