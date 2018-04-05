@@ -148,21 +148,21 @@ class LXCContainer(LXDModule):
         except Exception as e:
             raise ValueError(e)
 
-    def start(self, waitIt=False):
+    def start(self, waitIt=True):
         try:
             container = self.client.containers.get(self.data.get('name'))
             container.start(wait=waitIt)
         except Exception as e:
             raise ValueError(e)
 
-    def stop(self, waitIt=False):
+    def stop(self, waitIt=True):
         try:
             container = self.client.containers.get(self.data.get('name'))
             container.stop(wait=waitIt)
         except Exception as e:
             raise ValueError(e)
 
-    def restart(self, waitIt=False):
+    def restart(self, waitIt=True):
         try:
             container = self.client.containers.get(self.data.get('name'))
             container.restart(wait=waitIt)

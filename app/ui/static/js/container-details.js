@@ -74,7 +74,9 @@ App.containerDetails = App.containerDetails || {
     },
     onDeleteSuccess: function(name){
         console.log('onDelete', name);
-        window.location.href = '/ui/containers';
+        //location.reload()
+        window.location = '/ui/containers';
+        //window.location.href = '/ui/containers';
     },
     getSnapshotList: function(){
         this.setLoading(true);
