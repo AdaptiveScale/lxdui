@@ -10,16 +10,16 @@
         </legend>
         <div>
             <div class="form-group">
-                <button class="btn btn-default btn-start_container" id="buttonStart" style="visibility:hidden;">
+                <button class="btn btn-default btn-start_container" id="buttonStart" disabled>
                     <span class="glyphicon glyphicon-play"> </span> Start
                 </button>
-                <button class="btn btn-default btn-stop_container" id="buttonStop" style="visibility:hidden;">
+                <button class="btn btn-default btn-stop_container" id="buttonStop" disabled>
                     <span class="glyphicon glyphicon-stop"> </span> Stop
                 </button>
-                <button class="btn btn-default btn-restart_container" id="buttonRestart" style="visibility:hidden;">
+                <button class="btn btn-default btn-restart_container" id="buttonRestart" disabled>
                     <span class="glyphicon glyphicon-repeat"> </span> Restart
                 </button>
-                <button class="btn btn-default btn-delete_container" id="buttonDelete" style="visibility:hidden;">
+                <button class="btn btn-default btn-delete_container" id="buttonDelete" disabled>
                     <span class="glyphicon glyphicon-remove-sign"> </span> Delete
                 </button>
                 <!--- right -->
@@ -33,7 +33,7 @@
     <div class="col-lg-12">
         <table class="table table-bordered" id="tableContainers">
             <thead>
-            <th>#</th>
+            <th><input id="selectAllContainers" type="checkbox" /></th>
             <th>Name</th>
             <th>Status</th>
             <th>IP Address</th>
@@ -44,7 +44,6 @@
             <tbody>
             {% for container in containers %}
             <tr id="{{container.name}}">
-                <!--<td>{{loop.index}}</td>-->
                 <td></td>
                 <td><a onClick="$.proxy(App.containers.showSnapshotList('{{container.name}}'));" href="#">{{container.name}}</a></td>
                 <td>{{container.status}}</td>
