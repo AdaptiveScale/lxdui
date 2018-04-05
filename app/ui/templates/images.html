@@ -8,10 +8,6 @@
 <div class="col-lg-12 main-div" id="set-div">
         <legend class="legend">
             <span>Images </span><span class="glyphicon glyphicon-refresh spinning loader"></span>
-            <!--<button id="buttonUpdate" class="btn btn-primary pull-right">-->
-                <!--<span class="glyphicon glyphicon-refresh"> </span>-->
-                <!--Refresh list-->
-            <!--</button>-->
         </legend>
     <div>
         <div class="col-lg-12">
@@ -20,17 +16,16 @@
                 <div class="btn-group btn-group-s" id="imageType">
                 <button id="btnLocalImages" type="button" class="btn btn-info">
                     <span class="glyphicon glyphicon-hdd"> </span>
-                    Local <span class="badge"></span>
+                    Local <span class="badge">{{localImages|length}}</span>
                 </button>
                 <button type="button" id="btnRemoteImages" class="btn btn-primary">
                     <span class="glyphicon glyphicon-globe"> </span>
-                    Remote <span class="badge"></span>
+                    Remote <span class="badge">{{remoteImages|length}}</span>
                 </button>
             </div>
                  <div class="form-group pull-right">
                      <button id="buttonLaunchContainers" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Launch Container(s)
             </button>
-            <!--<button id="buttonLaunch" class="btn btn-success" style="visibility: hidden;">Launch Container(s)</button>-->
             <button id="buttonDelete" class="btn btn-danger pull-right" style="visibility: hidden;margin-right:5px;">Delete OS Image </button>
 
             <button id="buttonDownload" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Download Image</button>
@@ -40,15 +35,6 @@
     <br>
     <br>
     <br>
-    <!--<div class="col-lg-12">-->
-        <!--<div class="form-group">-->
-            <!--&lt;!&ndash;<button id="buttonLaunch" class="btn btn-success" style="visibility: hidden;">Launch Container(s)</button>&ndash;&gt;-->
-            <!--<button id="buttonDelete" class="btn btn-danger" style="visibility: hidden;">Delete OS Image</button>-->
-            <!--<button id="buttonLaunchContainers" class="btn btn-success" style="visibility: hidden">Launch Container(s)-->
-            <!--</button>-->
-            <!--<button id="buttonDownload" class="btn btn-success" style="visibility: hidden;">Download Image</button>-->
-        <!--</div>-->
-    <!--</div>-->
     <div class="col-lg-12" id="loader" style="display:none;">
         <div class="col-lg-offset-4 col-lg-4">
             <img src="static/images/loader.gif" class="text-center" width="150px">
@@ -58,11 +44,11 @@
         <div class="">
             <table id="tableImagesLocal" class="table table-bordered table-fixed">
                 <thead>
-                <th>Select</th>
+                <th><input type="checkbox" id="selectAllLocal"/></th>
                 <th>OS</th>
                 <th>Description</th>
                 <th>Alias</th>
-                <th>Release</th>
+                <th>Ver</th>
                 <th>Arch</th>
                 <th>Size</th>
                 </thead>
@@ -70,7 +56,6 @@
                 {% for image in localImages %}
                 <tr id="{{image.fingerprint}}">
                     <td></td>
-
                     {% if image.properties.get('description') == None %}
                     <td>
                         <a style="cursor:pointer"
@@ -84,7 +69,6 @@
                     </td>
                     <td>{{ image.properties.description }}</td>
                      {% endif %}
-
                     <td>
                         {% for alias in image.aliases %}
                             <li>{{alias.name}}</li>
@@ -104,20 +88,22 @@
         <div class="">
             <table id="tableImagesRemote" class="table table-bordered table-responsive table-fixed" style="width:100%">
                 <thead>
-                    <th>Select</th>
-                    <th>Os</th>
-                    <th>Architecture</th>
-                    <th>Distribution</th>
-                    <th>Image</th>
+                    <th><input type="checkbox" id="selectAllRemote" style="width:100%;"/></th>
+                    <th>OS</th>
+                    <th>Description</th>
+                    <th>Alias</th>
+                    <th>Ver</th>
+                    <th>Arch</th>
                     </thead>
                 <tbody>
                 {% for image in remoteImages %}
                 <tr id="{{image.image}}">
                     <td></td>
                     <td>{{ image.name}}</td>
-                    <td>{{ image.architecture }}</td>
-                    <td>{{ image.distribution }}</td>
+                    <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>
                     <td>{{ image.image }}</td>
+                    <td>{{ image.distribution }}</td>
+                    <td>{{ image.architecture }}</td>
                 </tr>
                 {% endfor %}
                 </tbody>
@@ -188,7 +174,7 @@
                 <label class="col-sm-4 form-check-label">Hard Limit</label>
                 <div class="clearfix"></div>
                 <div class="col-sm-4">
-                    <input type="number" class="form-control" name="cpu[percentage]" min="5" max="100" value="30">
+                    <input type="number" class="form-control" name="cpu[percentage]" min="5" max="100" value="100">
                 </div>
                 <div class="col-sm-4">
                     <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]"
