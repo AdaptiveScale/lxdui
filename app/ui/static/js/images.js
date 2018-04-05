@@ -34,8 +34,8 @@ App.images = App.images || {
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
         this.containerTemplate = $('.multiContainerTemplate');
-        $('#btnLocalImages').on('click', $.proxy(this.onSwitchToggle, this, 'local'));
-        $('#btnRemoteImages').on('click', $.proxy(this.onSwitchToggle, this, 'remote'));
+        $('#btnLocalImages').on('click', $.proxy(this.switchView, this, 'localList'));
+        $('#btnRemoteImages').on('click', $.proxy(this.switchView, this, 'remoteList'));
         $('#buttonUpdate').on('click', $.proxy(this.getData, this));
         $('#buttonDelete').on('click', $.proxy(this.doDeleteLocalImages, this));
         $('#buttonDownload').on('click', $.proxy(this.doDownload, this));
@@ -48,6 +48,8 @@ App.images = App.images || {
         this.initLocalTable();
         this.initRemoteTable();
         $('.imageSize').each(this.convertImageSize);
+        $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
+        $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
@@ -79,14 +81,18 @@ App.images = App.images || {
     },
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
-            var state = this.tableLocal.rows({selected:true}).count()>0?'visible':'hidden';
-            $('#buttonLaunchContainers').css('visibility',state);
-            $('#buttonDelete').css('visibility',state);
+            var state = this.tableLocal.rows({selected:true}).count()>0;
+            var visibility= state?'visible':'hidden';
+            $('#buttonLaunchContainers').css('visibility',visibility);
+            $('#buttonDelete').css('visibility',visibility);
+            $('#selectAllLocal').prop('checked',state);
             return;
         }
         if(this.activeTab=='remote'){
-            var state = this.tableRemote.rows({selected:true}).count()>0?'visible':'hidden';
-            $('#buttonDownload').css('visibility',state);
+            var state = this.tableRemote.rows({selected:true}).count()>0
+            var visibility= state?'visible':'hidden';
+            $('#buttonDownload').css('visibility',visibility);
+            $('#selectAllRemote').prop('checked',state);
             return;
         }
     },
@@ -131,7 +137,7 @@ App.images = App.images || {
         if(this.activeTab=='remote')
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
     },
-    onSwitchToggle: function(screen){
+    activateScreen: function(screen){
         this.tableLocal.rows({selected:true}).deselect();
         this.tableRemote.rows({selected:true}).deselect();
         if(screen==='local'){
@@ -256,6 +262,14 @@ App.images = App.images || {
         if(view!=='form'){
             $('#multiContainerSection').empty();
         }
+        if(view=='remoteList'){
+            this.activateScreen('remote');
+        }
+        if(view=='localList'){
+            return this.activateScreen('local');
+        }
+        $('#buttonLaunchContainers').css('visibility','hidden');
+        $('#buttonDelete').css('visibility','hidden');
     },
     generateContainer: function(name, formData){
         return {
@@ -314,5 +328,12 @@ App.images = App.images || {
     launchContainer:function(fingerprint){
         this.tableLocal.row('#'+fingerprint).select();
         this.launchContainers();
+    },
+    toggleSelectAll:function(name, event){
+        if(event.target.checked){
+            this['table'+name].rows().select();
+        }else{
+            this['table'+name].rows().deselect();
+        }
     }
 }

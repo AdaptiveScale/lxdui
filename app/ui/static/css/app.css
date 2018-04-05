@@ -74,6 +74,11 @@
 {
     color:black;
 }
+.btn-login
+{
+    background: #FA5D26;
+    color: white;
+}
 .nav-pills>li>a:focus,.nav-pills>li>a:hover
 {
     background:#FA5D26;

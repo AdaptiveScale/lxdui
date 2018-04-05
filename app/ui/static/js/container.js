@@ -47,6 +47,7 @@ App.containers = App.containers || {
         //this.getData();
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
+        $('#selectAllContainers').on('change', $.proxy(this.toggleSelectAll, this));
         if(window.location.hash && window.location.hash=='#createContainer')
             this.switchView('form')
     },
@@ -97,11 +98,13 @@ App.containers = App.containers || {
         }));
     },
     onRowSelected: function(e, dt, type, indexes ){
-        var state = this.dataTable.rows({selected:true}).count()>0?'visible':'hidden';
-        $('#buttonStart').css('visibility',state);
-        $('#buttonStop').css('visibility',state);
-        $('#buttonRestart').css('visibility',state);
-        $('#buttonDelete').css('visibility',state);
+        var state = this.dataTable.rows({selected:true}).count()>0;
+        $('#selectAllContainers').prop('checked',state);
+        var action = state?'removeAttr':'attr';
+        $('#buttonStart')[action]('disabled', 'disabled');
+        $('#buttonStop')[action]('disabled', 'disabled');
+        $('#buttonRestart')[action]('disabled', 'disabled');
+        $('#buttonDelete')[action]('disabled', 'disabled');
     },
     startContainer: function(){
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -359,4 +362,11 @@ App.containers = App.containers || {
          console.log(response);
          console.log('Snapshot Success:', 'TODO - add alert and refresh local data');
     },
+    toggleSelectAll(event){
+        if(event.target.checked){
+            this.dataTable.rows().select();
+        }else{
+            this.dataTable.rows().deselect();
+        }
+    }
 }
