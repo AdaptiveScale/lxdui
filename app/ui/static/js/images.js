@@ -292,7 +292,7 @@ App.images = App.images || {
         specs['memory']['sizeInMB']=Number(specs['memory']['sizeInMB']);
         specs['memory']['hardLimitation']=Boolean(specs['memory']['hardLimitation']) || false;
         specs['stateful']=Boolean(specs['stateful']) || true;
-        specs['autostart']=Boolean(specs['autostart']) || true;
+        specs['autostart']=Boolean(specs['autostart']);
         if($('#'+specs.image+'_profiles').val()){
             specs['profiles'] = $('#'+specs.image+'_profiles').val();
         }
