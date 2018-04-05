@@ -40,7 +40,7 @@ class LXCContainer(LXDModule):
             self.setImageAlias(input.get('imageAlias'))
 
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
-        if input.get('autostart') is not None:
+        if input.get('autostart') != None:
             self.setBootType(input.get('autostart'))
         else:
             self.setBootType(True)
@@ -117,7 +117,8 @@ class LXCContainer(LXDModule):
     def create(self, waitIt=True):
         try:
             self.client.containers.create(self.data, wait=waitIt)
-            self.start(waitIt)
+            if self.data['config']['boot.autostart'] == '1':
+                self.start(waitIt)
             return self.info()
         except Exception as e:
             raise ValueError(e)
