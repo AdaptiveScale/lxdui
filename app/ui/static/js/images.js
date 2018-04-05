@@ -291,7 +291,7 @@ App.images = App.images || {
         specs['cpu']['hardLimitation']=Boolean(specs['cpu']['hardLimitation']) || false;
         specs['memory']['sizeInMB']=Number(specs['memory']['sizeInMB']);
         specs['memory']['hardLimitation']=Boolean(specs['memory']['hardLimitation']) || false;
-        specs['stateful']=Boolean(specs['stateful']) || true;
+        specs['stateful']=Boolean(specs['stateful']);
         specs['autostart']=Boolean(specs['autostart']);
         if($('#'+specs.image+'_profiles').val()){
             specs['profiles'] = $('#'+specs.image+'_profiles').val();
