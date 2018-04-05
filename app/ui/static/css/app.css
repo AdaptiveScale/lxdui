@@ -23,6 +23,11 @@
     cursor:default;
 }
 
+.btn-default[disabled]:hover {
+    color: #333;
+}
+
+
 
 #footer_paragraph
 {
