@@ -1,6 +1,11 @@
 .main-div{
-    padding-top: 50px;
+    padding-top: 15px;
 }
+
+#set-div {
+    padding-top: 20px;
+}
+
 .scrollable{
     overflow: auto;
     height: 700px;
@@ -17,6 +22,8 @@
     border:1px dashed;
     cursor:default;
 }
+
+
 #footer_paragraph
 {
      position: fixed;
