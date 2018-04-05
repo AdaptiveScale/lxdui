@@ -266,8 +266,10 @@ App.images = App.images || {
             this.activateScreen('remote');
         }
         if(view=='localList'){
-            this.activateScreen('local');
+            return this.activateScreen('local');
         }
+        $('#buttonLaunchContainers').css('visibility','hidden');
+        $('#buttonDelete').css('visibility','hidden');
     },
     generateContainer: function(name, formData){
         return {
