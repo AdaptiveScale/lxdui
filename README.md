@@ -1,136 +1,63 @@
-![logo](https://github.com/AdaptiveScale/lxdui/blob/master/lxdui/static/images/logo.png "LXDUI")
-
+![logo](https://github.com/AdaptiveScale/lxdui/blob/master/app/ui/static/images/logo.png)
 ### A web UI for Linux containers based on LXD/LXC.  
-Learn more about Linux containers and LXD/LXC here: [linuxcontainers.org](https://linuxcontainers.org/ "linuxcontainers.org")
+Learn more about Linux containers and LXD/LXC here: [linuxcontainers.org](https://linuxcontainers.org/)
 
-LXDUI is a Python Flask application that leverages LXD's Python client library, **pylxd** [(https://github.com/lxc/pylxd)](https://github.com/lxc/pylxd "https://github.com/lxc/pylxd"), for interacting with the LXD REST API.  It allows for rapid provisioning and management of large number of containers from a web browser, and you can simultaneously create any number of containers, even from multiple images, in one step.
+LXDUI leverages LXD's Python client library, **pylxd** 
+[(https://github.com/lxc/pylxd)](https://github.com/lxc/pylxd), for interacting with the LXD REST API.  It allows for rapid provisioning and management of large number of containers from a web browser, and you can simultaneously create any number of containers, even from multiple images, in one step.
 
+## Version 2.0
+[Version 2.0](https://github.com/AdaptiveScale/lxdui/wiki/New-in-2.0) of LXDUI is a complete rewrite of the application that better exposes LXD's feature set with additional functionality. A new CLI is now available for managing LXDUI as well. Learn more about the CLI, `lui`, [here](https://github.com/AdaptiveScale/lxdui/wiki/LXDUI's-CLI). 
+
+
+
+## Screencast
+![Screencast](https://github.com/vhajdari/testsite/blob/master/lxdui_screencast_2.gif)
 ##
-![screencast](https://github.com/vhajdari/testsite/blob/master/lxdui_screencast_2.gif "lxdui screencast")
-##
 
-## Installation
+## Installation Instructions
 
-### Prerequisites
-The following are the prerequisites required to run LDXUI (supported only on 16):
-- **Python 3.5** (lxdui does not support python2.7 anymore).
-- **pip3** and some additional modules.
-	
-    To install **pip** run:
-    
-	`sudo apt-get install -y python3-pip`
+As the name suggests, LXDUI is a visual interface for the LXD & LXC toolset.  In order to use LXDUI you need to have LXD installed on your system.  The following instructions walk you through the installation process so that you have a working system with LXD and LXDUI.
 
-	Install the following (required for development)
+These instructions are targeted for an Ubuntu distribution, but you should be able to adapt the instructions to use in any distribution where LXD is supported.
 
-	`sudo apt-get install build-essential libssl-dev libffi-dev python-dev`
+### Install
+**1.** Install the Prerequisites - [instructions here](https://github.com/AdaptiveScale/lxdui/wiki/Installing-the-Prerequisites)
 
-        
-- Your must have **LXD 2.4.4 or higher** already installed.
-    
-    The following commands will install the latest stable version of LXC/LXD . 
-    
-	- `sudo apt-get update`
-	- `sudo apt-get install snap`
-	- `sudo snap install lxd`
-	
-    **NOTE**:
-    
-    Make sure you initialize LXD before you can use it with `lxdui`
-     - Run `sudo lxd init` 
-     - Choose your desired settings
-     - For beginners -- you can just start the daemon with its default parameters
-     	-  `sudo lxd init --auto`
+**2.** Clone LXDUI from the GitHub repo:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `git clone https://github.com/AdaptiveScale/lxdui.git`
+
+**3.** **[Optional]** Create a virtual environment for testing. Skip this step if you want to install it globaly on your system.
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `python3 -m venv mytestenv`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Activate the virtual environment:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `source mytestenv/bin/activate`
+
+**4.** Run Setup
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `cd lxdui`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `python3 setup.py install`
 
 
+### Start LXDUI
+At this point LXDUI should be installed and ready to start.
 
-### 1) Clone the repository
-`git clone https://github.com/AdaptiveScale/lxdui.git`
+To start the app run: `python3 run.py start`  
+or use the new CLI:  &nbsp;&nbsp;`lui start`
 
-### 2) Install from source
-Go into to the `lxdui` directory and execute `sudo python3 setup.py install`
-   
+When the app starts open a browser to the following link to access the app:
+[http://127.0.0.1:15151](http://127.0.0.1:15151)
 
-### 3) Run the app
-
-Run the command to configure the server `lui init`
-Run the command to start the server: `lui start`
-
-- To start the server as a background process type: `lui start &`
-
- **Issues you might run into during installation**
-> - **ImportError: No module named build_py**.  
->	- This is a **pip** error, adn is easily fixed by re-running the same install command again.
-> - **ImportError: No module named connection**
-> 	- **pip** fails to install the correct **urllib3** module according to the required version of the dependencies.
-> 	- `pip show urllib3` might deceive you showing you that the right version is already installed.  
-> - **urllib3 version mismatch**
->	- `lxdui` will throw the following error: **from urllib3.connection import HTTPConnection**
->   	- `python -c "import urllib3; print urllib3.__version__;"` will show you the installed version.
->   - Fix it by manually installing *urllib3* from the official repo 
->   	- `git clone --branch 1.8 git://github.com/shazow/urllib3.git`
->   	- `cd urllib3 && sudo python setup.py install`
-
-## Install via PIP 
-Instructions will be made available soon.
-
-## Helpful Info</h1>
-
-- To stop `lui`, find the **process id** using the `ps` command and issue the kill command on that process:
-    -   `ps -ef | grep lui`
-	```
-	example output:
-	
-	root 32488  1062  0 10:46 pts/0    00:00:00 lui start
-	root 32489 32488  0 10:46 pts/0    00:00:00 /usr/bin/python3 /usr/local/bin/lui
-	```
-    - `sudo kill 32489`
-
-
-# LIMITATIONS
-There are a number of things that you can do with the LXC CLI that are notably missing from **lxdui**
-
-Neamely:
-- Rename Container
-- Snapshots
-- Copy/Move Containers
-- Management of storage pools
-
-For a list of available commands in **lxc** type:
-```sudo lxc -h```
-```
-  config           Change container or server configuration options
-  copy             Copy containers within or in between LXD instances
-  delete           Delete containers and snapshots
-  exec             Execute commands in containers
-  file             Manage files in containers
-  image            Manipulate container images
-  info             Show container or server information
-  launch           Create and start containers from images
-  list             List the existing containers
-  move             Move containers within or in between LXD instances
-  network          Manage and attach containers to networks
-  profile          Manage container configuration profiles
-  publish          Publish containers as images
-  remote           Manage the list of remote LXD servers
-  restart          Restart containers
-  restore          Restore containers from snapshots
-  snapshot         Create container snapshots
-  start            Start containers
-  stop             Stop containers
-  storage          Manage storage pools and volumes
-```
 # AUTHOR
 
 AdaptiveScale, Inc.
 [http://www.adaptivescale.com](http://www.adaptivescale.com)
 
 # LICENSE
-Copyright © 2017 AdaptiveScale, Inc.
+Copyright © 2018 AdaptiveScale, Inc.
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
-
-http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
-
-For details see the file COPYING or visit: http://www.gnu.org/licenses/
+Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License. For details see the file COPYING or visit: http://www.gnu.org/licenses/
