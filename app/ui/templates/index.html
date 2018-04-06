@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>LXD-UI {%-if currentpage %} / {{currentpage|capitalize}}{%endif-%}</title>
+    <!-- FAVICONS -->
+        <link href="" />
+    <link href="{{url_for('.static', filename='favicon.ico')}}" rel="shortcut icon"/>
+    <link rel="icon" type="image/png" href="{{url_for('.static', filename='favicon-16x16.png')}}" sizes="16x16"/>
+    <link rel="icon" type="image/png" href="{{url_for('.static', filename='favicon-32x32.png')}}" sizes="32x32"/>
+    <link rel="apple-touch-icon" sizes="180x180" href="{{url_for('static', filename='apple-touch-icon.png')}}"/>
+
+
+    <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('.static', filename='css/app.css') }}" rel="stylesheet">
+    <script src="{{ url_for('.static', filename='js/jquery-2.0.0.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/jquery.serializejson.min.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/bootstrap.js')}}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('.static', filename='css/datatables.min.css')}}"/>
+    <script type="text/javascript" src="{{ url_for('.static', filename='js/datatables.min.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/app.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/login.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/html.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/container-details.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/container.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/images.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/createcontainer.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/profile.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/network.js')}}"></script>
+
+    <!-- TOASTER -->
+    <link href="{{ url_for('.static', filename='css/toastr.css')}}" rel="stylesheet"/>
+    <script src="{{ url_for('.static', filename='js/toastr.min.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/ace.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/mode-json.js')}}"></script>
+    <!-- boostra-multiselect -->
+    <link rel="stylesheet" href="{{ url_for('.static', filename='css/bootstrap-select.min.css')}}">
+    <script src="{{ url_for('.static', filename='js/bootstrap-select.min.js')}}"></script>
+    <script>
+
+    toastr.options = {
+        "closeButton": false,
+        "debug": false,
+        "newestOnTop": false,
+        "progressBar": false,
+        "positionClass": "toast-bottom-right",
+        "preventDuplicates": false,
+        "onclick": null,
+        "showDuration": "0",
+        "hideDuration": "100",
+        "timeOut": "5000",
+        "extendedTimeOut": "7250",
+        "showEasing": "swing",
+        "hideEasing": "linear",
+        "showMethod": "fadeIn",
+        "hideMethod": "fadeOut",
+        "escapeHtml" : true
+        }
+    </script>
+
+</head>
+<body>
+    <div class="container">
+   
+    <div class="col-lg-12">
+        <div class="col-lg-2 main-div">
+            <ul class="nav nav-pills nav-stacked">
+                <li role="presentation" style="text-align:center"><img src="{{ url_for('.static', filename='images/logo.png')}}" width="90%"/> </li>
+                <li id="stamplike" role="presentation" class="label"></li>
+                <li class="container-menu" role="presentation"><a href="/ui/containers"><span class="glyphicon glyphicon-th"> </span>Containers</a></li>
+                <li class="image-menu" role="presentation"><a href="/ui/images"><span class="glyphicon glyphicon-hdd"> </span>Images</a></li>
+                <li class="profile-menu" role="presentation"><a href="/ui/profiles"><span class="glyphicon glyphicon-compressed"> </span>Profiles</a></li>
+                <li class="network-menu" role="presentation"><a href="/ui/network"><span class="glyphicon glyphicon-random"> </span>Network </a></li>
+                <li role="presentation"><a class="buttonLogout" style="cursor:pointer"><span class="glyphicon glyphicon-log-out"> </span>Logout</a></li>
+            </ul>
+        </div>
+<!-- child template -->
+        <div class="col-lg-10">
+      {% block content %}{% endblock %}
+      
+        </div>
+        
+    </div>
+    <p id="footer_paragraph">
+        <span style="color:black">LXDUI v</span><b style="color:#FA5D26">{{lxdui_current_version}}</b><br/>
+        Copyright © 2018 <a href="http://www.adaptivescale.com" target="_blank">AdaptiveScale, Inc.</a>
+    </p>
+    </div>
+</body>
+</html>

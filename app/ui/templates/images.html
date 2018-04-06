@@ -1,0 +1,217 @@
+{% extends "index.html" %}
+{% block content %}
+<script>
+    var constLocalImages = {{jsData.local|safe}} || {};
+    var constRemoteImages = {{jsData.remote|safe}} || {};
+</script>
+
+<div class="col-lg-12 main-div" id="set-div">
+        <legend class="legend">
+            <span>Images </span><span class="glyphicon glyphicon-refresh spinning loader"></span>
+            <div class="btn-group btn-group-s pull-right" id="imageType">
+                <button id="btnLocalImages" type="button" class="btn btn-info">
+                    <span class="glyphicon glyphicon-hdd"> </span>
+                    Local <span class="badge">{{localImages|length}}</span>
+                </button>
+                <button type="button" id="btnRemoteImages" class="btn btn-primary">
+                    <span class="glyphicon glyphicon-globe"> </span>
+                    Remote <span class="badge">{{remoteImages|length}}</span>
+                </button>
+            </div>
+        </legend>
+</div>
+    <div>
+        <div class="col-lg-12 mg-bottom15">
+            <div class="form-inline">
+                 <div class="form-group pull-right">
+                     <button id="buttonLaunchContainers" class="btn btn-success pull-right" style="visibility: hidden;">Launch Container(s)
+            </button>
+            <button id="buttonDelete" class="btn btn-danger pull-right" style="visibility: hidden;margin-right:5px;">Delete OS Image </button>
+
+            <button id="buttonDownload" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Download Image</button>
+        </div>
+        </div>
+    </div>
+    <br>
+    <br>
+    <br>
+    <div class="col-lg-12" id="loader" style="display:none;">
+        <div class="col-lg-offset-4 col-lg-4">
+            <img src="static/images/loader.gif" class="text-center" width="150px">
+        </div>
+    </div>
+    <div class="col-lg-12" id="tableImagesLocalWrapper">
+        <div class="">
+            <table id="tableImagesLocal" class="table table-bordered table-fixed">
+                <thead>
+                <th><input type="checkbox" id="selectAllLocal"/></th>
+                <th>OS</th>
+                <th>Description</th>
+                <th>Alias</th>
+                <th>Ver</th>
+                <th>Arch</th>
+                <th>Size</th>
+                </thead>
+                <tbody>
+                {% for image in localImages %}
+                <tr id="{{image.fingerprint}}">
+                    <td></td>
+                    {% if image.properties.get('description') == None %}
+                    <td>
+                        <a style="cursor:pointer"
+                           onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
+                    </td>
+                    <td>{{image.aliases[0].description}}</td>
+                     {% else %}
+                    <td>
+                        <a style="cursor:pointer"
+                           onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
+                    </td>
+                    <td>{{ image.properties.description }}</td>
+                     {% endif %}
+                    <td>
+                        {% for alias in image.aliases %}
+                            <li>{{alias.name}}</li>
+                        {% endfor %}
+                    </td>
+                    <td>{{ image.properties.release }}</td>
+                    <td>{{ image.properties.architecture }}</td>
+                    <td class="imageSize">{{ image.size }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+    <div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">
+        <div class="">
+            <table id="tableImagesRemote" class="table table-bordered table-responsive table-fixed" style="width:100%">
+                <thead>
+                    <th><input type="checkbox" id="selectAllRemote" style="width:100%;"/></th>
+                    <th>OS</th>
+                    <th>Description</th>
+                    <th>Alias</th>
+                    <th>Ver</th>
+                    <th>Arch</th>
+                    </thead>
+                <tbody>
+                {% for image in remoteImages %}
+                <tr id="{{image.image}}">
+                    <td></td>
+                    <td>{{ image.name}}</td>
+                    <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>
+                    <td>{{ image.image }}</td>
+                    <td>{{ image.distribution }}</td>
+                    <td>{{ image.architecture }}</td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div id="createMultipleContainersForm" style="display:none;">
+        <div class="col-lg-12 main-div">
+            <div>
+                <div class="form-group">
+                    <button class="btn btn-defult" id="buttonBack">
+                        <span class="glyphicon glyphicon-chevron-left"> </span> Back
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-12">
+            <form id="newContainerForm">
+                <div class="form-group" id="multiContainerSection">
+
+                </div>
+                <div class="col-lg-3" style="margin:20px;">
+                    <button type="submit" class="btn btn-primary">Save <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="panel panel-default multiContainerTemplate" style="display:none;">
+    <div class="panel-heading" role="tab">
+        <h4 class="panel-title">
+            <a role="button" data-toggle="collapse" data-parent="#accordion" aria-expanded="true"
+               aria-controls="collapseOne"> <span id="description"></span>
+                <span>
+                    <label class="imageName">Caja</label>
+                    <label class="pull-right nodeCount">1 Node</label>
+                </span>
+            </a>
+        </h4>
+    </div>
+    <div id="${i}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="${i}">
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Container Name</label>
+                <label class="col-sm-2 control-label">Number</label>
+                <label class="col-sm-2 form-check-label">Persistent</label>
+                <label class="col-sm-2 form-check-label">Autostart</label>
+                <div class="clearfix"></div>
+                <div class="col-sm-4">
+                    <input type="text" class="containerName form-control" value="cnt-"
+                           placeholder="container name prefix" name="name" required/>
+                </div>
+                <div class="col-sm-2">
+                    <input type="number" class="cntNrs form-control" min="1" value="1" name="count">
+                </div>
+                <div class="col-sm-2">
+                     <input type="checkbox" class="form-check-input containerStateful" name="stateful" checked value="true">
+                </div>
+                <div>
+                    <input type="checkbox" class="form-check-input" name="autostart" checked value="true">
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">CPU usage in %</label>
+                <label class="col-sm-4 form-check-label">Hard Limit</label>
+                <div class="clearfix"></div>
+                <div class="col-sm-4">
+                    <input type="number" class="form-control" name="cpu[percentage]" min="5" max="100" value="100">
+                </div>
+                <div class="col-sm-4">
+                    <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]"
+                   value="true">
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Memory usage in MB:<br /> (Max: {{memory}} MB)</label>
+                <label class="col-sm-4 form-check-label">Hard Limit</label>
+                <div class="clearfix"></div>
+                <div class="col-sm-4">
+                    <input type="number" class="form-control" name="memory[sizeInMB]" min="32" max="{{memory}}" value="32">
+                </div>
+                <div class="col-sm-4">
+                    <input type="checkbox" class="form-check-input" name="memory[hardLimitation]"
+                   value="true">
+                </div>
+            </div>
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label class="col-sm-4 control-label">Profiles:</label>
+                <div class="clearfix"></div>
+                <div class="col-sm-4">
+                    <select multiple name="profiles">
+                        {% for profile in profiles %}
+                            <option>{{profile.name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+        </div>
+        <input class="imageNameInput" type="hidden" name="image" value="">
+    </div>
+</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends "index.html" %}
+{% block content %}
+<div id="profileList">
+    <div class="col-lg-12 main-div" id="set-div">
+        <legend class="legend">
+            <span>Profiles <span class="glyphicon glyphicon-refresh spinning loader"></span></span>
+        </legend>
+    </div>
+        <div class="col-lg-12 mg-bottom15">
+            <div class="form-group">
+                <button id="buttonNewProfile" class="btn btn-success pull-right">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                         New Profile
+                </button>
+                <button class="btn btn-danger btn-delete_container pull-right" style="margin-right:5px;" id="buttonDeleteProfile">
+                    <span class="glyphicon glyphicon-remove-sign"> </span> Delete <span class="glyphicon glyphicon-refresh spinning loader hidden"></span>
+                </button>
+            </div>
+
+        </div>
+        <br>
+        <br>
+        <br>
+
+        <div class="col-lg-12">
+            <table class="table table-bordered" id="tableProfiles">
+                <thead>
+                <th><input type="checkbox" id="selectAllProfiles"/></th>
+                <th>Name</th>
+                <th>Description</th>
+                <th>Config</th>
+                <th>Devices</th>
+                <th>Used by</th>
+
+                </thead>
+                <tbody>
+                {% for profile in profiles %}
+                <tr id="{{profile.name}}">
+                    <td></td>
+                    <td>{{profile.name}}</td>
+                    <td>{{ profile.description }}</td>
+                    <td>
+                         {% for device in profile.devices %}
+                        <ul>
+                            <h5>{{device}}</h5>
+                            {% for key, value in profile.devices[device].items() %}
+
+                            <li>{{key}}: {{value}}</li>
+                            {% endfor %}
+                        </ul>
+                         {% endfor %}
+                    </td>
+                    <td>
+                        <ul>
+                            {% for key, value in profile.config.items() %}
+
+                            {{key}}: {{value}}<br>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                     {% for used in profile.used_by %}
+                        <li>{{used}}</li>
+                     {% endfor %}
+                    </td>
+
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<div id="newProfile" hidden>
+    <div class="col-lg-12 main-div" id="set-div">
+        <legend>Profiles <span class="glyphicon glyphicon-refresh spinning hidden"></span></legend>
+
+        <div>
+            <div class="form-group">
+                <button id="backProfile" class="btn">
+                        <span class="glyphicon glyphicon-chevron-left"> </span>
+                         Back
+                </button>
+            </div>
+        </div>
+
+
+        <div class="col-lg-12">
+            <form id="profileForm">
+                <div class="form-horizontal">
+                    <label for="name" class="col-sm-2 control-label" style="margin-left: -28px;">Profile Name</label>
+                    <div class="col-sm-4">
+                        <input id="name" name="name" class="form-control" type="text" placeholder="Profile Name" title="Profile Name" required/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="configEditor" class="col-sm-12 control-label" style="margin-top:10px;">Config (JSON)</label>
+                    <div class="col-sm-8">
+                        <div id="configEditor" style="height:200px; position:relative;"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="devicesEditor" class="col-sm-12 control-label" style="margin-top:10px;">Devices (JSON)</label>
+                    <div class="col-sm-8">
+                        <div id="devicesEditor" name="devicesEditor" style="height:200px; position:relative;"></div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="form-inline col-md-12" style="margin-top:10px;">
+                        <button id="buttonCreateProfile" class="btn btn-primary">Create Profile <span class="glyphicon glyphicon-refresh spinning hidden"></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

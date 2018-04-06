@@ -1,0 +1,99 @@
+{% extends "index.html" %} {% block content %}
+<div class="col-lg-12 main-div">
+    {% if container == None %}
+    <div class="alert alert-danger" role="alert"> CONTAINER <b>{{name}}</b> : {{message}} !</div>
+    <script>
+        window.location = '/ui/containers';
+    </script>
+    {% else %}
+    <script>
+        $(function () {
+            $.proxy(App.containerDetails.initContainerDetails('{{container.name}}'));
+        });
+    </script>
+    <div class="col-lg-12">
+        <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}">{{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span></legend>
+        <div class="form-group">
+            {% if container.status == 'Running' %}
+                <button class="btn btn-default btn-stop_container" id="buttonStopDetail">
+                    <span class="glyphicon glyphicon-stop"> </span> Stop
+                </button>
+                <button class="btn btn-default btn-restart_container" id="buttonRestartDetail">
+                    <span class="glyphicon glyphicon-repeat"> </span> Restart
+                </button>
+                <button class="btn btn-default btn-delete_container" id="buttonDeleteDetail">
+                        <span class="glyphicon glyphicon-remove-sign"> </span> Delete
+                </button>
+            {% else %}
+                <button class="btn btn-default btn-start_container" id="buttonStartDetail">
+                    <span class="glyphicon glyphicon-play"> </span> Start
+                </button>
+                <button class="btn btn-default btn-delete_container" id="buttonDeleteDetail">
+                        <span class="glyphicon glyphicon-remove-sign"> </span> Delete
+                </button>
+            {% endif %}
+
+        </div>
+
+        <div class="form-group">
+            <h5 style="display:inline">Name :</h5>
+            <b>{{container.name}}</b> {% if container.pid != 'N/A' %}
+            <span class="label label-primary"> PID: {{container.pid}}</span> {% endif %} {% if container.processes !=
+            'N/A' %}
+            <div class="form-group pull-right">
+                <h5 style="display:inline">Currently Running Processes :</h5>
+                <span class="label label-info">{{container.processes}}</span>
+            </div>
+            {% endif %}
+    </div>
+    <div class="form-group">
+        <h5 style="display:inline">Type :</h5>
+        {% if container.ephemeral %}
+            <b>Ephemeral</b>
+        {% else %}
+            <b>Persistent</b>
+        {% endif %}
+    </div>
+    <div class="form-group">
+        <h5 style="display:inline">Architecture :</h5>
+        <b>{{container.architecture}}</b>
+    </div>
+
+    <div class="form-group">
+        <h5 style="display:inline">OS Image :</h5>
+        <b>{{container.expanded_config['image.os']}} {{container.expanded_config['image.release']}} ({{container.expanded_config['image.architecture']}})</b>
+    </div>
+    <div class="form-group">
+        <h5 style="display:inline">Created On:</h5>
+        <b>{{container.created_at}}</b>
+    </div>
+
+    <div class="form-group">
+        <h5 style="display:inline">Profiles :</h5>
+        {% for p in container.profiles %}
+        <span class="label label-default">{{ p }}</span> {% endfor %}
+    </div>
+
+    <div class="form-group">
+        {% if container.network is mapping %}
+        <h5>Network Interfaces :</h5>
+        {% for key, value in container.network.items() %}
+        <div class="netint_data">
+            IP Interface : <span class="label label-primary"> {{ key }}</span><br/> IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>            <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span><br/> MAC Address
+            : <b style="font-size:75%">{{value.hwaddr}}</b><br/> State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
+            <hr/> {% for counterkey, counterval in value.counters.items() %} {{counterkey|upper}} : <span class="label label-default">{{counterval}}</span><br/>            {% endfor %}
+        </div>
+        {% endfor %} {% else %}
+        <h5 style="display:inline">Network Interfaces :</h5>
+        <span class="label label-default"> N/A </span> {% endif %}
+    </div>
+
+    <div class="form-group">
+        <h5>List of Snapshots :</h5>
+        <div id="snapshotList" class="netint_data">
+        </div>
+    </div>
+</div>
+{% endif %}
+</div>
+{% endblock %}

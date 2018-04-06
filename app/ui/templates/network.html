@@ -1,0 +1,271 @@
+{% extends "index.html" %} {% block content %}
+<div class="col-lg-12 main-div" id="set-div">
+    <div class="col-lg-12" id="networkList">
+        <legend class="legend">
+        <span>Network </span><span class="glyphicon glyphicon-refresh spinning loader"></span>
+        </legend>
+        <div class="col-lg-12" style="padding-left:0px;padding-right:0px;">
+            <div class="form-group">
+                <button id="buttonNewNetwork" class="btn btn-success pull-right">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                         New Bridge Network
+                </button>
+                <button class="btn btn-danger btn-delete_container pull-right" id="buttonDeleteNetwork" style="margin-right:5px;">
+                    <span class="glyphicon glyphicon-remove-sign"> </span> Delete </span>
+                </button>
+            </div>
+        </div>
+        <br>
+        <br>
+        <br>
+        <div class="">
+            <table class="table table-bordered table-fixed" id="tableNetworks">
+                <thead>
+                    <th><input type="checkbox" id="selectAllNetworks"/></th>
+                    <th>Name</th>
+                    <th>Type</th>
+                    <th>Config</th>
+                    <th>Used by</th>
+                    <th>Action</th>
+                </thead>
+                <tbody>
+                {% for net in network %}
+                {% if net.type == 'bridge' %}
+                <tr id="{{net.name}}">
+                    <td></td>
+                    <td>{{ net.name }}</td>
+                    <td>{{ net.type }}</td>
+                    <td>
+                        <ul>
+                            <h5>Config:</h5>
+                            {% for key, value in net.config.items() %}
+
+                            <li>{{key}}: {{value}}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                    <td>
+                     {% for used in net.used_by %}
+                        <li>{{used}}</li>
+                     {% endfor %}
+                    </td>
+                    <td>
+                        <button class="btn" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork({{net.name}}));">
+                            <span class="glyphicon"> </span> Update Bridge
+                        </button>
+                    </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="col-lg-12" id="newUpdateNetwork" hidden>
+        <legend>LXD Network</legend>
+        <div>
+            <div class="form-group">
+                <button id="backNetwork" class="btn">
+                        <span class="glyphicon glyphicon-chevron-left"> </span>
+                         Back
+                </button>
+            </div>
+        </div>
+        <form id="entire_form" class="form-horizontal">
+
+            <div class="form-group">
+                <label for="name" class="col-sm-3 control-label">Network Bridge Name</label>
+                <div class="col-sm-3">
+                    <input id="name" name="name" class="form-control" type="text" placeholder="IPv4 network address" title="Name"
+                    />
+                </div>
+            </div>
+
+            <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist" class="col-lg-6">
+                <li class="nav-item active">
+                    <a class="nav-link" data-toggle="tab" href="#ip_ver_4" role="tab" style="background:#F2F1F0;">IPv4 configuration</a>
+                </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="ip_ver_4" role="tabpanel" style="padding-top:20px;;padding-bottom:20px;background:#F2F1F0;">
+                    <div class="form-group">
+                        <label for="IPv4_ADDR" class="col-sm-3 control-label">Network IP</label>
+                        <div class="col-sm-3">
+                            <input id="IPv4_ADDR" name="IPv4_ADDR" class="form-control" type="text" placeholder="IPv4 network address" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+                                title="Network IPv4 Address"
+                            />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="IPv4_NETMASK" class="col-sm-3 control-label">Netmask</label>
+                        <div class="col-sm-3">
+                            <input id="IPv4_NETMASK" name="IPv4_NETMASK" class="form-control" type="text" placeholder="IPv4 netmask address" pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$"
+                                title="Netmask IPv4 Address"
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="IPv4_DHCP_START" class="col-sm-3 control-label">DHCP Range Start</label>
+                        <div class="col-sm-3">
+                            <input id="IPv4_DHCP_START" name="IPv4_DHCP_START" class="form-control" type="text" placeholder="IP assignment range starts from"
+                                pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="IPv4 Address"
+                            />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="IPv4_DHCP_END" class="col-sm-3 control-label">DHCP Range End</label>
+                        <div class="col-sm-3">
+                            <input id="IPv4_DHCP_END" name="IPv4_DHCP_END" class="form-control" type="text" placeholder="IP assignment range ends at"
+                                pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" title="IPv4 Address"
+                            />
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+            <div class="form-group">
+                <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                    <button id="buttonUpdateNetwork" class="btn btn-primary pull-right" hidden>Update <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                    <button id="buttonCreateNetwork" class="btn btn-primary pull-right"> Create <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<style>
+    .disableActions {
+        pointer-events: none;
+    }
+    /* The switch - the box around the slider */
+
+    .switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 25px;
+        margin-top: 5px;
+    }
+    /* Hide default HTML checkbox */
+
+    .switch input {
+        display: none;
+    }
+    /* The slider */
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 2px;
+        bottom: 3px;
+        background-color: white;
+        -webkit-transition: .4s;
+        transition: .4s;
+    }
+
+    input:checked+.slider {
+        background-color: #2196F3;
+    }
+
+    input:focus+.slider {
+        box-shadow: 0 0 1px #2196F3;
+    }
+
+    input:checked+.slider:before {
+        -webkit-transform: translateX(26px);
+        -ms-transform: translateX(26px);
+        transform: translateX(26px);
+    }
+    /* Rounded sliders */
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+</style>
+<script>
+    function disable_form(n) {
+        var n = String(n);
+        if (n == "4" || n == "6") {
+            var tmp_bool = $("#IPv" + n + "_ENABLED").prop("checked");
+            $("#IPv" + n + "_ADDR").prop("disabled", tmp_bool);
+            $("#IPv" + n + "_NETMASK").prop("disabled", tmp_bool);
+            $("#IPv" + n + "_DHCP_START").prop("disabled", tmp_bool);
+            $("#IPv" + n + "_DHCP_END").prop("disabled", tmp_bool);
+        }
+    }
+
+    function check_auto_for(n) {
+        var n = String(n);
+        if (n == "4" || n == "6") {
+            var color = "white";
+            var dhcp_color = "white";
+            if ($("#IPv" + n + "_AUTO").prop("checked")) {
+                $("#ipv" + n + "_auto_txt").removeClass('label-default').addClass('label-primary');
+                toastr.warning("No DHCP ranges can be specified with this option !\nEverything will be set accordingly from the LXD daemon !", "IPv" + n + " <AUTO>");
+                color = 'rgba(51, 122, 183, 0.6)';
+                dhcp_color = "#F89406";
+            }
+
+            else {
+                $("#ipv" + n + "_auto_txt").removeClass('label-primary').addClass('label-default');
+            }
+            $("#IPv" + n + "_NETMASK").css("background", color);
+            $("#IPv" + n + "_ADDR").css("background", color);
+            $("#IPv" + n + "_DHCP_START").css("background", dhcp_color);
+            $("#IPv" + n + "_DHCP_END").css("background", dhcp_color);
+
+        }
+    }
+
+    function initial_state_check() {
+        arr = ["4", "6"]
+        for (var i in arr) {
+            n = arr[i];
+            if ($("#IPv" + n + "_ENABLED").prop('checked')) {
+                $("#IPv" + n + "_NETMASK").prop("disabled", true);
+                $("#IPv" + n + "_ADDR").prop("disabled", true);
+                $("#IPv" + n + "_DHCP_START").prop("disabled", true);
+                $("#IPv" + n + "_DHCP_END").prop("disabled", true);
+            }
+        }
+
+    }
+    $(document).ready(function () {
+        {% with messages = get_flashed_messages(with_categories = true) %}
+        {% if messages %}
+        {% for category, message in messages %}
+        var spitout = "{{message|safe}}".replace(/,,,/g, '\n');
+        toastr['{{category}}'](spitout);
+        {% endfor %}
+        {% endif %}
+        {% endwith %}    
+        initial_state_check();
+
+        $("form#entire_form").submit(function (event) {});
+
+    });
+
+</script>
+{% endblock %}

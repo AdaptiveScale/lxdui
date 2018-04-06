@@ -1,0 +1,253 @@
+{% extends "index.html" %}
+{% block content %}
+<div id="containers">
+    <div class="col-lg-12 main-div">
+        <legend class="legend"><span>Containers </span> <span class="glyphicon glyphicon-refresh spinning loader"></span>
+                 <button class="btn btn-primary pull-right" href="#" id="refreshContainers" style="margin-right:5px;">
+                   <span class="glyphicon glyphicon-refresh"> </span> Refresh List
+                </button>
+
+        </legend>
+        <div>
+            <div class="form-group">
+                <button class="btn btn-default btn-start_container" id="buttonStart" disabled>
+                    <span class="glyphicon glyphicon-play"> </span> Start
+                </button>
+                <button class="btn btn-default btn-stop_container" id="buttonStop" disabled>
+                    <span class="glyphicon glyphicon-stop"> </span> Stop
+                </button>
+                <button class="btn btn-default btn-restart_container" id="buttonRestart" disabled>
+                    <span class="glyphicon glyphicon-repeat"> </span> Restart
+                </button>
+                <button class="btn btn-default btn-delete_container" id="buttonDelete" disabled>
+                    <span class="glyphicon glyphicon-remove-sign"> </span> Delete
+                </button>
+                <!--- right -->
+                <a class="btn btn-success pull-right" id="buttonNewInstance">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                         New Instance
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-12">
+        <table class="table table-bordered" id="tableContainers">
+            <thead>
+            <th><input id="selectAllContainers" type="checkbox" /></th>
+            <th>Name</th>
+            <th>Status</th>
+            <th>IP Address</th>
+            <th>Type</th>
+            <th>OS image</th>
+            <th>Created On</th>
+            <th>Actions</th>
+            </thead>
+            <tbody>
+            {% for container in containers %}
+            <tr id="{{container.name}}">
+                <td></td>
+                <td><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
+                <td>{{container.status}}</td>
+                {% if container.network != None and container.network.get('eth0') != None %}
+                    {% if container['network']['eth0']['addresses']|length != 0 %}
+                        <td>{{container['network']['eth0']['addresses'][0]['address']}}</td>
+                    {% else %}
+                        <td>N/A</td>
+                    {% endif %}
+                {% else %}
+                    <td>N/A</td>
+                {% endif %}
+                {% if container.ephemeral %}
+                    <td>Ephemeral</td>
+                {% else %}
+                    <td>Persistent</td>
+                {% endif %}
+                <td>{{container.config['image.distribution']}} {{container.config['image.release']}} {{container.config['image.architecture']}}</td>
+                <td>{{container.created_at}}</td>
+                <td style="width:157px !important;">
+                    <a><i id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>
+                    <a><i id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" class="glyphicon glyphicon-share-alt btn btn-sm btn-default"></i></a>
+                    <a><i id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot" class="glyphicon glyphicon-camera btn btn-sm btn-default"></i></a>
+                    <a><i id="exportContainer" onClick="$.proxy(App.containers.showExportContainer('{{container.name}}'));" title="Export Image from Container" class="glyphicon glyphicon-export btn btn-sm btn-default"></i></a>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    </div>
+
+<div id="createContainerForm" style="display:none;">
+    <div class="col-lg-12 main-div">
+        <legend class="legend"><span>Containers </span> <span class="glyphicon glyphicon-refresh spinning loader"></span></legend>
+        <div>
+            <div class="form-group">
+                <button class="btn btn-defult" id="buttonBack">
+                    <span class="glyphicon glyphicon-chevron-left"> </span> Back
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-12">
+        <form id="newContainerForm" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="containerName">Name</label>
+                 <div class="col-md-3">
+                        <input type="text" class="form-control" id="containerName" aria-describedby="name"
+                       placeholder="Enter container name" name="name" required>
+                 </div>
+            </div>
+             <div class="form-group">
+              <label class="col-md-2 control-label" for="containerImage">Select image:</label>
+              <div class="col-md-3">
+                 <select class="form-control" id="containerImage" name="image">
+                  {% for image in images %}
+                     {% if image.properties.get('description') == None %}
+                     <option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>
+                     {% else %}
+                    <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
+                     {% endif %}
+                  {% endfor %}
+              </select>
+              </div>
+            </div>
+            <div class="form-group">
+                <label class="form-check-label col-md-2 control-label" for="containerStateful">Persistent</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-check-label col-md-2 control-label" for="containerAutostart">Autostart</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="containerCPUPercentage">CPU allocation (%):</label>
+                <div class="col-md-3">
+                    <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
+                       min="5" max="100" value="100">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-check-label col-md-2 control-label" for="containerCPUHardLimit">Hard Limit</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">
+                </div>
+                </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="containerMemoryPercentage">Memory allocation (MB):</label>
+                <div class="col-md-3">
+                    <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
+                       min="32" max="{{memory}}" value="32">
+                     (Max: {{memory}} MB)
+                </div>
+            </div>
+            <div class="form-group">
+                 <label class="form-check-label col-md-2 control-label" for="containerMemoryHardLimit">Hard Limit</label>
+                <div class="col-md-3">
+                    <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-md-2 control-label" for="containerProfiles">Profiles:</label>
+                <div class="col-md-3">
+                    <select class="selectpicker" multiple id="containerProfiles" name="profiles">
+                     {% for profile in profiles %}
+                        <option>{{profile.name}}</option>
+                     {% endfor %}
+                    </select>
+                </div>
+            </div>
+        <div class="form-group">
+            <div class="col-md-5">
+                <button type="submit" class="btn btn-primary pull-right">Submit <span class="glyphicon glyphicon-refresh spinning loader"></span> </button>
+
+            </div>
+        </div>
+        </form>
+    </div>
+</div>
+
+
+
+<div id="cloneContainerForm" hidden>
+    <h4 id="selectedClone">Clone Container - test</h4>
+    <form id="cloneForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
+            <div class="col-sm-3">
+                <input id="newContainerClone" name="newContainer" class="form-control" type="text" placeholder="Clone Name" title="Clone Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span style="vertical-align: middle;
+padding-top: 10px;"><label class="loader"></label></span></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="moveContainerForm" hidden>
+    <h4 id="selectedMove">Move Container - test</h4>
+    <form id="moveForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
+            <div class="col-sm-3">
+                <input id="newContainerMove" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Move Container Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <button id="buttonMoveContainer" class="btn btn-primary">Move Container <span style="vertical-align: middle;
+padding-top: 10px;"><label class="loader"></label></span></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="exportContainerForm" hidden>
+    <h4 id="selectedExport">Export Container - test</h4>
+    <form id="exportForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
+            <div class="col-sm-3">
+                <input id="imageAlias" name="imageAlias" class="form-control" type="text" placeholder="Image Alias" title="Image Alias" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <button id="buttonExportContainer" class="btn btn-primary">Export Container <span style="vertical-align: middle;
+padding-top: 10px;"><label class="loader"></label></span></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="snapshotContainerForm" hidden>
+    <h4 id="selectedSnapshot">Create Snapshot from Container - test</h4>
+    <form id="snapshotForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
+            <div class="col-sm-3">
+                <input id="snapshotName" name="snapshotName" class="form-control" type="text" placeholder="Snapshot Name" title="Snapshot Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <button id="buttonSnapshotContainer" class="btn btn-primary">Snapshot <span style="vertical-align: middle;
+padding-top: 10px;"><label class="loader"></label></span></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="snapshotList" hidden>
+    <h4 id="selectedSnapshotList">List of Snapshots - </h4>
+</div>
+{% endblock %}
+
+<!-- Default form contact -->
