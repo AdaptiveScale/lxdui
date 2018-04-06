@@ -5,7 +5,7 @@ Learn more about Linux containers and LXD/LXC here: [linuxcontainers.org](https:
 LXDUI leverages LXD's Python client library, **pylxd** 
 [(https://github.com/lxc/pylxd)](https://github.com/lxc/pylxd), for interacting with the LXD REST API.  It allows for rapid provisioning and management of large number of containers from a web browser, and you can simultaneously create any number of containers, even from multiple images, in one step.
 
-## Version 2.0
+## Version 2.0 (beta)
 [Version 2.0](https://github.com/AdaptiveScale/lxdui/wiki/New-in-2.0) of LXDUI is a complete rewrite of the application that better exposes LXD's feature set with additional functionality. A new CLI is now available for managing LXDUI as well. Learn more about the CLI, `lui`, [here](https://github.com/AdaptiveScale/lxdui/wiki/LXDUI's-CLI). 
 
 
@@ -19,6 +19,8 @@ LXDUI leverages LXD's Python client library, **pylxd**
 As the name suggests, LXDUI is a visual interface for the LXD & LXC toolset.  In order to use LXDUI you need to have LXD installed on your system.  The following instructions walk you through the installation process so that you have a working system with LXD and LXDUI.
 
 These instructions are targeted for an Ubuntu distribution, but you should be able to adapt the instructions to use in any distribution where LXD is supported.
+
+For more detailed instructions please refer to the [wiki page](https://github.com/AdaptiveScale/lxdui/wiki).
 
 ### Install
 **1.** Install the Prerequisites - [instructions here](https://github.com/AdaptiveScale/lxdui/wiki/Installing-the-Prerequisites)
