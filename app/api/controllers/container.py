@@ -94,7 +94,10 @@ def startContainer(name):
 def stopContainer(name):
     try:
         container = LXCContainer({'name': name})
+        ephemeral = container.info()['ephemeral']
         container.stop()
+        if ephemeral:
+            return response.replySuccess(data={}, message='success')
         return response.replySuccess(container.info())
     except ValueError as e:
         return response.replyFailed(message=e.__str__())

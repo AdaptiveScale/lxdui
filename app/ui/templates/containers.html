@@ -37,6 +37,7 @@
             <th>Name</th>
             <th>Status</th>
             <th>IP Address</th>
+            <th>Type</th>
             <th>OS image</th>
             <th>Created On</th>
             <th>Actions</th>
@@ -55,6 +56,11 @@
                     {% endif %}
                 {% else %}
                     <td>N/A</td>
+                {% endif %}
+                {% if container.ephemeral %}
+                    <td>Ephemeral</td>
+                {% else %}
+                    <td>Persistent</td>
                 {% endif %}
                 <td>{{container.config['image.distribution']}} {{container.config['image.release']}} {{container.config['image.architecture']}}</td>
                 <td>{{container.created_at}}</td>
@@ -107,7 +113,7 @@
               </div>
             </div>
             <div class="form-group">
-                <label class="form-check-label col-md-2 control-label" for="containerStateful">Stateful</label>
+                <label class="form-check-label col-md-2 control-label" for="containerStateful">Persistent</label>
                 <div class="col-md-3">
                     <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
                 </div>

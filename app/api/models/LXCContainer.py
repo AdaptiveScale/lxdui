@@ -45,6 +45,11 @@ class LXCContainer(LXDModule):
         else:
             self.setBootType(True)
 
+        if input.get('stateful') != None:
+            self.setEphemeral(not input.get('stateful'))
+        else:
+            self.setEphemeral(False)
+
 
     def setImageType(self, input):
         # Detect image type (alias or fingerprint)
@@ -99,6 +104,10 @@ class LXCContainer(LXDModule):
         self.initConfig()
         self.data['config']['boot.autostart'] = '1' if input else '0'
 
+    def setEphemeral(self, input):
+        self.initConfig()
+        self.data['ephemeral'] = input
+
     def info(self):
         try:
             c = self.client.containers.get(self.data.get('name'))
@@ -126,7 +135,10 @@ class LXCContainer(LXDModule):
     def delete(self, force=False):
         try:
             container = self.client.containers.get(self.data.get('name'))
-            if force and self.info().get('status') == 'Running':
+            if self.info().get('ephemeral'):
+                container.stop(wait=True)
+                return
+            elif force and self.info().get('status') == 'Running':
                 container.stop(wait=True)
             container.delete()
         except Exception as e:

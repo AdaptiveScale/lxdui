@@ -10,7 +10,7 @@ App.containers = App.containers || {
     tableSettings: {
         rowId:'name',
         searching:true,
-        responsive: true,
+        responsive: false,
         select: true,
         columnDefs: [
             {
