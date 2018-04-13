@@ -14,10 +14,10 @@ App.containerDetails = App.containerDetails || {
         $('#buttonBackDetail').on('click', $.proxy(this.switchView, this, 'list'));
         App.setActiveLink('');
 
-        $('#buttonCloneContainerDetail').on('click', $.proxy(this.cloneContainer, this));
-        $('#buttonMoveContainerDetail').on('click', $.proxy(this.moveContainer, this));
-        $('#buttonExportContainerDetail').on('click', $.proxy(this.exportContainer, this));
-        $('#buttonSnapshotContainerDetail').on('click', $.proxy(this.snapshotContainer, this));
+        $('#buttonCloneContainerDetail').on('click', $.proxy(this.showCloneContainer, this));
+        $('#buttonMoveContainerDetail').on('click', $.proxy(this.showMoveContainer, this));
+        $('#buttonExportContainerDetail').on('click', $.proxy(this.showExportContainer, this));
+        $('#buttonSnapshotContainerDetail').on('click', $.proxy(this.showSnapshotContainer, this));
 
     },
     initContainerDetails: function(name) {
@@ -94,9 +94,83 @@ App.containerDetails = App.containerDetails || {
         });
 
     },
+    showCloneContainer: function(name) {
+        $('.modal-title').text('');
+        $('#newContainerClone').val('');
+        $('.modal-title').text('Clone Container: ' + name);
+        $("#containerDetailModal").modal("show");
+
+        $('#cloneContainerForm').show();
+        $('#buttonCloneContainer').show();
+
+
+        $('#buttonNewContainerSnapshot').hide();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
+        $('#buttonExportContainer').hide();
+        $('#buttonSnapshotContainer').hide();
+        $('#buttonMoveContainer').hide();
+        $('#buttonCloneContainer').show();
+    },
+    showMoveContainer: function(name) {
+        $('.modal-title').text('');
+        $('.modal-title').text('Move Container: ' + name);
+        $('#newContainerMove').val('');
+        $("#containerDetailModal").modal("show");
+        $('#cloneContainerForm').hide();
+
+        $('#buttonExportContainer').hide();
+        $('#buttonCloneContainer').hide();
+        $('#buttonSnapshotContainer').hide();
+        $('#buttonMoveContainer').show();
+        $('#buttonNewContainerSnapshot').hide();
+
+        $('#moveContainerForm').show();
+
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
+    },
+    showExportContainer: function(name) {
+        $('.modal-title').text('');
+        $('.modal-title').text('Export Image from Container: ' + name);
+        $('#imageAlias').val('');
+        $("#containerDetailModal").modal("show");
+
+        $('#cloneContainerForm').hide();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').hide();
+
+        $('#buttonMoveContainer').hide();
+        $('#buttonCloneContainer').hide();
+        $('#buttonSnapshotContainer').hide();
+        $('#buttonExportContainer').show();
+        $('#buttonNewContainerSnapshot').hide();
+
+        $('#exportContainerForm').show();
+
+    },
+    showSnapshotContainer: function(name) {
+        $('.modal-title').text('');
+        $('.modal-title').text('Create Snapshot from Container: ' + name);
+        $('#snapshotName').val('');
+        $("#containerDetailModal").modal("show");
+//        $('#selectedSnapshot').text('Create Snapshot from Container: ' + name);
+        $('#cloneContainerForm').hide();
+        $('#buttonExportContainer').hide();
+        $('#buttonCloneContainer').hide();
+        $('#buttonMoveContainer').hide();
+        $('#buttonSnapshotContainer').show();
+        $('#moveContainerForm').hide();
+        $('#buttonNewContainerSnapshot').hide();
+
+        $('#snapshotContainerForm').show();
+        $('#exportContainerForm').hide();
+    },
     cloneContainer: function() {
+        var container = this.name;
         $.ajax({
-            url:App.baseAPI+'container/clone/'+this.selectedContainer,
+            url:App.baseAPI+'container/clone/'+container,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -109,10 +183,11 @@ App.containerDetails = App.containerDetails || {
     onCloneSuccess: function(response){
          console.log(response);
          console.log('clonedSuccess:', 'TODO - add alert and refresh local data');
+         location.reaload();
     },
     moveContainer: function() {
         $.ajax({
-            url:App.baseAPI+'container/move/'+this.selectedContainer,
+            url:App.baseAPI+'container/move/'+this.name,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -125,10 +200,11 @@ App.containerDetails = App.containerDetails || {
     onMoveSuccess: function(response){
          console.log(response);
          console.log('Moved Success:', 'TODO - add alert and refresh local data');
+         location.reaload();
     },
     exportContainer: function() {
         $.ajax({
-            url:App.baseAPI+'container/export/'+this.selectedContainer,
+            url:App.baseAPI+'container/export/'+this.name,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -142,10 +218,11 @@ App.containerDetails = App.containerDetails || {
     onExportSuccess: function(response){
          console.log(response);
          console.log('Export Success:', 'TODO - add alert and refresh local data');
+         location.reload();
     },
     snapshotContainer: function() {
         $.ajax({
-            url:App.baseAPI+'snapshot/' + $('#snapshotName').val() + '/container/'+this.selectedContainer,
+            url:App.baseAPI+'snapshot/' + $('#snapshotName').val() + '/container/'+this.name,
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
@@ -155,6 +232,7 @@ App.containerDetails = App.containerDetails || {
     onSnapshotSuccess: function(response){
          console.log(response);
          console.log('Snapshot Success:', 'TODO - add alert and refresh local data');
+         location.reload();
     },
     restoreSnapshot: function() {
         console.log("Restore");
@@ -165,10 +243,6 @@ App.containerDetails = App.containerDetails || {
             type: 'PUT',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({
-                imageAlias: $('#imageAlias').val(),
-                force: true
-            }),
             success: $.proxy(this.onRestoreSuccess, this)
         });
     },
@@ -179,6 +253,26 @@ App.containerDetails = App.containerDetails || {
         console.log("Create Container");
         var snapshotName = $(event.target).prop('name');
         var container = this.name;
+        $('.modal-title').text('');
+        $('.modal-title').text('Create Container from Snapshot: ' + snapshotName);
+        $('#newContainerMove').val('');
+        $("#containerDetailModal").modal("show");
+        $('#cloneContainerForm').hide();
+
+        $('#buttonExportContainer').hide();
+        $('#buttonCloneContainer').hide();
+        $('#buttonSnapshotContainer').hide();
+        $('#buttonMoveContainer').hide();
+        $('#buttonNewContainerSnapshot').show();
+
+        if ($('#moveContainerForm').is(':visible') && this.selectedContainer === name) {
+            $('#moveContainerForm').hide();
+        }
+        else {
+            $('#createContainerSnapshotForm').show();
+        }
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
     },
     deleteSnapshot: function() {
         console.log("Delete Snapshot");
