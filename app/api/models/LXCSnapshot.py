@@ -1,5 +1,4 @@
 from app.api.models.LXDModule import LXDModule
-from datetime import datetime
 
 class LXCSnapshot(LXDModule):
     def __init__(self, input):
@@ -17,6 +16,9 @@ class LXCSnapshot(LXDModule):
         if input.get('container'):
             self.setContainer(input.get('container'))
 
+        if input.get('newContainer'):
+            self.setNewContainer(input.get('newContainer'))
+
         super(LXCSnapshot, self).__init__(remoteHost=self.remoteHost)
 
 
@@ -25,6 +27,9 @@ class LXCSnapshot(LXDModule):
 
     def setContainer(self, input):
         self.data['container'] = input
+
+    def setNewContainer(self, input):
+        self.data['newContainer'] = input
 
 
     def snapshotList(self):
@@ -43,7 +48,6 @@ class LXCSnapshot(LXDModule):
         try:
             container = self.client.containers.get(self.data.get('container'))
             snapName = self.data.get('name')
-            #snapName = '{}_{}'.format(self.data.get('container'), datetime.now().strftime('%Y-%m-%d_%H:%M'))
             container.snapshots.create(snapName)
             return self.client.api.containers[self.data.get('container')].snapshots.get().json()['metadata']
         except Exception as e:
@@ -53,5 +57,35 @@ class LXCSnapshot(LXDModule):
         try:
             container = self.client.containers.get(self.data.get('container'))
             container.snapshots.get(self.data.get('name')).delete()
+        except Exception as e:
+            raise ValueError(e)
+
+
+    def snapshotRestore(self):
+        try:
+            return self.client.api.containers[self.data.get('container')].put(json={'restore': self.data.get('name')}).json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+    def snapshotPublish(self):
+        try:
+            container = self.client.containers.get(self.data.get('container'))
+            image = container.snapshots.get(self.data.get('name')).publish(wait=True)
+            image.add_alias(self.data.get('name'), self.data.get('name'))
+            return self.client.api.images[image.fingerprint].get().json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
+    def snapshotCreateContainer(self):
+        try:
+            container = self.client.containers.get(self.data.get('container'))
+            image = container.snapshots.get(self.data.get('name')).publish(wait=True)
+            image.add_alias(self.data.get('name'), self.data.get('name'))
+            config = {'name': self.data.get('newContainer'), 'source': {'type': 'image', 'alias': self.data.get('name')}}
+            self.client.containers.create(config, wait=True)
+
+            newImage = self.client.images.get(image.fingerprint)
+            newImage.delete(wait=True)
+
         except Exception as e:
             raise ValueError(e)
