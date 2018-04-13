@@ -215,12 +215,19 @@ App.images = App.images || {
         tempSection.find('input[name="containers['+pos+'][image]"]').val(image.fingerprint);
 
         tempSection.find('input[name="count"]').prop('name', 'containers['+pos+'][count]');
-        tempSection.find('input[name="containers['+pos+'][count]"]').on('change', $.proxy(this.onCountChange, this, tempSection.find('.nodeCount')));
+        tempSection.find('input[name="containers['+pos+'][count]"]').on('change', $.proxy(this.onCountChange, this, $(tempSection.find('.nodeCount'))));
 
         tempSection.find('input[name="cpu[percentage]"]').prop('name', 'containers['+pos+'][cpu[percentage]]');
+        tempSection.find('#cpu_percentage').prop('id', 'cpu_percentage_'+pos);
+        tempSection.find('#cpu_percentage_'+pos).on('change',$.proxy(this.updateFieldValue, this,tempSection.find('input[name="containers['+pos+'][cpu[percentage]]"]')));
+        tempSection.find('input[name="containers['+pos+'][cpu[percentage]]"]').on('change',$.proxy(this.updateFieldValue, this,tempSection.find('#cpu_percentage_'+pos)));
+
         tempSection.find('input[name="cpu[hardLimitation]"]').prop('name', 'containers['+pos+'][cpu[hardLimitation]]');
 
         tempSection.find('input[name="memory[sizeInMB]"]').prop('name', 'containers['+pos+'][memory[sizeInMB]]');
+        tempSection.find('#memory_percentage').prop('id', 'memory_percentage_'+pos);
+        tempSection.find('#memory_percentage_'+pos).on('change',$.proxy(this.updateFieldValue, this,tempSection.find('input[name="containers['+pos+'][memory[sizeInMB]]"]')));
+        tempSection.find('input[name="containers['+pos+'][memory[sizeInMB]]"]').on('change',$.proxy(this.updateFieldValue, this,tempSection.find('#memory_percentage_'+pos)));
         tempSection.find('input[name="memory[hardLimitation]"]').prop('name', 'containers['+pos+'][memory[hardLimitation]]');
 
         tempSection.find('input[name="autostart"]').prop('name', 'containers['+pos+'][autostart]');
@@ -335,5 +342,8 @@ App.images = App.images || {
         }else{
             this['table'+name].rows().deselect();
         }
-    }
+    },
+    updateFieldValue: function(target, event){
+        target.val(event.target.value);
+    },
 }
