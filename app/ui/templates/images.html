@@ -99,7 +99,8 @@
                 {% for image in remoteImages %}
                 <tr id="{{image.image}}">
                     <td></td>
-                    <td>{{ image.name}}</td>
+                    <td><a style="cursor:pointer"
+                           onClick="App.images.showRemoteDetails('{{image.image}}');">{{ image.name}}</a></td>
                     <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>
                     <td>{{ image.image }}</td>
                     <td>{{ image.distribution }}</td>
@@ -215,6 +216,35 @@
         <input class="imageNameInput" type="hidden" name="image" value="">
     </div>
 </div>
+</div>
+
+<div class="hidden">
+    <div class="form-group itemTemplate">
+        <h5 style="display:inline" class="itemKey">Key :</h5>
+        <b class="itemValue">value</b>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Remote Image: <b class="imageName"></b></h4>
+      </div>
+      <div class="modal-body" style="overflow:scroll;" id="modalBody">
+
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-success" id="modalDownloadButton">Download</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 {% endblock %}
