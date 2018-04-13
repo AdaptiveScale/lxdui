@@ -83,8 +83,14 @@ App.containerDetails = App.containerDetails || {
         $.get(App.baseAPI+'snapshot/container/'+this.name, $.proxy(this.getSnapshotSuccess, this));
     },
     getSnapshotSuccess: function (response){
+        var container = this.name;
+        console.log(container);
         $.each(response.data, function(index, value) {
-            $('#snapshotList').append('<li>'+value+'</li>');
+            $('#snapshotList').append('<h4>'+value+'</h4>');
+            $('#snapshotList').append('<button class="btn btn-default" name="'+value.split('/').pop(-1)+'" id="restore-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());">Restore</button>');
+            $('#snapshotList').append('<button class="btn btn-default" name="'+value.split('/').pop(-1)+'" id="create-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());">New Container</button>');
+            $('#snapshotList').append('<button class="btn btn-default" name="'+value.split('/').pop(-1)+'" id="delete-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());">Delete</button>')
+            $('#snapshotList').append('<br>');
         });
 
     },
@@ -150,4 +156,48 @@ App.containerDetails = App.containerDetails || {
          console.log(response);
          console.log('Snapshot Success:', 'TODO - add alert and refresh local data');
     },
+    restoreSnapshot: function() {
+        console.log("Restore");
+        var snapshotName = $(event.target).prop('name');
+        var container = this.name;
+        $.ajax({
+            url:App.baseAPI+'snapshot/'+snapshotName+'/container/'+container,
+            type: 'PUT',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                imageAlias: $('#imageAlias').val(),
+                force: true
+            }),
+            success: $.proxy(this.onRestoreSuccess, this)
+        });
+    },
+    onRestoreSuccess: function(response) {
+        location.reload();
+    },
+    createContainerSnapshot: function() {
+        console.log("Create Container");
+        var snapshotName = $(event.target).prop('name');
+        var container = this.name;
+    },
+    deleteSnapshot: function() {
+        console.log("Delete Snapshot");
+        var snapshotName = $(event.target).prop('name');
+        var container = this.name;
+        $.ajax({
+            url:App.baseAPI+'snapshot/'+snapshotName+'/container/'+container,
+            type: 'DELETE',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                imageAlias: $('#imageAlias').val(),
+                force: true
+            }),
+            success: $.proxy(this.onSnapshotDeleteSuccess, this)
+        });
+    },
+    onSnapshotDeleteSuccess: function(response) {
+        location.reload();
+    },
+
 }

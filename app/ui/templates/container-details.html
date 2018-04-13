@@ -78,11 +78,13 @@
         {% if container.network is mapping %}
         <h5>Network Interfaces :</h5>
         {% for key, value in container.network.items() %}
+        {% if key!='lo' %}
         <div class="netint_data">
             IP Interface : <span class="label label-primary"> {{ key }}</span><br/> IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>            <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span><br/> MAC Address
             : <b style="font-size:75%">{{value.hwaddr}}</b><br/> State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
             <hr/> {% for counterkey, counterval in value.counters.items() %} {{counterkey|upper}} : <span class="label label-default">{{counterval}}</span><br/>            {% endfor %}
         </div>
+        {% endif %}
         {% endfor %} {% else %}
         <h5 style="display:inline">Network Interfaces :</h5>
         <span class="label label-default"> N/A </span> {% endif %}
