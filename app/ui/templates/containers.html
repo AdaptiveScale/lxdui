@@ -163,7 +163,7 @@
             </div>
         <div class="form-group">
             <div class="col-md-5">
-                <button type="submit" class="btn btn-primary pull-right">Submit <span class="glyphicon glyphicon-refresh spinning loader"></span> </button>
+                <button type="submit" class="btn btn-primary pull-right">Submit <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
 
             </div>
         </div>
@@ -171,82 +171,104 @@
     </div>
 </div>
 
+<div id="snapshotList" hidden>
+    <h4 id="selectedSnapshotList">List of Snapshots - </h4>
+</div>
+
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
 
 
 <div id="cloneContainerForm" hidden>
-    <h4 id="selectedClone">Clone Container - test</h4>
+
     <form id="cloneForm" class="form-horizontal">
         <div class="form-group">
             <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <input id="newContainerClone" name="newContainer" class="form-control" type="text" placeholder="Clone Name" title="Clone Name" required/>
             </div>
         </div>
         <div class="form-group">
             <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                <button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+                <!--<button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
             </div>
         </div>
     </form>
 </div>
 
 <div id="moveContainerForm" hidden>
-    <h4 id="selectedMove">Move Container - test</h4>
+
     <form id="moveForm" class="form-horizontal">
         <div class="form-group">
             <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <input id="newContainerMove" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Move Container Name" required/>
             </div>
         </div>
         <div class="form-group">
             <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                <button id="buttonMoveContainer" class="btn btn-primary">Move Container <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+
             </div>
         </div>
     </form>
 </div>
 
 <div id="exportContainerForm" hidden>
-    <h4 id="selectedExport">Export Container - test</h4>
+
     <form id="exportForm" class="form-horizontal">
         <div class="form-group">
             <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <input id="imageAlias" name="imageAlias" class="form-control" type="text" placeholder="Image Alias" title="Image Alias" required/>
             </div>
         </div>
         <div class="form-group">
             <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                <button id="buttonExportContainer" class="btn btn-primary">Export Container <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+
             </div>
         </div>
     </form>
 </div>
 
 <div id="snapshotContainerForm" hidden>
-    <h4 id="selectedSnapshot">Create Snapshot from Container - test</h4>
+
     <form id="snapshotForm" class="form-horizontal">
         <div class="form-group">
             <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <input id="snapshotName" name="snapshotName" class="form-control" type="text" placeholder="Snapshot Name" title="Snapshot Name" required/>
             </div>
         </div>
         <div class="form-group">
             <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                <button id="buttonSnapshotContainer" class="btn btn-primary">Snapshot <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+
             </div>
         </div>
     </form>
 </div>
+        </div>
+        <div class="modal-footer">
+             <button id="buttonExportContainer" class="btn btn-primary">Export Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonSnapshotContainer" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonMoveContainer" class="btn btn-primary">Move Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <!--<button type="button" class="btn btn-primary">Save</button>-->
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
 
-<div id="snapshotList" hidden>
-    <h4 id="selectedSnapshotList">List of Snapshots - </h4>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 
