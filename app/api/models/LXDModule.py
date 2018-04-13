@@ -44,7 +44,7 @@ class LXDModule(Base):
         try:
             response = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases/{}'.format(alias))
             image_details = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/{}'.format(response.json()['metadata']['target']))
-            return image_details.json()
+            return image_details.json()['metadata']
         except Exception as e:
             raise ValueError(e)
 

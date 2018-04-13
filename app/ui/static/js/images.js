@@ -29,6 +29,7 @@ App.images = App.images || {
     },
     containerTemplate:null,
     newContainerForm:null,
+    itemTemplate:null,
     init: function(opts){
         console.log('Images initialized');
         this.data = constLocalImages || [];
@@ -50,6 +51,8 @@ App.images = App.images || {
         $('.imageSize').each(this.convertImageSize);
         $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
+        this.itemTemplate = $('.itemTemplate').clone();
+        $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
@@ -111,6 +114,7 @@ App.images = App.images || {
          $('#buttonDelete').css('visibility','hidden');
     },
     doDownload: function(){
+        $('#modalDownloadButton').attr('disabled', 'disabled');
         this.tableRemote.rows({selected: true}).data().map(function(row){
             $.ajax({
                 url:App.baseAPI+'image/remote',
@@ -346,4 +350,74 @@ App.images = App.images || {
     updateFieldValue: function(target, event){
         target.val(event.target.value);
     },
+    showRemoteDetails: function(image){
+        this.tableRemote.rows('#'+image).select();
+        $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
+    },
+    onGetRemoteDetailsSuccess: function(response){
+        console.log('remoteDetails', response.data, 'this:', this);
+        this.showDetailsModal(response.data);
+    },
+    generateDetailItemFromArray(itemKey, tempArray){
+        var tempResult = {};
+        for(var i=0; i < tempArray.length;i++){
+            console.log('index', i, 'item:', tempArray[i]);
+            tempResult[itemKey+i]=tempArray[i];
+        }
+        console.log('arrayResult', tempResult);
+        return tempResult;
+    },
+    generateDetailItem: function(key, value){
+        var tempItem = this.itemTemplate.clone();
+        tempItem.find('.itemKey').text(App.helpers.capitalizeFirstLetter(key) +' : ');
+        if(key==='size'){
+            value = App.formatBytes(value);
+        }
+        if(['string','number', 'boolean'].indexOf(typeof(value))==-1){
+            tempItem.find('.itemValue').addClass('netint_data');
+            tempItem.find('.itemValue').css('display','block');
+        }else{
+            tempItem.find('.itemValue').text(value);
+        }
+        if(Array.isArray(value)){
+            console.log('array', value);
+            tempItem.find('.itemValue').empty();
+            tempItem.find('.itemValue').append(this.generateRemoteImageItem(this.generateDetailItemFromArray(key, value)));
+            return tempItem;
+        }
+        if(typeof(value)==='object'){
+            console.log('object', value);
+              tempItem.find('.itemValue').html(this.generateRemoteImageItem(value));
+              return tempItem;
+        }
+        if(typeof(value)==='boolean'){
+            console.log('boolean', value);
+            tempItem.find('.itemValue').addClass('label label-primary');
+
+        }
+        if(key==='fingerprint'){
+            tempItem.find('.itemValue').html('<span class="label label-default">'+value+'</span>');
+        }
+        return tempItem;
+    },
+    generateRemoteImageItem: function(tempItem){
+        var tempResult = [];
+        for(var tempProp in tempItem){
+            tempResult.push(this.generateDetailItem(tempProp, tempItem[tempProp]));
+        }
+        return tempResult;
+    },
+    showDetailsModal: function(remoteImage){
+        var tempModal = $('#myModal').modal();
+        tempModal.find('.imageName').text(remoteImage.properties.description);
+//        console.log('modal', tempModal);
+        var modalBody = $('#modalBody');
+        modalBody.append(this.generateRemoteImageItem(remoteImage));
+//        console.log('modalBody', modalBody);
+//        var tempContent = $('<ul></ul>');
+//        console.log('tempContent', tempContent);
+//        tempContent.append(this.generateListFromObjectProps(remoteImage,$('<ul></ul>'), $('<li class="col-sm-6"></li>')));
+//        modalBody.append(tempContent);
+        tempModal.show();
+    }
 }
