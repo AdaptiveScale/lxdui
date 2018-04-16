@@ -410,14 +410,8 @@ App.images = App.images || {
     showDetailsModal: function(remoteImage){
         var tempModal = $('#myModal').modal();
         tempModal.find('.imageName').text(remoteImage.properties.description);
-//        console.log('modal', tempModal);
         var modalBody = $('#modalBody');
         modalBody.append(this.generateRemoteImageItem(remoteImage));
-//        console.log('modalBody', modalBody);
-//        var tempContent = $('<ul></ul>');
-//        console.log('tempContent', tempContent);
-//        tempContent.append(this.generateListFromObjectProps(remoteImage,$('<ul></ul>'), $('<li class="col-sm-6"></li>')));
-//        modalBody.append(tempContent);
         tempModal.show();
     }
 }
