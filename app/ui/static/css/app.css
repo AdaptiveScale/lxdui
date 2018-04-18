@@ -176,4 +176,29 @@
     margin-bottom: 15px;
 }
 
+.no-right-padding {
+ padding-right:0;
+}
+.mg-right {
+    margin-right:10px;
+}
 
+.tag-button {
+    height:18px;
+    margin:-1px 0 0 0;
+    padding:0;
+    border-radius:0px 2px 2px 0px;
+    float:none;
+    line-height:1.1;
+}
+
+.profiles .label .btn {
+    color: #fff;
+    padding: 0px 2px;
+}
+
+.profiles select {
+   padding: 6px 12px;
+   cursor: pointer;
+
+}

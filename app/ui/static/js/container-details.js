@@ -25,7 +25,8 @@ App.containerDetails = App.containerDetails || {
         $('#buttonExportContainer2').on('click', $.proxy(this.exportContainerDetail, this));
         $('#buttonSnapshotContainer2').on('click', $.proxy(this.snapshotContainerDetail, this));
         $('#buttonNewContainerSnapshot2').on('click', $.proxy(this.newContainerFromSnapshotDetail, this));
-
+        $('.profileTag').on('click', $.proxy(this.deleteProfile, this));
+        $('#buttonAdd').on('click', $.proxy(this.addProfile, this));
     },
     initContainerDetails: function(name) {
         this.name = name;
@@ -310,5 +311,50 @@ App.containerDetails = App.containerDetails || {
     onSnapshotDeleteSuccess: function(response) {
         location.reload();
     },
-
+    deleteProfile: function(event){
+        console.log('profileID',
+            $(event.target).data('id'),
+            $(event.target).data('container'),
+        );
+        this.data.profiles.splice(this.data.profiles.indexOf($(event.target).data('id')),1);
+        console.log(this.data.profiles);
+        $.ajax({
+            url: App.baseAPI+'container/',
+            type:'PUT',
+            dataType:'json',
+            contentType:'application/json',
+            data: JSON.stringify({
+                name: $(event.target).data('container'),
+                profiles: this.data.profiles,
+                image:this.data.config['volatile.base_image']
+            }),
+            success:$.proxy(this.onDeleteProfileSuccess, this)
+        });
+    },
+    onDeleteProfileSuccess:function(response){
+        window.location.reload();
+    },
+    addProfile: function(event){
+        var tempSelected = $('#containerProfiles').find(':selected').text();
+        console.log(tempSelected, event);
+        if(this.data.profiles.indexOf(tempSelected)!==-1){
+            return;
+        }
+        this.data.profiles.push(tempSelected);
+        $.ajax({
+            url: App.baseAPI+'container/',
+            type:'PUT',
+            dataType:'json',
+            contentType:'application/json',
+            data: JSON.stringify({
+                name: this.data.name,
+                profiles: this.data.profiles,
+                image:this.data.config['volatile.base_image']
+            }),
+            success:$.proxy(this.onAddProfileSuccess, this)
+        });
+    },
+    onAddProfileSuccess:function(response){
+        window.location.reload();
+    },
 }

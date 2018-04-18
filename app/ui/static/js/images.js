@@ -85,17 +85,17 @@ App.images = App.images || {
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
             var state = this.tableLocal.rows({selected:true}).count()>0;
-            var visibility= state?'visible':'hidden';
-            $('#buttonLaunchContainers').css('visibility',visibility);
-            $('#buttonDelete').css('visibility',visibility);
-            $('#selectAllLocal').prop('checked',state);
+            var visibility= !state?'attr':'removeAttr';
+            $('#buttonLaunchContainers')[visibility]('disabled', 'disabled');
+            $('#buttonDelete')[visibility]('disabled', 'disabled');
+            $('#selectAllLocal').prop('checked',this.tableLocal.rows({selected:true}).count()==this.tableLocal.rows().count());
             return;
         }
         if(this.activeTab=='remote'){
             var state = this.tableRemote.rows({selected:true}).count()>0
-            var visibility= state?'visible':'hidden';
-            $('#buttonDownload').css('visibility',visibility);
-            $('#selectAllRemote').prop('checked',state);
+            var visibility= !state?'attr':'removeAttr';
+            $('#buttonDownload')[visibility]('disabled', 'disabled');
+            $('#selectAllRemote').prop('checked',this.tableRemote.rows({selected:true}).count()==this.tableRemote.rows().count());
             return;
         }
     },
@@ -110,8 +110,8 @@ App.images = App.images || {
     },
     onDeleteSuccess: function(fingerprint){
         this.tableLocal.row("#"+fingerprint).remove().draw();
-         $('#buttonLaunchContainers').css('visibility','hidden');
-         $('#buttonDelete').css('visibility','hidden');
+         $('#buttonLaunchContainers').hide();
+         $('#buttonDelete').hide();
     },
     doDownload: function(){
         $('#modalDownloadButton').attr('disabled', 'disabled');
@@ -147,14 +147,18 @@ App.images = App.images || {
         if(screen==='local'){
             $('#tableImagesLocalWrapper').show();
             $('#tableImagesRemoteWrapper').hide();
-            $('#buttonDownload').css('visibility','hidden');
+            $('#buttonDelete').show();
+            $('#buttonLaunchContainers').show();
+            $('#buttonDownload').hide();
             this.activeTab = 'local';
             return;
         }
         if(screen==='remote'){
             $('#tableImagesLocalWrapper').hide();
             $('#tableImagesRemoteWrapper').show();
-            $('#buttonDelete').css('visibility','hidden');
+            $('#buttonLaunchContainers').hide();
+            $('#buttonDownload').show();
+            $('#buttonDelete').hide();
             this.activeTab = 'remote';
             return;
         }
@@ -274,13 +278,13 @@ App.images = App.images || {
             $('#multiContainerSection').empty();
         }
         if(view=='remoteList'){
-            this.activateScreen('remote');
+            return this.activateScreen('remote');
         }
         if(view=='localList'){
             return this.activateScreen('local');
         }
-        $('#buttonLaunchContainers').css('visibility','hidden');
-        $('#buttonDelete').css('visibility','hidden');
+        $('#buttonLaunchContainers').hide();
+        $('#buttonDelete').hide();
     },
     generateContainer: function(name, formData){
         return {
@@ -410,14 +414,8 @@ App.images = App.images || {
     showDetailsModal: function(remoteImage){
         var tempModal = $('#myModal').modal();
         tempModal.find('.imageName').text(remoteImage.properties.description);
-//        console.log('modal', tempModal);
         var modalBody = $('#modalBody');
         modalBody.append(this.generateRemoteImageItem(remoteImage));
-//        console.log('modalBody', modalBody);
-//        var tempContent = $('<ul></ul>');
-//        console.log('tempContent', tempContent);
-//        tempContent.append(this.generateListFromObjectProps(remoteImage,$('<ul></ul>'), $('<li class="col-sm-6"></li>')));
-//        modalBody.append(tempContent);
         tempModal.show();
     }
 }

@@ -10,6 +10,7 @@
         $(function () {
             $.proxy(App.containerDetails.initContainerDetails('{{container.name}}'));
         });
+        App.containerDetails.data = {{container|tojson}};
     </script>
     <div class="col-lg-12">
         <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}">{{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span></legend>
@@ -73,10 +74,26 @@
         <b>{{container.created_at}}</b>
     </div>
 
-    <div class="form-group">
+    <div class="form-group profiles">
         <h5 style="display:inline">Profiles :</h5>
         {% for p in container.profiles %}
-        <span class="label label-default">{{ p }}</span> {% endfor %}
+            <span class="label label-default no-right-padding mg-right">{{ p }}
+                <a id="button_{{p}}" class="btn tag-button profileTag" data-id="{{p}}" data-container="{{container.name}}">x</a>
+            </span>
+        {% endfor %}
+            <select id="containerProfiles" name="profiles">
+             {% for profile in profiles %}
+                {% if profile in container.profiles %}
+                    <option>here</option>
+                    <option selected>{{profile.name}}</option>
+                {% else %}
+                    <option value="{{profile.name}}">{{profile.name}}</option>
+                {% endif %}
+             {% endfor %}
+            </select>
+            <!--<span class="label label-success no-right-padding mg-right">{{ p }}-->
+                <a id="buttonAdd" class="btn btn-success">+</a>
+            <!--</span>-->
     </div>
 
     <div class="form-group">
@@ -84,15 +101,32 @@
         <h5>Network Interfaces :</h5>
         {% for key, value in container.network.items() %}
         {% if key!='lo' %}
-        <div class="netint_data">
-            IP Interface : <span class="label label-primary"> {{ key }}</span><br/> IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>            <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span><br/> MAC Address
-            : <b style="font-size:75%">{{value.hwaddr}}</b><br/> State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
-            <hr/> {% for counterkey, counterval in value.counters.items() %} {{counterkey|upper}} : <span class="label label-default">{{counterval}}</span><br/>            {% endfor %}
+        <div class="netint_data row">
+            <div class="col-sm-6">
+                IP Interface : <span class="label label-primary"> {{ key }}</span>
+                <br/>
+                IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>
+                <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span>
+                <br/>
+                MAC Address
+                : <b style="font-size:75%">{{value.hwaddr}}</b>
+                <br/>
+                State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
+            </div>
+            <div class="col-sm-5">
+                {% for counterkey, counterval in value.counters.items() %}
+                    {{counterkey|upper}} :
+                    <span class="label label-default">{{counterval}}</span>
+                    <br/>
+                {% endfor %}
+            </div>
         </div>
         {% endif %}
-        {% endfor %} {% else %}
-        <h5 style="display:inline">Network Interfaces :</h5>
-        <span class="label label-default"> N/A </span> {% endif %}
+        {% endfor %}
+        {% else %}
+            <h5 style="display:inline">Network Interfaces :</h5>
+            <span class="label label-default"> N/A </span>
+        {% endif %}
     </div>
 
     <div class="form-group">
