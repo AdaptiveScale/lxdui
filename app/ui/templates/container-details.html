@@ -33,11 +33,15 @@
                 </button>
             {% endif %}
 
-            <button id="buttonExportContainerDetail" class="btn btn-default pull-right">Export Container</button>
-            <button id="buttonSnapshotContainerDetail" class="btn btn-default pull-right">Snapshot</button>
-            <button id="buttonMoveContainerDetail" class="btn btn-default pull-right">Move Container</button>
-            <button id="buttonCloneContainerDetail" class="btn btn-default pull-right">Clone Container</button>
+            <!--<button id="buttonExportContainerDetail" class="btn btn-default pull-right">Export Container</button>-->
+            <!--<button id="buttonSnapshotContainerDetail" class="btn btn-default pull-right">Snapshot</button>-->
+            <!--<button id="buttonMoveContainerDetail" class="btn btn-default pull-right">Move Container</button>-->
+            <!--<button id="buttonCloneContainerDetail" class="btn btn-default pull-right">Clone Container</button>-->
 
+            <button id="buttonExportContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-duplicate"></span> Export <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonSnapshotContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-camera"></span> Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonMoveContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-share-alt"></span> Move <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <button id="buttonCloneContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-export"></span> Clone <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
         </div>
 
         <div class="form-group">
@@ -168,7 +172,7 @@
 </div>
 
 <div id="exportContainerForm" hidden>
-
+<
     <form id="exportForm" class="form-horizontal">
         <div class="form-group">
             <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
@@ -202,10 +206,10 @@
 </div>
         </div>
         <div class="modal-footer">
-             <button id="buttonExportContainer2" class="btn btn-primary">Export Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonExportContainer2" class="btn btn-primary">Export <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
              <button id="buttonSnapshotContainer2" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-             <button id="buttonMoveContainer2" class="btn btn-primary">Move Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-            <button id="buttonCloneContainer2" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonMoveContainer2" class="btn btn-primary">Move <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <button id="buttonCloneContainer2" class="btn btn-primary">Clone <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
             <button id="buttonNewContainerSnapshot2" class="btn btn-primary">New Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
           <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
         </div>
