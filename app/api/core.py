@@ -37,6 +37,9 @@ def index():
 def run():
     startApp()
 
+def stop():
+    app.shutdown()
+
 def startApp(port, uiPages=None):
     if uiPages is not None:
         app.register_blueprint(uiPages, url_prefix='/ui')

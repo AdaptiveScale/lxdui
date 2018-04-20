@@ -21,6 +21,10 @@ schema = {
                     'type':'string',
                     'description':'Image alias or hash'
                 },
+                'newName': {
+                    'type': 'string',
+                    'description': 'New Container name'
+                },
                 'stateful':{
                     'type':'boolean',
                     'description':'Stateful container'

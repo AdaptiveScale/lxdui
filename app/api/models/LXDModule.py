@@ -119,6 +119,13 @@ class LXDModule(Base):
                     return 'alias'
         return None
 
+    def containerExists(self, containerName):
+        lxdModule = LXDModule()
+        try:
+            container = self.client.containers.get(containerName)
+            return True
+        except Exception as e:
+            return False
 
     def info(self):
         raise NotImplementedError()

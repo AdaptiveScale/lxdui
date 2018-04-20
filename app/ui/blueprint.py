@@ -45,6 +45,7 @@ def containerDetails(name):
         container = LXCContainer({'name': name})
         return render_template('container-details.html', currentpage='Container Details',
                                container=container.info(),
+                               profiles = getProfiles(),
                                lxdui_current_version=VERSION)
     except ValueError as ex:
         return render_template('container-details.html', currentpage='Container Details',
