@@ -50,6 +50,10 @@ class LXCContainer(LXDModule):
         else:
             self.setEphemeral(False)
 
+        if input.get('newName'):
+            self.setNewName(input.get('newName'))
+
+
 
     def setImageType(self, input):
         # Detect image type (alias or fingerprint)
@@ -108,6 +112,10 @@ class LXCContainer(LXDModule):
         self.initConfig()
         self.data['ephemeral'] = input
 
+    def setNewName(self, input):
+        self.initConfig()
+        self.data['newName'] = input
+
     def info(self):
         try:
             c = self.client.containers.get(self.data.get('name'))
@@ -157,6 +165,8 @@ class LXCContainer(LXDModule):
                 container.description = self.data.get('description')
 
             container.save(True)
+            if self.data.get('newName'):
+                self.rename()
             return self.info()
         except Exception as e:
             raise ValueError(e)
@@ -233,3 +243,24 @@ class LXCContainer(LXDModule):
             return self.client.api.images[image.fingerprint].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
+
+    def rename(self, force=True):
+        try:
+            if self.data.get('newName'):
+                if self.containerExists(self.data.get('newName')):
+                    raise ValueError('Container with that name already exists')
+            container = self.client.containers.get(self.data.get('name'))
+            previousState = container.status
+            if previousState == 'Running':
+                if force == False:
+                    raise ValueError('Container is running')
+                container.stop(wait=True)
+            container.rename(self.data.get('newName'), True)
+            if previousState == 'Running':
+                container.start(wait=True)
+            self.data['name'] = self.data.get('newName')
+            return self.info()
+        except Exception as e:
+            raise ValueError(e)
+
+
