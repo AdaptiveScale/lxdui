@@ -9,11 +9,12 @@
     <script>
         $(function () {
             $.proxy(App.containerDetails.initContainerDetails('{{container.name}}'));
+            App.containerDetails.data = {{container|tojson}};
+            App.containerDetails.setInitialData.call(App.containerDetails);
         });
-        App.containerDetails.data = {{container|tojson}};
     </script>
     <div class="col-lg-12">
-        <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}">{{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span></legend>
+        <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}">{{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span><button class="label btn btn-primary pull-right" style="display:none;" id="buttonSave">Save</button> </legend>
         <div class="form-group">
             {% if container.status == 'Running' %}
                 <button class="btn btn-default btn-stop_container" id="buttonStopDetail">
@@ -34,19 +35,20 @@
                 </button>
             {% endif %}
 
-            <button id="buttonExportContainerDetail" class="btn btn-default pull-right">Export Container</button>
+            <button id="buttonExportContainerDetail" class="btn btn-default pull-right">Export</button>
             <button id="buttonSnapshotContainerDetail" class="btn btn-default pull-right">Snapshot</button>
-            <button id="buttonMoveContainerDetail" class="btn btn-default pull-right">Move Container</button>
-            <button id="buttonCloneContainerDetail" class="btn btn-default pull-right">Clone Container</button>
+            <button id="buttonMoveContainerDetail" class="btn btn-default pull-right">Move</button>
+            <button id="buttonCloneContainerDetail" class="btn btn-default pull-right">Clone</button>
 
         </div>
 
         <div class="form-group">
             <h5 style="display:inline">Name :</h5>
-            <b>{{container.name}}</b> {% if container.pid != 'N/A' %}
-            <span class="label label-primary"> PID: {{container.pid}}</span> {% endif %} {% if container.processes !=
-            'N/A' %}
+            <b contenteditable="true" id="containerNameInput" class="formModifier">{{container.name}}</b>
+            <span class="btn btn-xs btn-default glyphicon glyphicon-edit formModifier" id="editNameButton"></span> {% if container.pid != 'N/A' %}
+            {% endif %} {% if container.processes != 'N/A' %}
             <div class="form-group pull-right">
+                <span class="label label-primary"> PID: {{container.pid}}</span>
                 <h5 style="display:inline">Currently Running Processes :</h5>
                 <span class="label label-info">{{container.processes}}</span>
             </div>
@@ -76,12 +78,14 @@
 
     <div class="form-group profiles">
         <h5 style="display:inline">Profiles :</h5>
+        <span id="profileList">
         {% for p in container.profiles %}
             <span class="label label-default no-right-padding mg-right">{{ p }}
-                <a id="button_{{p}}" class="btn tag-button profileTag" data-id="{{p}}" data-container="{{container.name}}">x</a>
+                <a id="button_{{p}}" class="btn tag-button glyphicon glyphicon-remove profileTag formModifier" data-id="{{p}}" data-container="{{container.name}}"></a>
             </span>
         {% endfor %}
-            <select id="containerProfiles" name="profiles">
+        </span>
+            <select id="containerProfiles" name="profiles" style="display:none;">
              {% for profile in profiles %}
                 {% if profile in container.profiles %}
                     <option>here</option>
@@ -92,7 +96,7 @@
              {% endfor %}
             </select>
             <!--<span class="label label-success no-right-padding mg-right">{{ p }}-->
-                <a id="buttonAdd" class="btn btn-success">+</a>
+                <a id="buttonAdd" class="btn btn-default btn-xs glyphicon glyphicon-plus formModifier"></a>
             <!--</span>-->
     </div>
     <div class="form-group">
@@ -147,7 +151,7 @@
 
     <div class="form-group">
         <h5>List of Snapshots :</h5>
-        <div id="snapshotList" class="netint_data">
+        <div id="snapshotList" class="netint_data row">
         </div>
     </div>
 </div>

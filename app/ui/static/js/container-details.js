@@ -1,5 +1,8 @@
 App.containerDetails = App.containerDetails || {
     data:[],
+    updates:{
+        image:''
+    },
     error:false,
     errorMessage:'',
     name: '',
@@ -26,7 +29,12 @@ App.containerDetails = App.containerDetails || {
         $('#buttonSnapshotContainer2').on('click', $.proxy(this.snapshotContainerDetail, this));
         $('#buttonNewContainerSnapshot2').on('click', $.proxy(this.newContainerFromSnapshotDetail, this));
         $('.profileTag').on('click', $.proxy(this.deleteProfile, this));
-        $('#buttonAdd').on('click', $.proxy(this.addProfile, this));
+        $('#buttonAdd').on('click', $.proxy(this.onAddProfileClick, this));
+        $('.formModifier').on('click', $.proxy(this.formChanged, this));
+        $('#buttonSave').on('click', $.proxy(this.saveChanges, this));
+        $('#containerProfiles').on('change', $.proxy(this.addProfile, this));
+        $('#editNameButton').on('click', $.proxy(this.focusOnName, this));
+        $('#containerNameInput').on('blur', $.proxy(this.onNameChange, this));
     },
     initContainerDetails: function(name) {
         this.name = name;
@@ -93,11 +101,12 @@ App.containerDetails = App.containerDetails || {
     getSnapshotSuccess: function (response){
         var container = this.name;
         $.each(response.data, function(index, value) {
-            $('#snapshotList').append('<h4>'+value+'</h4>');
-            $('#snapshotList').append('<button class="btn btn-default" name="'+value.split('/').pop(-1)+'" id="restore-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());">Restore</button>');
-            $('#snapshotList').append('<button class="btn btn-default" name="'+value.split('/').pop(-1)+'" id="create-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());">New Container</button>');
-            $('#snapshotList').append('<button class="btn btn-default" name="'+value.split('/').pop(-1)+'" id="delete-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());">Delete</button>')
-            $('#snapshotList').append('<br>');
+            $('#snapshotList').append('<h5 class="col-sm-6 ">'+value+'</h5>');
+            var tempPlaceholder = $('<div class="col-sm-6"></div>');
+            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="restore-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());">Restore</button>');
+            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="create-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());">New Container</button>');
+            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="delete-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());">Delete</button>');
+            $('#snapshotList').append(tempPlaceholder);
         });
 
     },
@@ -312,49 +321,63 @@ App.containerDetails = App.containerDetails || {
         location.reload();
     },
     deleteProfile: function(event){
-        console.log('profileID',
-            $(event.target).data('id'),
-            $(event.target).data('container'),
-        );
         this.data.profiles.splice(this.data.profiles.indexOf($(event.target).data('id')),1);
-        console.log(this.data.profiles);
-        $.ajax({
-            url: App.baseAPI+'container/',
-            type:'PUT',
-            dataType:'json',
-            contentType:'application/json',
-            data: JSON.stringify({
-                name: $(event.target).data('container'),
-                profiles: this.data.profiles,
-                image:this.data.config['volatile.base_image']
-            }),
-            success:$.proxy(this.onDeleteProfileSuccess, this)
-        });
+        this.updates['profiles'] = this.data.profiles;
+        this.updateProfiles();
     },
     onDeleteProfileSuccess:function(response){
         window.location.reload();
     },
+    updateProfiles: function(){
+        $('#profileList').empty();
+        for(var i=0,profile;profile=this.updates.profiles[i];i++){
+            var tempProfile = '<span class="label label-default no-right-padding mg-right">'+profile;
+            tempProfile += '<a id="button_'+profile+'" class="btn tag-button glyphicon glyphicon-remove profileTag" data-id="'+profile+'" data-container="'+this.data.name+'"></a></span>';
+            $('#profileList').append(tempProfile);
+        }
+        $('.profileTag').on('click', $.proxy(this.deleteProfile, this));
+    },
+    onAddProfileClick: function(){
+        $('#containerProfiles').show();
+        $('#buttonAdd').hide();
+    },
     addProfile: function(event){
         var tempSelected = $('#containerProfiles').find(':selected').text();
-        console.log(tempSelected, event);
         if(this.data.profiles.indexOf(tempSelected)!==-1){
             return;
         }
         this.data.profiles.push(tempSelected);
+        this.updates['profiles'] = this.data.profiles;
+        this.updateProfiles();
+        $('#containerProfiles').hide();
+        $('#buttonAdd').show();
+    },
+    saveChanges:function(){
         $.ajax({
             url: App.baseAPI+'container/',
             type:'PUT',
             dataType:'json',
             contentType:'application/json',
-            data: JSON.stringify({
-                name: this.data.name,
-                profiles: this.data.profiles,
-                image:this.data.config['volatile.base_image']
-            }),
-            success:$.proxy(this.onAddProfileSuccess, this)
+            data: JSON.stringify(this.updates),
+            success:$.proxy(this.onSaveChangesSuccess, this)
         });
     },
-    onAddProfileSuccess:function(response){
+    onSaveChangesSuccess:function(response){
         window.location.reload();
     },
+    setInitialData: function(){
+        this.updates['image'] = this.data.config['volatile.base_image'];
+        this.updates['name'] = this.data.name;
+    },
+    formChanged: function(){
+        console.log('enableSave');
+        $('#buttonSave').show();
+        $('.formChanged').unbind('click');
+    },
+    focusOnName: function(){
+        $('#containerNameInput').focus();
+    },
+    onNameChange: function(event){
+        this.updates['newName'] = event.target.textContent;
+    }
 }
