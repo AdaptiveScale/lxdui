@@ -161,6 +161,9 @@ App.profiles = App.profiles || {
     },
     onItemSelectChange : function(e, dt, type, indexes ){
         var state = this.dataTable.rows({selected:true}).count()>0;
+        console.log('newState', state);
         $('#selectAllProfiles').prop('checked', state);
+        var buttonStates = state?'removeAttr':'attr';
+        $('#buttonDeleteProfile')[buttonStates]('disabled','disabled');
     }
 }
