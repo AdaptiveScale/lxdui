@@ -103,9 +103,9 @@ App.containerDetails = App.containerDetails || {
         $.each(response.data, function(index, value) {
             $('#snapshotList').append('<h5 class="col-sm-6 ">'+value+'</h5>');
             var tempPlaceholder = $('<div class="col-sm-6"></div>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="restore-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());">Restore</button>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="create-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());">New Container</button>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="delete-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());">Delete</button>');
+            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="restore-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
+            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="create-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());"><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>');
+            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="delete-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
             $('#snapshotList').append(tempPlaceholder);
         });
 
