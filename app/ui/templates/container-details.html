@@ -40,10 +40,10 @@
             <!--<button id="buttonMoveContainerDetail" class="btn btn-default pull-right">Move Container</button>-->
             <!--<button id="buttonCloneContainerDetail" class="btn btn-default pull-right">Clone Container</button>-->
 
-            <button id="buttonExportContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-duplicate"></span> Export <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-             <button id="buttonSnapshotContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-camera"></span> Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-             <button id="buttonMoveContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-share-alt"></span> Move <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-            <button id="buttonCloneContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-export"></span> Clone <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <button id="buttonExportContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-duplicate"></span> Export</button>
+             <button id="buttonSnapshotContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-camera"></span> Snapshot</button>
+             <button id="buttonMoveContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-share-alt"></span> Move</button>
+            <button id="buttonCloneContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-export"></span> Clone</button>
         </div>
 
         <div class="form-group">
@@ -129,8 +129,10 @@
             <div class="col-sm-6">
                 IP Interface : <span class="label label-primary"> {{ key }}</span>
                 <br/>
+                {% if value.addresses|length > 0 %}
                 IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>
                 <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span>
+                {% endif %}
                 <br/>
                 MAC Address
                 : <b style="font-size:75%">{{value.hwaddr}}</b>
