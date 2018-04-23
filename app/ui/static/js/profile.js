@@ -42,7 +42,7 @@ App.profiles = App.profiles || {
         App.setActiveLink('profile');
         this.getData();
     },
-     refreshProfiles: function(e){
+    refreshProfiles: function(e){
         console.log('refreshProfiles');
         e.preventDefault();
         console.log('dataTable', this.dataTable);
@@ -160,7 +160,11 @@ App.profiles = App.profiles || {
         }
     },
     onItemSelectChange : function(e, dt, type, indexes ){
+    console.log('argumentss', arguments);
         var state = this.dataTable.rows({selected:true}).count()>0;
-        $('#selectAllProfiles').prop('checked', state);
+        console.log('newState', state);
+        $('#selectAllProfiles').prop('checked', this.dataTable.rows({selected:true}).count()==this.dataTable.rows().count());
+        var buttonStates = state?'removeAttr':'attr';
+        $('#buttonDeleteProfile')[buttonStates]('disabled','disabled');
     }
 }

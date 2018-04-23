@@ -49,6 +49,20 @@ def remote():
         return response.replyFailed(message=e.__str__())
 
 
+@image_api.route('/remote/details')
+@jwt_required()
+def remoteDetails():
+    try:
+        alias = ''
+        args = request.args
+        if args['alias']:
+            alias = args['alias']
+        client = LXDModule()
+        return response.replySuccess(client.detailsRemoteImage(alias))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
 @image_api.route('/remote', methods=['POST'])
 @jwt_required()
 def downloadImage():

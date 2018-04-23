@@ -45,6 +45,7 @@ def containerDetails(name):
         container = LXCContainer({'name': name})
         return render_template('container-details.html', currentpage='Container Details',
                                container=container.info(),
+                               profiles = getProfiles(),
                                lxdui_current_version=VERSION)
     except ValueError as ex:
         return render_template('container-details.html', currentpage='Container Details',
@@ -77,29 +78,42 @@ def network():
 
 @uiPages.route('/images')
 def images():
+    localImages = getLocalImages()
+    profiles = getProfiles()
+    remoteImages = getRemoteImages()
+    return render_template('images.html', currentpage='Images',
+                           localImages=localImages,
+                           remoteImages=remoteImages,
+                           profiles=profiles,
+                           jsData={
+                               'local': json.dumps(localImages),
+                               'remote': json.dumps(remoteImages),
+                           },
+                           memory=memory(),
+                           lxdui_current_version=VERSION)
+
+
+def getLocalImages():
     try:
         localImages = LXDModule().listLocalImages()
-        profiles = LXDModule().listProfiles()
-        remoteImages = LXDModule().listRemoteImages()
-        return render_template('images.html', currentpage='Images',
-                               localImages=localImages,
-                               remoteImages=remoteImages,
-                               profiles=profiles,
-                               jsData={
-                                   'local': json.dumps(localImages),
-                                   'remote': json.dumps(remoteImages),
-                               },
-                               memory=memory(),
-                               lxdui_current_version=VERSION)
     except:
-        # TODO - log exception
-        return render_template('images.html', currentpage='Images',
-                               localImages=[],
-                               remoteImages=[],
-                               profiles=[],
-                               jsData={
-                                   'local': json.dumps([]),
-                                   'remote': json.dumps([]),
-                               },
-                               memory=memory(),
-                               lxdui_current_version=VERSION)
+        localImages = []
+
+    return localImages
+
+def getRemoteImages():
+    try:
+        remoteImages = LXDModule().listRemoteImages()
+    except:
+        remoteImages = []
+
+    return remoteImages
+
+def getProfiles():
+    try:
+        profiles = LXDModule().listProfiles()
+    except:
+        profiles = []
+
+    return profiles
+
