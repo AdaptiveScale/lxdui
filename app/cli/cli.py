@@ -7,7 +7,8 @@ from app.api import core
 from app.ui.blueprint import uiPages
 import click
 import os
-import sys
+import time
+import subprocess
 import logging
 log = logging.getLogger(__name__)
 
@@ -65,6 +66,28 @@ def start():
     # if daemon:
     #     #start in the background
     #click.echo("Starting %s" % APP)
+    _doStart()
+
+
+@lui.command()
+def stop():
+    """Stop LXDUI"""
+    _doStop()
+
+
+@lui.command()
+def restart():
+    """Restart LXDUI"""
+
+
+@lui.command()
+def status():
+    """Check the status of LXDUI"""
+    click.echo("%s Status" % APP)
+
+
+#Private Functions
+def _doStart(args=None):
     port = 5000
     try:
         port = int(Config().get('LXDUI', 'lxdui.port'))
@@ -74,23 +97,10 @@ def start():
 
     core.startApp(port, uiPages)
 
-
-@lui.command()
-def stop():
-    """Stop LXDUI"""
+def _doStop(args=None):
     click.echo("Stopping %s" % APP)
+    subprocess.Popen("fuser -k {}/tcp".format(Config().get('LXDUI', 'lxdui.port')), shell=True).wait()
 
-
-@lui.command()
-def restart():
-    """Restart LXDUI"""
-    click.echo("Restarting %s" % APP)
-
-
-@lui.command()
-def status():
-    """Check the status of LXDUI"""
-    click.echo("%s Status" % APP)
 
 @lui.command()
 def cwd():
