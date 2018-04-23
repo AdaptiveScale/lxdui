@@ -129,8 +129,10 @@
             <div class="col-sm-6">
                 IP Interface : <span class="label label-primary"> {{ key }}</span>
                 <br/>
+                {% if value.addresses|length > 0 %}
                 IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>
                 <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span>
+                {% endif %}
                 <br/>
                 MAC Address
                 : <b style="font-size:75%">{{value.hwaddr}}</b>
