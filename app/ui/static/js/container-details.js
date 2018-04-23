@@ -101,12 +101,14 @@ App.containerDetails = App.containerDetails || {
     getSnapshotSuccess: function (response){
         var container = this.name;
         $.each(response.data, function(index, value) {
-            $('#snapshotList').append('<div class="row"><h5 class="col-sm-6 ">'+value+'</h5>');
-            var tempPlaceholder = $('<div class="col-sm-6">');
+            var row = $('<div class="row"></div>');
+            row.append('<h5 class="col-sm-6 ">'+value+'</h5>');
+            var tempPlaceholder = $('<div class="col-sm-6"></div>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="restore-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="create-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());"><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="delete-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button></div></div>');
-            $('#snapshotList').append(tempPlaceholder);
+            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.split('/').pop(-1)+'" id="delete-'+value.split('/').pop(-1)+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
+            row.append(tempPlaceholder);
+            $('#snapshotList').append(row);
         });
 
     },
