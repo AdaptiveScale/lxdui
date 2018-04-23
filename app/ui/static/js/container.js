@@ -48,6 +48,11 @@ App.containers = App.containers || {
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
         $('#selectAllContainers').on('change', $.proxy(this.toggleSelectAll, this));
+        $('#cpu_percentage').on('change', $.proxy(this.updateValue, this, $('#containerCPUPercentage')));
+        $('#containerCPUPercentage').on('change', $.proxy(this.updateValue, this, $('#cpu_percentage')));
+        $('#memory_percentage').on('change', $.proxy(this.updateValue, this, $('#containerMemoryPercentage')));
+        $('#containerMemoryPercentage').on('change', $.proxy(this.updateValue, this, $('#memory_percentage')));
+
         if(window.location.hash && window.location.hash=='#createContainer')
             this.switchView('form')
     },
@@ -407,5 +412,8 @@ App.containers = App.containers || {
         }else{
             this.dataTable.rows().deselect();
         }
+    },
+    updateValue:function(target, event){
+        target.val(event.target.value);
     }
 }

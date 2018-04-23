@@ -89,187 +89,99 @@
         </div>
     </div>
 
-    <div class="col-lg-12">
-        <form id="newContainerForm">
-                <div class="form-group" id="multiContainerSection">
-
-                <div class="panel panel-default multiContainerTemplate" style="display: block;" id="7bf9cfc0fb7d88790932edb7174f34e25314c2c4fa4eb6737a6454e06ddaabeb">
-    <div class="panel-heading" role="tab">
-        <h4 class="panel-title">
-            <a role="button" data-toggle="collapse" data-parent="#accordion" aria-expanded="true" aria-controls="collapseOne"> <span id="description"></span>
-                <span>
-                    <label class="imageName"></label>
-                    <label class="pull-right nodeCount"></label>
-                </span>
-            </a>
-        </h4>
-    </div>
-    <div id="${i}" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="${i}">
-        <div class="panel-body">
-            <div class="form-group">
-              <label class="col-md-2 control-label" for="containerImage">Select image:</label>
-              <div class="col-md-4">
-                 <select class="form-control" id="containerImage" name="image">
-                  {% for image in images %}
-                     {% if image.properties.get('description') == None %}
-                     <option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>
-                     {% else %}
-                    <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
-                     {% endif %}
-                  {% endfor %}
-              </select>
-              </div>
-            </div>
-        </div>
-        <div class="panel-body">
-            <div class="form-group">
-                <label class="col-sm-6 control-label">Container Name</label>
-                <!--<label class="col-sm-2 control-label">Quantity</label>-->
-                <label class="col-sm-2 form-check-label text-center">Persistent</label>
-                <label class="col-sm-2 form-check-label text-center">Autostart</label>
-                <div class="clearfix"></div>
-                <div class="col-sm-6">
-                    <input class="containerName form-control" value="cnt-" placeholder="container name prefix" name="containers[0][name]" required="" type="text">
-                </div>
-                <!--<div class="col-sm-2">-->
-                    <!--<input class="cntNrs form-control" min="1" value="1" name="containers[0][count]" type="number">-->
-                <!--</div>-->
-                <div class="col-sm-2">
-                     <input class="form-check-input containerStateful" style="width:100%;" name="containers[0][stateful]" checked="" value="true" type="checkbox">
-                </div>
-                <div class="col-sm-2">
-                    <input class="form-check-input" name="containers[0][autostart]" style="width:100%;" checked="" value="true" type="checkbox">
-                </div>
-            </div>
-        </div>
-        <div class="panel-body">
-            <div class="form-group">
-                <label class="col-sm-3 control-label">CPU allocation in %</label>
-                <div class="col-sm-3">
-                    <input class="form-control" id="cpu_percentage_0" min="5" max="100" value="100" step="5" type="range">
-                </div>
-                <div class="col-sm-2">
-                    <input class="form-control" name="containers[0][cpu[percentage]]" min="5" max="100" value="100" step="5" type="number">
-                </div>
-                <div class="col-sm-2">
-                    <label class="form-check-label">Hard Limit</label>
-                    <input class="form-check-input" id="containerCPUHardLimit" name="containers[0][cpu[hardLimitation]]" value="true" type="checkbox">
-                </div>
-            </div>
-        </div>
-        <div class="panel-body">
-            <div class="form-group">
-                <label class="col-sm-3 control-label">Memory usage in MB:</label>
-                <div class="col-sm-3">
-                    <input class="form-control" id="memory_percentage_0" min="5" max="1993" value="100" step="5" type="range">
-                </div>
-                <div class="col-sm-2">
-                    <input class="form-control" name="containers[0][memory[sizeInMB]]" min="32" max="1993" value="32" type="number">
-                    <b>(max: 1993 MB)</b>
-                </div>
-                <div class="col-sm-2">
-                    <label class="form-check-label">Hard Limit</label>
-                    <input class="form-check-input" name="containers[0][memory[hardLimitation]]" value="true" type="checkbox">
-                </div>
-            </div>
-        </div>
-        <div class="panel-body">
-            <div class="form-group">
-                <label class="col-sm-1 control-label">Profiles:</label>
-                <div class="col-sm-4">
-                    <div class="btn-group bootstrap-select show-tick"><button type="button" class="btn dropdown-toggle bs-placeholder btn-default" data-toggle="dropdown" role="button" data-id="7bf9cfc0fb7d88790932edb7174f34e25314c2c4fa4eb6737a6454e06ddaabeb_profiles" title="Nothing selected"><span class="filter-option pull-left">Nothing selected</span>&nbsp;<span class="bs-caret"><span class="caret"></span></span></button><div class="dropdown-menu open" role="combobox"><ul class="dropdown-menu inner" role="listbox" aria-expanded="false"><li data-original-index="0"><a tabindex="0" class="" data-tokens="null" role="option" aria-disabled="false" aria-selected="false"><span class="text">default</span><span class="glyphicon glyphicon-ok check-mark"></span></a></li></ul></div><select multiple="" name="containers[0][profiles]" class="selectpicker" id="7bf9cfc0fb7d88790932edb7174f34e25314c2c4fa4eb6737a6454e06ddaabeb_profiles" tabindex="-98">
-
-                            <option>default</option>
-
-                    </select></div>
-                </div>
-            </div>
-        </div>
-        <input class="imageNameInput" name="containers[0][image]" value="7bf9cfc0fb7d88790932edb7174f34e25314c2c4fa4eb6737a6454e06ddaabeb" type="hidden">
-    </div>
-</div></div>
-                <button type="submit" class="btn btn-primary">Create <span class="glyphicon glyphicon-refresh spinning loader" style="display: none;"></span></button>
-            </form>
+    <div class="col-lg-12 panel panel-default">
 
         <!-- end form normal from images -->
-        <!--<form id="newContainerForm" class="form-horizontal">-->
-            <!--<div class="form-group">-->
-                <!--<label class="col-md-2 control-label" for="containerName">Name</label>-->
-                 <!--<div class="col-md-3">-->
-                        <!--<input type="text" class="form-control" id="containerName" aria-describedby="name"-->
-                       <!--placeholder="Enter container name" name="name" required>-->
-                 <!--</div>-->
-            <!--</div>-->
-             <!--<div class="form-group">-->
-              <!--<label class="col-md-2 control-label" for="containerImage">Select image:</label>-->
-              <!--<div class="col-md-3">-->
-                 <!--<select class="form-control" id="containerImage" name="image">-->
-                  <!--{% for image in images %}-->
-                     <!--{% if image.properties.get('description') == None %}-->
-                     <!--<option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>-->
-                     <!--{% else %}-->
-                    <!--<option value="{{image.fingerprint}}">{{image.properties.description}}</option>-->
-                     <!--{% endif %}-->
-                  <!--{% endfor %}-->
-              <!--</select>-->
-              <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-                <!--<label class="form-check-label col-md-2 control-label" for="containerStateful">Persistent</label>-->
-                <!--<div class="col-md-3">-->
-                    <!--<input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-                <!--<label class="form-check-label col-md-2 control-label" for="containerAutostart">Autostart</label>-->
-                <!--<div class="col-md-3">-->
-                    <!--<input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-                <!--<label class="col-md-2 control-label" for="containerCPUPercentage">CPU allocation (%):</label>-->
-                <!--<div class="col-md-3">-->
-                    <!--<input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"-->
-                       <!--min="5" max="100" value="100">-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-                <!--<label class="form-check-label col-md-2 control-label" for="containerCPUHardLimit">Hard Limit</label>-->
-                <!--<div class="col-md-3">-->
-                    <!--<input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">-->
-                <!--</div>-->
-                <!--</div>-->
-            <!--<div class="form-group">-->
-                <!--<label class="col-md-2 control-label" for="containerMemoryPercentage">Memory allocation (MB):</label>-->
-                <!--<div class="col-md-3">-->
-                    <!--<input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"-->
-                       <!--min="32" max="{{memory}}" value="32">-->
-                     <!--(Max: {{memory}} MB)-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-                 <!--<label class="form-check-label col-md-2 control-label" for="containerMemoryHardLimit">Hard Limit</label>-->
-                <!--<div class="col-md-3">-->
-                    <!--<input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">-->
-                <!--</div>-->
-            <!--</div>-->
-            <!--<div class="form-group">-->
-                <!--<label class="col-md-2 control-label" for="containerProfiles">Profiles:</label>-->
-                <!--<div class="col-md-3">-->
-                    <!--<select class="selectpicker" multiple id="containerProfiles" name="profiles">-->
-                     <!--{% for profile in profiles %}-->
-                        <!--<option>{{profile.name}}</option>-->
-                     <!--{% endfor %}-->
-                    <!--</select>-->
-                <!--</div>-->
-            <!--</div>-->
-        <!--<div class="form-group">-->
-            <!--<div class="col-md-5">-->
-                <!--<button type="submit" class="btn btn-primary pull-right">Submit <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
-
-            <!--</div>-->
-        <!--</div>-->
-        <!--</form>-->
+        <form id="newContainerForm">
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="containerImage">Select image:</label>
+                    <div class="col-md-3">
+                         <select class="form-control" id="containerImage" name="image">
+                          {% for image in images %}
+                             {% if image.properties.get('description') == None %}
+                             <option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>
+                             {% else %}
+                            <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
+                             {% endif %}
+                          {% endfor %}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-4 control-label">Container Name</label>
+                    <!--<label class="col-sm-2 control-label"></label>-->
+                    <label class="col-sm-2 form-check-label text-center" >Persistent</label>
+                    <label class="col-sm-2 form-check-label text-center">Autostart</label>
+                    <div class="clearfix"></div>
+                        <div class="col-sm-4">
+                             <input type="text" class="form-control" value="cnt-" id="containerName" aria-describedby="name"
+                           placeholder="Enter container name" name="name" required>
+                        </div>
+                    <!--<div class="col-sm-2"></div>-->
+                         <div class="col-sm-2 text-center">
+                            <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
+                        </div>
+                         <div class="col-sm-2 text-center">
+                            <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">
+                        </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-md-3 control-label" for="containerCPUPercentage">CPU allocation (%):</label>
+                    <div class="col-sm-3">
+                        <input type="range" class="form-control" id="cpu_percentage" min="5" max="100" value="100" step="5">
+                    </div>
+                    <div class="col-md-2">
+                        <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
+                           min="5" max="100" value="100">
+                    </div>
+                    <div class="col-md-2">
+                          <label class="form-check-label control-label" for="containerCPUHardLimit">Hard Limit</label>
+                         <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-sm-3 control-label">Memory usage in MB:</label>
+                    <div class="col-sm-3">
+                        <input type="range" class="form-control" id="memory_percentage" min="5" max="{{memory}}" value="100" step="5">
+                    </div>
+                    <div class="col-sm-2">
+                        <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
+                       min="32" max="{{memory}}" value="32">
+                     (Max: {{memory}} MB)
+                    </div>
+                    <div class="col-sm-2">
+                         <label class="form-check-label control-label" for="containerMemoryHardLimit">Hard Limit</label>
+                            <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
+                    </div>
+                </div>
+            </div>
+             <div class="panel-body">
+                <div class="form-group">
+                     <label class="col-md-2 control-label" for="containerProfiles">Profiles:</label>
+                    <div class="col-sm-3">
+                        <select class="selectpicker" multiple id="containerProfiles" name="profiles">
+                         {% for profile in profiles %}
+                            <option>{{profile.name}}</option>
+                         {% endfor %}
+                        </select>
+                    </div>
+                </div>
+             </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-primary">Create <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                    </div>
+                </div>
+            </div>
+        </form>
     </div>
 </div>
 
