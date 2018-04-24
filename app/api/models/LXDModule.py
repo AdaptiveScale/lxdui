@@ -40,6 +40,14 @@ class LXDModule(Base):
         except Exception as e:
             raise ValueError(e)
 
+    def detailsRemoteImage(self, alias):
+        try:
+            response = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases/{}'.format(alias))
+            image_details = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/{}'.format(response.json()['metadata']['target']))
+            return image_details.json()['metadata']
+        except Exception as e:
+            raise ValueError(e)
+
     def downloadImage(self, image):
         try:
             #response = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases/{}'.format(self.data.get('image')))
@@ -111,6 +119,13 @@ class LXDModule(Base):
                     return 'alias'
         return None
 
+    def containerExists(self, containerName):
+        lxdModule = LXDModule()
+        try:
+            container = self.client.containers.get(containerName)
+            return True
+        except Exception as e:
+            return False
 
     def info(self):
         raise NotImplementedError()

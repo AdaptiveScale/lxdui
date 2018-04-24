@@ -90,163 +90,201 @@
     </div>
 
     <div class="col-lg-12">
-        <form id="newContainerForm" class="form-horizontal">
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="containerName">Name</label>
-                 <div class="col-md-3">
-                        <input type="text" class="form-control" id="containerName" aria-describedby="name"
-                       placeholder="Enter container name" name="name" required>
-                 </div>
-            </div>
-             <div class="form-group">
-              <label class="col-md-2 control-label" for="containerImage">Select image:</label>
-              <div class="col-md-3">
-                 <select class="form-control" id="containerImage" name="image">
-                  {% for image in images %}
-                     {% if image.properties.get('description') == None %}
-                     <option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>
-                     {% else %}
-                    <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
-                     {% endif %}
-                  {% endfor %}
-              </select>
-              </div>
-            </div>
-            <div class="form-group">
-                <label class="form-check-label col-md-2 control-label" for="containerStateful">Persistent</label>
-                <div class="col-md-3">
-                    <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-check-label col-md-2 control-label" for="containerAutostart">Autostart</label>
-                <div class="col-md-3">
-                    <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="containerCPUPercentage">CPU allocation (%):</label>
-                <div class="col-md-3">
-                    <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
-                       min="5" max="100" value="100">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="form-check-label col-md-2 control-label" for="containerCPUHardLimit">Hard Limit</label>
-                <div class="col-md-3">
-                    <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">
-                </div>
-                </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="containerMemoryPercentage">Memory allocation (MB):</label>
-                <div class="col-md-3">
-                    <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
-                       min="32" max="{{memory}}" value="32">
-                     (Max: {{memory}} MB)
-                </div>
-            </div>
-            <div class="form-group">
-                 <label class="form-check-label col-md-2 control-label" for="containerMemoryHardLimit">Hard Limit</label>
-                <div class="col-md-3">
-                    <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
-                </div>
-            </div>
-            <div class="form-group">
-                <label class="col-md-2 control-label" for="containerProfiles">Profiles:</label>
-                <div class="col-md-3">
-                    <select class="selectpicker" multiple id="containerProfiles" name="profiles">
-                     {% for profile in profiles %}
-                        <option>{{profile.name}}</option>
-                     {% endfor %}
-                    </select>
-                </div>
-            </div>
-        <div class="form-group">
-            <div class="col-md-5">
-                <button type="submit" class="btn btn-primary pull-right">Submit <span class="glyphicon glyphicon-refresh spinning loader"></span> </button>
 
+        <!-- end form normal from images -->
+        <form id="newContainerForm">
+            <div class="panel-body">
+                <div class="form-group">
+                    <label class="col-md-2 control-label" for="containerImage">Select image:</label>
+                    <div class="col-md-3">
+                         <select class="form-control" id="containerImage" name="image">
+                          {% for image in images %}
+                             {% if image.properties.get('description') == None %}
+                             <option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>
+                             {% else %}
+                            <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
+                             {% endif %}
+                          {% endfor %}
+                        </select>
+                    </div>
+                </div>
             </div>
-        </div>
-        </form>
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label">Container Name</label>
+                        <!--<label class="col-sm-2 control-label"></label>-->
+                        <label class="col-sm-2 form-check-label text-center" >Persistent</label>
+                        <label class="col-sm-2 form-check-label text-center">Autostart</label>
+                        <div class="clearfix"></div>
+                            <div class="col-sm-4">
+                                 <input type="text" class="form-control" id="containerName" aria-describedby="name"
+                               placeholder="Enter container name" name="name" required>
+                            </div>
+                        <!--<div class="col-sm-2"></div>-->
+                             <div class="col-sm-2 text-center">
+                                <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
+                            </div>
+                             <div class="col-sm-2 text-center">
+                                <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">
+                            </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-md-3 control-label" for="containerCPUPercentage">CPU allocation (%):</label>
+                        <div class="col-sm-3">
+                            <input type="range" class="form-control" id="cpu_percentage" min="5" max="100" value="100" step="5">
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
+                               min="5" max="100" value="100">
+                        </div>
+                        <div class="col-md-2">
+                              <label class="form-check-label control-label" for="containerCPUHardLimit">Hard Limit</label>
+                             <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">Memory usage in MB:</label>
+                        <div class="col-sm-3">
+                            <input type="range" class="form-control" id="memory_percentage" min="5" max="{{memory}}" value="100" step="5">
+                        </div>
+                        <div class="col-sm-2">
+                            <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
+                           min="32" max="{{memory}}" value="32">
+                         (Max: {{memory}} MB)
+                        </div>
+                        <div class="col-sm-2">
+                             <label class="form-check-label control-label" for="containerMemoryHardLimit">Hard Limit</label>
+                                <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
+                        </div>
+                    </div>
+                </div>
+                 <div class="panel-body">
+                    <div class="form-group">
+                         <label class="col-md-2 control-label" for="containerProfiles">Profiles:</label>
+                        <div class="col-sm-3">
+                            <select class="selectpicker" multiple id="containerProfiles" name="profiles">
+                             {% for profile in profiles %}
+                                <option>{{profile.name}}</option>
+                             {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                 </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <div class="col-md-2">
+                            <button type="submit" class="btn btn-primary">Create <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </form>
     </div>
 </div>
 
+<div id="snapshotList" hidden>
+    <h4 id="selectedSnapshotList">List of Snapshots - </h4>
+</div>
+
+<!-- Modal -->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
 
 
 <div id="cloneContainerForm" hidden>
-    <h4 id="selectedClone">Clone Container - test</h4>
+
     <form id="cloneForm" class="form-horizontal">
         <div class="form-group">
             <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <input id="newContainerClone" name="newContainer" class="form-control" type="text" placeholder="Clone Name" title="Clone Name" required/>
             </div>
         </div>
         <div class="form-group">
             <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                <button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+                <!--<button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
             </div>
         </div>
     </form>
 </div>
 
 <div id="moveContainerForm" hidden>
-    <h4 id="selectedMove">Move Container - test</h4>
+
     <form id="moveForm" class="form-horizontal">
         <div class="form-group">
             <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <input id="newContainerMove" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Move Container Name" required/>
             </div>
         </div>
         <div class="form-group">
             <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                <button id="buttonMoveContainer" class="btn btn-primary">Move Container <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+
             </div>
         </div>
     </form>
 </div>
 
 <div id="exportContainerForm" hidden>
-    <h4 id="selectedExport">Export Container - test</h4>
+
     <form id="exportForm" class="form-horizontal">
         <div class="form-group">
             <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <input id="imageAlias" name="imageAlias" class="form-control" type="text" placeholder="Image Alias" title="Image Alias" required/>
             </div>
         </div>
         <div class="form-group">
             <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                <button id="buttonExportContainer" class="btn btn-primary">Export Container <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+
             </div>
         </div>
     </form>
 </div>
 
 <div id="snapshotContainerForm" hidden>
-    <h4 id="selectedSnapshot">Create Snapshot from Container - test</h4>
+
     <form id="snapshotForm" class="form-horizontal">
         <div class="form-group">
             <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
-            <div class="col-sm-3">
+            <div class="col-sm-8">
                 <input id="snapshotName" name="snapshotName" class="form-control" type="text" placeholder="Snapshot Name" title="Snapshot Name" required/>
             </div>
         </div>
         <div class="form-group">
             <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
-                <button id="buttonSnapshotContainer" class="btn btn-primary">Snapshot <span style="vertical-align: middle;
-padding-top: 10px;"><label class="loader"></label></span></button>
+
             </div>
         </div>
     </form>
 </div>
+        </div>
+        <div class="modal-footer">
+             <button id="buttonExportContainer" class="btn btn-primary">Export Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonSnapshotContainer" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonMoveContainer" class="btn btn-primary">Move Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <!--<button type="button" class="btn btn-primary">Save</button>-->
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
 
-<div id="snapshotList" hidden>
-    <h4 id="selectedSnapshotList">List of Snapshots - </h4>
+    </div>
+  </div>
+
 </div>
 {% endblock %}
 

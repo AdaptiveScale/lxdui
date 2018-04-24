@@ -23,12 +23,12 @@
     <div>
         <div class="col-lg-12 mg-bottom15">
             <div class="form-inline">
-                 <div class="form-group pull-right">
-                     <button id="buttonLaunchContainers" class="btn btn-success pull-right" style="visibility: hidden;">Launch Container(s)
+                 <div class="form-group">
+                     <button id="buttonLaunchContainers" class="btn btn-success" disabled><span class="glyphicon glyphicon-th"></span> Launch Container(s)
             </button>
-            <button id="buttonDelete" class="btn btn-danger pull-right" style="visibility: hidden;margin-right:5px;">Delete OS Image </button>
+            <button id="buttonDelete" class="btn btn-danger" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete </button>
 
-            <button id="buttonDownload" class="btn btn-success pull-right" style="visibility: hidden;margin-right:5px">Download Image</button>
+            <button id="buttonDownload" class="btn btn-success" style="display:none;" disabled><span class="glyphicon glyphicon-download-alt"></span> Download</button>
         </div>
         </div>
     </div>
@@ -99,7 +99,8 @@
                 {% for image in remoteImages %}
                 <tr id="{{image.image}}">
                     <td></td>
-                    <td>{{ image.name}}</td>
+                    <td><a style="cursor:pointer"
+                           onClick="App.images.showRemoteDetails('{{image.image}}');">{{ image.name}}</a></td>
                     <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>
                     <td>{{ image.image }}</td>
                     <td>{{ image.distribution }}</td>
@@ -126,9 +127,7 @@
                 <div class="form-group" id="multiContainerSection">
 
                 </div>
-                <div class="col-lg-3" style="margin:20px;">
-                    <button type="submit" class="btn btn-primary">Save <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-                </div>
+                <button type="submit" class="btn btn-primary">Create <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
             </form>
         </div>
     </div>
@@ -149,9 +148,9 @@
         <div class="panel-body">
             <div class="form-group">
                 <label class="col-sm-4 control-label">Container Name</label>
-                <label class="col-sm-2 control-label">Number</label>
-                <label class="col-sm-2 form-check-label">Persistent</label>
-                <label class="col-sm-2 form-check-label">Autostart</label>
+                <label class="col-sm-2 control-label">Quantity</label>
+                <label class="col-sm-2 form-check-label text-center" >Persistent</label>
+                <label class="col-sm-2 form-check-label text-center">Autostart</label>
                 <div class="clearfix"></div>
                 <div class="col-sm-4">
                     <input type="text" class="containerName form-control" value="cnt-"
@@ -161,22 +160,24 @@
                     <input type="number" class="cntNrs form-control" min="1" value="1" name="count">
                 </div>
                 <div class="col-sm-2">
-                     <input type="checkbox" class="form-check-input containerStateful" name="stateful" checked value="true">
+                     <input type="checkbox" class="form-check-input containerStateful" style="width:100%;" name="stateful" checked value="true">
                 </div>
-                <div>
-                    <input type="checkbox" class="form-check-input" name="autostart" checked value="true">
+                <div class="col-sm-2">
+                    <input type="checkbox" class="form-check-input" name="autostart" style="width:100%;" checked value="true">
                 </div>
             </div>
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label class="col-sm-4 control-label">CPU usage in %</label>
-                <label class="col-sm-4 form-check-label">Hard Limit</label>
-                <div class="clearfix"></div>
-                <div class="col-sm-4">
-                    <input type="number" class="form-control" name="cpu[percentage]" min="5" max="100" value="100">
+                <label class="col-sm-3 control-label">CPU allocation in %</label>
+                <div class="col-sm-3">
+                    <input type="range" class="form-control" id="cpu_percentage" min="5" max="100" value="100" step="5">
                 </div>
-                <div class="col-sm-4">
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" name="cpu[percentage]" min="5" max="100" value="100" step="5">
+                </div>
+                <div class="col-sm-2">
+                    <label class="form-check-label">Hard Limit</label>
                     <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]"
                    value="true">
                 </div>
@@ -184,22 +185,23 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label class="col-sm-4 control-label">Memory usage in MB:<br /> (Max: {{memory}} MB)</label>
-                <label class="col-sm-4 form-check-label">Hard Limit</label>
-                <div class="clearfix"></div>
-                <div class="col-sm-4">
-                    <input type="number" class="form-control" name="memory[sizeInMB]" min="32" max="{{memory}}" value="32">
+                <label class="col-sm-3 control-label">Memory usage in MB:</label>
+                <div class="col-sm-3">
+                    <input type="range" class="form-control" id="memory_percentage" min="5" max="{{memory}}" value="100" step="5">
                 </div>
-                <div class="col-sm-4">
-                    <input type="checkbox" class="form-check-input" name="memory[hardLimitation]"
-                   value="true">
+                <div class="col-sm-2">
+                    <input type="number" class="form-control" name="memory[sizeInMB]" min="32" max="{{memory}}" value="32">
+                    <b>(max: {{memory}} MB)</b>
+                </div>
+                <div class="col-sm-2">
+                    <label class="form-check-label">Hard Limit</label>
+                    <input type="checkbox" class="form-check-input" name="memory[hardLimitation]" value="true">
                 </div>
             </div>
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <label class="col-sm-4 control-label">Profiles:</label>
-                <div class="clearfix"></div>
+                <label class="col-sm-1 control-label">Profiles:</label>
                 <div class="col-sm-4">
                     <select multiple name="profiles">
                         {% for profile in profiles %}
@@ -212,6 +214,35 @@
         <input class="imageNameInput" type="hidden" name="image" value="">
     </div>
 </div>
+</div>
+
+<div class="hidden">
+    <div class="form-group itemTemplate">
+        <h5 style="display:inline" class="itemKey">Key :</h5>
+        <b class="itemValue">value</b>
+    </div>
+</div>
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Remote Image: <b class="imageName"></b></h4>
+      </div>
+      <div class="modal-body" style="overflow:scroll;" id="modalBody">
+
+      </div>
+      <div class="modal-footer">
+          <button type="button" class="btn btn-success" id="modalDownloadButton">Download</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 {% endblock %}

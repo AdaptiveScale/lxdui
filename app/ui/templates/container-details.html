@@ -9,10 +9,12 @@
     <script>
         $(function () {
             $.proxy(App.containerDetails.initContainerDetails('{{container.name}}'));
+            App.containerDetails.data = {{container|tojson}};
+            App.containerDetails.setInitialData.call(App.containerDetails);
         });
     </script>
     <div class="col-lg-12">
-        <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}">{{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span></legend>
+        <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}">{{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span><button class="label btn btn-primary pull-right" style="display:none;" id="buttonSave">Save</button> </legend>
         <div class="form-group">
             {% if container.status == 'Running' %}
                 <button class="btn btn-default btn-stop_container" id="buttonStopDetail">
@@ -33,14 +35,24 @@
                 </button>
             {% endif %}
 
+            <!--<button id="buttonExportContainerDetail" class="btn btn-default pull-right">Export Container</button>-->
+            <!--<button id="buttonSnapshotContainerDetail" class="btn btn-default pull-right">Snapshot</button>-->
+            <!--<button id="buttonMoveContainerDetail" class="btn btn-default pull-right">Move Container</button>-->
+            <!--<button id="buttonCloneContainerDetail" class="btn btn-default pull-right">Clone Container</button>-->
+
+            <button id="buttonExportContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-duplicate"></span> Export</button>
+             <button id="buttonSnapshotContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-camera"></span> Snapshot</button>
+             <button id="buttonMoveContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-share-alt"></span> Move</button>
+            <button id="buttonCloneContainerDetail" class="btn btn-default pull-right"><span class="glyphicon glyphicon-export"></span> Clone</button>
         </div>
 
         <div class="form-group">
             <h5 style="display:inline">Name :</h5>
-            <b>{{container.name}}</b> {% if container.pid != 'N/A' %}
-            <span class="label label-primary"> PID: {{container.pid}}</span> {% endif %} {% if container.processes !=
-            'N/A' %}
+            <b contenteditable="true" id="containerNameInput" class="formModifier">{{container.name}}</b>
+            <span class="btn btn-xs btn-default glyphicon glyphicon-edit formModifier" id="editNameButton"></span> {% if container.pid != 'N/A' %}
+            {% endif %} {% if container.processes != 'N/A' %}
             <div class="form-group pull-right">
+                <span class="label label-primary"> PID: {{container.pid}}</span>
                 <h5 style="display:inline">Currently Running Processes :</h5>
                 <span class="label label-info">{{container.processes}}</span>
             </div>
@@ -68,32 +80,203 @@
         <b>{{container.created_at}}</b>
     </div>
 
-    <div class="form-group">
+    <div class="form-group profiles">
         <h5 style="display:inline">Profiles :</h5>
+        <span id="profileList">
         {% for p in container.profiles %}
-        <span class="label label-default">{{ p }}</span> {% endfor %}
+            <span class="label label-default no-right-padding mg-right">{{ p }}
+                <a id="button_{{p}}" class="btn tag-button glyphicon glyphicon-remove profileTag formModifier" data-id="{{p}}" data-container="{{container.name}}"></a>
+            </span>
+        {% endfor %}
+        </span>
+            <select id="containerProfiles" name="profiles" style="display:none;">
+             {% for profile in profiles %}
+                {% if profile in container.profiles %}
+                    <option>here</option>
+                    <option selected>{{profile.name}}</option>
+                {% else %}
+                    <option value="{{profile.name}}">{{profile.name}}</option>
+                {% endif %}
+             {% endfor %}
+            </select>
+            <!--<span class="label label-success no-right-padding mg-right">{{ p }}-->
+                <a id="buttonAdd" class="btn btn-default btn-xs glyphicon glyphicon-plus formModifier"></a>
+            <!--</span>-->
+    </div>
+    <div class="form-group">
+        <h5 style="display:inline">CPU Allocation :</h5>
+        <b>{{container.config['limits.cpu.allowance']}}</b>
+    </div>
+    <div class="form-group">
+        <h5 style="display:inline">Memory Allocation :</h5>
+        <b>{{container.config['limits.memory']}}</b>
+    </div>
+    <div class="form-group">
+        <h5 style="display:inline">Is set to Autostart :</h5>
+        <div class="btn-group" role="group">
+            <button type="button" id="buttonAutostartActive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='1' else 'default'}}">Yes</button>
+            <button type="button" id="buttonAutostartInactive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='0' else 'default'}}">No</button>
+        </div>
+        <!--{% if container.expanded_config['boot.autostart']=='1' %}-->
+            <!--<b><span class="label label-success">Yes</span></b>-->
+        <!--{% else %}-->
+            <!--<b><span class="label label-danger">Yes</span></b>-->
+        <!--{% endif %}-->
     </div>
 
     <div class="form-group">
         {% if container.network is mapping %}
         <h5>Network Interfaces :</h5>
         {% for key, value in container.network.items() %}
-        <div class="netint_data">
-            IP Interface : <span class="label label-primary"> {{ key }}</span><br/> IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>            <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span><br/> MAC Address
-            : <b style="font-size:75%">{{value.hwaddr}}</b><br/> State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
-            <hr/> {% for counterkey, counterval in value.counters.items() %} {{counterkey|upper}} : <span class="label label-default">{{counterval}}</span><br/>            {% endfor %}
+        {% if key!='lo' %}
+        <div class="netint_data row">
+            <div class="col-sm-6">
+                IP Interface : <span class="label label-primary"> {{ key }}</span>
+                <br/>
+                {% if value.addresses|length > 0 %}
+                IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>
+                <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span>
+                {% endif %}
+                <br/>
+                MAC Address
+                : <b style="font-size:75%">{{value.hwaddr}}</b>
+                <br/>
+                State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
+            </div>
+            <div class="col-sm-5">
+                {% for counterkey, counterval in value.counters.items() %}
+                    {{counterkey|upper}} :
+                    <span class="label label-default">{{counterval}}</span>
+                    <br/>
+                {% endfor %}
+            </div>
         </div>
-        {% endfor %} {% else %}
-        <h5 style="display:inline">Network Interfaces :</h5>
-        <span class="label label-default"> N/A </span> {% endif %}
+        {% endif %}
+        {% endfor %}
+        {% else %}
+            <h5 style="display:inline">Network Interfaces :</h5>
+            <span class="label label-default"> N/A </span>
+        {% endif %}
     </div>
 
     <div class="form-group">
         <h5>List of Snapshots :</h5>
-        <div id="snapshotList" class="netint_data">
+        <div id="snapshotList" class="netint_data row">
         </div>
     </div>
 </div>
 {% endif %}
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="containerDetailModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+
+           <div id="cloneContainerForm" hidden>
+
+    <form id="cloneForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
+            <div class="col-sm-8">
+                <input id="newContainerClone" name="newContainer" class="form-control" type="text" placeholder="Clone Name" title="Clone Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+                <!--<button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="moveContainerForm" hidden>
+
+    <form id="moveForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
+            <div class="col-sm-8">
+                <input id="newContainerMove" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Move Container Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="createContainerSnapshotForm" hidden>
+
+    <form id="newContainerForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerSnapshot" class="col-sm-3 control-label">New Container Name</label>
+            <div class="col-sm-8">
+                <input id="newContainerSnapshot" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Create Container Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="exportContainerForm" hidden>
+
+    <form id="exportForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
+            <div class="col-sm-8">
+                <input id="imageAlias" name="imageAlias" class="form-control" type="text" placeholder="Image Alias" title="Image Alias" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="snapshotContainerForm" hidden>
+
+    <form id="snapshotForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
+            <div class="col-sm-8">
+                <input id="snapshotName" name="snapshotName" class="form-control" type="text" placeholder="Snapshot Name" title="Snapshot Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+
+            </div>
+        </div>
+    </form>
+</div>
+        </div>
+        <div class="modal-footer">
+             <button id="buttonExportContainer2" class="btn btn-primary">Export <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonSnapshotContainer2" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonMoveContainer2" class="btn btn-primary">Move <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <button id="buttonCloneContainer2" class="btn btn-primary">Clone <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <button id="buttonNewContainerSnapshot2" class="btn btn-primary">New Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
 </div>
 {% endblock %}

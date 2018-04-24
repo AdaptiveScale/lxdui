@@ -29,6 +29,7 @@ App.images = App.images || {
     },
     containerTemplate:null,
     newContainerForm:null,
+    itemTemplate:null,
     init: function(opts){
         console.log('Images initialized');
         this.data = constLocalImages || [];
@@ -50,6 +51,8 @@ App.images = App.images || {
         $('.imageSize').each(this.convertImageSize);
         $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
+        this.itemTemplate = $('.itemTemplate').clone();
+        $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
@@ -82,17 +85,17 @@ App.images = App.images || {
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
             var state = this.tableLocal.rows({selected:true}).count()>0;
-            var visibility= state?'visible':'hidden';
-            $('#buttonLaunchContainers').css('visibility',visibility);
-            $('#buttonDelete').css('visibility',visibility);
-            $('#selectAllLocal').prop('checked',state);
+            var visibility= !state?'attr':'removeAttr';
+            $('#buttonLaunchContainers')[visibility]('disabled', 'disabled');
+            $('#buttonDelete')[visibility]('disabled', 'disabled');
+            $('#selectAllLocal').prop('checked',this.tableLocal.rows({selected:true}).count()==this.tableLocal.rows().count());
             return;
         }
         if(this.activeTab=='remote'){
             var state = this.tableRemote.rows({selected:true}).count()>0
-            var visibility= state?'visible':'hidden';
-            $('#buttonDownload').css('visibility',visibility);
-            $('#selectAllRemote').prop('checked',state);
+            var visibility= !state?'attr':'removeAttr';
+            $('#buttonDownload')[visibility]('disabled', 'disabled');
+            $('#selectAllRemote').prop('checked',this.tableRemote.rows({selected:true}).count()==this.tableRemote.rows().count());
             return;
         }
     },
@@ -107,10 +110,11 @@ App.images = App.images || {
     },
     onDeleteSuccess: function(fingerprint){
         this.tableLocal.row("#"+fingerprint).remove().draw();
-         $('#buttonLaunchContainers').css('visibility','hidden');
-         $('#buttonDelete').css('visibility','hidden');
+         $('#buttonLaunchContainers').hide();
+         $('#buttonDelete').hide();
     },
     doDownload: function(){
+        $('#modalDownloadButton').attr('disabled', 'disabled');
         this.tableRemote.rows({selected: true}).data().map(function(row){
             $.ajax({
                 url:App.baseAPI+'image/remote',
@@ -143,14 +147,18 @@ App.images = App.images || {
         if(screen==='local'){
             $('#tableImagesLocalWrapper').show();
             $('#tableImagesRemoteWrapper').hide();
-            $('#buttonDownload').css('visibility','hidden');
+            $('#buttonDelete').show();
+            $('#buttonLaunchContainers').show();
+            $('#buttonDownload').hide();
             this.activeTab = 'local';
             return;
         }
         if(screen==='remote'){
             $('#tableImagesLocalWrapper').hide();
             $('#tableImagesRemoteWrapper').show();
-            $('#buttonDelete').css('visibility','hidden');
+            $('#buttonLaunchContainers').hide();
+            $('#buttonDownload').show();
+            $('#buttonDelete').hide();
             this.activeTab = 'remote';
             return;
         }
@@ -209,18 +217,29 @@ App.images = App.images || {
         var tempSection = this.containerTemplate.clone();
         tempSection.prop('id',image.fingerprint);
         tempSection.find('input[name="name"]').prop('name', 'containers['+pos+'][name]');
-        tempSection.find('input[name="containers['+pos+'][name]"]').val(image.properties.os.toLowerCase()+'-');
+        //Handle exported containers
+        if (image.properties.os !== undefined)
+            tempSection.find('input[name="containers['+pos+'][name]"]').val(image.properties.os.toLowerCase()+'-');
+        else
+            tempSection.find('input[name="containers['+pos+'][name]"]').val('cnt-');
 
         tempSection.find('input[name="image"]').prop('name', 'containers['+pos+'][image]');
         tempSection.find('input[name="containers['+pos+'][image]"]').val(image.fingerprint);
 
         tempSection.find('input[name="count"]').prop('name', 'containers['+pos+'][count]');
-        tempSection.find('input[name="containers['+pos+'][count]"]').on('change', $.proxy(this.onCountChange, this, tempSection.find('.nodeCount')));
+        tempSection.find('input[name="containers['+pos+'][count]"]').on('change', $.proxy(this.onCountChange, this, $(tempSection.find('.nodeCount'))));
 
         tempSection.find('input[name="cpu[percentage]"]').prop('name', 'containers['+pos+'][cpu[percentage]]');
+        tempSection.find('#cpu_percentage').prop('id', 'cpu_percentage_'+pos);
+        tempSection.find('#cpu_percentage_'+pos).on('change',$.proxy(this.updateFieldValue, this,tempSection.find('input[name="containers['+pos+'][cpu[percentage]]"]')));
+        tempSection.find('input[name="containers['+pos+'][cpu[percentage]]"]').on('change',$.proxy(this.updateFieldValue, this,tempSection.find('#cpu_percentage_'+pos)));
+
         tempSection.find('input[name="cpu[hardLimitation]"]').prop('name', 'containers['+pos+'][cpu[hardLimitation]]');
 
         tempSection.find('input[name="memory[sizeInMB]"]').prop('name', 'containers['+pos+'][memory[sizeInMB]]');
+        tempSection.find('#memory_percentage').prop('id', 'memory_percentage_'+pos);
+        tempSection.find('#memory_percentage_'+pos).on('change',$.proxy(this.updateFieldValue, this,tempSection.find('input[name="containers['+pos+'][memory[sizeInMB]]"]')));
+        tempSection.find('input[name="containers['+pos+'][memory[sizeInMB]]"]').on('change',$.proxy(this.updateFieldValue, this,tempSection.find('#memory_percentage_'+pos)));
         tempSection.find('input[name="memory[hardLimitation]"]').prop('name', 'containers['+pos+'][memory[hardLimitation]]');
 
         tempSection.find('input[name="autostart"]').prop('name', 'containers['+pos+'][autostart]');
@@ -263,13 +282,13 @@ App.images = App.images || {
             $('#multiContainerSection').empty();
         }
         if(view=='remoteList'){
-            this.activateScreen('remote');
+            return this.activateScreen('remote');
         }
         if(view=='localList'){
             return this.activateScreen('local');
         }
-        $('#buttonLaunchContainers').css('visibility','hidden');
-        $('#buttonDelete').css('visibility','hidden');
+        $('#buttonLaunchContainers').hide();
+        $('#buttonDelete').hide();
     },
     generateContainer: function(name, formData){
         return {
@@ -335,5 +354,74 @@ App.images = App.images || {
         }else{
             this['table'+name].rows().deselect();
         }
+    },
+    updateFieldValue: function(target, event){
+        target.val(event.target.value);
+    },
+    showRemoteDetails: function(image){
+        this.tableRemote.rows().deselect();
+        this.tableRemote.rows('#'+image).select();
+        $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
+    },
+    onGetRemoteDetailsSuccess: function(response){
+        console.log('remoteDetails', response.data, 'this:', this);
+        this.showDetailsModal(response.data);
+    },
+    generateDetailItemFromArray(itemKey, tempArray){
+        var tempResult = {};
+        for(var i=0; i < tempArray.length;i++){
+            console.log('index', i, 'item:', tempArray[i]);
+            tempResult[itemKey+i]=tempArray[i];
+        }
+        console.log('arrayResult', tempResult);
+        return tempResult;
+    },
+    generateDetailItem: function(key, value){
+        var tempItem = this.itemTemplate.clone();
+        tempItem.find('.itemKey').text(App.helpers.capitalizeFirstLetter(key) +' : ');
+        if(key==='size'){
+            value = App.formatBytes(value);
+        }
+        if(['string','number', 'boolean'].indexOf(typeof(value))==-1){
+            tempItem.find('.itemValue').addClass('netint_data');
+            tempItem.find('.itemValue').css('display','block');
+        }else{
+            tempItem.find('.itemValue').text(value);
+        }
+        if(Array.isArray(value)){
+            console.log('array', value);
+            tempItem.find('.itemValue').empty();
+            tempItem.find('.itemValue').append(this.generateRemoteImageItem(this.generateDetailItemFromArray(key, value)));
+            return tempItem;
+        }
+        if(typeof(value)==='object'){
+            console.log('object', value);
+              tempItem.find('.itemValue').html(this.generateRemoteImageItem(value));
+              return tempItem;
+        }
+        if(typeof(value)==='boolean'){
+            console.log('boolean', value);
+            tempItem.find('.itemValue').addClass('label label-primary');
+
+        }
+        if(key==='fingerprint'){
+            tempItem.find('.itemValue').html('<span class="label label-default">'+value+'</span>');
+        }
+        return tempItem;
+    },
+    generateRemoteImageItem: function(tempItem){
+        var tempResult = [];
+        for(var tempProp in tempItem){
+            tempResult.push(this.generateDetailItem(tempProp, tempItem[tempProp]));
+        }
+        return tempResult;
+    },
+    showDetailsModal: function(remoteImage){
+        var tempModal = $('#myModal').modal();
+        tempModal.find('.imageName').text(remoteImage.properties.description);
+        var modalBody = $('#modalBody');
+        modalBody.empty();
+        modalBody.append(this.generateRemoteImageItem(remoteImage));
+        tempModal.show();
     }
 }

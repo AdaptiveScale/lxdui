@@ -5,7 +5,7 @@ App.network = App.network || {
     tableSettings: {
         rowId:'name',
         searching:true,
-        responsive: true,
+        responsive: false,
         select: true,
         columnDefs: [
             {
@@ -57,7 +57,8 @@ App.network = App.network || {
         $('#IPv4_DHCP_END').val(this.activeNetwork.IPv4_DHCP_END);
     },
     showUpdateNetwork: function(elem) {
-        this.getNetwork($(elem).attr('id'));
+        this.getNetwork(elem);
+
         $('#newUpdateNetwork').show();
         $('#networkList').hide();
         $('#buttonUpdateNetwork').show();
