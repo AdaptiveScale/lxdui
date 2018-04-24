@@ -50,7 +50,7 @@
                      {% endfor %}
                     </td>
                     <td>
-                        <button class="btn btn-default" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork({{net.name}}));">
+                        <button class="btn btn-default" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork('{{net.name}}'));">
                             <span class="glyphicon"> </span> Update Bridge
                         </button>
                     </td>
