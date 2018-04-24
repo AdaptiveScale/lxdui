@@ -217,7 +217,11 @@ App.images = App.images || {
         var tempSection = this.containerTemplate.clone();
         tempSection.prop('id',image.fingerprint);
         tempSection.find('input[name="name"]').prop('name', 'containers['+pos+'][name]');
-        tempSection.find('input[name="containers['+pos+'][name]"]').val(image.properties.os.toLowerCase()+'-');
+        //Handle exported containers
+        if (image.properties.os !== undefined)
+            tempSection.find('input[name="containers['+pos+'][name]"]').val(image.properties.os.toLowerCase()+'-');
+        else
+            tempSection.find('input[name="containers['+pos+'][name]"]').val('cnt-');
 
         tempSection.find('input[name="image"]').prop('name', 'containers['+pos+'][image]');
         tempSection.find('input[name="containers['+pos+'][image]"]').val(image.fingerprint);
