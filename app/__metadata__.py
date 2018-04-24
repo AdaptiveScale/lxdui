@@ -1,6 +1,6 @@
 APP_NAME = 'LXDUI'
 APP_CLI_CMD = 'lui'
-VERSION = '2.0-beta'
+VERSION = '2.0-RC1'
 GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
 LXD_URL = 'http://localhost:8443'
 LICENSE = 'Apache 2.0'
