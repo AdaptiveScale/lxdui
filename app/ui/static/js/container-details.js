@@ -35,6 +35,8 @@ App.containerDetails = App.containerDetails || {
         $('#containerProfiles').on('change', $.proxy(this.addProfile, this));
         $('#editNameButton').on('click', $.proxy(this.focusOnName, this));
         $('#containerNameInput').on('blur', $.proxy(this.onNameChange, this));
+        $('#buttonAutostartActive').on('click', $.proxy(this.onAutoStartToggle, this, true));
+        $('#buttonAutostartInactive').on('click', $.proxy(this.onAutoStartToggle, this, false));
     },
     initContainerDetails: function(name) {
         this.name = name;
@@ -365,7 +367,10 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onSaveChangesSuccess:function(response){
-        window.location.reload();
+        if(this.updates['newName']){
+            return window.location.pathname = '/ui/containers/'+this.updates['newName'];
+        }
+        return window.location.reload();
     },
     setInitialData: function(){
         this.updates['image'] = this.data.config['volatile.base_image'];
@@ -381,5 +386,20 @@ App.containerDetails = App.containerDetails || {
     },
     onNameChange: function(event){
         this.updates['newName'] = event.target.textContent;
+    },
+    onAutoStartToggle:function(state){
+    console.log('newState', state);
+        this.updates['autostart']=state;
+        if(state){
+             $('#buttonAutostartActive').removeClass('btn-default');
+             $('#buttonAutostartActive').addClass('btn-success');
+             $('#buttonAutostartInactive').removeClass('btn-success');
+             $('#buttonAutostartInactive').addClass('btn-default');
+        }else{
+             $('#buttonAutostartActive').removeClass('btn-success');
+             $('#buttonAutostartActive').addClass('btn-default');
+             $('#buttonAutostartInactive').removeClass('btn-default');
+             $('#buttonAutostartInactive').addClass('btn-success');
+        }
     }
 }
