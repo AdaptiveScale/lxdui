@@ -19,7 +19,7 @@
         <br>
         <br>
         <div class="">
-            <table class="table table-bordered table-fixed" id="tableNetworks">
+            <table class="table table-bordered" id="tableNetworks">
                 <thead>
                     <th><input type="checkbox" id="selectAllNetworks"/></th>
                     <th>Name</th>
@@ -50,7 +50,7 @@
                      {% endfor %}
                     </td>
                     <td>
-                        <button class="btn" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork('{{net.name}}'));">
+                        <button class="btn btn-default" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork('{{net.name}}'));">
                             <span class="glyphicon"> </span> Update Bridge
                         </button>
                     </td>

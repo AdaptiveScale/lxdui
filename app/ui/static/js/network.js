@@ -5,7 +5,7 @@ App.network = App.network || {
     tableSettings: {
         rowId:'name',
         searching:true,
-        responsive: true,
+        responsive: false,
         select: true,
         columnDefs: [
             {
