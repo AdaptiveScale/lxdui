@@ -1,4 +1,4 @@
-from flask import Blueprint, abort, jsonify
+from flask import Blueprint, jsonify
 from flask_jwt import jwt_required
 
 from app.api.models.LXDModule import LXDModule

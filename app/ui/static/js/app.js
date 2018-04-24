@@ -107,6 +107,11 @@ var App = App || {
              destination[prop]=source[prop]
          }
          return destination;
+    },
+    helpers:{
+        capitalizeFirstLetter: function(value){
+            return value.charAt(0).toUpperCase() + value.slice(1);
+        }
     }
 };
 

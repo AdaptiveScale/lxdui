@@ -6,11 +6,11 @@
         </legend>
         <div class="col-lg-12" style="padding-left:0px;padding-right:0px;">
             <div class="form-group">
-                <button id="buttonNewNetwork" class="btn btn-success pull-right">
+                <button id="buttonNewNetwork" class="btn btn-success">
                         <span class="glyphicon glyphicon-plus-sign"> </span>
                          New Bridge Network
                 </button>
-                <button class="btn btn-danger btn-delete_container pull-right" id="buttonDeleteNetwork" style="margin-right:5px;">
+                <button class="btn btn-danger btn-delete_container" id="buttonDeleteNetwork" style="margin-right:5px;">
                     <span class="glyphicon glyphicon-remove-sign"> </span> Delete </span>
                 </button>
             </div>
@@ -19,7 +19,7 @@
         <br>
         <br>
         <div class="">
-            <table class="table table-bordered table-fixed" id="tableNetworks">
+            <table class="table table-bordered" id="tableNetworks">
                 <thead>
                     <th><input type="checkbox" id="selectAllNetworks"/></th>
                     <th>Name</th>
@@ -50,7 +50,7 @@
                      {% endfor %}
                     </td>
                     <td>
-                        <button class="btn" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork({{net.name}}));">
+                        <button class="btn btn-default" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork('{{net.name}}'));">
                             <span class="glyphicon"> </span> Update Bridge
                         </button>
                     </td>

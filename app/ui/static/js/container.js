@@ -48,6 +48,11 @@ App.containers = App.containers || {
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
         $('#selectAllContainers').on('change', $.proxy(this.toggleSelectAll, this));
+        $('#cpu_percentage').on('change', $.proxy(this.updateValue, this, $('#containerCPUPercentage')));
+        $('#containerCPUPercentage').on('change', $.proxy(this.updateValue, this, $('#cpu_percentage')));
+        $('#memory_percentage').on('change', $.proxy(this.updateValue, this, $('#containerMemoryPercentage')));
+        $('#containerMemoryPercentage').on('change', $.proxy(this.updateValue, this, $('#memory_percentage')));
+
         if(window.location.hash && window.location.hash=='#createContainer')
             this.switchView('form')
     },
@@ -215,23 +220,41 @@ App.containers = App.containers || {
         console.log('createContainerFailed', response);
     },
     showCloneContainer: function(name) {
-        $('#selectedClone').text('Clone Container: ' + name);
+        $('.modal-title').text('');
+        $('#newContainerClone').val('');
+        $('.modal-title').text('Clone Container: ' + name);
+        $("#myModal").modal("show");
+//        $('#selectedClone').text('Clone Container: ' + name);
         if ($('#cloneContainerForm').is(':visible') && this.selectedContainer === name) {
             $('#cloneContainerForm').hide();
+            $('#buttonCloneContainer').hide();
         }
         else {
             $('#cloneContainerForm').show();
+            $('#buttonCloneContainer').show();
         }
         $('#moveContainerForm').hide();
         $('#snapshotContainerForm').hide();
         $('#exportContainerForm').hide();
         $('#snapshotList').hide();
+        $('#buttonExportContainer').hide();
+        $('#buttonSnapshotContainer').hide();
+        $('#buttonMoveContainer').hide();
+        $('#buttonCloneContainer').show();
         this.selectedContainer = name;
     },
     showMoveContainer: function(name) {
-        $('#selectedMove').text('Move Container: ' + name);
-
+        $('.modal-title').text('');
+        $('.modal-title').text('Move Container: ' + name);
+        $('#newContainerMove').val('');
+        $("#myModal").modal("show");
         $('#cloneContainerForm').hide();
+
+        $('#buttonExportContainer').hide();
+        $('#buttonCloneContainer').hide();
+        $('#buttonSnapshotContainer').hide();
+        $('#buttonMoveContainer').show();
+
         if ($('#moveContainerForm').is(':visible') && this.selectedContainer === name) {
             $('#moveContainerForm').hide();
         }
@@ -244,11 +267,20 @@ App.containers = App.containers || {
         this.selectedContainer = name;
     },
     showExportContainer: function(name) {
-        $('#selectedExport').text('Export Image from Container: ' + name);
+        $('.modal-title').text('');
+        $('.modal-title').text('Export Image from Container: ' + name);
+        $('#imageAlias').val('');
+        $("#myModal").modal("show");
 
         $('#cloneContainerForm').hide();
         $('#moveContainerForm').hide();
         $('#snapshotContainerForm').hide();
+
+        $('#buttonMoveContainer').hide();
+        $('#buttonCloneContainer').hide();
+        $('#buttonSnapshotContainer').hide();
+        $('#buttonExportContainer').show();
+
         if ($('#exportContainerForm').is(':visible') && this.selectedContainer === name) {
             $('#exportContainerForm').hide();
         }
@@ -259,8 +291,16 @@ App.containers = App.containers || {
         this.selectedContainer = name;
     },
     showSnapshotContainer: function(name) {
-        $('#selectedSnapshot').text('Create Snapshot from Container: ' + name);
+        $('.modal-title').text('');
+        $('.modal-title').text('Create Snapshot from Container: ' + name);
+        $('#snapshotName').val('');
+        $("#myModal").modal("show");
+//        $('#selectedSnapshot').text('Create Snapshot from Container: ' + name);
         $('#cloneContainerForm').hide();
+        $('#buttonExportContainer').hide();
+        $('#buttonCloneContainer').hide();
+        $('#buttonMoveContainer').hide();
+        $('#buttonSnapshotContainer').show();
         $('#moveContainerForm').hide();
         if ($('#snapshotContainerForm').is(':visible') && this.selectedContainer === name) {
             $('#snapshotContainerForm').hide();
@@ -315,6 +355,7 @@ App.containers = App.containers || {
     onCloneSuccess: function(response){
          console.log(response);
          console.log('clonedSuccess:', 'TODO - add alert and refresh local data');
+         $("#myModal").modal("hide");
     },
     moveContainer: function() {
         $.ajax({
@@ -331,6 +372,7 @@ App.containers = App.containers || {
     onMoveSuccess: function(response){
          console.log(response);
          console.log('Moved Success:', 'TODO - add alert and refresh local data');
+         $("#myModal").modal("hide");
     },
     exportContainer: function() {
         $.ajax({
@@ -348,6 +390,7 @@ App.containers = App.containers || {
     onExportSuccess: function(response){
          console.log(response);
          console.log('Export Success:', 'TODO - add alert and refresh local data');
+         $("#myModal").modal("hide");
     },
     snapshotContainer: function() {
         $.ajax({
@@ -361,6 +404,7 @@ App.containers = App.containers || {
     onSnapshotSuccess: function(response){
          console.log(response);
          console.log('Snapshot Success:', 'TODO - add alert and refresh local data');
+         $("#myModal").modal("hide");
     },
     toggleSelectAll(event){
         if(event.target.checked){
@@ -368,5 +412,8 @@ App.containers = App.containers || {
         }else{
             this.dataTable.rows().deselect();
         }
+    },
+    updateValue:function(target, event){
+        target.val(event.target.value);
     }
 }
