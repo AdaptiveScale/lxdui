@@ -7,8 +7,9 @@ App.profiles = App.profiles || {
     tableSettings: {
         rowId:'name',
         searching:true,
-        responsive: true,
+        responsive: false,
         select: true,
+        scrollX: true,
         columnDefs: [
             {
                 orderable: false,
