@@ -359,6 +359,7 @@ App.images = App.images || {
         target.val(event.target.value);
     },
     showRemoteDetails: function(image){
+        this.tableRemote.rows().deselect();
         this.tableRemote.rows('#'+image).select();
         $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
     },
@@ -419,6 +420,7 @@ App.images = App.images || {
         var tempModal = $('#myModal').modal();
         tempModal.find('.imageName').text(remoteImage.properties.description);
         var modalBody = $('#modalBody');
+        modalBody.empty();
         modalBody.append(this.generateRemoteImageItem(remoteImage));
         tempModal.show();
     }
