@@ -377,7 +377,7 @@ App.images = App.images || {
 
       // Architecture
       modalBody.append(this.generateItem('Architecture', (tempData.architecture + '(' + tempData.properties.architecture + ')')));
-      modalBody.append(this.generateItem('Size', tempData.size));
+      modalBody.append(this.generateItem('Size', App.formatBytes(tempData.size)));
       modalBody.append('<div class="form-group"><hr style="border:1px solid lightgrey;"/></div>');
       modalBody.append(this.generateItem('Fingerprint', tempData.fingerprint));
       modalBody.append(this.generateItem('Filename', tempData.filename));
