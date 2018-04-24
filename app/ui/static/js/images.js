@@ -365,63 +365,43 @@ App.images = App.images || {
     },
     onGetRemoteDetailsSuccess: function(response){
         console.log('remoteDetails', response.data, 'this:', this);
-        this.showDetailsModal(response.data);
+        this.generateModalDetails(response);
     },
-    generateDetailItemFromArray(itemKey, tempArray){
-        var tempResult = {};
-        for(var i=0; i < tempArray.length;i++){
-            console.log('index', i, 'item:', tempArray[i]);
-            tempResult[itemKey+i]=tempArray[i];
-        }
-        console.log('arrayResult', tempResult);
-        return tempResult;
+    generateItem:function(key, value){
+        return '<div class="form-group"><label class="control-label col-sm-3">'+key+'</label><p class="col-sm-9" title="'+value+'">'+value+'</p></div>';
     },
-    generateDetailItem: function(key, value){
-        var tempItem = this.itemTemplate.clone();
-        tempItem.find('.itemKey').text(App.helpers.capitalizeFirstLetter(key) +' : ');
-        if(key==='size'){
-            value = App.formatBytes(value);
-        }
-        if(['string','number', 'boolean'].indexOf(typeof(value))==-1){
-            tempItem.find('.itemValue').addClass('netint_data');
-            tempItem.find('.itemValue').css('display','block');
-        }else{
-            tempItem.find('.itemValue').text(value);
-        }
-        if(Array.isArray(value)){
-            console.log('array', value);
-            tempItem.find('.itemValue').empty();
-            tempItem.find('.itemValue').append(this.generateRemoteImageItem(this.generateDetailItemFromArray(key, value)));
-            return tempItem;
-        }
-        if(typeof(value)==='object'){
-            console.log('object', value);
-              tempItem.find('.itemValue').html(this.generateRemoteImageItem(value));
-              return tempItem;
-        }
-        if(typeof(value)==='boolean'){
-            console.log('boolean', value);
-            tempItem.find('.itemValue').addClass('label label-primary');
+    generateModalDetails: function(response) {
+      var tempData = response.data;
+      var modalBody = $('#modalBody');
+      modalBody.empty();
 
-        }
-        if(key==='fingerprint'){
-            tempItem.find('.itemValue').html('<span class="label label-default">'+value+'</span>');
-        }
-        return tempItem;
-    },
-    generateRemoteImageItem: function(tempItem){
-        var tempResult = [];
-        for(var tempProp in tempItem){
-            tempResult.push(this.generateDetailItem(tempProp, tempItem[tempProp]));
-        }
-        return tempResult;
-    },
-    showDetailsModal: function(remoteImage){
-        var tempModal = $('#myModal').modal();
-        tempModal.find('.imageName').text(remoteImage.properties.description);
-        var modalBody = $('#modalBody');
-        modalBody.empty();
-        modalBody.append(this.generateRemoteImageItem(remoteImage));
-        tempModal.show();
+      // Architecture
+      modalBody.append(this.generateItem('Architecture', (tempData.architecture + '(' + tempData.properties.architecture + ')')));
+      modalBody.append(this.generateItem('Size', tempData.size));
+      modalBody.append('<div class="form-group"><hr style="border:1px solid lightgrey;"/></div>');
+      modalBody.append(this.generateItem('Fingerprint', tempData.fingerprint));
+      modalBody.append(this.generateItem('Filename', tempData.filename));
+      modalBody.append(this.generateItem('Created at', tempData.created_at));
+      modalBody.append(this.generateItem('Uploaded at', tempData.uploaded_at));
+      modalBody.append(this.generateItem('Expires at', tempData.expires_at));
+
+      modalBody.append(this.generateItem('Aliases', tempData.properties.build));
+      modalBody.append(this.generateItem('Build', tempData.properties.build));
+      modalBody.append(this.generateItem('Description', tempData.properties.description));
+      modalBody.append(this.generateItem('Distribution', tempData.properties.distribution));
+      modalBody.append(this.generateItem('Build', tempData.properties.build));
+      modalBody.append(this.generateItem('Os', tempData.properties.os));
+      modalBody.append(this.generateItem('Release', tempData.properties.release));
+      modalBody.append(this.generateItem('Serial', tempData.properties.serial));
+      modalBody.append(this.generateItem('Public', tempData.public));
+      modalBody.append('<div class="form-group"><hr style="border:1px solid lightgrey;"/></div>');
+      tempData.aliases.forEach(function(alias, index){
+            modalBody.append('<div class="form-group"><b>Alias '+(index+1)+'</b></div>')
+           modalBody.append(this.generateItem('Description',alias.description));
+           modalBody.append(this.generateItem('Name',alias.name));
+           modalBody.append(this.generateItem('Target',alias.target));
+      }.bind(this));
+      $('#myModal').modal().show();
+
     }
 }
