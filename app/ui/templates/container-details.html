@@ -113,11 +113,15 @@
     </div>
     <div class="form-group">
         <h5 style="display:inline">Is set to Autostart :</h5>
-        {% if container.expanded_config['boot.autostart']=='1' %}
-            <b><span class="label label-success">Yes</span></b>
-        {% else %}
-            <b><span class="label label-danger">Yes</span></b>
-        {% endif %}
+        <div class="btn-group" role="group">
+            <button type="button" id="buttonAutostartActive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='1' else 'default'}}">Yes</button>
+            <button type="button" id="buttonAutostartInactive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='0' else 'default'}}">No</button>
+        </div>
+        <!--{% if container.expanded_config['boot.autostart']=='1' %}-->
+            <!--<b><span class="label label-success">Yes</span></b>-->
+        <!--{% else %}-->
+            <!--<b><span class="label label-danger">Yes</span></b>-->
+        <!--{% endif %}-->
     </div>
 
     <div class="form-group">
