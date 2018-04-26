@@ -5,6 +5,7 @@ from app.api.schemas.container_schema import doValidate, doValidateCloneMove, do
 from app.api.models.LXCContainer import LXCContainer
 from app.api.models.LXDModule import LXDModule
 from app.api.utils import response
+from app.api.utils.containerMapper import getContainerDetails
 
 container_api = Blueprint('container_api', __name__)
 
@@ -14,9 +15,10 @@ def containers():
     client = LXDModule()
     result = []
     containers = client.listContainers()
+    result = []
     for container in containers:
-        c = LXCContainer({'name': container.get('name')})
-        result.append(c.info())
+        result.append(getContainerDetails(container))
+
     return response.reply(result)
 
 

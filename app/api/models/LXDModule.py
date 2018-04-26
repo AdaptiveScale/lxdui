@@ -12,11 +12,7 @@ class LXDModule(Base):
 
     def listContainers(self):
         try:
-            results = []
-            for container in self.client.api.containers.get().json()['metadata']:
-                results.append(self.client.api.containers[container.split('/')[-1]].get().json()['metadata'])
-
-            return results
+            return self.client.containers.all()
         except Exception as e:
             raise ValueError(e)
 
