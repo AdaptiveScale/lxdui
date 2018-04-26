@@ -245,6 +245,9 @@ App.containerDetails = App.containerDetails || {
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
+            data: JSON.stringify({
+                stateful: $('#snapshotStateful').is(':checked'),
+            }),
             success: $.proxy(this.onSnapshotSuccess, this)
         });
     },

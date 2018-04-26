@@ -35,7 +35,6 @@ class LXCSnapshot(LXDModule):
 
     def snapshotList(self):
         try:
-            #return self.client.api.containers[self.data.get('container')].snapshots.get().json()['metadata']
             container = self.client.containers.get(self.data.get('container'))
             result = []
             for snap in container.snapshots.all():
@@ -51,13 +50,13 @@ class LXCSnapshot(LXDModule):
         except Exception as e:
             raise ValueError(e)
 
-    def snapshot(self):
+    def snapshot(self, s=False):
         try:
             container = self.client.containers.get(self.data.get('container'))
             snapName = self.data.get('name')
             if self._checkSnapshot(container) == False:
                 raise ValueError('Snapshot with name {} already exists.'.format(snapName))
-            container.snapshots.create(snapName)
+            container.snapshots.create(snapName, stateful=s, wait=True)
             return self.client.api.containers[self.data.get('container')].snapshots.get().json()['metadata']
         except Exception as e:
             raise ValueError(e)

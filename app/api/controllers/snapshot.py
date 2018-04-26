@@ -33,8 +33,14 @@ def snapshotInfo(name, container):
 @jwt_required()
 def createSnapshot(name, container):
     try:
+        input = request.get_json(silent=True)
+        stateful = False
+        if input != None:
+            if input.get('stateful') != None:
+                stateful = input.get('stateful')
+
         snapshot = LXCSnapshot({'name': name, 'container': container})
-        return response.replySuccess(snapshot.snapshot())
+        return response.replySuccess(snapshot.snapshot(stateful))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
