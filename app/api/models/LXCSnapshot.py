@@ -1,4 +1,5 @@
 from app.api.models.LXDModule import LXDModule
+from app.api.utils.snapshotMapper import getSnapshotData
 
 class LXCSnapshot(LXDModule):
     def __init__(self, input):
@@ -34,7 +35,13 @@ class LXCSnapshot(LXDModule):
 
     def snapshotList(self):
         try:
-            return self.client.api.containers[self.data.get('container')].snapshots.get().json()['metadata']
+            #return self.client.api.containers[self.data.get('container')].snapshots.get().json()['metadata']
+            container = self.client.containers.get(self.data.get('container'))
+            result = []
+            for snap in container.snapshots.all():
+                result.append(getSnapshotData(snap))
+
+            return result
         except Exception as e:
             raise ValueError(e)
 
@@ -48,6 +55,8 @@ class LXCSnapshot(LXDModule):
         try:
             container = self.client.containers.get(self.data.get('container'))
             snapName = self.data.get('name')
+            if self._checkSnapshot(container) == False:
+                raise ValueError('Snapshot with name {} already exists.'.format(snapName))
             container.snapshots.create(snapName)
             return self.client.api.containers[self.data.get('container')].snapshots.get().json()['metadata']
         except Exception as e:
@@ -89,3 +98,10 @@ class LXCSnapshot(LXDModule):
 
         except Exception as e:
             raise ValueError(e)
+
+    def _checkSnapshot(self, container):
+        for snap in container.snapshots.all():
+            if snap.name == self.data.get('name'):
+                return False
+
+        return True
