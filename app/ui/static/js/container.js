@@ -96,7 +96,7 @@ App.containers = App.containers || {
                 { title:'Create at', data : 'created_at' },
                 { title:'Actions', data : 'name',
                     render: function(field) {
-                        return '<a><i id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('+field+'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>';
+                        return '<a><i id="cloneContainer" data-keyboard="true" onClick="$.proxy(App.containers.showCloneContainer('+field+'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>';
                     }
                 },
             ]
