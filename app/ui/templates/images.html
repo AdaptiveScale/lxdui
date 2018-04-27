@@ -24,7 +24,7 @@
         <div class="col-lg-12 mg-bottom15">
             <div class="form-inline">
                  <div class="form-group">
-                     <button id="buttonLaunchContainers" class="btn btn-success" disabled><span class="glyphicon glyphicon-th"></span> Launch Container(s)
+                     <button id="buttonLaunchContainers" class="btn btn-success" disabled><span class="glyphicon glyphicon-send"></span> Launch Container(s)
             </button>
             <button id="buttonDelete" class="btn btn-danger" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete </button>
 
@@ -97,7 +97,7 @@
                 <tr id="{{image.image}}">
                     <td></td>
                     <td><a style="cursor:pointer"
-                           onClick="App.images.showRemoteDetails('{{image.image}}');">{{ image.name}}</a></td>
+                           onClick="App.images.showRemoteDetails('{{image.image}}');" data-keyboard="true">{{ image.name}}</a></td>
                     <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>
                     <td>{{ image.image }}</td>
                     <td>{{ image.distribution }}</td>
@@ -226,7 +226,7 @@
 </div>
 
 <!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
+<div id="myModal" class="modal fade" role="dialog" tabindex="-1">
   <div class="modal-dialog modal-lg">
 
     <!-- Modal content-->

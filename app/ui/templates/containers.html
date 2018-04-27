@@ -47,7 +47,14 @@
             <tr id="{{container.name}}">
                 <td></td>
                 <td><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
-                <td>{{container.status}}</td>
+                <td>
+                    {% if container.status == 'Running' %}
+                       <i class="glyphicon glyphicon-off" style="color:green;font-size:10px;"></i>
+                    {% elif container.status == 'Stopped' %}
+                        <i class="glyphicon glyphicon-off" style="color:red;font-size:10px;"></i>
+                    {% endif %}
+                    {{container.status}}
+                </td>
                 <td>{{container.ip}}</td>
                 {% if container.ephemeral %}
                     <td>Ephemeral</td>
@@ -58,7 +65,7 @@
                 <td>{{container.created_at}}</td>
                 <td style="width:157px !important;">
                     <a><i id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>
-                    <a><i id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" class="glyphicon glyphicon-share-alt btn btn-sm btn-default"></i></a>
+                    <a><i id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" class="glyphicon glyphicon-share btn btn-sm btn-default"></i></a>
                     <a><i id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot" class="glyphicon glyphicon-camera btn btn-sm btn-default"></i></a>
                     <a><i id="exportContainer" onClick="$.proxy(App.containers.showExportContainer('{{container.name}}'));" title="Export Image from Container" class="glyphicon glyphicon-export btn btn-sm btn-default"></i></a>
                 </td>
@@ -184,7 +191,7 @@
 </div>
 
 <!-- Modal -->
-  <div class="modal fade" id="myModal" role="dialog" tabindex="-1">
+  <div class="modal fade" id="myModal" role="dialog">
     <div class="modal-dialog">
 
       <!-- Modal content-->
