@@ -14,6 +14,8 @@ App.containerDetails = App.containerDetails || {
         searching:false,
         responsive: false,
         bLengthChange: false,
+        bInfo: false,
+        bPaginate: false,
         order: [[ 1, 'asc' ]],
     },
     loading:false,
