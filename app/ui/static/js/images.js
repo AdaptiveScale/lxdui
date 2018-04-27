@@ -378,6 +378,7 @@ App.images = App.images || {
       var modalBody = $('#modalBody');
       modalBody.empty();
 
+      $('.imageName').text(tempData.properties.name);
       // Architecture
       modalBody.append(this.generateItem('Os', tempData.properties.os));
       modalBody.append(this.generateItem('Distribution', tempData.properties.distribution));
