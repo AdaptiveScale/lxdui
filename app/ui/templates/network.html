@@ -46,7 +46,7 @@
                     </td>
                     <td>
                      {% for used in net.used_by %}
-                        <li>{{used}}</li>
+                        <li>{{used.split('/')[-1]}}</li>
                      {% endfor %}
                     </td>
                     <td>

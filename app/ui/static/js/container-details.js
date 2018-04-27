@@ -11,8 +11,9 @@ App.containerDetails = App.containerDetails || {
     initiated:false,
     tableSettings: {
         rowId:'name',
-        searching:true,
+        searching:false,
         responsive: false,
+        bLengthChange: false,
         order: [[ 1, 'asc' ]],
     },
     loading:false,
