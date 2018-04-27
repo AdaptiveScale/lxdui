@@ -144,6 +144,7 @@ App.images = App.images || {
     activateScreen: function(screen){
         this.tableLocal.rows({selected:true}).deselect();
         this.tableRemote.rows({selected:true}).deselect();
+        $('.mg-bottom15').show();
         if(screen==='local'){
             $('#tableImagesLocalWrapper').show();
             $('#tableImagesRemoteWrapper').hide();
@@ -280,6 +281,8 @@ App.images = App.images || {
         $('#tableImagesRemoteWrapper')[view=='remoteList'?'show':'hide']();
         if(view!=='form'){
             $('#multiContainerSection').empty();
+        }else{
+            $('.mg-bottom15').hide();
         }
         if(view=='remoteList'){
             return this.activateScreen('remote');
