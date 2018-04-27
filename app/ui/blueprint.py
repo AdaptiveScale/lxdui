@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, redirect
+from flask import Blueprint, render_template
 from app.api.models.LXCContainer import LXDModule, LXCContainer
+from app.api.utils.containerMapper import getContainerDetails
 from app.__metadata__ import VERSION
 import json
 import os
@@ -21,8 +22,8 @@ def container():
         containers = LXDModule().listContainers()
         result = []
         for container in containers:
-            c = LXCContainer({'name': container.get('name')})
-            result.append(c.info())
+            result.append(getContainerDetails(container))
+
         images = LXDModule().listLocalImages()
         profiles = LXDModule().listProfiles()
         return render_template('containers.html', currentpage='Containers',
@@ -38,6 +39,7 @@ def container():
                                profiles=[],
                                memory=memory(),
                                lxdui_current_version=VERSION)
+
 
 @uiPages.route('/containers/<string:name>')
 def containerDetails(name):

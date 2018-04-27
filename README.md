@@ -2,19 +2,20 @@
 ### A web UI for Linux containers based on LXD/LXC.  
 Learn more about Linux containers and LXD/LXC here: [linuxcontainers.org](https://linuxcontainers.org/)
 
-LXDUI leverages LXD's Python client library, **pylxd** 
-[(https://github.com/lxc/pylxd)](https://github.com/lxc/pylxd), for interacting with the LXD REST API.  It allows for rapid provisioning and management of large number of containers from a web browser, and you can simultaneously create any number of containers, even from multiple images, in one step.
+LXDUI leverages LXD's Python client library, 
+[**pylxd**](https://github.com/lxc/pylxd), for interacting with the LXD REST API.  It allows for rapid provisioning and management of large number of containers from a web browser, and you can simultaneously create any number of containers, even from multiple images, in one step.
 
 ## Version 2.0 (beta)
 [Version 2.0](https://github.com/AdaptiveScale/lxdui/wiki/New-in-2.0) of LXDUI is a complete rewrite of the application that better exposes LXD's feature set with additional functionality. A new CLI is now available for managing LXDUI as well. Learn more about the CLI, `lui`, [here](https://github.com/AdaptiveScale/lxdui/wiki/LXDUI's-CLI). 
 
+[New in 2.0](https://github.com/AdaptiveScale/lxdui/wiki/New-in-2.0)
 
 
 ## Screencast
 ![Screencast](https://github.com/vhajdari/testsite/blob/master/lxdui_screencast_2.gif)
 ##
 
-## Installation Instructions
+# Getting Started
 
 As the name suggests, LXDUI is a visual interface for the LXD & LXC toolset.  In order to use LXDUI you need to have LXD installed on your system.  The following instructions walk you through the installation process so that you have a working system with LXD and LXDUI.
 
@@ -53,12 +54,19 @@ or use the new CLI:  &nbsp;&nbsp;`lui start`
 When the app starts open a browser to the following link to access the app:
 [http://127.0.0.1:15151](http://127.0.0.1:15151)
 
-# AUTHOR
+**Log In.**  The default account and password are: **admin** | **admin**
+
+## CONTRIBUTION
+
+Your contribution is welcome and greatly appreciated.  Please contribute your fixes and new features via a pull request.
+Pull requests and proposed changes will then go through a code review and once approved will be merged into the project.
+
+## AUTHOR
 
 AdaptiveScale, Inc.
 [http://www.adaptivescale.com](http://www.adaptivescale.com)
 
-# LICENSE
+## LICENSE
 Copyright © 2018 AdaptiveScale, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
