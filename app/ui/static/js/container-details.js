@@ -7,9 +7,18 @@ App.containerDetails = App.containerDetails || {
     errorMessage:'',
     name: '',
     activeSnapshot: '',
+    dataTable:null,
+    initiated:false,
+    tableSettings: {
+        rowId:'name',
+        searching:true,
+        responsive: false,
+        order: [[ 1, 'asc' ]],
+    },
     loading:false,
     init: function(){
         console.log('Container Details init');
+        this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
         $('#refreshContainers').on('click', $.proxy(this.refreshContainers, this));
         $('#buttonStartDetail').on('click', $.proxy(this.startContainer, this));
         $('#buttonStopDetail').on('click', $.proxy(this.stopContainer, this));
@@ -103,15 +112,24 @@ App.containerDetails = App.containerDetails || {
     getSnapshotSuccess: function (response){
         var container = this.name;
         $.each(response.data, function(index, value) {
-            var row = $('<div class="row"></div>');
-            row.append('<h5 class="col-sm-6 ">'+value.name+'-'+value.createdAt+'-'+value.stateful+'</h5>');
+
+            //$('#tableSnapshots tbody').append('<tr><td>'+value.name+'</td><td>'+value.createdAt+'</td><td>'+value.stateful+'</td></tr>');
+            //var row = $('<div class="row"></div>');
+            //row.append('<h5 class="col-sm-6 ">'+value.name+'-'+value.createdAt+'-'+value.stateful+'</h5>');
             var tempPlaceholder = $('<div class="col-sm-6"></div>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="delete-'+value.name+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="restore-'+value.name+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="create-'+value.name+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());"><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>');
+            this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
+            this.dataTable.row.add([
+                value.name,
+                value.createdAt,
+                value.stateful ? 'Yes' : 'No',
+                tempPlaceholder.html(),
+            ]).draw();
 
-            row.append(tempPlaceholder);
-            $('#snapshotList').append(row);
+            //row.append(tempPlaceholder);
+            //$('#snapshotList').append(row);
         });
 
     },
