@@ -28,8 +28,7 @@
                 <th><input type="checkbox" id="selectAllProfiles"/></th>
                 <th>Name</th>
                 <th>Description</th>
-                <th>Config</th>
-                <th>Devices</th>
+                <th>Profile</th>
                 <th>Used by</th>
 
                 </thead>
@@ -49,8 +48,6 @@
                             {% endfor %}
                         </ul>
                          {% endfor %}
-                    </td>
-                    <td>
                         <ul>
                             {% for key, value in profile.config.items() %}
 
@@ -60,7 +57,7 @@
                     </td>
                     <td>
                      {% for used in profile.used_by %}
-                        <li>{{used}}</li>
+                        <li>{{used.split('/')[-1]}}</li>
                      {% endfor %}
                     </td>
 
@@ -107,18 +104,18 @@
             <!-- Tab panes -->
             <div class="tab-content">
                 <div class="tab-pane active" id="config" role="tabpanel" style="padding-bottom:20px;background:#F2F1F0;">
-                    <div class="form-group">
+                    <div class="form-group" style="width: 100%;">
                         <label for="configEditor" class="col-sm-12 control-label" style="text-align: left; margin-left: 40px; margin-bottom: 10px;">Config (JSON)</label>
-                        <div class="col-sm-8">
+                        <div class="col-sm-12">
                             <div id="configEditor" style="height:200px; position:relative;"></div>
                         </div>
                     </div>
                 </div>
 
                 <div class="tab-pane" id="devices" role="tabpanel" style="padding-bottom:20px;background:#F2F1F0;">
-                    <div class="form-group">
+                    <div class="form-group" style="width: 100%;">
                         <label for="devicesEditor" class="col-sm-12 control-label" style="text-align: left; margin-left: 40px; margin-bottom: 10px;">Devices (JSON)</label>
-                        <div class="col-sm-8">
+                        <div class="col-sm-12">
                             <div id="devicesEditor" name="devicesEditor" style="height:200px; position:relative;"></div>
                         </div>
                     </div>
