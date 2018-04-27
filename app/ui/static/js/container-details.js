@@ -101,9 +101,7 @@ App.containerDetails = App.containerDetails || {
     },
     onDeleteSuccess: function(name){
         console.log('onDelete', name);
-        //location.reload()
         window.location = '/ui/containers';
-        //window.location.href = '/ui/containers';
     },
     getSnapshotList: function(){
         this.setLoading(true);
@@ -112,10 +110,6 @@ App.containerDetails = App.containerDetails || {
     getSnapshotSuccess: function (response){
         var container = this.name;
         $.each(response.data, function(index, value) {
-
-            //$('#tableSnapshots tbody').append('<tr><td>'+value.name+'</td><td>'+value.createdAt+'</td><td>'+value.stateful+'</td></tr>');
-            //var row = $('<div class="row"></div>');
-            //row.append('<h5 class="col-sm-6 ">'+value.name+'-'+value.createdAt+'-'+value.stateful+'</h5>');
             var tempPlaceholder = $('<div class="col-sm-6"></div>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="delete-'+value.name+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="restore-'+value.name+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
@@ -127,9 +121,6 @@ App.containerDetails = App.containerDetails || {
                 value.stateful ? 'Yes' : 'No',
                 tempPlaceholder.html(),
             ]).draw();
-
-            //row.append(tempPlaceholder);
-            //$('#snapshotList').append(row);
         });
 
     },
@@ -223,7 +214,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onCloneSuccess: function(response){
-         //location.reload();
          window.location = '/ui/containers';
     },
     moveContainerDetail: function() {
@@ -239,7 +229,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onMoveSuccess: function(response){
-         //location.reload();
          window.location = '/ui/containers';
     },
     exportContainerDetail: function() {
@@ -286,7 +275,9 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onRestoreSuccess: function(response) {
-        location.reload();
+        setTimeout(function() {
+            location.reload();
+        }, 3000)
     },
     createContainerSnapshot: function() {
         console.log("Create Container");
