@@ -208,7 +208,7 @@
     padding: 5px;
 }
 
-.label-success {
+.label-success, .label-danger {
     padding: 2px 3px;
     font-size: 10px;
 }
@@ -269,3 +269,4 @@
     margin-top: 20px;
     padding-top: 20px;
 }
+
