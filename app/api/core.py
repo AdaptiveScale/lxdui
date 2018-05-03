@@ -2,6 +2,10 @@ from flask import Flask, redirect
 
 from app.api.utils.authentication import initAuth
 
+from app.lib.log import Log
+import logging
+
+Log(__name__)
 app = Flask(__name__)
 HAS_UI = False
 
@@ -41,10 +45,12 @@ def stop():
     app.shutdown()
 
 def startApp(port, uiPages=None):
+    logging.debug('Checking ui availability')
     if uiPages is not None:
         app.register_blueprint(uiPages, url_prefix='/ui')
         global HAS_UI
         HAS_UI = True
+        logging.info('UI Loaded')
     else:
-        print('ui not included')
+        logging.warning('UI Missing... Starting without UI.')
     app.run(debug=True, host='0.0.0.0', port=port)

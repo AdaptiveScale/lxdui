@@ -3,37 +3,42 @@ from app.api.utils.remoteImageMapper import remoteImagesList
 
 from pylxd import Client
 import requests
+import logging
 
 
 class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config
     def __init__(self, remoteHost='127.0.0.1'):
+        logging.info('Accessing PyLXD client')
         self.client = Client()
 
     def listContainers(self):
         try:
+            logging.info('Reading container list')
             return self.client.containers.all()
         except Exception as e:
+            logging.error('Failed to read container list: ', e)
             raise ValueError(e)
 
     def listLocalImages(self):
         try:
+            logging.info('Reading local image list')
             results = []
             for image in self.client.api.images.get().json()['metadata']:
                 results.append(self.client.api.images[image.split('/')[-1]].get().json()['metadata'])
 
             return results
         except Exception as e:
+            logging.error('Failed to read local image list: ', e)
             raise ValueError(e)
 
     def listRemoteImages(self):
         try:
-            #remoteClient = Client(endpoint='https://images.linuxcontainers.org')
-            #return remoteClient.api.images.get().json()['metadata']
-
+            logging.info('Reading remote container list')
             images = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases')
             return remoteImagesList(images.json())
         except Exception as e:
+            logging.error('Failed to get remote container images: ', e)
             raise ValueError(e)
 
     def detailsRemoteImage(self, alias):
@@ -46,15 +51,13 @@ class LXDModule(Base):
 
     def downloadImage(self, image):
         try:
-            #response = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases/{}'.format(self.data.get('image')))
-            #image_details = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/{}'.format(response.json()['metadata']['target']))
-
+            logging.info('Downloading remote iamge:', image)
             remoteClient = Client(endpoint='https://images.linuxcontainers.org')
             remoteImage = remoteClient.images.get_by_alias(image)
             newImage = remoteImage.copy(self.client, auto_update=False, public=False, wait=True)
-
             return self.client.api.images[newImage.fingerprint].get().json()['metadata']
         except Exception as e:
+            logging.error('Failed to download image:', e)
             raise ValueError(e)
 
     def deleteImage(self):
@@ -81,12 +84,14 @@ class LXDModule(Base):
 
     def listNetworks(self):
         try:
+            logging.info('Retrieving network list.')
             results = []
             for network in self.client.api.networks.get().json()['metadata']:
                 results.append(self.client.api.networks[network.split('/')[-1]].get().json()['metadata'])
 
             return results
         except Exception as e:
+            logging.error('Failed to retrieve network list:', e)
             raise ValueError(e)
 
     def createNetwork(self):
@@ -118,9 +123,11 @@ class LXDModule(Base):
     def containerExists(self, containerName):
         lxdModule = LXDModule()
         try:
+            logging.info('Checking if container exists.')
             container = self.client.containers.get(containerName)
             return True
         except Exception as e:
+            logging.error('Failed to verify container:', e)
             return False
 
     def info(self):
