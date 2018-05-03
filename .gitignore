@@ -6,3 +6,4 @@ lxdui.egg-info
 build
 dist/
 LXDUI.egg-info
+logs/
