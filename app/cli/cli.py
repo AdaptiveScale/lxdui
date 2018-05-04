@@ -57,16 +57,16 @@ def init(password):
 
 
 @lui.command()
-# @click.option('-d', '--daemon', nargs=0, help='Starts the app in the background.')
-def start():
+@click.option('-d/','--debug/--no-debug', default=False, help='Run the app in debug mode')
+def start(debug):
     """Start LXDUI"""
     '''
-    TODO:  add -d option to start the server as a daemon
+    TODO:  add -d option to start the server in debug mode
     '''
-    # if daemon:
-    #     #start in the background
-    #click.echo("Starting %s" % APP)
-    _doStart()
+    if debug:
+        _doStart(debug=True)
+    else:
+        _doStart()
 
 
 @lui.command()
@@ -87,7 +87,7 @@ def status():
 
 
 #Private Functions
-def _doStart(args=None):
+def _doStart(debug=False):
     port = 5000
     try:
         port = int(Config().get('LXDUI', 'lxdui.port'))
@@ -95,7 +95,7 @@ def _doStart(args=None):
         print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
         exit()
 
-    core.startApp(port, uiPages)
+    core.startApp(port, debug, uiPages)
 
 def _doStop(args=None):
     click.echo("Stopping %s" % APP)

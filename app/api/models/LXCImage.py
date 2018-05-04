@@ -1,6 +1,8 @@
 from app.api.models.LXDModule import LXDModule
 import logging
 
+logging = logging.getLogger(__name__)
+
 class LXCImage(LXDModule):
     def __init__(self, input):
         self.data = {}
@@ -39,7 +41,8 @@ class LXCImage(LXDModule):
             logging.info('Reading image {} details'.format(self.data.get('fingerprint')))
             return self.client.api.images[self.data.get('fingerprint')].get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to retrieve information for image {}'.format(self.data.get('fingerprint')), e)
+            logging.error('Failed to retrieve information for image {}'.format(self.data.get('fingerprint')))
+            logging.exception(e)
             raise ValueError(e)
 
     def deleteImage(self):
@@ -48,5 +51,6 @@ class LXCImage(LXDModule):
             image = self.client.images.get(self.data.get('fingerprint'))
             image.delete()
         except Exception as e:
-            logging.error('Failed to delete the image {}'.format(self.data.get('fingerprint')), e)
+            logging.error('Failed to delete the image {}'.format(self.data.get('fingerprint')))
+            logging.exception(e)
             raise ValueError(e)

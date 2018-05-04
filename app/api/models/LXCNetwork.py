@@ -8,6 +8,8 @@ import socket
 import struct
 import logging
 
+logging = logging.getLogger(__name__)
+
 class LXCNetwork(LXDModule):
 
     def __init__(self, input):
@@ -70,7 +72,8 @@ class LXCNetwork(LXDModule):
 
                 return {'error': False, "result": self._structure_data(rez), 'used_by': used_by_containers}
         except Exception as e:
-            logging.error('Failed to retrieve information for network {}'.format(self.input.get('name')), e)
+            logging.error('Failed to retrieve information for network {}'.format(self.input.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def createNetwork(self, input, name):
@@ -78,7 +81,8 @@ class LXCNetwork(LXDModule):
             logging.info('Creating network {}'.format(name))
             return self._executeLXCNetworkTerminal(self._formToLXCSetTask(input), name)
         except Exception as e:
-            logging.error('Failed to create network {}'.format(name), e)
+            logging.error('Failed to create network {}'.format(name))
+            logging.exception(e)
             raise ValueError(e)
 
     def deleteNetwork(self):
@@ -87,7 +91,8 @@ class LXCNetwork(LXDModule):
             p = subprocess.Popen(['lxc', 'network', 'delete', self.input.get('name')], stdout=subprocess.PIPE)
             return {'completed': True}
         except Exception as e:
-            logging.error('Failed to delete network {}'.format(self.input.get('name')), e)
+            logging.error('Failed to delete network {}'.format(self.input.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def updateNetwork(self, input, name):
@@ -95,7 +100,8 @@ class LXCNetwork(LXDModule):
             logging.info('Updating network {}'.format(name))
             return self._executeLXCNetworkTerminal(self._formToLXCSetTask(input), name)
         except Exception as e:
-            logging.error('Failed to update network {}'.format(name), e)
+            logging.error('Failed to update network {}'.format(name))
+            logging.exception(e)
             raise ValueError(e)
 
 

@@ -1,6 +1,8 @@
 from app.api.models.LXDModule import LXDModule
 import logging
 
+logging = logging.getLogger(__name__)
+
 class LXCContainer(LXDModule):
     def __init__(self, input):
         self.data = {}
@@ -148,7 +150,8 @@ class LXCContainer(LXDModule):
 
             return container
         except Exception as e:
-            logging.error('Failed to retrieve information for container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to retrieve information for container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def create(self, waitIt=True):
@@ -159,7 +162,8 @@ class LXCContainer(LXDModule):
                 self.start(waitIt)
             return self.info()
         except Exception as e:
-            logging.error('Failed to create container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to create container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def delete(self, force=False):
@@ -173,7 +177,8 @@ class LXCContainer(LXDModule):
                 container.stop(wait=True)
             container.delete()
         except Exception as e:
-            logging.error('Failed to delete container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to delete container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def update(self):
@@ -194,7 +199,8 @@ class LXCContainer(LXDModule):
                 self.rename()
             return self.info()
         except Exception as e:
-            logging.error('Failed to update container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to update container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def start(self, waitIt=True):
@@ -203,7 +209,8 @@ class LXCContainer(LXDModule):
             container = self.client.containers.get(self.data.get('name'))
             container.start(wait=waitIt)
         except Exception as e:
-            logging.error('Failed to start container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to start container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def stop(self, waitIt=True):
@@ -212,7 +219,8 @@ class LXCContainer(LXDModule):
             container = self.client.containers.get(self.data.get('name'))
             container.stop(wait=waitIt)
         except Exception as e:
-            logging.error('Failed to stop container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to stop container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def restart(self, waitIt=True):
@@ -221,7 +229,8 @@ class LXCContainer(LXDModule):
             container = self.client.containers.get(self.data.get('name'))
             container.restart(wait=waitIt)
         except Exception as e:
-            logging.error('Failed to restart container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to restart container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def move(self):
@@ -243,7 +252,8 @@ class LXCContainer(LXDModule):
             newContainer.start(wait=True)
             return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to clone container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to clone container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def move(self):
@@ -263,7 +273,8 @@ class LXCContainer(LXDModule):
             container.delete(wait=True)
             return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to move container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to move container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
 
@@ -279,7 +290,8 @@ class LXCContainer(LXDModule):
             container.start(wait=True)
             return self.client.api.images[image.fingerprint].get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to export container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to export container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def rename(self, force=True):
@@ -300,7 +312,8 @@ class LXCContainer(LXDModule):
             self.data['name'] = self.data.get('newName')
             return self.info()
         except Exception as e:
-            logging.error('Failed to rename container {}'.format(self.data.get('name')), e)
+            logging.error('Failed to rename container {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
 

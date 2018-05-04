@@ -21,7 +21,9 @@ DEFAULT_CONFIG_FORMAT = 'ini'
 __default_config__ = """
 [LXDUI]
 lxdui.port = 15151
-lxdui.token.expiration = 1200
+lxdui.jwt.token.expiration = 1200
+lxdui.jwt.secret.key = AC8d83&21Almnis710sds
+lxdui.jwt.auth.url.rule = /api/user/login
 lxdui.admin.user = admin
 lxdui.conf.dir = {{app_root}}/conf
 lxdui.conf.file = ${lxdui.conf.dir}/lxdui.conf
