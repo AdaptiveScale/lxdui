@@ -2,6 +2,8 @@ from app.api.models.LXDModule import LXDModule
 from app.api.utils.snapshotMapper import getSnapshotData
 import logging
 
+logging = logging.getLogger(__name__)
+
 class LXCSnapshot(LXDModule):
     def __init__(self, input):
         self.data = {}

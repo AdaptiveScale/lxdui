@@ -1,6 +1,8 @@
 from app.api.models.LXDModule import LXDModule
 import logging
 
+logging = logging.getLogger(__name__)
+
 class LXCContainer(LXDModule):
     def __init__(self, input):
         self.data = {}

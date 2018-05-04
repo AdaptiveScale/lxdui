@@ -2,6 +2,7 @@ from app.api.models.LXDModule import LXDModule
 from pylxd import Client
 import logging
 
+logging = logging.getLogger(__name__)
 
 class LXCProfile(LXDModule):
 

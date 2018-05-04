@@ -5,6 +5,7 @@ from pylxd import Client
 import requests
 import logging
 
+logging = logging.getLogger(__name__)
 
 class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config

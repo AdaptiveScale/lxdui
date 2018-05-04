@@ -8,6 +8,8 @@ import socket
 import struct
 import logging
 
+logging = logging.getLogger(__name__)
+
 class LXCNetwork(LXDModule):
 
     def __init__(self, input):
