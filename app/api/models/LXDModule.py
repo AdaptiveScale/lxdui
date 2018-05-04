@@ -17,7 +17,8 @@ class LXDModule(Base):
             logging.info('Reading container list')
             return self.client.containers.all()
         except Exception as e:
-            logging.error('Failed to read container list: ', e)
+            logging.error('Failed to read container list: ')
+            logging.exception(e)
             raise ValueError(e)
 
     def listLocalImages(self):
@@ -29,7 +30,8 @@ class LXDModule(Base):
 
             return results
         except Exception as e:
-            logging.error('Failed to read local image list: ', e)
+            logging.error('Failed to read local image list: ')
+            logging.exception(e)
             raise ValueError(e)
 
     def listRemoteImages(self):
@@ -38,7 +40,8 @@ class LXDModule(Base):
             images = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases')
             return remoteImagesList(images.json())
         except Exception as e:
-            logging.error('Failed to get remote container images: ', e)
+            logging.error('Failed to get remote container images: ')
+            logging.exception(e)
             raise ValueError(e)
 
     def detailsRemoteImage(self, alias):
@@ -57,7 +60,8 @@ class LXDModule(Base):
             newImage = remoteImage.copy(self.client, auto_update=False, public=False, wait=True)
             return self.client.api.images[newImage.fingerprint].get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to download image:', e)
+            logging.error('Failed to download image:')
+            logging.exception(e)
             raise ValueError(e)
 
     def deleteImage(self):
@@ -91,7 +95,8 @@ class LXDModule(Base):
 
             return results
         except Exception as e:
-            logging.error('Failed to retrieve network list:', e)
+            logging.error('Failed to retrieve network list:')
+            logging.exception(e)
             raise ValueError(e)
 
     def createNetwork(self):
@@ -127,7 +132,8 @@ class LXDModule(Base):
             container = self.client.containers.get(containerName)
             return True
         except Exception as e:
-            logging.error('Failed to verify container:', e)
+            logging.error('Failed to verify container:')
+            logging.exception(e)
             return False
 
     def info(self):
