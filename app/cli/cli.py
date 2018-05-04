@@ -63,7 +63,6 @@ def start(debug):
     '''
     TODO:  add -d option to start the server in debug mode
     '''
-    print(debug)
     if debug:
         _doStart(debug=True)
     else:

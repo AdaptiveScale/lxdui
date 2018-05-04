@@ -1,6 +1,7 @@
 from flask import Flask, redirect
 
 from app.api.utils.authentication import initAuth
+from app.api.utils.readInstanceDetails import readInstanceDetails
 
 from app.lib.log import Log
 import logging
@@ -53,4 +54,6 @@ def startApp(port, debug=False, uiPages=None):
         logging.info('UI Loaded')
     else:
         logging.warning('UI Missing... Starting without UI.')
+
+    readInstanceDetails()
     app.run(debug=debug, host='0.0.0.0', port=port)
