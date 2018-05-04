@@ -48,7 +48,8 @@ class LXCSnapshot(LXDModule):
 
             return result
         except Exception as e:
-            logging.error('Failed to retrieve snapshot list for container {}'.format(self.data.get('container')), e)
+            logging.error('Failed to retrieve snapshot list for container {}'.format(self.data.get('container')))
+            logging.exception(e)
             raise ValueError(e)
 
     def snapshotInfo(self):
@@ -56,7 +57,8 @@ class LXCSnapshot(LXDModule):
             logging.info('Reading snapshot {} info for container {}'.format(self.data.get('name'), self.data.get('container')))
             return self.client.api.containers[self.data.get('container')].snapshots[self.data.get('name')].get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to retrieve snapshot {} info for container {}'.format(self.data.get('name'), self.data.get('container')), e)
+            logging.error('Failed to retrieve snapshot {} info for container {}'.format(self.data.get('name'), self.data.get('container')))
+            logging.exception(e)
             raise ValueError(e)
 
     def snapshot(self, s=False):
@@ -66,22 +68,23 @@ class LXCSnapshot(LXDModule):
             container = self.client.containers.get(self.data.get('container'))
             snapName = self.data.get('name')
             if self._checkSnapshot(container) == False:
-                logging.error('Failed to create snapshot {}'.format(self.data.get('name')), 'Snapshot with name {} already exists.'.format(snapName))
+                logging.error('Failed to create snapshot {}. Snapshot with name {} already exists.'.format(self.data.get('name'), snapName))
                 raise ValueError('Snapshot with name {} already exists.'.format(snapName))
             container.snapshots.create(snapName, stateful=s, wait=True)
             return self.client.api.containers[self.data.get('container')].snapshots.get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to create snapshot {}'.format(self.data.get('name')), e)
+            logging.error('Failed to create snapshot {}'.format(self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def snapshotDelete(self):
         try:
-            logging.error('Hello', None)
             logging.info('Deleting snapshot {} for container {}'.format(self.data.get('name'), self.data.get('container')))
             container = self.client.containers.get(self.data.get('container'))
             container.snapshots.get(self.data.get('name')).delete()
         except Exception as e:
-            logging.error('Failed to delete snapshot {} for container {}'.format(self.data.get('name'), self.data.get('container')), e)
+            logging.error('Failed to delete snapshot {} for container {}'.format(self.data.get('name'), self.data.get('container')))
+            logging.exception(e)
             raise ValueError(e)
 
 
@@ -92,7 +95,8 @@ class LXCSnapshot(LXDModule):
             return self.client.api.containers[self.data.get('container')].put(json={'restore': self.data.get('name')}).json()['metadata']
         except Exception as e:
             logging.error('Failed to restore snapshot {} for container {}'.format(self.data.get('name'),
-                                                                                 self.data.get('container')), e)
+                                                                                 self.data.get('container')))
+            logging.exception(e)
             raise ValueError(e)
 
     def snapshotPublish(self):
@@ -105,7 +109,8 @@ class LXCSnapshot(LXDModule):
             return self.client.api.images[image.fingerprint].get().json()['metadata']
         except Exception as e:
             logging.error('Failed to publish snapshot {} for container {}'.format(self.data.get('name'),
-                                                                                  self.data.get('container')), e)
+                                                                                  self.data.get('container')))
+            logging.exception(e)
             raise ValueError(e)
 
     def snapshotCreateContainer(self):
@@ -122,7 +127,8 @@ class LXCSnapshot(LXDModule):
             newImage.delete(wait=True)
 
         except Exception as e:
-            logging.error('Failed to create container {} from snapshot {}'.format(self.data.get('newContainer'), self.data.get('name')), e)
+            logging.error('Failed to create container {} from snapshot {}'.format(self.data.get('newContainer'), self.data.get('name')))
+            logging.exception(e)
             raise ValueError(e)
 
     def _checkSnapshot(self, container):
