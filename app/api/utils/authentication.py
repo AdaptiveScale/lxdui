@@ -4,11 +4,17 @@ from datetime import timedelta
 from flask_jwt import JWT
 from app.api.utils import converters
 import app.__metadata__ as meta
+import logging
+
+logging = logging.getLogger(__name__)
 
 def authenticate(username, password):
+    logging.info("Authenticate user {}".format(username))
     if User().authenticate(username, password)[0] == True:
+        logging.info("User {} successfully authenticated".format(username))
         return converters.json2obj('{"id": 1, "username": "'+username+'", "password": "'+password+'"}')
     else:
+        logging.warning("Authentication failed for user {}".format(username))
         return False
 
 
