@@ -6,14 +6,17 @@ from netaddr import IPAddress
 import time
 import socket
 import struct
-
+import logging
 
 class LXCNetwork(LXDModule):
 
     def __init__(self, input):
+        logging.info('Connecting to LXD')
         self.client = Client()
+        logging.debug('Setting network input to {}'.format(input))
         self.input = input
 
+        logging.debug('Setting network parameters')
         self.MAP = {"ipv4.address": ["IPv4_ENABLED", "IPv4_ADDR", "IPv4_NETMASK", "IPv4_AUTO"],
                     "ipv6.address": ["IPv6_ENABLED", "IPv6_ADDR", "IPv6_NETMASK", "IPv6_AUTO"],
                     "ipv4.nat": "IPv4_NAT",
@@ -29,6 +32,7 @@ class LXCNetwork(LXDModule):
 
     def info(self):
         try:
+            logging.info('Reading network {} information'.format(self.input.get('name')))
             tmp_start_reading = False
             used_by_containers = []
             p = subprocess.Popen(["lxc", "network", "show", self.input.get('name')], stdout=subprocess.PIPE,
@@ -66,29 +70,37 @@ class LXCNetwork(LXDModule):
 
                 return {'error': False, "result": self._structure_data(rez), 'used_by': used_by_containers}
         except Exception as e:
+            logging.error('Failed to retrieve information for network {}'.format(self.input.get('name')), e)
             raise ValueError(e)
 
     def createNetwork(self, input, name):
         try:
+            logging.info('Creating network {}'.format(name))
             return self._executeLXCNetworkTerminal(self._formToLXCSetTask(input), name)
         except Exception as e:
+            logging.error('Failed to create network {}'.format(name), e)
             raise ValueError(e)
 
     def deleteNetwork(self):
         try:
+            logging.info('Deleting network {}'.format(self.input.get('name')))
             p = subprocess.Popen(['lxc', 'network', 'delete', self.input.get('name')], stdout=subprocess.PIPE)
             return {'completed': True}
         except Exception as e:
+            logging.error('Failed to delete network {}'.format(self.input.get('name')), e)
             raise ValueError(e)
 
     def updateNetwork(self, input, name):
         try:
+            logging.info('Updating network {}'.format(name))
             return self._executeLXCNetworkTerminal(self._formToLXCSetTask(input), name)
         except Exception as e:
+            logging.error('Failed to update network {}'.format(name), e)
             raise ValueError(e)
 
 
     def _executeLXCNetworkTerminal(self, lines_to_exec, name):
+        logging.info('Execute network tasks on terminal')
         p = subprocess.Popen(["lxc", "network", "create", name], stdout=subprocess.PIPE)
         time.sleep(1)
         for lxc_network_value in lines_to_exec['unset']:
@@ -109,6 +121,7 @@ class LXCNetwork(LXDModule):
 
 
     def _formToLXCSetTask(self, data):
+        logging.info('Prepare network tasks')
         TO_DOS = {"set": [], "unset": []}
 
         if data.get("IPv4_ENABLED") == False:
