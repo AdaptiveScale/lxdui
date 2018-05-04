@@ -44,7 +44,7 @@ def run():
 def stop():
     app.shutdown()
 
-def startApp(port, uiPages=None):
+def startApp(port, debug=False, uiPages=None):
     logging.debug('Checking ui availability')
     if uiPages is not None:
         app.register_blueprint(uiPages, url_prefix='/ui')
@@ -53,4 +53,4 @@ def startApp(port, uiPages=None):
         logging.info('UI Loaded')
     else:
         logging.warning('UI Missing... Starting without UI.')
-    app.run(debug=True, host='0.0.0.0', port=port)
+    app.run(debug=debug, host='0.0.0.0', port=port)
