@@ -56,4 +56,7 @@ def startApp(port, debug=False, uiPages=None):
         logging.warning('UI Missing... Starting without UI.')
 
     readInstanceDetails()
+    print("LXDUI started")
+    print("Running on http://0.0.0.0:{}".format(port))
+    print("Press CTRL+C to quit")
     app.run(debug=debug, host='0.0.0.0', port=port)
