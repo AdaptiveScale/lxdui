@@ -30,6 +30,7 @@ lxdui.ssl.cert = ${lxdui.conf.dir}/client.crt
 lxdui.ssl.key = ${lxdui.conf.dir}/client.key
 lxdui.log.dir =  {{app_root}}/logs
 lxdui.log.file = ${lxdui.log.dir}/lxdui.log
+lxdui.log.conf = ${lxdui.conf.dir}/log.json
 #lxdui.log.rotate = true
 #lxdui.log.max = 10M
 #lxdui.log.keep.generations = 5
