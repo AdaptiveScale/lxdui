@@ -18,11 +18,13 @@ def identity(payload):
 
 def initAuth(app):
     APP = meta.APP_NAME
-    tokenExpiration = int(Config().get(APP, '{}.token.expiration'.format(APP.lower())))
+    tokenExpiration = int(Config().get(APP, '{}.jwt.token.expiration'.format(APP.lower())))
+    secretKey = Config().get(APP, '{}.jwt.secret.key'.format(APP.lower()))
+    authUrlRule = Config().get(APP, '{}.jwt.auth.url.rule'.format(APP.lower()))
     if (tokenExpiration == None):
         tokenExpiration = 1200
 
-    app.config['SECRET_KEY'] = 'AC8d83&21Almnis710sds'
-    app.config['JWT_AUTH_URL_RULE'] = '/api/user/login'
+    app.config['SECRET_KEY'] = secretKey
+    app.config['JWT_AUTH_URL_RULE'] = authUrlRule
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=tokenExpiration)
     JWT(app, authenticate, identity)
