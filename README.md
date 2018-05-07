@@ -5,7 +5,7 @@ Learn more about Linux containers and LXD/LXC here: [linuxcontainers.org](https:
 LXDUI leverages LXD's Python client library, 
 [**pylxd**](https://github.com/lxc/pylxd), for interacting with the LXD REST API.  It allows for rapid provisioning and management of large number of containers from a web browser, and you can simultaneously create any number of containers, even from multiple images, in one step.
 
-## Version 2.0 (beta)
+## Version 2.0
 [Version 2.0](https://github.com/AdaptiveScale/lxdui/wiki/New-in-2.0) of LXDUI is a complete rewrite of the application that better exposes LXD's feature set with additional functionality. A new CLI is now available for managing LXDUI as well. Learn more about the CLI [here](https://github.com/AdaptiveScale/lxdui/wiki/LXDUI's-CLI). 
 
 [New in 2.0](https://github.com/AdaptiveScale/lxdui/wiki/New-in-2.0)
