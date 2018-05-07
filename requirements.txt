@@ -1,9 +1,10 @@
+Click==6.7
 Flask==0.12.2
-pylxd==2.2.6
+flask-login==0.4.1
+flask_jwt==0.3.2
 jsonschema==2.6.0
 requests==2.9.1
 netaddr==0.7.19
-flask-login==0.4.1
-Click==6.7
 pyopenssl==17.5.0
-flask_jwt==0.3.2
+psutil==5.4.5
+pylxd==2.2.6

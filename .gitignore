@@ -1,5 +1,4 @@
 .idea/*
-conf/lxdui.conf
 *.pyc
 venv
 lxdui.egg-info

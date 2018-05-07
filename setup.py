@@ -8,7 +8,7 @@ setup(
    description='{} v{}'.format(meta.APP_NAME, meta.VERSION),
    long_description='{} v{}'.format(meta.APP_NAME, meta.VERSION),
    classifiers=[
-       'Development Status :: 2.0 - Alpha',
+       'Development Status :: 2.0 - Stable',
        'Programming Language :: Python :: 3.5',
        'Intended Audience :: Developers',
        'Intended Audience :: System Administrators',
@@ -28,19 +28,20 @@ setup(
    include_package_data=True,
    zip_safe=False,
    install_requires=[
+       'Click==6.7',
        'Flask==0.12.2',
-       'pylxd==2.2.6',
+       'flask-login==0.4.1',
+       'flask_jwt==0.3.2',
        'jsonschema==2.6.0',
        'requests==2.9.1',
        'netaddr==0.7.19',
-       'flask-login==0.4.1',
-       'Click==6.7',
        'pyopenssl==17.5.0',
-       'flask_jwt==0.3.2'
+       'psutil==5.4.5',
+       'pylxd==2.2.6'
    ],
    entry_points={
        'console_scripts': [
-           'lui = app.run:lui'
+           'lxdui = app.run:lxdui'
        ]
    }
 )

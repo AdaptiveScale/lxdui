@@ -7,6 +7,7 @@ from app.api import core
 from app.ui.blueprint import uiPages
 import click
 import os
+import signal
 import time
 import subprocess
 import logging
@@ -17,22 +18,22 @@ APP = meta.APP_NAME
 '''
 Commands:
 
-lui init					                #configures lxdui upon first use - admin password, generate certs
-lui start					                #start the app and print the endpoint URL  <http://hostname:port> 
-lui stop					                #stop the app
-lui restart					                #restart the app
-lui status					                #show the pid and the http endpoint for the UI <http://hostname:port> 
-lui config show				                #print out running config to console
-lui config set -c <path_to_conf_file>       #use external conf file
-lui config set <key> <value>    		    #set the value for a configuration key
-lui cert add     				            #add existing certs from file path
-lui cert create				                #generate new SSL certs (overwrite old files)
-lui cert list				                #list SSL certs
-lui cert delete 				            #remove SSL certs
-lui user add -u <username> -p <password>    #create a new user that can access the UI
-lui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
-lui user delete -u <username>			    #remove a user from the auth file
-lui user list				                #list the users in the auth file
+lxdui init					                #configures lxdui upon first use - admin password, generate certs
+lxdui start					                #start the app and print the endpoint URL  <http://hostname:port> 
+lxdui stop					                #stop the app
+lxdui restart					                #restart the app
+lxdui status					                #show the pid and the http endpoint for the UI <http://hostname:port> 
+lxdui config show				                #print out running config to console
+lxdui config set -c <path_to_conf_file>       #use external conf file
+lxdui config set <key> <value>    		    #set the value for a configuration key
+lxdui cert add     				            #add existing certs from file path
+lxdui cert create				                #generate new SSL certs (overwrite old files)
+lxdui cert list				                #list SSL certs
+lxdui cert delete 				            #remove SSL certs
+lxdui user add -u <username> -p <password>    #create a new user that can access the UI
+lxdui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
+lxdui user delete -u <username>			    #remove a user from the auth file
+lxdui user list				                #list the users in the auth file
 '''
 
 
@@ -40,15 +41,14 @@ lui user list				                #list the users in the auth file
 
 
 @click.group()
-def lui():
+@click.version_option(version=meta.VERSION, message='{} v{} \n{}\n{}'.format(meta.APP_NAME, meta.VERSION, meta.AUTHOR, meta.AUTHOR_URL))
+# @click.version_option(message=meta.APP_NAME + ' version ' + meta.VERSION + '\n' + meta.AUTHOR + '\n' + meta.AUTHOR_URL )
+def lxdui():
     """LXDUI CLI"""
     pass
 
-
-''' lui root level group of commands '''
-
-
-@lui.command()
+''' lxdui root level group of commands '''
+@lxdui.command()
 @click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Password')
 def init(password):
     """Initialize and configure LXDUI"""
@@ -56,83 +56,72 @@ def init(password):
     Init(password)
 
 
-@lui.command()
-@click.option('-d/','--debug/--no-debug', default=False, help='Run the app in debug mode')
+@lxdui.command()
+# @click.otion('-b', '--daemon', default=False, help='Run in background as a daemon.')
+# @click.otion('-c', '--conf', default=False, help='Config file.')
+# @click.otion('-p', '--port', default=False, help='TCP Port number.')
+@click.option('-d', '--debug', default=False, help='Run the app in debug mode')
 def start(debug):
     """Start LXDUI"""
-    '''
-    TODO:  add -d option to start the server in debug mode
-    '''
+
+    click.echo('{} ver. {} -- (c){}'.format(meta.APP_NAME, meta.VERSION, meta.AUTHOR))
+    click.echo(meta.AUTHOR_URL)
+
+    # Private Functions
+    def _start(debug=False):
+        port = 5000
+        try:
+            port = int(Config().get('LXDUI', 'lxdui.port'))
+        except:
+            print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
+            exit()
+
+        core.start(port, debug, uiPages)
+
     if debug:
-        _doStart(debug=True)
+        _start(debug=True)
     else:
-        _doStart()
+        _start()
 
 
-@lui.command()
+@lxdui.command()
 def stop():
     """Stop LXDUI"""
-    _doStop()
+    click.echo("Stopping %s" % APP)
+    core.stop()
 
 
-@lui.command()
+@lxdui.command()
 def restart():
     """Restart LXDUI"""
+    port = int(Config().get('LXDUI', 'lxdui.port'))
+    click.echo('Restarting with defaults.')
+    core.stop()
+    click.echo('Port = {} \nDebug = False\nMode = Foreground\n'.format(port))
+    time.sleep(3)
+    core.start(port, False, uiPages)
 
-
-@lui.command()
+@lxdui.command()
 def status():
     """Check the status of LXDUI"""
-    click.echo("%s Status" % APP)
+    click.echo("{} Status:".format(APP))
 
+    s = core.status()
+    if s == 'STOPPED':
+        click.echo('STOPPED')
+    else:
+        click.echo("=============")
+        for k, v in s.items():
+            click.echo(' {} : {}'.format(k, v))
 
-#Private Functions
-def _doStart(debug=False):
-    port = 5000
-    try:
-        port = int(Config().get('LXDUI', 'lxdui.port'))
-    except:
-        print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
-        exit()
-
-    core.startApp(port, debug, uiPages)
-
-def _doStop(args=None):
-    click.echo("Stopping %s" % APP)
-    subprocess.Popen("fuser -k {}/tcp".format(Config().get('LXDUI', 'lxdui.port')), shell=True).wait()
-
-
-@lui.command()
-def cwd():
-    """Check the status of LXDUI"""
-    click.echo(os.getcwd())
-    click.echo(os.path.dirname(__file__))
-    click.echo(os.path.dirname(os.path.abspath(__file__)))
-
-    # click.echo(os.path.abspath(__file__))
-    # click.echo(sys.modules[__name__].__file__)
-    # click.echo(os.path.abspath(__file__))
-    # click.echo(os.path.realpath(__file__))
-    # import inspect
-    # click.echo(inspect.getfile(Config()))
-    # click.echo(sys.path)
-    from configparser import ConfigParser, ExtendedInterpolation
-    # c = ConfigParser()
-    c = ConfigParser(interpolation=ExtendedInterpolation())
-    c.read('/Users/vetoni/PycharmProjects/lxdui/conf/lxdui.conf')
-    cd = c.get(APP, 'lxdui.conf.dir')
-    a = c.get(APP, 'lxdui.auth.conf')
-    click.echo(cd)
-    click.echo(a)
-    click.echo('{{app_path}}' in a)
 
 ''' 
     User level group of commands 
 
-    lui user list				                #list the users in the auth file
-    lui user add -u <username> -p <password>    #create a new user that can access the UI
-    lui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
-    lui user delete -u <username>			    #remove a user from the auth file
+    lxdui user list				                #list the users in the auth file
+    lxdui user add -u <username> -p <password>    #create a new user that can access the UI
+    lxdui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
+    lxdui user delete -u <username>			    #remove a user from the auth file
 
 '''
 
@@ -179,8 +168,8 @@ def delete(username):
 '''
     Config commands
 
-    lui config show				                #print out running config to console
-    lui config set <key> <value>		    #set the value for a configuration key
+    lxdui config show				                #print out running config to console
+    lxdui config set <key> <value>		    #set the value for a configuration key
 '''
 
 
@@ -188,6 +177,24 @@ def delete(username):
 def config():
     """List and modify configuration parameters"""
     pass
+
+@config.command()
+def env():
+    """Show environment variables"""
+    click.echo('HOME = '.format(os.getenv('HOME')))
+    click.echo('LXDUI_LOG = '.format(os.getenv('LXDUI_LOG')))
+    click.echo('LXDUI_CONF = '.format(os.getenv('LXDUI_CONF')))
+    click.echo('SNAP = '.format(os.getenv('SNAP')))
+    click.echo('SNAP_NAME = '.format(os.getenv('SNAP_NAME')))
+    click.echo('SNAP_VERSION = '.format(os.getenv('SNAP_VERSION')))
+    click.echo('SNAP_REVISION = '.format(os.getenv('SNAP_REVISION')))
+    click.echo('SNAP_ARCH = '.format(os.getenv('SNAP_ARCH')))
+    click.echo('SNAP_USER_DATA = '.format(os.getenv('SNAP_USER_DATA')))
+    click.echo('SNAP_USER_COMMON = '.format(os.getenv('SNAP_USER_COMMON')))
+    click.echo('SNAP_DATA = '.format(os.getenv('SNAP_DATA')))
+    click.echo('SNAP_COMMON = '.format(os.getenv('SNAP_COMMON')))
+    click.echo('SNAP_LIBRARY_PATH = '.format(os.getenv('SNAP_LIBRARY_PATH')))
+
 
 
 @config.command()
@@ -207,9 +214,9 @@ def set(parameter, value):
 '''
     Commands for certificate management
 
-    lui cert create				                #generate new SSL certs (overwrite old files)
-    lui cert list				                #list SSL certs
-    lui cert delete 				            #remove SSL certs
+    lxdui cert create				                #generate new SSL certs (overwrite old files)
+    lxdui cert list				                #list SSL certs
+    lxdui cert delete 				            #remove SSL certs
 '''
 
 
@@ -273,18 +280,15 @@ def delete():
 
 
 # Add commands
-lui.add_command(init)
-lui.add_command(start)
-lui.add_command(stop)
-lui.add_command(restart)
-lui.add_command(status)
-lui.add_command(user)
-lui.add_command(config)
-lui.add_command(cert)
-
-########################
-lui.add_command(init)
+lxdui.add_command(init)
+lxdui.add_command(start)
+lxdui.add_command(stop)
+lxdui.add_command(restart)
+lxdui.add_command(status)
+lxdui.add_command(user)
+lxdui.add_command(config)
+lxdui.add_command(cert)
 
 
 if __name__ == '__main__':
-    lui()
+    lxdui()
