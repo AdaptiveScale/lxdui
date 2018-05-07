@@ -1,6 +1,6 @@
 APP_NAME = 'LXDUI'
-APP_CLI_CMD = 'lui'
-VERSION = '2.0-RC1'
+APP_CLI_CMD = 'lxdui'
+VERSION = '2.0'
 GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
 LXD_URL = 'http://localhost:8443'
 LICENSE = 'Apache 2.0'
@@ -21,7 +21,9 @@ DEFAULT_CONFIG_FORMAT = 'ini'
 __default_config__ = """
 [LXDUI]
 lxdui.port = 15151
-lxdui.token.expiration = 1200
+lxdui.jwt.token.expiration = 1200
+lxdui.jwt.secret.key = AC8d83&21Almnis710sds
+lxdui.jwt.auth.url.rule = /api/user/login
 lxdui.admin.user = admin
 lxdui.conf.dir = {{app_root}}/conf
 lxdui.conf.file = ${lxdui.conf.dir}/lxdui.conf
@@ -30,13 +32,14 @@ lxdui.ssl.cert = ${lxdui.conf.dir}/client.crt
 lxdui.ssl.key = ${lxdui.conf.dir}/client.key
 lxdui.log.dir =  {{app_root}}/logs
 lxdui.log.file = ${lxdui.log.dir}/lxdui.log
+lxdui.log.conf = ${lxdui.conf.dir}/log.conf
 #lxdui.log.rotate = true
 #lxdui.log.max = 10M
 #lxdui.log.keep.generations = 5
 lxdui.profiles = ${lxdui.conf.dir}/profiles
 lxdui.zfs.pool.name = lxdpool
 lxdui.app.alias = LXDUI
-lxdui.cli = lui
+lxdui.cli = cli
         
 [LXDUI_CERT]
 lxdui.cert.country = US

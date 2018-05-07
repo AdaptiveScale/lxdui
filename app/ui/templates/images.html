@@ -24,7 +24,7 @@
         <div class="col-lg-12 mg-bottom15">
             <div class="form-inline">
                  <div class="form-group">
-                     <button id="buttonLaunchContainers" class="btn btn-success" disabled><span class="glyphicon glyphicon-th"></span> Launch Container(s)
+                     <button id="buttonLaunchContainers" class="btn btn-success" disabled><span class="glyphicon glyphicon-send"></span> Launch Container(s)
             </button>
             <button id="buttonDelete" class="btn btn-danger" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete </button>
 
@@ -32,9 +32,6 @@
         </div>
         </div>
     </div>
-    <br>
-    <br>
-    <br>
     <div class="col-lg-12" id="loader" style="display:none;">
         <div class="col-lg-offset-4 col-lg-4">
             <img src="static/images/loader.gif" class="text-center" width="150px">
@@ -100,7 +97,7 @@
                 <tr id="{{image.image}}">
                     <td></td>
                     <td><a style="cursor:pointer"
-                           onClick="App.images.showRemoteDetails('{{image.image}}');">{{ image.name}}</a></td>
+                           onClick="App.images.showRemoteDetails('{{image.image}}');" data-keyboard="true">{{ image.name}}</a></td>
                     <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>
                     <td>{{ image.image }}</td>
                     <td>{{ image.distribution }}</td>
@@ -115,9 +112,14 @@
         <div class="col-lg-12 main-div">
             <div>
                 <div class="form-group">
-                    <button class="btn btn-defult" id="buttonBack">
-                        <span class="glyphicon glyphicon-chevron-left"> </span> Back
-                    </button>
+                    <div class="col-lg-2">
+                        <button class="btn btn-defult" id="buttonBack">
+                            <span class="glyphicon glyphicon-chevron-left"> </span> Back
+                        </button>
+                    </div>
+                     <div class="col-lg-7 text-center">
+                         <h4><b>Create Container from Image</b></h4>
+                     </div>
                 </div>
             </div>
         </div>
@@ -224,19 +226,19 @@
 </div>
 
 <!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+<div id="myModal" class="modal fade" role="dialog" tabindex="-1">
+  <div class="modal-dialog images-modal">
 
     <!-- Modal content-->
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Remote Image: <b class="imageName"></b></h4>
+        <h4 class="modal-title">Remote Image: <label class="imageName"></label></h4>
       </div>
-      <div class="modal-body" style="overflow:scroll;" id="modalBody">
+      <div class="modal-body" id="modalBody">
 
       </div>
-      <div class="modal-footer">
+      <div class="modal-footer" style="border: none;">
           <button type="button" class="btn btn-success" id="modalDownloadButton">Download</button>
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
       </div>

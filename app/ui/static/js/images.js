@@ -144,6 +144,7 @@ App.images = App.images || {
     activateScreen: function(screen){
         this.tableLocal.rows({selected:true}).deselect();
         this.tableRemote.rows({selected:true}).deselect();
+        $('.mg-bottom15').show();
         if(screen==='local'){
             $('#tableImagesLocalWrapper').show();
             $('#tableImagesRemoteWrapper').hide();
@@ -254,7 +255,7 @@ App.images = App.images || {
         return tempSection;
     },
     onCountChange: function(countNode, event){
-        $(countNode).text($(event.target).val() +' Node(s)');
+        $(countNode).text($(event.target).val() +' Nodes');
     },
     getImageByFingerPrint: function(tempList, fingerprint){
         return tempList.filter(function(image){
@@ -280,6 +281,8 @@ App.images = App.images || {
         $('#tableImagesRemoteWrapper')[view=='remoteList'?'show':'hide']();
         if(view!=='form'){
             $('#multiContainerSection').empty();
+        }else{
+            $('.mg-bottom15').hide();
         }
         if(view=='remoteList'){
             return this.activateScreen('remote');
@@ -375,26 +378,30 @@ App.images = App.images || {
       var modalBody = $('#modalBody');
       modalBody.empty();
 
+      $('.imageName').text(tempData.properties.name);
       // Architecture
+      modalBody.append(this.generateItem('Os', tempData.properties.os));
+      modalBody.append(this.generateItem('Distribution', tempData.properties.distribution));
+      modalBody.append(this.generateItem('Release', tempData.properties.release));
       modalBody.append(this.generateItem('Architecture', (tempData.architecture + '(' + tempData.properties.architecture + ')')));
       modalBody.append(this.generateItem('Size', App.formatBytes(tempData.size)));
-      modalBody.append('<div class="form-group"><hr style="border:1px solid lightgrey;"/></div>');
+
+      modalBody.append('<div class="form-group col-lg-12"><hr style="border:1px solid lightgrey;"/></div>');
+
       modalBody.append(this.generateItem('Fingerprint', tempData.fingerprint));
       modalBody.append(this.generateItem('Filename', tempData.filename));
       modalBody.append(this.generateItem('Created at', tempData.created_at));
       modalBody.append(this.generateItem('Uploaded at', tempData.uploaded_at));
       modalBody.append(this.generateItem('Expires at', tempData.expires_at));
-
       modalBody.append(this.generateItem('Aliases', tempData.properties.build));
       modalBody.append(this.generateItem('Build', tempData.properties.build));
       modalBody.append(this.generateItem('Description', tempData.properties.description));
-      modalBody.append(this.generateItem('Distribution', tempData.properties.distribution));
       modalBody.append(this.generateItem('Build', tempData.properties.build));
-      modalBody.append(this.generateItem('Os', tempData.properties.os));
-      modalBody.append(this.generateItem('Release', tempData.properties.release));
       modalBody.append(this.generateItem('Serial', tempData.properties.serial));
       modalBody.append(this.generateItem('Public', tempData.public));
-      modalBody.append('<div class="form-group"><hr style="border:1px solid lightgrey;"/></div>');
+
+      modalBody.append('<div class="form-group col-lg-12"><hr style="border:1px solid lightgrey;"/></div>');
+
       tempData.aliases.forEach(function(alias, index){
             modalBody.append('<div class="form-group"><b>Alias '+(index+1)+'</b></div>')
            modalBody.append(this.generateItem('Description',alias.description));

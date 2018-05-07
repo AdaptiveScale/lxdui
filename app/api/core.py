@@ -1,9 +1,20 @@
+import time
+
 from flask import Flask, redirect
-
 from app.api.utils.authentication import initAuth
+from app.api.utils.readInstanceDetails import readInstanceDetails
+from app.lib.log import Log
+from app import __metadata__ as meta
+import os
+import signal
+import tempfile
+import psutil
+import logging
 
+Log(__name__)
 app = Flask(__name__)
 HAS_UI = False
+PID = os.path.join(tempfile.gettempdir(), '{}.pid'.format(meta.APP_NAME).lower())
 
 # Authentication section
 initAuth(app)
@@ -35,16 +46,82 @@ def index():
 
 @app.cli.command
 def run():
-    startApp()
+    start()
+
+def getPID():
+    try:
+        with open(PID, 'r') as f:
+            pid = int(f.read())
+        return pid
+    except FileNotFoundError as e:
+        logging.info(e)
+
+def status():
+
+    # def _find_proc(name):
+    #     "Return a list of processes matching 'app_name'."
+    #     ls = []
+    #     for p in psutil.process_iter(attrs=["name", "exe", "cmdline"]):
+    #         if name == p.info['name'] or \
+    #                 p.info['exe'] and os.path.basename(p.info['exe']) == name or \
+    #                 p.info['cmdline'] and p.info['cmdline'][0] == name:
+    #             ls.append(p)
+    #     return ls
+
+
+    try:
+        pid = getPID()
+        if pid:
+            p = psutil.Process(pid)
+            stat = {'running': p.is_running(),
+                    'pid': p.pid,
+                    'started': time.ctime(p.create_time()),
+                    'cmd': p.cmdline(),
+                    'cwd': p.cwd(),
+                    'ram': p.memory_info(),
+                    'connections': p.connections()
+                   }
+            return stat
+        else:
+            return 'STOPPED'
+    except psutil.NoSuchProcess:
+        print('No running process found.')
+
 
 def stop():
-    app.shutdown()
+    logging.debug('Stopping the app...')
+    try:
+        pid = getPID()
+        if pid:
+            os.kill(pid, signal.SIGTERM)
+            os.remove(PID)
+            logging.info('Deleting PID file.')
+            print('Process terminated.')
+        else:
+            print('{} is already stopped.'.format(meta.APP_NAME))
+            logging.info('no matching process found.')
+    except ProcessLookupError as e:
+        logging.info(e)
 
-def startApp(port, uiPages=None):
+
+def start(port, debug=False, uiPages=None):
+    logging.debug('Checking UI availability.')
+
     if uiPages is not None:
         app.register_blueprint(uiPages, url_prefix='/ui')
         global HAS_UI
         HAS_UI = True
+        logging.info('UI Loaded.')
     else:
-        print('ui not included')
-    app.run(debug=True, host='0.0.0.0', port=port)
+        logging.warning('UI Missing... Starting without UI.')
+
+    readInstanceDetails()
+
+    pid = os.getpid()
+    logging.info('pid={}, pid_file={}'.format(pid, PID))
+    with open(PID, 'w') as f:
+        f.write(str(pid))
+
+    print("LXDUI started. Running on http://0.0.0.0:{}".format(port))
+    print("PID={}, Press CTRL+C to quit".format(pid))
+    app.run(debug=debug, host='0.0.0.0', port=port)
