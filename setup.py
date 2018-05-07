@@ -24,7 +24,7 @@ setup(
    author_email=meta.AUTHOR_EMAIL,
    url = meta.AUTHOR_URL,
    license=meta.LICENSE,
-   packages=find_packages() + ['conf', 'logs'],
+   packages=find_packages(exclude=['conf/lxdui.conf',]) + ['conf', 'logs'],
    include_package_data=True,
    zip_safe=False,
    install_requires=[

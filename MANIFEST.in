@@ -1,4 +1,5 @@
-recursive-include conf *.conf
+recursive-include conf auth.conf
+recursive-include conf log.conf
 recursive-include logs *
 recursive-include app/ui/static *
 recursive-include app/ui/templates *
