@@ -8,7 +8,7 @@ setup(
    description='{} v{}'.format(meta.APP_NAME, meta.VERSION),
    long_description='{} v{}'.format(meta.APP_NAME, meta.VERSION),
    classifiers=[
-       'Development Status :: 2.0 - Alpha',
+       'Development Status :: 2.0 - Stable',
        'Programming Language :: Python :: 3.5',
        'Intended Audience :: Developers',
        'Intended Audience :: System Administrators',
@@ -40,7 +40,7 @@ setup(
    ],
    entry_points={
        'console_scripts': [
-           'lui = app.run:lui'
+           'lxdui = app.run:lxdui'
        ]
    }
 )

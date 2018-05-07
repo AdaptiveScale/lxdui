@@ -1,5 +1,5 @@
 APP_NAME = 'LXDUI'
-APP_CLI_CMD = 'lui'
+APP_CLI_CMD = 'lxdui'
 VERSION = '2.0-RC1'
 GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
 LXD_URL = 'http://localhost:8443'
@@ -39,7 +39,7 @@ lxdui.log.conf = ${lxdui.conf.dir}/log.conf
 lxdui.profiles = ${lxdui.conf.dir}/profiles
 lxdui.zfs.pool.name = lxdpool
 lxdui.app.alias = LXDUI
-lxdui.cli = lui
+lxdui.cli = cli
         
 [LXDUI_CERT]
 lxdui.cert.country = US

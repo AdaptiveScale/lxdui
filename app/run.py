@@ -1,7 +1,7 @@
-from app.cli.cli import lui
+from app.cli.cli import lxdui
 
 def main():
-    lui()
+    lxdui()
 
 if __name__ == '__main__':
     main()

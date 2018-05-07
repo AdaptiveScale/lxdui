@@ -26,10 +26,10 @@ class MetaConf(object):
         conf = ConfigParser()
         conf.read_string(meta.__default_config__)
         self.config = conf
-        self.resolveMacos()
+        self.resolveMacros()
         self.log_file, self.config_file = self.getConfPaths()
 
-    def resolveMacos(self):
+    def resolveMacros(self):
         for section in self.config.sections():
             for k in self.config.options(section):
                 v = self.config.get(section, k)
@@ -38,6 +38,7 @@ class MetaConf(object):
                     self.config.set(section, k, v)
 
     def getConfRoot(self):
+
         module_dir = os.path.dirname(__file__)
         app_dir = os.path.dirname(module_dir)
         return os.path.dirname(app_dir)
