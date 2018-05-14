@@ -277,3 +277,42 @@
 .acc {
 color: #000 !important;
 }
+
+
+.inline {
+    display: inline;
+}
+
+.bg-bottom {
+    border-bottom:1px solid #eee;
+    padding-bottom:10px;
+}
+
+.space {
+    margin: 30px 0px;
+}
+
+.space .label {
+    color: black;
+}
+
+.big-font {
+     font-size:75%;
+}
+
+.width300 {
+    width:300px !important;
+}
+
+.mgtop-10 {
+     margin-top:10px;
+}
+
+.cont-details {
+     position:relative;
+     top:-3px;
+}
+
+.none {
+    display:none;
+}
