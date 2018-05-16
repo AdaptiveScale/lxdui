@@ -50,7 +50,11 @@ class LXCProfile(LXDModule):
     def updateProfile(self):
         try:
             logging.info('Updating profile {}'.format(self.input.get('name')))
-            self.client.api.profiles[self.input.get('name')].put(json=self.input).json()['metadata']
+            profile = self.client.profiles.get(self.input.get('name'))
+            #self.client.api.profiles[self.input.get('name')].put(json=self.input).json()['metadata']
+            profile.config.update(self.input.get('config'))
+            profile.devices.update(self.input.get('devices'))
+            profile.update()
             if self.input.get('new_name'):
                 return self.rename()
             return self.info()
