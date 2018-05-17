@@ -78,6 +78,16 @@ class LXDModule(Base):
         except Exception as e:
             raise ValueError(e)
 
+    def listStoragePools(self):
+        try:
+            results = []
+            for profile in self.client.api.storage_pools.get().json()['metadata']:
+                results.append(self.client.api.storage_pools[profile.split('/')[-1]].get().json()['metadata'])
+
+            return results
+        except Exception as e:
+            raise ValueError(e)
+
     def createProfile(self):
         pass
 
