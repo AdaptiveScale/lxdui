@@ -279,6 +279,7 @@ color: #000 !important;
 }
 
 
+/*Container details start */
 .inline {
     display: inline;
 }
@@ -314,5 +315,37 @@ color: #000 !important;
 }
 
 .none {
-    display:none;
+    display:none !important;
 }
+
+/* Container details end */
+
+
+
+/*Containers start */
+
+
+.mgright-5 {
+    margin-right:5px;
+}
+
+.td-width {
+    min-width: 65px;
+    max-width: 55px;
+}
+
+.icon-style {
+    color:green;
+    font-size:10px;
+}
+
+.td-width-action {
+    width:157px !important;
+}
+
+
+
+
+
+
+/* Containers end */
