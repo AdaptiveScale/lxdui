@@ -280,6 +280,7 @@ color: #000 !important;
 
 
 /*Container details start */
+
 .inline {
     display: inline;
 }
@@ -294,7 +295,7 @@ color: #000 !important;
 }
 
 .space .label {
-    color: black;
+    color: #fff;
 }
 
 .big-font {
@@ -383,3 +384,21 @@ color: #000 !important;
 }
 
 /*Profiles end*/
+
+
+/*Network start*/
+
+.buttons-actions-network {
+     padding-left:0px !important;
+     padding-right:0px !important;
+}
+
+.left-align {
+     text-align:left;
+}
+
+.ipv4-config-bg {
+     background:#F2F1F0;
+}
+
+/*Network end*/
