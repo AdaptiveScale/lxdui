@@ -30,6 +30,7 @@
                 <th>Description</th>
                 <th>Profile</th>
                 <th>Used by</th>
+                <th>Action</th>
 
                 </thead>
                 <tbody>
@@ -59,6 +60,11 @@
                      {% for used in profile.used_by %}
                         <li>{{used.split('/')[-1]}}</li>
                      {% endfor %}
+                    </td>
+                    <td>
+                        <button class="btn btn-default" id="{{profile.name}}" name="updateProfile" onClick="$.proxy(App.profiles.showUpdateProfile('{{profile.name}}'));">
+                            <span class="glyphicon"> </span> Update Profile
+                        </button>
                     </td>
 
                 </tr>
@@ -125,6 +131,7 @@
                 <div class="form-group">
                     <div class="form-inline col-md-12" style="margin-top:10px;">
                         <button id="buttonCreateProfile" class="btn btn-primary">Create Profile <span class="glyphicon glyphicon-refresh spinning hidden"></span></button>
+                        <button id="buttonUpdateProfile" class="btn btn-primary">Update Profile <span class="glyphicon glyphicon-refresh spinning hidden"></span></button>
                     </div>
                 </div>
             </form>

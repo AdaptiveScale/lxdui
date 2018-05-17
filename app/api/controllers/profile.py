@@ -40,7 +40,7 @@ def create_profile():
 def get_profile(name):
     try:
         profile = LXCProfile({'name': name})
-        return response.reply(profile.info())
+        return response.reply(profile.info(name))
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
 
