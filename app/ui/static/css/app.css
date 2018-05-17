@@ -343,9 +343,37 @@ color: #000 !important;
     width:157px !important;
 }
 
-
-
-
-
-
 /* Containers end */
+
+/*Profiles start */
+
+.width100 {
+    width: 100% !important;
+}
+
+.profile-name {
+    margin-left: -28px;
+}
+
+.tab-background {
+    background:#F2F1F0;
+}
+
+.tab-content > .active {
+     padding-bottom:20px;
+     background:#F2F1F0;
+}
+
+#devicesEditor, #configEditor {
+     height:200px;
+     position:relative;
+}
+
+#devices {
+    padding-bottom:20px;
+    background:#F2F1F0;
+}
+
+
+
+/*Profiles end*/
