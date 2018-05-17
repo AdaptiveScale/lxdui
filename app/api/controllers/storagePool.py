@@ -4,7 +4,7 @@ from flask_jwt import jwt_required
 
 from app.api.models.LXDModule import LXDModule
 from app.api.models.LXCStoragePool import LXCStoragePool
-from app.api.schemas.profile_schema import doValidate, doValidateRename
+from app.api.schemas.storagePoolSchema import doValidate
 from app.api.utils import response
 
 storage_pool_api = Blueprint('storage_pool_api', __name__)
@@ -22,15 +22,15 @@ def storagePools():
 
 @storage_pool_api.route('/', methods=['POST'])
 @jwt_required()
-def create_profile():
+def create_storage_pool():
     input = request.get_json(silent=True)
     validation = doValidate(input)
     if validation:
         return response.replyFailed(message=validation.message)
 
     try:
-        profile = LXCStoragePool(input)
-        return jsonify(profile.createProfile())
+        storagePool = LXCStoragePool(input)
+        return jsonify(storagePool.createStoragePool())
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
 
@@ -49,8 +49,8 @@ def get_storage_pool(name):
 @jwt_required()
 def delete_storage_pool(name):
     try:
-        profile = LXCStoragePool({'name': name})
-        profile.deleteProfile()
+        storagePool = LXCStoragePool({'name': name})
+        storagePool.deleteStoragePool()
         return response.reply()
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())
@@ -65,24 +65,7 @@ def update_storage_pool(name):
     if validation:
         return response.replyFailed(message=validation.message)
     try:
-        profile = LXCStoragePool(data)
-        return response.reply(profile.updateProfile())
-    except ValueError as ex:
-        return response.replyFailed(message=ex.__str__())
-
-
-@storage_pool_api.route('/rename/<string:name>', methods=['PUT'])
-@jwt_required()
-def rename(name):
-    data = request.get_json()
-    validation = doValidateRename(data)
-
-    if validation:
-        return response.replyFailed(message=validation.message)
-
-    try:
-        data['name'] = name
-        profile = LXCStoragePool(data)
-        return response.reply(profile.rename())
+        storagePool = LXCStoragePool(data)
+        return response.reply(storagePool.updateProfile())
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())

@@ -29,8 +29,7 @@ class LXCStoragePool(LXDModule):
     def createStoragePool(self):
         try:
             logging.info('Creating storage pool {}'.format(self.input.get('name')))
-            self.client.storage_pools.create(self.input.get('name'), config=self.input.get('config'),
-                                        devices=self.input.get('devices'))
+            self.client.storage_pools.create(self.input)
 
             return self.client.api.storage_pools[self.input.get('name')].get().json()['metadata']
         except Exception as e:
@@ -41,7 +40,7 @@ class LXCStoragePool(LXDModule):
     def deleteStoragePool(self):
         try:
             logging.info('Deleting storage pool {}'.format(self.input.get('name')))
-            return self.client.api.storage_pools[self.input.get('name')].delete(json=self.input).json()
+            return self.client.api.storage_pools[self.input.get('name')].delete().json()
         except Exception as e:
             logging.error('Failed to delete storage pool {}'.format(self.input.get('name')))
             logging.exception(e)
