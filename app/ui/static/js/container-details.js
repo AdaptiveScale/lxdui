@@ -26,6 +26,8 @@ App.containerDetails = App.containerDetails || {
         $('#buttonStartDetail').on('click', $.proxy(this.startContainer, this));
         $('#buttonStopDetail').on('click', $.proxy(this.stopContainer, this));
         $('#buttonRestartDetail').on('click', $.proxy(this.restartContainer, this));
+        $('#buttonFreezeDetail').on('click', $.proxy(this.freezeContainer, this));
+        $('#buttonUnfreezeDetail').on('click', $.proxy(this.unfreezeContainer, this));
         $('#buttonDeleteDetail').on('click', $.proxy(this.deleteContainerDetail, this));
         $('#buttonBackDetail').on('click', $.proxy(this.switchView, this, 'list'));
         App.setActiveLink('');
@@ -90,8 +92,21 @@ App.containerDetails = App.containerDetails || {
             success: $.proxy(this.onStartSuccess, this, this.name)
         });
     },
+    freezeContainer: function() {
+         $.ajax({
+            url: App.baseAPI+'container/freeze/' + this.name,
+            type: 'PUT',
+            success: $.proxy(this.onStartSuccess, this, this.name)
+        });
+    },
+    unfreezeContainer: function() {
+         $.ajax({
+            url: App.baseAPI+'container/unfreeze/' + this.name,
+            type: 'PUT',
+            success: $.proxy(this.onStartSuccess, this, this.name)
+        });
+    },
     onRestartSuccess: function(name){
-        console.log('onRestartSuccess', name);
         location.reaload();
     },
     deleteContainerDetail: function() {
