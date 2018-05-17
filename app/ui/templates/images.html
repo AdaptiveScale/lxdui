@@ -55,13 +55,13 @@
                     <td></td>
                     {% if image.properties.get('description') == None %}
                     <td>
-                        <a style="cursor:pointer"
+                        <a class="pointer"
                            onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
                     </td>
                     <td>{{image.aliases[0].description}}</td>
                      {% else %}
                     <td>
-                        <a style="cursor:pointer"
+                        <a class="pointer"
                            onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
                     </td>
                     <td>{{ image.properties.description }}</td>
@@ -83,9 +83,9 @@
     </div>
     <div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">
         <div class="">
-            <table id="tableImagesRemote" class="table table-bordered table-responsive table-fixed" style="width:100%">
+            <table id="tableImagesRemote" class="table table-bordered table-responsive table-fixed width100">
                 <thead>
-                    <th><input type="checkbox" id="selectAllRemote" style="width:100%;"/></th>
+                    <th><input type="checkbox" id="selectAllRemote" class="width100"/></th>
                     <th>OS</th>
                     <th>Description</th>
                     <th>Alias</th>
@@ -96,7 +96,7 @@
                 {% for image in remoteImages %}
                 <tr id="{{image.image}}">
                     <td></td>
-                    <td><a style="cursor:pointer"
+                    <td><a class="pointer"
                            onClick="App.images.showRemoteDetails('{{image.image}}');" data-keyboard="true">{{ image.name}}</a></td>
                     <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>
                     <td>{{ image.image }}</td>
@@ -162,10 +162,10 @@
                     <input type="number" class="cntNrs form-control" min="1" value="1" name="count">
                 </div>
                 <div class="col-sm-2">
-                     <input type="checkbox" class="form-check-input containerStateful" style="width:100%;" name="stateful" checked value="true">
+                     <input type="checkbox" class="form-check-input containerStateful" width100 name="stateful" checked value="true">
                 </div>
                 <div class="col-sm-2">
-                    <input type="checkbox" class="form-check-input" name="autostart" style="width:100%;" checked value="true">
+                    <input type="checkbox" class="form-check-input width100" name="autostart" checked value="true">
                 </div>
             </div>
         </div>
@@ -220,7 +220,7 @@
 
 <div class="hidden">
     <div class="form-group itemTemplate">
-        <h5 style="display:inline" class="itemKey">Key :</h5>
+        <h5 class="itemKey show-inline">Key :</h5>
         <b class="itemValue">value</b>
     </div>
 </div>

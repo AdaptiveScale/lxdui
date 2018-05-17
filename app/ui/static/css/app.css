@@ -374,6 +374,12 @@ color: #000 !important;
     background:#F2F1F0;
 }
 
+.pointer {
+    cursor:pointer;
+}
 
+.show-inline {
+     display:inline;
+}
 
 /*Profiles end*/
