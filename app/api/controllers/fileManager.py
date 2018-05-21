@@ -39,9 +39,11 @@ def upload_file(name):
     # if validation:
     #     return response.replyFailed(message=validation.message)
 
+    input['name'] = name
+
     try:
         fileManager = LXCFileManager(input)
-        return jsonify(fileManager.push())
+        return response.reply(fileManager.push())
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
 
