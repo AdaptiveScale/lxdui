@@ -317,3 +317,25 @@ class LXCContainer(LXDModule):
             raise ValueError(e)
 
 
+    def freeze(self, waitIt=True):
+        try:
+            logging.info('Freezing container {}'.format(self.data.get('name')))
+            container = self.client.containers.get(self.data.get('name'))
+            container.freeze(wait=waitIt)
+        except Exception as e:
+            logging.error('Failed to freeze container {}'.format(self.data.get('name')))
+            logging.exception(e)
+            raise ValueError(e)
+
+
+    def unfreeze(self, waitIt=True):
+        try:
+            logging.info('Unfreezing container {}'.format(self.data.get('name')))
+            container = self.client.containers.get(self.data.get('name'))
+            container.unfreeze(wait=waitIt)
+        except Exception as e:
+            logging.error('Failed to unfreeze container {}'.format(self.data.get('name')))
+            logging.exception(e)
+            raise ValueError(e)
+
+

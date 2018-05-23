@@ -33,6 +33,8 @@ App.containers = App.containers || {
         $('#buttonStart').on('click', $.proxy(this.startContainer, this));
         $('#buttonStop').on('click', $.proxy(this.stopContainer, this));
         $('#buttonRestart').on('click', $.proxy(this.restartContainer, this));
+        $('#buttonFreeze').on('click', $.proxy(this.freezeContainer, this));
+        $('#buttonUnfreeze').on('click', $.proxy(this.unfreezeContainer, this));
         $('#buttonDelete').on('click', $.proxy(this.deleteContainer, this));
         $('#buttonNewInstance').on('click', $.proxy(this.switchView, this, 'form'));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'list'));
@@ -110,6 +112,8 @@ App.containers = App.containers || {
         $('#buttonStop')[action]('disabled', 'disabled');
         $('#buttonRestart')[action]('disabled', 'disabled');
         $('#buttonDelete')[action]('disabled', 'disabled');
+        $('#buttonFreeze')[action]('disabled', 'disabled');
+        $('#buttonUnfreeze')[action]('disabled', 'disabled');
     },
     startContainer: function(){
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -143,6 +147,24 @@ App.containers = App.containers || {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
             $.ajax({
                 url: App.baseAPI+'container/restart/' + row['name'],
+                type: 'PUT',
+                success: $.proxy(this.onRestartSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+    freezeContainer: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'container/freeze/' + row['name'],
+                type: 'PUT',
+                success: $.proxy(this.onRestartSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+    unfreezeContainer: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'container/unfreeze/' + row['name'],
                 type: 'PUT',
                 success: $.proxy(this.onRestartSuccess, this, row['name'])
             });
