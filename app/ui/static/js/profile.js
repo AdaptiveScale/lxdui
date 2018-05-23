@@ -4,6 +4,7 @@ App.profiles = App.profiles || {
     errorMessage:'',
     loading:false,
     initiated:false,
+    activeProfile: {},
     tableSettings: {
         rowId:'name',
         searching:true,
@@ -36,6 +37,7 @@ App.profiles = App.profiles || {
         $('#buttonNewProfile').on('click', $.proxy(this.showNewProfile, this));
         $('#backProfile').on('click', $.proxy(this.backToProfiles, this));
         $('#buttonCreateProfile').on('click', $.proxy(this.createProfile, this));
+        $('#buttonUpdateProfile').on('click', $.proxy(this.updateProfile, this));
         $('#buttonDeleteProfile').on('click', $.proxy(this.deleteProfile, this));
         $('#selectAllProfiles').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
         this.dataTable.on('select', $.proxy(this.onItemSelectChange, this));
@@ -52,18 +54,35 @@ App.profiles = App.profiles || {
     setLoading: function(state){
         this.loading=true;
     },
+    getProfile: function(name){
+        return $.get(App.baseAPI+'profile/'+name, $.proxy(this.getProfileDataSuccess, this));
+    },
+    getProfileDataSuccess: function(response) {
+        this.activeProfile = response.data;
+
+        $('#name').val(this.activeProfile.name);
+        this.configEditor.setValue(JSON.stringify(this.activeProfile.config, null , '\t'));
+        this.devicesEditor.setValue(JSON.stringify(this.activeProfile.devices, null , '\t'));
+    },
     getData: function(){
         this.setLoading(true);
         $.get(App.baseAPI+'profile', $.proxy(this.getDataSuccess, this));
     },
     getDataSuccess: function(response){
-        console.log('success', response.data);
         this.setLoading(false);
         this.data = response.data;
         if(!this.initiated)
             return this.initiated = true;
 
         this.updateLocalTable(response.data);
+    },
+    showUpdateProfile: function(elem) {
+        this.getProfile(elem);
+
+        $('#newProfile').show();
+        $('#profileList').hide();
+        $('#buttonUpdateProfile').show();
+        $('#buttonCreateProfile').hide();
     },
     updateLocalTable: function(jsonData){
         this.data = jsonData;
@@ -98,8 +117,14 @@ App.profiles = App.profiles || {
     showNewProfile: function() {
         $('#newProfile').show();
         $('#profileList').hide();
+
+        $('#buttonUpdateProfile').hide();
+        $('#buttonCreateProfile').show();
     },
     backToProfiles: function() {
+        $('#profileForm').trigger('reset');
+        this.configEditor.setValue('');
+        this.devicesEditor.setValue('');
         $('#newProfile').hide();
         $('#profileList').show();
     },
@@ -132,6 +157,38 @@ App.profiles = App.profiles || {
         });
     },
     onProfileCreate: function(response) {
+        console.log(response);
+        console.log('updateSuccess:', 'TODO - add alert and refresh local data');
+    },
+    updateProfile: function() {
+        console.log('Update Profile...');
+        if (this.configEditor.getValue() === '') {
+            configValue = {};
+        }
+        else {
+            configValue = JSON.parse(this.configEditor.getValue());
+        }
+        if (this.devicesEditor.getValue() === '') {
+            devicesValue = {};
+        }
+        else {
+            devicesValue = JSON.parse(this.devicesEditor.getValue());
+        }
+
+        $.ajax({
+            url:App.baseAPI+'profile/' + this.activeProfile.name,
+            type: 'PUT',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                new_name: $('#name').val(),
+                config: configValue,
+                devices: devicesValue,
+            }),
+            success: $.proxy(this.onProfileUpdate, this)
+        });
+    },
+    onProfileUpdate: function(response) {
         console.log(response);
         console.log('updateSuccess:', 'TODO - add alert and refresh local data');
     },
