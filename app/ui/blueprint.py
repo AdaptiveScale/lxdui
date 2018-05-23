@@ -68,6 +68,16 @@ def profile():
         return render_template('profiles.html', currentpage='Profiles',
                                profiles=[], lxdui_current_version=VERSION)
 
+@uiPages.route('/storage-pools')
+def storagePools():
+    try:
+        storagePools = LXDModule().listStoragePools()
+        return render_template('storage-pools.html', currentpage='StoragePools',
+                               storagePools=storagePools, lxdui_current_version=VERSION)
+    except:
+        return render_template('storage-pools.html', currentpage='Profiles',
+                               storagePools=[], lxdui_current_version=VERSION)
+
 @uiPages.route('/network')
 def network():
     try:

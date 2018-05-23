@@ -14,7 +14,7 @@ var App = App || {
     location: null,
     loading: false,
     tokenRefreshing: false,
-    notInitialized:['containers', 'images', 'network', 'containerDetails'],
+    notInitialized:['containers', 'images', 'network', 'containerDetails', 'storagePool'],
     init: function(){
         console.log('App initializing');
         this.setDefaultHeaders();
@@ -31,6 +31,9 @@ var App = App || {
             this.network.init();
         if(this.containers && window.location.href.startsWith(WEB +'containers/'))
             this.containerDetails.init();
+        if(this.containers && window.location.href.startsWith(WEB +'storage-pools'))
+            this.storagePool.init();
+
         console.log('App initialized');
         this.getInfo();
         $('.buttonLogout').on('click', $.proxy(this.login.doLogout, this.login));
