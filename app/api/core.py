@@ -37,6 +37,9 @@ app.register_blueprint(network_api, url_prefix='/api/network')
 from app.api.controllers.snapshot import snapshot_api
 app.register_blueprint(snapshot_api, url_prefix='/api/snapshot')
 
+from app.api.controllers.fileManager import file_manager_api
+app.register_blueprint(file_manager_api, url_prefix='/api/file')
+
 from app.api.controllers.storagePool import storage_pool_api
 app.register_blueprint(storage_pool_api, url_prefix='/api/storage_pool')
 
