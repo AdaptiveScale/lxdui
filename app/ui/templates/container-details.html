@@ -14,7 +14,7 @@
         });
     </script>
     <div class="col-lg-12">
-        <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}"><span class="glyphicon glyphicon-off"></span> {{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span><button class="label btn btn-primary pull-right" style="display:none;" id="buttonSave">Save</button> </legend>
+        <legend>Container Details : <b>{{container.name}}</b> <span class="cont-details label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}"><span class="glyphicon glyphicon-off"></span> {{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span><button class="label btn btn-primary pull-right" id="buttonSave" style="display:none;">Save</button> </legend>
         <div class="form-group">
             {% if container.status == 'Running' %}
                 <button class="btn btn-default btn-stop_container" id="buttonStopDetail">
@@ -58,12 +58,12 @@
         </div>
         <div class="col-sm-6">
             <div class="form-group">
-                <h5 style="display:inline">Name :</h5>
+                <h5 class="inline">Name :</h5>
                 <b contenteditable="true" id="containerNameInput" class="formModifier">{{container.name}}</b>
                 <span class="btn btn-xs btn-default glyphicon glyphicon-pencil formModifier" id="editNameButton"></span>
             </div>
     <div class="form-group">
-        <h5 style="display:inline">Type :</h5>
+        <h5 class="inline">Type :</h5>
         {% if container.ephemeral %}
             <b>Ephemeral</b>
         {% else %}
@@ -71,21 +71,21 @@
         {% endif %}
     </div>
     <div class="form-group">
-        <h5 style="display:inline">Architecture :</h5>
+        <h5 class="inline">Architecture :</h5>
         <b>{{container.architecture}}</b>
     </div>
 
     <div class="form-group">
-        <h5 style="display:inline">OS Image :</h5>
+        <h5 class="inline">OS Image :</h5>
         <b>{{container.expanded_config['image.os']}} {{container.expanded_config['image.release']}} ({{container.expanded_config['image.architecture']}})</b>
     </div>
     <div class="form-group">
-        <h5 style="display:inline">Created On:</h5>
+        <h5 class="inline">Created On:</h5>
         <b>{{container.created_at}}</b>
     </div>
 
     <div class="form-group profiles">
-        <h5 style="display:inline">Profiles :</h5>
+        <h5 class="inline">Profiles :</h5>
         <span id="profileList">
         {% for p in container.profiles %}
             <span class="label label-default no-right-padding mg-right">{{ p }}
@@ -109,7 +109,7 @@
     </div>
 
     <div class="form-group">
-        <h5 style="display:inline">Is set to Autostart :</h5>
+        <h5 class="inline">Is set to Autostart :</h5>
         <div class="btn-group" role="group">
             <button type="button" id="buttonAutostartActive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='1' else 'default'}}">Yes</button>
             <button type="button" id="buttonAutostartInactive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='0' else 'default'}}">No</button>
@@ -126,18 +126,18 @@
                         PID: <span class="label label-primary"> {{container.pid}}</span>
                     </div>
                     <div class="form-group">
-                         <h5 style="display:inline">Currently Running Processes :</h5>
+                         <h5 class="inline">Currently Running Processes :</h5>
                         <span class="label label-info">{{container.processes}}</span>
                     </div>
                     {% endif %}
                 </div>
              <div class="row border-space">
                  <div class="form-group">
-                        <h5 style="display:inline">CPU Allocation :</h5>
+                        <h5 class="inline">CPU Allocation :</h5>
                         <b>{{container.config['limits.cpu.allowance']}}</b>
                     </div>
                     <div class="form-group">
-                        <h5 style="display:inline">Memory Allocation :</h5>
+                        <h5 class="inline">Memory Allocation :</h5>
                         <b>{{container.config['limits.memory']}}</b>
                     </div>
                 </div>
@@ -145,20 +145,20 @@
         <div class="col-sm-12">
             <div class="form-group">
                     {% if container.network is mapping %}
-                    <h5 style="border-bottom:1px solid #eee;padding-bottom:10px;">Network Interfaces :</h5>
+                    <h5 class="bg-bottom">Network Interfaces :</h5>
                     {% for key, value in container.network.items() %}
                     {% if key!='lo' %}
-                    <div class="row" style="margin: 30px 0px;">
+                    <div class="row space">
                         <div class="col-sm-6">
                             IP Interface : <span class="label label-primary"> {{ key }}</span>
                             <br/>
                             {% if value.addresses|length > 0 %}
                             IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>
-                            <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span>
+                            <span class="label label-warning">/{{value.addresses.0.netmask}}</span>
                             {% endif %}
                             <br/>
                             MAC Address
-                            : <b style="font-size:75%">{{value.hwaddr}}</b>
+                            : <b class="big-font">{{value.hwaddr}}</b>
                             <br/>
                             State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
                         </div>
@@ -174,21 +174,21 @@
                 {% endif %}
                 {% endfor %}
                 {% else %}
-                    <h5 style="display:inline">Network Interfaces :</h5>
+                    <h5 class="inline">Network Interfaces :</h5>
                     <span class="label label-default"> N/A </span>
                 {% endif %}
             </div> <!-- form-group end-->
         </div> <!--col-sm-12 end-->
         <div class="col-sm-12">
             <div class="form-group">
-                <h5 style="border-bottom:1px solid #eee;padding-bottom:10px;">List of Snapshots :</h5>
-                <div id="snapshotList" class="row"  style="margin: 30px 0px;">
+                <h5 class="bg-bottom">List of Snapshots :</h5>
+                <div id="snapshotList" class="row space">
                      <table class="table" id="tableSnapshots">
                         <thead>
                             <th>Name</th>
                             <th>Created at</th>
                             <th>Stateful</th>
-                            <th style="width:300px !important;"></th>
+                            <th class="width300"></th>
                         </thead>
                         <tbody>
 
@@ -223,7 +223,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
                 <!--<button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
             </div>
         </div>
@@ -240,7 +240,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
 
             </div>
         </div>
@@ -257,7 +257,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
 
             </div>
         </div>
@@ -274,7 +274,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
 
             </div>
         </div>
@@ -295,7 +295,7 @@
             <input type="checkbox" class="form-check-input" id="snapshotStateful" name="stateful">
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
 
             </div>
         </div>
