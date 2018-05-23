@@ -161,3 +161,25 @@ def exportContainer(name):
         return response.replySuccess(container.export(force))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
+
+
+@container_api.route('/freeze/<string:name>', methods=['PUT'])
+@jwt_required()
+def freezeContainer(name):
+    try:
+        container = LXCContainer({'name': name})
+        container.freeze()
+        return response.replySuccess(container.info())
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
+@container_api.route('/unfreeze/<string:name>', methods=['PUT'])
+@jwt_required()
+def unfreezeContainer(name):
+    try:
+        container = LXCContainer({'name': name})
+        container.unfreeze()
+        return response.replySuccess(container.info())
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())

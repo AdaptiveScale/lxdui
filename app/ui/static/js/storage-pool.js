@@ -1,10 +1,9 @@
-App.profiles = App.profiles || {
+App.storagePool = App.storagePool || {
     data:[],
     error:false,
     errorMessage:'',
     loading:false,
     initiated:false,
-    activeProfile: {},
     tableSettings: {
         rowId:'name',
         searching:true,
@@ -25,28 +24,23 @@ App.profiles = App.profiles || {
         order: [[ 1, 'asc' ]],
     },
     configEditor:null,
-    devicesEditor:null,
-
     init: function(){
-        console.log('Profiles init');
+        console.log('Storag Pool init');
         this.configEditor = ace.edit('configEditor');
-        this.devicesEditor = ace.edit('devicesEditor');
         this.configEditor.session.setMode('ace/mode/json');
-        this.devicesEditor.session.setMode('ace/mode/json');
-        this.dataTable = $('#tableProfiles').DataTable(this.tableSettings);
-        $('#buttonNewProfile').on('click', $.proxy(this.showNewProfile, this));
-        $('#backProfile').on('click', $.proxy(this.backToProfiles, this));
-        $('#buttonCreateProfile').on('click', $.proxy(this.createProfile, this));
-        $('#buttonUpdateProfile').on('click', $.proxy(this.updateProfile, this));
-        $('#buttonDeleteProfile').on('click', $.proxy(this.deleteProfile, this));
-        $('#selectAllProfiles').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
+        this.dataTable = $('#tableStoragePools').DataTable(this.tableSettings);
+        $('#buttonNewStoragePool').on('click', $.proxy(this.showNewStoragePool, this));
+        $('#backStoragePool').on('click', $.proxy(this.backToStoragePools, this));
+        $('#buttonCreateStoragePool').on('click', $.proxy(this.createStoragePool, this));
+        $('#buttonDeleteStoragePool').on('click', $.proxy(this.deleteStoragePool, this));
+        $('#selectAllStoragePools').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
         this.dataTable.on('select', $.proxy(this.onItemSelectChange, this));
         this.dataTable.on('deselect', $.proxy(this.onItemSelectChange, this));
-        App.setActiveLink('profile');
+        App.setActiveLink('storage');
         this.getData();
     },
-    refreshProfiles: function(e){
-        console.log('refreshProfiles');
+    refreshStoragePools: function(e){
+        console.log('refreshStorage Pools');
         e.preventDefault();
         console.log('dataTable', this.dataTable);
         this.getData();
@@ -54,35 +48,18 @@ App.profiles = App.profiles || {
     setLoading: function(state){
         this.loading=true;
     },
-    getProfile: function(name){
-        return $.get(App.baseAPI+'profile/'+name, $.proxy(this.getProfileDataSuccess, this));
-    },
-    getProfileDataSuccess: function(response) {
-        this.activeProfile = response.data;
-
-        $('#name').val(this.activeProfile.name);
-        this.configEditor.setValue(JSON.stringify(this.activeProfile.config, null , '\t'));
-        this.devicesEditor.setValue(JSON.stringify(this.activeProfile.devices, null , '\t'));
-    },
     getData: function(){
         this.setLoading(true);
-        $.get(App.baseAPI+'profile', $.proxy(this.getDataSuccess, this));
+        $.get(App.baseAPI+'storage_pool', $.proxy(this.getDataSuccess, this));
     },
     getDataSuccess: function(response){
+        console.log('success', response.data);
         this.setLoading(false);
         this.data = response.data;
         if(!this.initiated)
             return this.initiated = true;
 
         this.updateLocalTable(response.data);
-    },
-    showUpdateProfile: function(elem) {
-        this.getProfile(elem);
-
-        $('#newProfile').show();
-        $('#profileList').hide();
-        $('#buttonUpdateProfile').show();
-        $('#buttonCreateProfile').hide();
     },
     updateLocalTable: function(jsonData){
         this.data = jsonData;
@@ -114,88 +91,44 @@ App.profiles = App.profiles || {
             ]
         });
     },
-    showNewProfile: function() {
-        $('#newProfile').show();
-        $('#profileList').hide();
-
-        $('#buttonUpdateProfile').hide();
-        $('#buttonCreateProfile').show();
+    showNewStoragePool: function() {
+        $('#newStoragePool').show();
+        $('#storagePoolList').hide();
     },
-    backToProfiles: function() {
-        $('#profileForm').trigger('reset');
-        this.configEditor.setValue('');
-        this.devicesEditor.setValue('');
-        $('#newProfile').hide();
-        $('#profileList').show();
+    backToStoragePools: function() {
+        $('#newStoragePool').hide();
+        $('#storagePoolList').show();
     },
-    createProfile: function() {
-        console.log('Create Profile...');
+    createStoragePool: function() {
+        console.log('Create Storage Pool...');
         if (this.configEditor.getValue() === '') {
             configValue = {};
         }
         else {
             configValue = JSON.parse(this.configEditor.getValue());
         }
-        if (this.devicesEditor.getValue() === '') {
-            devicesValue = {};
-        }
-        else {
-            devicesValue = JSON.parse(this.devicesEditor.getValue());
-        }
 
         $.ajax({
-            url:App.baseAPI+'profile/',
+            url:App.baseAPI+'storage_pool/',
             type: 'POST',
             dataType: 'json',
             contentType: 'application/json',
             data: JSON.stringify({
                 name: $('#name').val(),
                 config: configValue,
-                devices: devicesValue,
+                driver: $('#driver').val(),
             }),
-            success: $.proxy(this.onProfileCreate, this)
+            success: $.proxy(this.onStoragePoolCreate, this)
         });
     },
-    onProfileCreate: function(response) {
+    onStoragePoolCreate: function(response) {
         console.log(response);
         console.log('updateSuccess:', 'TODO - add alert and refresh local data');
     },
-    updateProfile: function() {
-        console.log('Update Profile...');
-        if (this.configEditor.getValue() === '') {
-            configValue = {};
-        }
-        else {
-            configValue = JSON.parse(this.configEditor.getValue());
-        }
-        if (this.devicesEditor.getValue() === '') {
-            devicesValue = {};
-        }
-        else {
-            devicesValue = JSON.parse(this.devicesEditor.getValue());
-        }
-
-        $.ajax({
-            url:App.baseAPI+'profile/' + this.activeProfile.name,
-            type: 'PUT',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                new_name: $('#name').val(),
-                config: configValue,
-                devices: devicesValue,
-            }),
-            success: $.proxy(this.onProfileUpdate, this)
-        });
-    },
-    onProfileUpdate: function(response) {
-        console.log(response);
-        console.log('updateSuccess:', 'TODO - add alert and refresh local data');
-    },
-    deleteProfile: function() {
+    deleteStoragePool: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
             $.ajax({
-                url: App.baseAPI+'profile/' + row['name'],
+                url: App.baseAPI+'storage_pool/' + row['name'],
                 type: 'DELETE',
                 success: $.proxy(this.onDeleteSuccess, this, row['name'])
             });
@@ -203,7 +136,7 @@ App.profiles = App.profiles || {
     },
     onDeleteSuccess: function(name){
         this.dataTable.row("#"+name).remove().draw();
-        $('.success-msg').text('Profile ' + name + ' has been removed');
+        $('.success-msg').text('Storage Pool ' + name + ' has been removed');
         var parent = $('.success-msg').parent().toggleClass('hidden');
 
         setTimeout(function(){
@@ -221,8 +154,8 @@ App.profiles = App.profiles || {
     console.log('argumentss', arguments);
         var state = this.dataTable.rows({selected:true}).count()>0;
         console.log('newState', state);
-        $('#selectAllProfiles').prop('checked', this.dataTable.rows({selected:true}).count()==this.dataTable.rows().count());
+        $('#selectAllStoragePools').prop('checked', this.dataTable.rows({selected:true}).count()==this.dataTable.rows().count());
         var buttonStates = state?'removeAttr':'attr';
-        $('#buttonDeleteProfile')[buttonStates]('disabled','disabled');
+        $('#buttonDeleteStoragePool')[buttonStates]('disabled','disabled');
     }
 }

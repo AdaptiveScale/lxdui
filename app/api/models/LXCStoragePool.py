@@ -4,7 +4,7 @@ import logging
 
 logging = logging.getLogger(__name__)
 
-class LXCProfile(LXDModule):
+class LXCStoragePool(LXDModule):
 
     def __init__(self, input):
         logging.info('Connecting to LXD')
@@ -13,49 +13,47 @@ class LXCProfile(LXDModule):
 
     def info(self):
         try:
-            return self.client.api.profiles[self.input.get('name')].get().json()['metadata']
+            return self.client.api.storage_pools[self.input.get('name')].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
 
     def info(self, name):
         try:
-            logging.info('Reading profile {} information'.format(name))
-            return self.client.api.profiles[name].get().json()['metadata']
+            logging.info('Reading storage pool {} information'.format(name))
+            return self.client.api.storage_pools[name].get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to retrieve information for profile {}'.format(name))
+            logging.error('Failed to retrieve information for storage pool {}'.format(name))
             logging.exception(e)
             raise ValueError(e)
 
-    def createProfile(self):
+    def createStoragePool(self):
         try:
-            logging.info('Creating profile {}'.format(self.input.get('name')))
-            self.client.profiles.create(self.input.get('name'), config=self.input.get('config'),
-                                        devices=self.input.get('devices'))
+            logging.info('Creating storage pool {}'.format(self.input.get('name')))
+            self.client.storage_pools.create(self.input)
 
-            return self.client.api.profiles[self.input.get('name')].get().json()['metadata']
+            return self.client.api.storage_pools[self.input.get('name')].get().json()['metadata']
         except Exception as e:
-            logging.error('Failed to create container {}'.format(self.input.get('name')))
+            logging.error('Failed to create storage pool {}'.format(self.input.get('name')))
             logging.exception(e)
             raise ValueError(e)
 
-    def deleteProfile(self):
+    def deleteStoragePool(self):
         try:
-            logging.info('Deleting profile {}'.format(self.input.get('name')))
-            return self.client.api.profiles[self.input.get('name')].delete(json=self.input).json()
+            logging.info('Deleting storage pool {}'.format(self.input.get('name')))
+            return self.client.api.storage_pools[self.input.get('name')].delete().json()
         except Exception as e:
-            logging.error('Failed to delete profile {}'.format(self.input.get('name')))
+            logging.error('Failed to delete storage pool {}'.format(self.input.get('name')))
             logging.exception(e)
             raise ValueError(e)
 
+    '''
     def updateProfile(self):
         try:
             logging.info('Updating profile {}'.format(self.input.get('name')))
-            self.client.api.profiles[self.input.get('name')].put(json={'config': self.input.get('config'), 'devices': self.input.get('devices')})
+            self.client.api.profiles[self.input.get('name')].put(json=self.input).json()['metadata']
             if self.input.get('new_name'):
-                if self.input.get('new_name') != self.input.get('name'):
-                    return self.rename()
-
-            return self.info(self.input.get('name'))
+                return self.rename()
+            return self.info()
         except Exception as e:
             logging.error('Failed to update profile {}'.format(self.input.get('name')))
             logging.exception(e)
@@ -71,3 +69,5 @@ class LXCProfile(LXDModule):
             logging.error('Failed to rename profile {}'.format(self.input.get('name')))
             logging.exception(e)
             raise ValueError(e)
+            
+    '''
