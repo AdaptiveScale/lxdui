@@ -108,7 +108,7 @@ class LXCNetwork(LXDModule):
     def _executeLXCNetworkTerminal(self, lines_to_exec, name):
         logging.info('Execute network tasks on terminal')
         p = subprocess.Popen(["lxc", "network", "create", name], stdout=subprocess.PIPE)
-        time.sleep(1)
+        time.sleep(2)
         for lxc_network_value in lines_to_exec['unset']:
             p = subprocess.Popen(["lxc", "network", "unset", name, lxc_network_value],
                                  stdout=subprocess.PIPE)
