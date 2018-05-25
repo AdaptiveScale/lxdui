@@ -30,7 +30,7 @@ def create_profile():
 
     try:
         profile = LXCProfile(input)
-        return jsonify(profile.createProfile())
+        return response.replySuccess(profile.createProfile(), message='Profile {} created successfully.'.format(input.get('name')))
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
 
@@ -51,7 +51,7 @@ def delete_profile(name):
     try:
         profile = LXCProfile({'name': name})
         profile.deleteProfile()
-        return response.reply()
+        return response.replySuccess(data=None, message='Profile {} deleted successfully.'.format(name))
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())
 
@@ -66,7 +66,7 @@ def update_profile(name):
         return response.replyFailed(message=validation.message)
     try:
         profile = LXCProfile(data)
-        return response.reply(profile.updateProfile())
+        return response.replySuccess(profile.updateProfile(), message='Profile {} updated successfully.'.format(name))
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())
 
