@@ -57,6 +57,9 @@ class LXCContainer(LXDModule):
         if input.get('newName'):
             self.setNewName(input.get('newName'))
 
+        if input.get('config'):
+            self.setConfig(input.get('config'))
+
 
 
     def setImageType(self, input):
@@ -135,6 +138,12 @@ class LXCContainer(LXDModule):
         self.initConfig()
         logging.debug('Setting new container name as: {}'.format(input))
         self.data['newName'] = input
+
+    def setConfig(self, input):
+        logging.debug('Setting key-value for container config')
+        self.initConfig()
+        for key in input.keys():
+            self.data['config'][key] = input[key]
 
     def info(self):
         try:
