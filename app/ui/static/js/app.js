@@ -121,7 +121,7 @@ var App = App || {
         if(response.status !== 200){
             toastr.error(response.responseJSON.message || 'Unknown error', response.statusText||'Error');
         }else{
-            toastr.success(response.message,'Success');
+            toastr.success(response.responseJSON.message, 'Success');
         }
     },
     formatBytes:function(bytes){
