@@ -223,6 +223,9 @@ App.containers = App.containers || {
             jsonForm['profiles'] = $('#containerProfiles').val()
 
         var tempJSON = this.generateRequest(jsonForm);
+        if (tempJSON['name'] == '') {
+            tempJSON['name'] = App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)];
+        }
         $.ajax({
             url: App.baseAPI +'container/',
             type:'POST',
