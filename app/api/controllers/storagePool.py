@@ -30,7 +30,7 @@ def create_storage_pool():
 
     try:
         storagePool = LXCStoragePool(input)
-        return jsonify(storagePool.createStoragePool())
+        return response.replySuccess(storagePool.createStoragePool(), message='Storage Pool {} created successfully.'.format(input.get('name')))
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
 
@@ -51,7 +51,7 @@ def delete_storage_pool(name):
     try:
         storagePool = LXCStoragePool({'name': name})
         storagePool.deleteStoragePool()
-        return response.reply()
+        return response.replySuccess(data=None, message='Storage Pool {} deleted successfully.'.format(name))
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())
 
@@ -66,6 +66,6 @@ def update_storage_pool(name):
         return response.replyFailed(message=validation.message)
     try:
         storagePool = LXCStoragePool(data)
-        return response.reply(storagePool.updateProfile())
+        return response.replySuccess(storagePool.updateProfile(), message='Storage Pool {} updated successfully.'.format(name))
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())

@@ -48,7 +48,7 @@ def createContainer():
         for container in input:
             client = LXCContainer(container)
             result.append(client.create())
-        return response.reply(result)
+        return response.reply(result, message='Container {} created successfully.'.format(input.get('name')))
     except ValueError as ex:
         return response.reply(message=ex.__str__(), status=403)
 
@@ -62,7 +62,7 @@ def updateContainer():
 
     try:
         client = LXCContainer(input)
-        return response.reply(client.update())
+        return response.reply(client.update(), message='Container {} updated successfully.'.format(input.get('name')))
     except ValueError as ex:
         return response.reply(message=ex.__str__(), status=403)
 
@@ -75,7 +75,7 @@ def deleteContainer(name):
     try:
         container = LXCContainer({'name': name})
         container.delete(force)
-        return response.reply(None)
+        return response.reply(None, message='Container {} deleted successfully.'.format(name))
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())
 
@@ -86,7 +86,7 @@ def startContainer(name):
     try:
         container = LXCContainer({'name': name})
         container.start()
-        return response.replySuccess(container.info())
+        return response.replySuccess(container.info(), message='Container {} started successfully.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -99,8 +99,8 @@ def stopContainer(name):
         ephemeral = container.info()['ephemeral']
         container.stop()
         if ephemeral:
-            return response.replySuccess(data={}, message='success')
-        return response.replySuccess(container.info())
+            return response.replySuccess(container.info(), message='Container {} stopped successfully.'.format(name))
+        return response.replySuccess(container.info(), message='Container {} stopped successfully.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -111,7 +111,7 @@ def restartContainer(name):
     try:
         container = LXCContainer({'name': name})
         container.restart()
-        return response.replySuccess(container.info())
+        return response.replySuccess(container.info(), message='Container {} restarted successfully.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -126,7 +126,7 @@ def cloneContainer(name):
     input['name'] = name
     try:
         container = LXCContainer(input)
-        return response.replySuccess(container.clone())
+        return response.replySuccess(container.clone(), message='Container {} cloned successfully.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -141,7 +141,7 @@ def moveContainer(name):
     input['name'] = name
     try:
         container = LXCContainer(input)
-        return response.replySuccess(container.move())
+        return response.replySuccess(container.move(), message='Container {} moved successfully.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -158,7 +158,7 @@ def exportContainer(name):
     input['name'] = name
     try:
         container = LXCContainer(input)
-        return response.replySuccess(container.export(force))
+        return response.replySuccess(container.export(force), message='Image {} exported successfully from container {}.'.format(input.get('imageAlias'), name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -169,7 +169,7 @@ def freezeContainer(name):
     try:
         container = LXCContainer({'name': name})
         container.freeze()
-        return response.replySuccess(container.info())
+        return response.replySuccess(container.info(), message='Container {} is frozen.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -180,6 +180,6 @@ def unfreezeContainer(name):
     try:
         container = LXCContainer({'name': name})
         container.unfreeze()
-        return response.replySuccess(container.info())
+        return response.replySuccess(container.info(), message='Container {} is unfrozen.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
