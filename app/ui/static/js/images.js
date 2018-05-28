@@ -217,12 +217,12 @@ App.images = App.images || {
     getDataSuccess: function(response){
         this.setLoading(false);
         this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
-        if(this.activeTab=='local'){
-            this.updateLocalTable(response.data);
-        }
-        if(this.activeTab == 'remote'){
-            this.updateRemoteTable(response.data);
-        }
+//        if(this.activeTab=='local'){
+//            this.updateLocalTable(response.data);
+//        }
+//        if(this.activeTab == 'remote'){
+//            this.updateRemoteTable(response.data);
+//        }
     },
     showJSON: function(e) {
         this.rawJson.setValue('');
