@@ -292,6 +292,8 @@ App.images = App.images || {
         }
         $('#buttonLaunchContainers').hide();
         $('#buttonDelete').hide();
+
+        $('#containerNameImages').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
     },
     generateContainer: function(name, formData){
         return {
@@ -303,7 +305,12 @@ App.images = App.images || {
         var imageContainers = [];
         var tempData = this.cleanupFormData($.extend({}, true,formData));
         for(var i=0;i<=Number(formData.count)-1;i++){
-            imageContainers.push(this.generateContainer(tempData.name+(i+1),tempData));
+            if (tempData.name == '') {
+                imageContainers.push(this.generateContainer(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)], tempData));
+            }
+            else {
+                imageContainers.push(this.generateContainer(tempData.name+(i+1),tempData));
+            }
         }
         return imageContainers;
     },
@@ -333,6 +340,7 @@ App.images = App.images || {
         e.preventDefault();
         var tempForm = $.extend({}, true,this.newContainerForm.serializeJSON());
         var tempJSON = this.generateRequest(tempForm);
+
         $.ajax({
             url: App.baseAPI +'container/',
             type:'POST',
