@@ -114,7 +114,7 @@ App.containers = App.containers || {
             ]
         }));
     },
-    showJSON: function(e, data) {
+    showJSON: function(e) {
         this.rawJson.setValue('');
         $('.modal-title').text('');
         $('.modal-title').text('RAW JSON for Containers');
