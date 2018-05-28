@@ -26,14 +26,18 @@ App.profiles = App.profiles || {
     },
     configEditor:null,
     devicesEditor:null,
-
+    rawJson:null,
     init: function(){
         console.log('Profiles init');
         this.configEditor = ace.edit('configEditor');
         this.devicesEditor = ace.edit('devicesEditor');
         this.configEditor.session.setMode('ace/mode/json');
         this.devicesEditor.session.setMode('ace/mode/json');
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
         this.dataTable = $('#tableProfiles').DataTable(this.tableSettings);
+        $('#rawJSONProfiles').on('click', $.proxy(this.showJSON, this));
         $('#buttonNewProfile').on('click', $.proxy(this.showNewProfile, this));
         $('#backProfile').on('click', $.proxy(this.backToProfiles, this));
         $('#buttonCreateProfile').on('click', $.proxy(this.createProfile, this));
@@ -74,7 +78,18 @@ App.profiles = App.profiles || {
         if(!this.initiated)
             return this.initiated = true;
 
-        this.updateLocalTable(response.data);
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
+        //this.updateLocalTable(response.data);
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Profiles');
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getData();
+
     },
     showUpdateProfile: function(elem) {
         this.getProfile(elem);
