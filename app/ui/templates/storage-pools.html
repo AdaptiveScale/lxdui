@@ -79,7 +79,14 @@
                 <div class="form-group">
                     <label for="driver" class="col-sm-2 control-label" style="margin-left: -28px;">Driver</label>
                     <div class="col-sm-4">
-                        <input id="driver" name="driver" class="form-control" type="text" placeholder="Storage Pool Driver" title="Storage Pool Driver" required/>
+                        <select class="form-control" name="driver" id="driver">
+                            <option value="dir" selected>Directory</option>
+                            <option value="ceph">CEPH</option>
+                            <option value="btrfs">Btrfs</option>
+                            <option value="lvm">LVM</option>
+                            <option value="zfs">ZFS</option>
+                        </select>
+                        <!--<input id="driver" name="driver" class="form-control" type="text" placeholder="Storage Pool Driver" title="Storage Pool Driver" required/>-->
                     </div>
                 </div>
 
