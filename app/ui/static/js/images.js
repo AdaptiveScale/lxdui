@@ -292,6 +292,8 @@ App.images = App.images || {
         }
         $('#buttonLaunchContainers').hide();
         $('#buttonDelete').hide();
+
+        $('#containerNameImages').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
     },
     generateContainer: function(name, formData){
         return {

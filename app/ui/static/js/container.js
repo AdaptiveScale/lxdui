@@ -197,6 +197,7 @@ App.containers = App.containers || {
 
         $('#createContainerForm')[view=='form'?'show':'hide']();
         $('#containers')[view=='list'?'show':'hide']();
+        $('#containerName').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)]);
     },
     generateRequest: function(formData){
         return {
