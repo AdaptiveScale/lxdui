@@ -43,6 +43,8 @@ app.register_blueprint(file_manager_api, url_prefix='/api/file')
 from app.api.controllers.storagePool import storage_pool_api
 app.register_blueprint(storage_pool_api, url_prefix='/api/storage_pool')
 
+from app.api.controllers.terminal import terminal
+
 @app.route('/')
 def index():
     if HAS_UI:
@@ -130,4 +132,5 @@ def start(port, debug=False, uiPages=None):
 
     print("LXDUI started. Running on http://0.0.0.0:{}".format(port))
     print("PID={}, Press CTRL+C to quit".format(pid))
-    app.run(debug=debug, host='0.0.0.0', port=port)
+    terminal(app, port)
+    # app.run(debug=debug, host='0.0.0.0', port=port)
