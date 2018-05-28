@@ -19,10 +19,15 @@ App.containerDetails = App.containerDetails || {
         order: [[ 1, 'asc' ]],
     },
     loading:false,
+    rawJson:null,
     init: function(){
         console.log('Container Details init');
         this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
         $('#refreshContainers').on('click', $.proxy(this.refreshContainers, this));
+        $('#rawJSONContainerDetails').on('click', $.proxy(this.showJSON, this));
         $('#buttonStartDetail').on('click', $.proxy(this.startContainer, this));
         $('#buttonStopDetail').on('click', $.proxy(this.stopContainer, this));
         $('#buttonRestartDetail').on('click', $.proxy(this.restartContainer, this));
@@ -62,6 +67,23 @@ App.containerDetails = App.containerDetails || {
     },
     setLoading: function(state){
         this.loading=true;
+    },
+    getData: function(){
+        this.setLoading(true);
+        $.get(App.baseAPI+'container/'+this.name, $.proxy(this.getDataSuccess, this));
+    },
+    getDataSuccess: function(response) {
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Container ' + this.name);
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getData();
+
     },
     startContainer: function(){
         $.ajax({

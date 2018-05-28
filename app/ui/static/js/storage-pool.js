@@ -24,11 +24,16 @@ App.storagePool = App.storagePool || {
         order: [[ 1, 'asc' ]],
     },
     configEditor:null,
+    rawJson: null,
     init: function(){
         console.log('Storag Pool init');
         this.configEditor = ace.edit('configEditor');
         this.configEditor.session.setMode('ace/mode/json');
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
         this.dataTable = $('#tableStoragePools').DataTable(this.tableSettings);
+        $('#rawJSONStoragePool').on('click', $.proxy(this.showJSON, this));
         $('#buttonNewStoragePool').on('click', $.proxy(this.showNewStoragePool, this));
         $('#backStoragePool').on('click', $.proxy(this.backToStoragePools, this));
         $('#buttonCreateStoragePool').on('click', $.proxy(this.createStoragePool, this));
@@ -59,7 +64,17 @@ App.storagePool = App.storagePool || {
         if(!this.initiated)
             return this.initiated = true;
 
-        this.updateLocalTable(response.data);
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
+        //this.updateLocalTable(response.data);
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Profiles');
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getData();
     },
     updateLocalTable: function(jsonData){
         this.data = jsonData;

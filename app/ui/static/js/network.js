@@ -21,9 +21,14 @@ App.network = App.network || {
         order: [[ 1, 'asc' ]],
     },
     activeNetwork: {},
+    rawJson: null,
     init: function(opts){
         console.log('Network initialized')
         this.dataTable = $('#tableNetworks').DataTable(this.tableSettings);
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
+        $('#rawJSONNetworks').on('click', $.proxy(this.showJSON, this));
         $('#buttonUpdateNetwork').on('click', $.proxy(this.updateNetwork, this));
         $('#buttonCreateNetwork').on('click', $.proxy(this.createNetwork, this));
         $('#buttonNewNetwork').on('click', $.proxy(this.showNewUpdateNetwork, this));
@@ -43,6 +48,25 @@ App.network = App.network || {
             return $('#tableImagesLocalWrapper')[tempTableState]();
         else
             return $('#tableImagesRemoteWrapper')[tempTableState]();
+    },
+    getData: function(){
+        this.setLoading(true);
+        $.get(App.baseAPI+'network', $.proxy(this.getDataSuccess2, this));
+    },
+    getDataSuccess2: function(response){
+        this.setLoading(false);
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
+        //this.updateLocalTable(response.data);
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Networks');
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getData();
+
     },
     getNetwork: function(name){
         $('#name').val(name);
