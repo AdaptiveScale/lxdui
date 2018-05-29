@@ -8,13 +8,20 @@ from tornado.httpserver import HTTPServer
 from tornado.ioloop import IOLoop
 import tornado_xstatic as tornado_xstatic
 from terminado import TermSocket
+
+from app.api.models.LXCContainer import LXCContainer
 from app.lib.termmanager import NamedTermManager
+from app.api.utils import mappings
 
-AUTH_TYPES = ("none", "login")
+TEMPLATE_DIR = os.path.dirname(__file__).replace('/api/controllers','/ui/templates/')
+STATIC_DIR = os.path.dirname(__file__).replace('/api/controllers','/ui/static/')
 
-UI_DIR = os.path.dirname(__file__).replace('/api/controllers','/ui')
-TEMPLATE_DIR = UI_DIR+ "/templates/"
-STATIC_DIR = UI_DIR+ "/static/"
+def findShellTypeOfContainer(container):
+    containerImage = container.info()['config']['image.os'].lower()
+    for image in mappings.OS_SHELL_MAPPINGS:
+        if image in containerImage:
+            return mappings.OS_SHELL_MAPPINGS[image]
+    return 'bash'
 
 class TerminalPageHandler(tornado.web.RequestHandler):
     """Render the /ttyX pages"""
@@ -26,7 +33,8 @@ class TerminalPageHandler(tornado.web.RequestHandler):
 class NewTerminalHandler(tornado.web.RequestHandler):
     """Redirect to an unused terminal name"""
     def get(self, name='new'):
-        shell = ['bash', '-c', 'lxc exec {} -- /bin/bash'.format(name)]
+        shellType = findShellTypeOfContainer(LXCContainer({'name': name}))
+        shell = ['bash', '-c', 'lxc exec {} -- /bin/{}'.format(name, shellType)]
         name, terminal = self.application.settings['term_manager'].new_named_terminal(shell_command=shell)
         self.redirect("/terminal/" + name, permanent=False)
 
