@@ -12,6 +12,7 @@ App.containers = App.containers || {
         searching:true,
         responsive: false,
         select: true,
+//        dom: '<"top"i>rt<"bottom"flp><"clear">',
         columnDefs: [
             {
                 orderable: false,

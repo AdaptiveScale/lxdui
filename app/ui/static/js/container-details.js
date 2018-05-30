@@ -7,6 +7,8 @@ App.containerDetails = App.containerDetails || {
     errorMessage:'',
     name: '',
     activeSnapshot: '',
+    selectedSnapshots: [],
+    selectedSnapshot: null,
     dataTable:null,
     initiated:false,
     tableSettings: {
@@ -17,6 +19,17 @@ App.containerDetails = App.containerDetails || {
         bInfo: false,
         bPaginate: false,
         order: [[ 1, 'asc' ]],
+        columnDefs: [
+            {
+                orderable: false,
+                className: 'select-checkbox',
+                targets:   0
+            }
+        ],
+        select: {
+            style:    'multi',
+            selector: 'td:first-child'
+        },
     },
     loading:false,
     init: function(){
@@ -30,6 +43,8 @@ App.containerDetails = App.containerDetails || {
         $('#buttonUnfreezeDetail').on('click', $.proxy(this.unfreezeContainer, this));
         $('#buttonDeleteDetail').on('click', $.proxy(this.deleteContainerDetail, this));
         $('#buttonBackDetail').on('click', $.proxy(this.switchView, this, 'list'));
+        this.dataTable.on('select', $.proxy(this.onRowSelected, this));
+        this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
         App.setActiveLink('');
 
         $('#buttonCloneContainerDetail').on('click', $.proxy(this.showCloneContainer, this));
@@ -51,6 +66,9 @@ App.containerDetails = App.containerDetails || {
         $('#containerNameInput').on('blur', $.proxy(this.onNameChange, this));
         $('#buttonAutostartActive').on('click', $.proxy(this.onAutoStartToggle, this, true));
         $('#buttonAutostartInactive').on('click', $.proxy(this.onAutoStartToggle, this, false));
+        $('[data-toggle="popover"]').popover();
+        $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
+        $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
     },
     initContainerDetails: function(name) {
         this.name = name;
@@ -129,11 +147,14 @@ App.containerDetails = App.containerDetails || {
         var container = this.name;
         $.each(response.data, function(index, value) {
             var tempPlaceholder = $('<div class="col-sm-6"></div>');
+            var inputPlaceholder = $('div');
+            inputPlaceholder.append('<td></td>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="delete-'+value.name+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="restore-'+value.name+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="create-'+value.name+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());"><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>');
             this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
             this.dataTable.row.add([
+                null,
                 value.name,
                 value.createdAt,
                 value.stateful ? 'Yes' : 'No',
@@ -142,6 +163,15 @@ App.containerDetails = App.containerDetails || {
         });
 
     },
+     onRowSelected: function(e, dt, type, indexes ){
+        var state = this.dataTable.rows({selected:true}).count()>0;
+        $('#selectAllSnapshots').prop('checked',state);
+        var action = state?'removeAttr':'attr';
+        $('#buttonNewContainerSnapshot')[action]('disabled', 'disabled');
+        $('#buttonRestoreSnapshot')[action]('disabled', 'disabled');
+        $('#buttonDeleteSnapshot')[action]('disabled', 'disabled');
+    },
+
     showCloneContainer: function(name) {
         $('.modal-title').text('');
         $('#newContainerClone').val('');
@@ -280,6 +310,25 @@ App.containerDetails = App.containerDetails || {
     onSnapshotSuccess: function(response){
          location.reload();
     },
+    restoreSnapshots: function() {
+      this.dataTable.rows( { selected: true } ).data().map(function(row){
+        console.log('row', row);
+        var name = this.name;
+        $.ajax({
+//              url:App.baseAPI+'snapshot/'+snapshotName+'/container/'+container,
+            url:App.baseAPI+'snapshot/'+row[1]+'/container/'+name,
+            type: 'DELETE',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                imageAlias: $('#imageAlias').val(),
+                force: true
+            }),
+            success: $.proxy(this.onSnapshotDeleteSuccess, this)
+        });
+        }.bind(this));
+    },
+
     restoreSnapshot: function() {
         console.log("Restore");
         var snapshotName = $(event.target).prop('name');
@@ -351,6 +400,23 @@ App.containerDetails = App.containerDetails || {
             }),
             success: $.proxy(this.onSnapshotDeleteSuccess, this)
         });
+    },
+    deleteSnapshots: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+        console.log('row', row);
+        var name = this.name;
+        $.ajax({
+                url:App.baseAPI+'snapshot/'+row[1]+'/container/'+name,
+                 type: 'DELETE',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                imageAlias: $('#imageAlias').val(),
+                force: true
+            }),
+            success: $.proxy(this.onSnapshotDeleteSuccess, this)
+        });
+        }.bind(this));
     },
     onSnapshotDeleteSuccess: function(response) {
         location.reload();
