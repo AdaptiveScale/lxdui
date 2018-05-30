@@ -2,11 +2,13 @@
 {% block content %}
 <div id="containers">
     <div class="col-lg-12 main-div">
-        <legend class="legend"><span>Containers </span> <span  style="display:none;" class="glyphicon glyphicon-refresh spinning loader"></span>
-                 <button class="btn btn-primary pull-right mgright-5" href="#" id="refreshContainers">
+        <legend class="legend"><span>Containers </span> <span class="glyphicon glyphicon-refresh spinning loader"></span>
+                <button class="btn btn-primary pull-right mgright-5" href="#" id="refreshContainers">
                    <span class="glyphicon glyphicon-refresh"> </span> Refresh List
                 </button>
-
+                <button class="btn btn-primary pull-right mgright-5" href="#" id="rawJSONContainers">
+                   Raw JSON
+                </button>
         </legend>
         <div>
             <div class="form-group">
@@ -124,7 +126,7 @@
                         <div class="clearfix"></div>
                             <div class="col-sm-4">
                                  <input type="text" class="form-control" id="containerName" aria-describedby="name"
-                               placeholder="Enter container name" name="name" required>
+                               placeholder="Enter container name" name="name">
                             </div>
                         <!--<div class="col-sm-2"></div>-->
                              <div class="col-sm-2 text-center">

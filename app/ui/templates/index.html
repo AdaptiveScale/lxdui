@@ -28,6 +28,7 @@
     <script src="{{ url_for('.static', filename='js/profile.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/network.js')}}"></script>
     <script src="{{ url_for('.static', filename='js/storage-pool.js')}}"></script>
+    <script src="{{ url_for('.static', filename='js/properties.js')}}"></script>
 
     <!-- TOASTER -->
     <link href="{{ url_for('.static', filename='css/toastr.css')}}" rel="stylesheet"/>
@@ -88,5 +89,25 @@
         Copyright © 2018 <a href="http://www.adaptivescale.com" target="_blank">AdaptiveScale, Inc.</a>
     </p>
     </div>
+
+<div class="modal fade" id="jsonModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
+            <div id="rawJson"></div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+</div>
 </body>
 </html>

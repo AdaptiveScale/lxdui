@@ -457,6 +457,11 @@ color: #000 !important;
      position:relative;
 }
 
+#rawJson {
+    height:400px;
+    position:relative;
+}
+
 #devices {
     padding-bottom:20px;
     background:#F2F1F0;

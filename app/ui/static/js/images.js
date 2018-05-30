@@ -30,11 +30,16 @@ App.images = App.images || {
     containerTemplate:null,
     newContainerForm:null,
     itemTemplate:null,
+    rawJson:null,
     init: function(opts){
         console.log('Images initialized');
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
         this.containerTemplate = $('.multiContainerTemplate');
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
+        $('#rawJSONImages').on('click', $.proxy(this.showJSON, this));
         $('#btnLocalImages').on('click', $.proxy(this.switchView, this, 'localList'));
         $('#btnRemoteImages').on('click', $.proxy(this.switchView, this, 'remoteList'));
         $('#buttonUpdate').on('click', $.proxy(this.getData, this));
@@ -141,6 +146,13 @@ App.images = App.images || {
         if(this.activeTab=='remote')
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
     },
+    getDataJSON: function(){
+        //this.setLoading(true);
+        if(this.activeTab=='local')
+            return $.get(App.baseAPI+'image', $.proxy(this.getDataSuccess, this));
+        if(this.activeTab=='remote')
+            return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
+    },
     activateScreen: function(screen){
         this.tableLocal.rows({selected:true}).deselect();
         this.tableRemote.rows({selected:true}).deselect();
@@ -204,12 +216,23 @@ App.images = App.images || {
     },
     getDataSuccess: function(response){
         this.setLoading(false);
-        if(this.activeTab=='local'){
-            this.updateLocalTable(response.data);
-        }
-        if(this.activeTab == 'remote'){
-            this.updateRemoteTable(response.data);
-        }
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
+//        if(this.activeTab=='local'){
+//            this.updateLocalTable(response.data);
+//        }
+//        if(this.activeTab == 'remote'){
+//            this.updateRemoteTable(response.data);
+//        }
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Images');
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getDataJSON();
+
     },
     getRemoteData: function(){
         $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
@@ -292,6 +315,8 @@ App.images = App.images || {
         }
         $('#buttonLaunchContainers').hide();
         $('#buttonDelete').hide();
+
+        $('#containerNameImages').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
     },
     generateContainer: function(name, formData){
         return {
@@ -303,7 +328,12 @@ App.images = App.images || {
         var imageContainers = [];
         var tempData = this.cleanupFormData($.extend({}, true,formData));
         for(var i=0;i<=Number(formData.count)-1;i++){
-            imageContainers.push(this.generateContainer(tempData.name+(i+1),tempData));
+            if (tempData.name == '') {
+                imageContainers.push(this.generateContainer(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)], tempData));
+            }
+            else {
+                imageContainers.push(this.generateContainer(tempData.name+(i+1),tempData));
+            }
         }
         return imageContainers;
     },
@@ -333,6 +363,7 @@ App.images = App.images || {
         e.preventDefault();
         var tempForm = $.extend({}, true,this.newContainerForm.serializeJSON());
         var tempJSON = this.generateRequest(tempForm);
+
         $.ajax({
             url: App.baseAPI +'container/',
             type:'POST',

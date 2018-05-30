@@ -27,10 +27,15 @@ App.containers = App.containers || {
         order: [[ 1, 'asc' ]],
     },
     newContainerForm:null,
+    rawJson:null,
     init: function(){
         console.log('Containers init');
         this.dataTable = $('#tableContainers').DataTable(this.tableSettings);
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
         $('#refreshContainers').on('click', $.proxy(this.refreshContainers, this));
+        $('#rawJSONContainers').on('click', $.proxy(this.showJSON, this));
         $('#buttonStart').on('click', $.proxy(this.startContainer, this));
         $('#buttonStop').on('click', $.proxy(this.stopContainer, this));
         $('#buttonRestart').on('click', $.proxy(this.restartContainer, this));
@@ -70,13 +75,18 @@ App.containers = App.containers || {
     },
     getData: function(){
         this.setLoading(true);
-        $.get(App.baseAPI+'container', $.proxy(this.getDataSuccess, this));
+        $.get(App.baseAPI+'container', $.proxy(this.getDataSuccess2, this));
+    },
+    getDataSuccess2: function(response) {
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
     },
     getDataSuccess: function(response){
         this.setLoading(false);
         this.data = response.data;
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
         if(!this.initiated)
             return this.initiated = true;
+
         this.dataTable.clear();
         this.dataTable.destroy();
         this.dataTable=$('#tableContainers').DataTable(App.mergeProps(this.tableSettings, {
@@ -104,6 +114,16 @@ App.containers = App.containers || {
                 },
             ]
         }));
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Containers');
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getData();
+
     },
     onRowSelected: function(e, dt, type, indexes ){
         var state = this.dataTable.rows({selected:true}).count()>0;
@@ -198,6 +218,7 @@ App.containers = App.containers || {
 
         $('#createContainerForm')[view=='form'?'show':'hide']();
         $('#containers')[view=='list'?'show':'hide']();
+        $('#containerName').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)]);
     },
     generateRequest: function(formData){
         return {
@@ -224,6 +245,9 @@ App.containers = App.containers || {
             jsonForm['profiles'] = $('#containerProfiles').val()
 
         var tempJSON = this.generateRequest(jsonForm);
+        if (tempJSON['name'] == '') {
+            tempJSON['name'] = App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)];
+        }
         $.ajax({
             url: App.baseAPI +'container/',
             type:'POST',
