@@ -176,6 +176,18 @@
     margin-bottom: 15px;
 }
 
+.mg-top15 {
+    margin-top: 15px;
+}
+
+.mg-left15 {
+    margin-left: 15px;
+}
+
+.mg-left60 {
+    margin-left: 60px;
+}
+
 .no-right-padding {
  padding-right:0;
 }
@@ -318,6 +330,81 @@ color: #000 !important;
 .none {
     display:none !important;
 }
+
+.container-details-tabs .glyphicon{
+    font-size: 70px;
+}
+
+.container-details-tabs .tab-content > .active {
+    padding-bottom: 20px;
+    background: none;
+}
+
+.tab-details h5 {
+    font-size: 14px !important;
+    font-weight: bold !important;
+}
+
+.tab-details p {
+    font-size: 12px !important;
+}
+
+.tab-details span {
+    margin-top: 35px;
+}
+
+.tab-details .formModifier {
+    font-size: 12px;
+    margin-top:0px;
+}
+
+.network-tab .glyphicon,
+.snapshots-tab .glyphicon{
+    font-size: 15px;
+}
+
+
+.snapshots-tab .btn .glyphicon {
+    font-size: 12px;
+}
+
+.advanced-settings-tab .glyphicon{
+    font-size: 13px;
+}
+
+.pd-left0 {
+    padding-left: 0px;
+}
+
+.pd-right0 {
+    padding-right: 0px;
+}
+
+
+
+.add-borders {
+    border: 1px solid #eee;
+}
+
+.padding-top-25 {
+    padding-top: 25px;
+}
+
+.hover-info {
+    position: absolute;
+    top: 8px;;
+    right: 10px;
+}
+
+.hover-info .glyphicon {
+    font-size: 14px;
+}
+
+.container-details-tabs .nav-tabs {
+    boder: none;
+}
+
+
 
 /* Container details end */
 
