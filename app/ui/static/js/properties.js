@@ -1,5 +1,5 @@
 App.properties = App.properties || {
-    key-value: {
+    keyValues: {
         'boot.autostart': {
             disabled: true,
             description: 'Always start the container when LXD starts (if not set, restore last state)',
@@ -167,7 +167,7 @@ App.properties = App.properties || {
         },
         'security.syscalls.blacklist': {
             disabled: true,
-            description: 'A '\n' separated list of syscalls to blacklist',
+            description: 'A \'\n\' separated list of syscalls to blacklist',
             type: 'string'
         },
         'security.syscalls.blacklist_compat': {
@@ -182,7 +182,7 @@ App.properties = App.properties || {
         },
         'security.syscalls.whitelist': {
             disabled: true,
-            description: 'A '\n' separated list of syscalls to whitelist (mutually exclusive with security.syscalls.blacklist*)',
+            description: 'A \'\n\' separated list of syscalls to whitelist (mutually exclusive with security.syscalls.blacklist*)',
             type: 'string'
         },
     },

@@ -74,10 +74,37 @@ App.containerDetails = App.containerDetails || {
         $('[data-toggle="popover"]').popover();
         $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
         $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
+
+        this.initKeyValuePairs();
     },
     initContainerDetails: function(name) {
         this.name = name;
         this.getSnapshotList();
+    },
+    initKeyValuePairs: function() {
+        for (key in App.properties.keyValues) {
+            $('#advancedSettings').append('<div class="row">' +
+                    '<div class="col-lg-5">'+
+                        '<div class="form-group row">' +
+                            '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
+                            '<a href="#" class="hover-info" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
+                        '</div>' +
+                    '</div>'+
+                    '<div class="col-lg-5">' +
+                        '<div class="form-group row">' +
+                            '<input type="text" class="form-control" placeholder="" value="" disabled />' +
+                        '</div>' +
+                    '</div>' +
+                     '<div class="col-lg-2">' +
+                         '<div class="btn-group" role="group">' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-default">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger">Off</button>' +
+                        '</div>' +
+                     '</div>' +
+                '</div>');
+        }
     },
     refreshContainers: function(e){
         console.log('refreshContainers');
