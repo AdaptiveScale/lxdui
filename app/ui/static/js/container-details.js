@@ -87,7 +87,7 @@ App.containerDetails = App.containerDetails || {
                     '<div class="col-lg-5">'+
                         '<div class="form-group row">' +
                             '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
-                            '<a href="#" class="hover-info" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
                                  '<span class="glyphicon glyphicon-info-sign"></span>' +
                              '</a>' +
                         '</div>' +
@@ -123,6 +123,9 @@ App.containerDetails = App.containerDetails || {
 
         $(e).siblings().removeClass('btn-success');
         $(e).siblings().addClass('btn-default');
+    },
+    showPopover: function(e) {
+        $(e).popover('show');
     },
     refreshContainers: function(e){
         console.log('refreshContainers');
