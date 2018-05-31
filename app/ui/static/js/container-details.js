@@ -99,12 +99,28 @@ App.containerDetails = App.containerDetails || {
                     '</div>' +
                      '<div class="col-lg-2">' +
                          '<div class="btn-group" role="group">' +
-                            '<button type="button" id="" class="formModifier btn btn-sm btn-default">On</button>' +
-                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger">Off</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-default" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
                         '</div>' +
                      '</div>' +
                 '</div>');
         }
+    },
+    enableInput: function(e) {
+        $(e).parent().parent().parent().find('input').eq(1).removeAttr('disabled', '');
+        $(e).removeClass('btn-default');
+        $(e).addClass('btn-success');
+
+        $(e).siblings().removeClass('btn-danger');
+        $(e).siblings().addClass('btn-default');
+    },
+    disableInput: function(e) {
+        $(e).parent().parent().parent().find('input').eq(1).attr('disabled', 'disabled');
+        $(e).removeClass('btn-default');
+        $(e).addClass('btn-danger');
+
+        $(e).siblings().removeClass('btn-success');
+        $(e).siblings().addClass('btn-default');
     },
     refreshContainers: function(e){
         console.log('refreshContainers');
