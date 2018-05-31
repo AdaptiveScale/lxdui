@@ -476,6 +476,14 @@ App.containerDetails = App.containerDetails || {
         $('#buttonAdd').show();
     },
     saveChanges:function(){
+
+        this.updates['config'] = {
+            'limits.memory': '700',
+            'limits.cpu.allowance': '30%',
+            'security.nesting': 'false',
+            'raw.lxc': 'lxc.net.0.ipv4.address=10.31.10.7'
+        },
+        console.log(this.updates);
         $.ajax({
             url: App.baseAPI+'container/',
             type:'PUT',
@@ -484,6 +492,29 @@ App.containerDetails = App.containerDetails || {
             data: JSON.stringify(this.updates),
             success:$.proxy(this.onSaveChangesSuccess, this)
         });
+    },
+    readKeyValuePairs: function() {
+        //TODO Read all Key-Value Pairs using jQuery
+        keyValues = {
+            'limits.memory': '300MB',
+            'limits.cpu.allowance': '25%',
+            'security.nesting': 'false',
+            'lxc.net.0.ipv4.address': '10.31.10.7',
+            //'raw.lxc': 'lxc.net.0.ipv4.address=10.31.10.7'
+        }
+
+        for (var key in keyValues) {
+            if (key.startswith(("boot", "environmnet", "image", "limits", "nvidia", "security", "user", "volatile", "raw"))) {
+                console.log("Key: " + key + " i am ok!");
+            }
+            else {
+                console.log("I am not OK!");
+                keyValues['raw.lxc'] += key+'='+keyValues[key]+'\n';
+                delete keyValues[key];
+            }
+        }
+
+        return keyValues;
     },
     onSaveChangesSuccess:function(response){
         if(this.updates['newName']){
