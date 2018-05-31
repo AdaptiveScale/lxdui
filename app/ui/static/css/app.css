@@ -272,7 +272,23 @@
     border-right: 1px solid #ddd;
 }
 
+.panel > div:nth-child(5) {
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+.panel > div:nth-child(6) {
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
 .panel {
+    border: none;
+}
+
+.panel-collapse {
     border: none;
 }
 
@@ -290,6 +306,32 @@
 color: #000 !important;
 }
 
+#accordion > .panel-default .panel-heading {
+    border: none !important;
+    background: none !important;
+}
+
+#accordion .panel-title {
+    font-size: 14px !important;
+    font-weight: bold;
+}
+
+#accordion > .panel-collapse {
+    border: none !important;
+}
+
+/*.panel-group .panel-default:nth-child(1) {
+    border-bottom: 1px solid #000;
+} */
+
+#collapse1, #collapse2 {
+    border: none;
+}
+
+#collapse1 .panel-body,
+#collapse2   .panel-body {
+    border: none;
+}
 
 /*Container details start */
 
@@ -494,3 +536,21 @@ color: #000 !important;
 }
 
 /*Network end*/
+
+/* Image page start */
+
+.image-tabs .tab-content .active {
+    background: #fff;
+}
+
+.tableImagesLocal {
+    width: 100% !important;
+}
+
+.buttonAddRemoteModal {
+    position: relative;
+    top: 9px;
+    right: 0px;
+}
+
+/* Image page end */
