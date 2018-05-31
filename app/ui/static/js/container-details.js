@@ -94,7 +94,7 @@ App.containerDetails = App.containerDetails || {
                     '</div>'+
                     '<div class="col-lg-5">' +
                         '<div class="form-group row">' +
-                            '<input type="text" class="form-control" placeholder="" value="" disabled />' +
+                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
                         '</div>' +
                     '</div>' +
                      '<div class="col-lg-2">' +
@@ -107,6 +107,7 @@ App.containerDetails = App.containerDetails || {
         }
     },
     enableInput: function(e) {
+        $('#buttonSave').show();
         $(e).parent().parent().parent().find('input').eq(1).removeAttr('disabled', '');
         $(e).removeClass('btn-default');
         $(e).addClass('btn-success');
@@ -115,6 +116,7 @@ App.containerDetails = App.containerDetails || {
         $(e).siblings().addClass('btn-default');
     },
     disableInput: function(e) {
+        $('#buttonSave').show();
         $(e).parent().parent().parent().find('input').eq(1).attr('disabled', 'disabled');
         $(e).removeClass('btn-default');
         $(e).addClass('btn-danger');
@@ -520,12 +522,7 @@ App.containerDetails = App.containerDetails || {
     },
     saveChanges:function(){
 
-        this.updates['config'] = {
-            'limits.memory': '700',
-            'limits.cpu.allowance': '30%',
-            'security.nesting': 'false',
-            'raw.lxc': 'lxc.net.0.ipv4.address=10.31.10.7'
-        },
+        this.updates['config'] = this.readKeyValuePairs();
         console.log(this.updates);
         $.ajax({
             url: App.baseAPI+'container/',
@@ -537,25 +534,10 @@ App.containerDetails = App.containerDetails || {
         });
     },
     readKeyValuePairs: function() {
-        //TODO Read all Key-Value Pairs using jQuery
-        keyValues = {
-            'limits.memory': '300MB',
-            'limits.cpu.allowance': '25%',
-            'security.nesting': 'false',
-            'lxc.net.0.ipv4.address': '10.31.10.7',
-            //'raw.lxc': 'lxc.net.0.ipv4.address=10.31.10.7'
-        }
-
-        for (var key in keyValues) {
-            if (key.startswith(("boot", "environmnet", "image", "limits", "nvidia", "security", "user", "volatile", "raw"))) {
-                console.log("Key: " + key + " i am ok!");
-            }
-            else {
-                console.log("I am not OK!");
-                keyValues['raw.lxc'] += key+'='+keyValues[key]+'\n';
-                delete keyValues[key];
-            }
-        }
+        keyValues = {}
+        $('#advancedSettings').find('input:enabled').each(function() {
+            keyValues[this.name] = this.value;
+        })
 
         return keyValues;
     },
