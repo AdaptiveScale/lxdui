@@ -219,7 +219,7 @@ App.containerDetails = App.containerDetails || {
             var tempPlaceholder = $('<div class="col-sm-6"></div>');
             var inputPlaceholder = $('div');
             inputPlaceholder.append('<td></td>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="delete-'+value.name+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
+//            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="delete-'+value.name+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="restore-'+value.name+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
             tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="create-'+value.name+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());"><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>');
             this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);

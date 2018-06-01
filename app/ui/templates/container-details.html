@@ -82,7 +82,7 @@
                               </div>
                               <div class="col-md-12">
                                   <h5>CPU</h5>
-                                  <p>27(sec)</p>
+                                  <p>{{'%0.1f'|format(container.cpu.usage/1000000000)}}(sec)</p>
                               </div>
                           </div>
                           <div class="col-md-3">
@@ -91,8 +91,8 @@
                               </div>
                               <div class="col-md-12">
                                   <h5>Memory</h5>
-                                  <p>current: 2.29MB</p>
-                                  <p>peak: 2.59MB</p>
+                                  <p>current: {{'%0.2f'|format(container.memory.usage/(1024*1024))}}MB</p>
+                                  <p>peak: {{'%0.2f'|format(container.memory.usage_peak/(1024*1024))}}MB</p>
                               </div>
 
                           </div>
@@ -111,8 +111,13 @@
                                </div>
                               <div class="col-md-12">
                                   <h5>Network</h5>
-                                  <p><span>eth0: </span> B{6.57kB | 2.50kB} P{49 | 16}</p>
-                                  <p><span>eth1:</span> B {0kB | 0kB} P {0 | 0}</p>
+                                  {% if container.network is mapping %}
+                                    {% for key, value in container.network.items() %}
+                                        {% if key!='lo' %}
+                                            <p><span>{{ key }}: </span> B {{'%0.2f'|format(container.network[key]['counters']['bytes_received']/1024)}}kB | {{'%0.2f'|format(container.network[key]['counters']['bytes_sent']/1024)}}kB P {{container.network[key]['counters']['packets_received']}} | {{container.network[key]['counters']['packets_sent']}}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                  {% endif %}
                               </div>
                           </div>
                       </div>
@@ -208,7 +213,7 @@
                    <div class="col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group">
                                 {% if container.network is mapping %}
-                            <h5 class="bg-bottom"><b>Network Interfaces : </b><span class="glyphicon glyphicon-refresh"></span></h5>
+                            <h5 class="bg-bottom"><b>Network Interfaces : </b></h5>
                                 {% for key, value in container.network.items() %}
                                 {% if key!='lo' %}
                                 <div class="row space">
@@ -242,48 +247,13 @@
                             {% endif %}
                         </div> <!-- form-group end-->
                     </div> <!--col-sm-12 end-->
-                     <div class="col-sm-12 col-md-12 col-lg-12">
-                        <div class="form-group">
-
-                                <div class="row space">
-                                    <div class="col-sm-6">
-                                        IP Interface : <span class="label label-primary"> eth1</span>
-                                        <br/>
-
-                                        <!--IP Address : <span class="label label-default">10.343.176.19</span>-->
-                                        <!--<span class="label label-warning">/24</span>-->
-
-                                        <br/>
-                                        MAC Address : <b class="big-font">00:16:3e:e1:01:b2</b>
-                                        <br/>
-                                        State : <span class="label label-danger">DOWN</span>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        BYTES_RECEIVED
-                                            <span class="label label-default">0</span>
-                                            <br/>
-                                         BYTES_SENT
-                                            <span class="label label-default">0</span>
-                                            <br/>
-                                         BYTES_RECEIVED
-                                            <span class="label label-default">0</span>
-                                            <br/>
-                                         BYTES_SENT
-                                            <span class="label label-default">0</span>
-                                            <br/>
-                                    </div>
-                                </div>
-                                <!--netint_data row end-->
-                        </div> <!-- form-group end-->
-                    </div> <!--col-sm-12 end-->
-
 				</div>
                 <div class="tab-pane snapshots-tab col-sm-12 col-md-12 col-lg-12 pd-left0 pd-right0 add-borders" id="3">
                     <div class="col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group">
                                <h5 class="bg-bottom"><b>List of Snapshots : </b><span class="glyphicon glyphicon-camera"></span>
-                                    <button id="buttonNewContainerSnapshot" class="btn btn-sm btn-default mg-left60" disabled><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>
-                                    <button id="buttonRestoreSnapshot" class="btn btn-sm btn-default" disabled><span class="glyphicon glyphicon-repeat"></span> Restore</button>
+                                    <!--<button id="buttonNewContainerSnapshot" class="btn btn-sm btn-default mg-left60" disabled><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>-->
+                                    <!--<button id="buttonRestoreSnapshot" class="btn btn-sm btn-default" disabled><span class="glyphicon glyphicon-repeat"></span> Restore</button>-->
                                     <button id="buttonDeleteSnapshot" class="btn btn-sm btn-default" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>
                                </h5>
                             <div id="snapshotList" class="row space">
@@ -318,45 +288,45 @@
 
                         </div>
                     </div>
-                    <div class="col-lg-12 col-md-12 col-sm-12 user-defined-settings">
-                        <div class="form-group">
-                            <h5 class="bg-bottom"><b> User Defined Settings (Raw) :</b></h5>
-                        </div>
-                         <div class="row">
-                            <div class="col-lg-5">
-                                <div class="form-group row">
-                                    <input type="text" class="form-control" placeholder="" value="project_code" />
-                                </div>
-                            </div>
-                            <div class="col-lg-5">
-                                <div class="form-group row">
-                                    <input type="text" class="form-control" placeholder="" value="awesomesouce" />
-                                </div>
+                    <!--<div class="col-lg-12 col-md-12 col-sm-12 user-defined-settings">-->
+                        <!--<div class="form-group">-->
+                            <!--<h5 class="bg-bottom"><b> User Defined Settings (Raw) :</b></h5>-->
+                        <!--</div>-->
+                         <!--<div class="row">-->
+                            <!--<div class="col-lg-5">-->
+                                <!--<div class="form-group row">-->
+                                    <!--<input type="text" class="form-control" placeholder="" value="project_code" />-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="col-lg-5">-->
+                                <!--<div class="form-group row">-->
+                                    <!--<input type="text" class="form-control" placeholder="" value="awesomesouce" />-->
+                                <!--</div>-->
 
-                            </div>
-                              <div class="col-lg-2">
-                                  <span class="glyphicon btn btn-default glyphicon-trash"></span>
-                              </div>
-                        </div><!--end row-->
-                        <div class="row">
-                            <div class="col-lg-5">
-                                <div class="form-group row">
-                                    <input type="text" class="form-control" placeholder="" value="foo" />
-                                </div>
-                            </div>
-                            <div class="col-lg-5">
-                                <div class="form-group row">
-                                    <input type="text" class="form-control" placeholder="" value="bar" />
-                                </div>
+                            <!--</div>-->
+                              <!--<div class="col-lg-2">-->
+                                  <!--<span class="glyphicon btn btn-default glyphicon-trash"></span>-->
+                              <!--</div>-->
+                        <!--</div>&lt;!&ndash;end row&ndash;&gt;-->
+                        <!--<div class="row">-->
+                            <!--<div class="col-lg-5">-->
+                                <!--<div class="form-group row">-->
+                                    <!--<input type="text" class="form-control" placeholder="" value="foo" />-->
+                                <!--</div>-->
+                            <!--</div>-->
+                            <!--<div class="col-lg-5">-->
+                                <!--<div class="form-group row">-->
+                                    <!--<input type="text" class="form-control" placeholder="" value="bar" />-->
+                                <!--</div>-->
 
-                            </div>
-                              <div class="col-lg-2">
-                                  <span class="glyphicon btn btn-default glyphicon-trash"></span>
-                                   <span class="glyphicon btn btn-default glyphicon-plus"></span>
-                              </div>
-                        </div><!--end row-->
+                            <!--</div>-->
+                              <!--<div class="col-lg-2">-->
+                                  <!--<span class="glyphicon btn btn-default glyphicon-trash"></span>-->
+                                   <!--<span class="glyphicon btn btn-default glyphicon-plus"></span>-->
+                              <!--</div>-->
+                        <!--</div>&lt;!&ndash;end row&ndash;&gt;-->
 
-                </div>
+                <!--</div>-->
 			</div>
 
          </div>
