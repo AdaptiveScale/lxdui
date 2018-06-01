@@ -74,10 +74,58 @@ App.containerDetails = App.containerDetails || {
         $('[data-toggle="popover"]').popover();
         $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
         $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
+
+        this.initKeyValuePairs();
     },
     initContainerDetails: function(name) {
         this.name = name;
         this.getSnapshotList();
+    },
+    initKeyValuePairs: function() {
+        for (key in App.properties.keyValues) {
+            $('#advancedSettings').append('<div class="row">' +
+                    '<div class="col-lg-5">'+
+                        '<div class="form-group row">' +
+                            '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
+                        '</div>' +
+                    '</div>'+
+                    '<div class="col-lg-5">' +
+                        '<div class="form-group row">' +
+                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                        '</div>' +
+                    '</div>' +
+                     '<div class="col-lg-2">' +
+                         '<div class="btn-group" role="group">' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-default" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
+                        '</div>' +
+                     '</div>' +
+                '</div>');
+        }
+    },
+    enableInput: function(e) {
+        $('#buttonSave').show();
+        $(e).parent().parent().parent().find('input').eq(1).removeAttr('disabled', '');
+        $(e).removeClass('btn-default');
+        $(e).addClass('btn-success');
+
+        $(e).siblings().removeClass('btn-danger');
+        $(e).siblings().addClass('btn-default');
+    },
+    disableInput: function(e) {
+        $('#buttonSave').show();
+        $(e).parent().parent().parent().find('input').eq(1).attr('disabled', 'disabled');
+        $(e).removeClass('btn-default');
+        $(e).addClass('btn-danger');
+
+        $(e).siblings().removeClass('btn-success');
+        $(e).siblings().addClass('btn-default');
+    },
+    showPopover: function(e) {
+        $(e).popover('show');
     },
     refreshContainers: function(e){
         console.log('refreshContainers');
@@ -476,6 +524,9 @@ App.containerDetails = App.containerDetails || {
         $('#buttonAdd').show();
     },
     saveChanges:function(){
+
+        this.updates['config'] = this.readKeyValuePairs();
+        console.log(this.updates);
         $.ajax({
             url: App.baseAPI+'container/',
             type:'PUT',
@@ -484,6 +535,14 @@ App.containerDetails = App.containerDetails || {
             data: JSON.stringify(this.updates),
             success:$.proxy(this.onSaveChangesSuccess, this)
         });
+    },
+    readKeyValuePairs: function() {
+        keyValues = {}
+        $('#advancedSettings').find('input:enabled').each(function() {
+            keyValues[this.name] = this.value;
+        })
+
+        return keyValues;
     },
     onSaveChangesSuccess:function(response){
         if(this.updates['newName']){
