@@ -41,10 +41,10 @@
                         <a href="#1" id="btnLocalImages" aria-expanded="true" data-toggle="tab">Local <span class="badge">{{localImages|length}}</span></a>
                     </li>
                     <li>
-                        <a href="#2" id="btnRemoteImages" data-toggle="tab">Nightly <span class="badge">0</span></a>
+                        <a href="#2" id="btnNightlyImages" data-toggle="tab">Nightly <span class="badge">0</span></a>
                     </li>
                     <li>
-                        <a href="#3" data-toggle="tab">Remote <span class="badge">{{remoteImages|length}}</span></a>
+                        <a href="#3" id="btnRemoteImages" data-toggle="tab">Remote <span class="badge">{{remoteImages|length}}</span></a>
                     </li>
                         <a href="" class="btn btn-default btn-xs buttonAddRemoteModal" data-toggle="modal" data-target="#addRemoteModal">
                             <span class="glyphicon glyphicon-plus-sign"></span></a>
@@ -123,7 +123,7 @@
                                      <div class="form-group col-lg-2">
                                         <button id="buttonDownloadNightly" class="btn btn-success" disabled><span class="glyphicon glyphicon-download-alt"></span> Download</button>
                                     </div>
-                                     <p>Remote: <a href="https://image.linuxcontainers.org">https://image.linuxcontainers.org</a></p>
+                                     <p>Remote: <a target="_blank" href="https://image.linuxcontainers.org">https://image.linuxcontainers.org</a></p>
                                 </div>
                            </h5>
 
@@ -137,7 +137,7 @@
                                                 <th>Alias</th>
                                                 <th>Ver</th>
                                                 <th>Arch</th>
-                                                </thead>
+                                            </thead>
                                             <tbody>
                                             <!--{% for image in nightlyImages %}-->
                                             <!--<tr id="{{image.image}}">-->

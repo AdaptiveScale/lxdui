@@ -48,7 +48,7 @@ def createContainer():
         for container in input:
             client = LXCContainer(container)
             result.append(client.create())
-        return response.reply(result, message='Container {} created successfully.'.format(input.get('name')))
+        return response.reply(result, message='Container {} created successfully.'.format(container.get('name')))
     except ValueError as ex:
         return response.reply(message=ex.__str__(), status=403)
 
