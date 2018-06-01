@@ -8,8 +8,8 @@ netaddr==0.7.19
 pyopenssl==17.5.0
 psutil==5.4.5
 pylxd==2.2.6
-terminado
-tornado
-tornado-xstatic
-XStatic
-XStatic-term.js
+terminado==0.8.1
+tornado==5.0.2
+tornado-xstatic==0.2
+XStatic==1.0.1
+XStatic-term.js==0.0.7.0
