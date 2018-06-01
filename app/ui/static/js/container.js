@@ -12,7 +12,19 @@ App.containers = App.containers || {
         searching:true,
         responsive: false,
         select: true,
-//        dom: '<"top"i>rt<"bottom"flp><"clear">',
+        buttons: [
+            {
+                text: 'JSON',
+                action: function ( e, dt, node, config ) {
+                    dt.button().add( 1, {
+                        text: 'Button '+(counter++),
+                        action: function () {
+                            this.remove();
+                        }
+                    } );
+                }
+            }
+        ],
         columnDefs: [
             {
                 orderable: false,
