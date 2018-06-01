@@ -82,7 +82,7 @@
                               </div>
                               <div class="col-md-12">
                                   <h5>CPU</h5>
-                                  <p>27(sec)</p>
+                                  <p>{{'%0.1f'|format(container.cpu.usage/1000000000)}}(sec)</p>
                               </div>
                           </div>
                           <div class="col-md-3">
@@ -91,8 +91,8 @@
                               </div>
                               <div class="col-md-12">
                                   <h5>Memory</h5>
-                                  <p>current: 2.29MB</p>
-                                  <p>peak: 2.59MB</p>
+                                  <p>current: {{'%0.2f'|format(container.memory.usage/(1024*1024))}}MB</p>
+                                  <p>peak: {{'%0.2f'|format(container.memory.usage_peak/(1024*1024))}}MB</p>
                               </div>
 
                           </div>
@@ -111,8 +111,13 @@
                                </div>
                               <div class="col-md-12">
                                   <h5>Network</h5>
-                                  <p><span>eth0: </span> B{6.57kB | 2.50kB} P{49 | 16}</p>
-                                  <p><span>eth1:</span> B {0kB | 0kB} P {0 | 0}</p>
+                                  {% if container.network is mapping %}
+                                    {% for key, value in container.network.items() %}
+                                        {% if key!='lo' %}
+                                            <p><span>{{ key }}: </span> B {{'%0.2f'|format(container.network[key]['counters']['bytes_received']/1024)}}kB | {{'%0.2f'|format(container.network[key]['counters']['bytes_sent']/1024)}}kB P {{container.network[key]['counters']['packets_received']}} | {{container.network[key]['counters']['packets_sent']}}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                  {% endif %}
                               </div>
                           </div>
                       </div>

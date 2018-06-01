@@ -156,6 +156,7 @@ class LXCContainer(LXDModule):
             container['network'] = c.state().network
             container['processes'] = c.state().processes
             container['pid'] = c.state().pid
+            container['disk'] = c.state().disk
 
             return container
         except Exception as e:
