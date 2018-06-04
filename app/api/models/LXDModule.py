@@ -37,11 +37,21 @@ class LXDModule(Base):
 
     def listRemoteImages(self):
         try:
-            logging.info('Reading remote container list')
+            logging.info('Reading remote image list')
             images = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases')
             return remoteImagesList(images.json())
         except Exception as e:
             logging.error('Failed to get remote container images: ')
+            logging.exception(e)
+            raise ValueError(e)
+
+    def listNightlyImages(self):
+        try:
+            logging.info('Reading nightly remote image list')
+            images = requests.get(url='https://vhajdari.github.io/lxd-images/images.json')
+            return images.json()['images']
+        except Exception as e:
+            logging.error('Failed to get remote nightly container images: ')
             logging.exception(e)
             raise ValueError(e)
 
