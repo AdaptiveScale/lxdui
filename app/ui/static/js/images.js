@@ -58,6 +58,7 @@ App.images = App.images || {
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
         this.itemTemplate = $('.itemTemplate').clone();
         $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
+        $('#exTab2 > ul > li:nth-child(1)').addClass('active');// set first tab as active
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
@@ -162,6 +163,8 @@ App.images = App.images || {
             $('#tableImagesRemoteWrapper').hide();
             $('#buttonDelete').show();
             $('#buttonLaunchContainers').show();
+            $('.local-tab-action-buttons').show();
+            $('#buttonJSONRaw').show();
             $('#buttonDownload').hide();
             this.activeTab = 'local';
             return;
@@ -170,6 +173,7 @@ App.images = App.images || {
             $('#tableImagesLocalWrapper').hide();
             $('#tableImagesRemoteWrapper').show();
             $('#buttonLaunchContainers').hide();
+            $('#buttonJSONRaw').hide();
             $('#buttonDownload').show();
             $('#buttonDelete').hide();
             this.activeTab = 'remote';
@@ -297,6 +301,7 @@ App.images = App.images || {
         //initialize profile pickers
         $('.selectpicker').selectpicker();
         this.switchView('form');
+//        $('.image-tabs').toggleClass('hidden');
     },
     switchView: function(view){
         $('#createMultipleContainersForm')[view=='form'?'show':'hide']();
@@ -315,6 +320,8 @@ App.images = App.images || {
         }
         $('#buttonLaunchContainers').hide();
         $('#buttonDelete').hide();
+        $('#rawJSONImages').hide();
+        $('.local-tab-action-buttons').hide();
 
         $('#containerNameImages').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
     },
