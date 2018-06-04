@@ -278,6 +278,14 @@ App.images = App.images || {
         tempSection.find('select[name="containers['+pos+'][profiles]"]').prop('id', image.fingerprint+'_profiles');
 
         tempSection.find('.imageName').text(image.properties.description);
+
+        tempSection.find('#accordion').prop('id', 'accordion_'+pos);
+        tempSection.find('#accordion_link').prop('id', 'accordion_link_'+pos);
+        tempSection.find('#accordion_link_'+pos).prop('data-parent', '#accordion_'+pos);
+        tempSection.find('#accordion_link_'+pos).prop('href', '#collapse_'+pos);
+
+        tempSection.find('#collapse').prop('id', 'collapse_'+pos);
+
         tempSection.show();
         return tempSection;
     },
