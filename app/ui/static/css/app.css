@@ -450,6 +450,14 @@ color: #000 !important;
     margin-left: 15px;
 }
 
+.popover {
+    max-width: 100%;
+}
+
+.popover-content {
+    width: 300px !important;
+}
+
 
 
 /* Container details end */
