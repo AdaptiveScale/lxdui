@@ -7,7 +7,7 @@
                    <span class="glyphicon glyphicon-refresh"> </span> Refresh List
                 </button>
                 <button class="btn btn-primary pull-right mgright-5" href="#" id="rawJSONContainers">
-                   Raw JSON
+                   JSON
                 </button>
         </legend>
         <div>
@@ -55,7 +55,7 @@
             <tr id="{{container.name}}">
                 <td></td>
                 <td class="td-width"><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
-                <td>
+                <td class="td-status">
                     {% if container.status == 'Running' %}
                        <i class="glyphicon glyphicon-off icon-style"></i>
                     {% elif container.status == 'Stopped' %}
@@ -72,10 +72,37 @@
                 <td>{{container.image}}</td>
                 <td>{{container.created_at}}</td>
                 <td class="td-width-action">
-                    <a><i id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot" class="glyphicon glyphicon-camera btn btn-sm btn-default"></i></a>
-                    <a><i id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));" title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>
-                    <a><i id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" class="glyphicon glyphicon-share btn btn-sm btn-default"></i></a>
-                    <a><i id="exportContainer" onClick="$.proxy(App.containers.showExportContainer('{{container.name}}'));" title="Export Image from Container" class="glyphicon glyphicon-export btn btn-sm btn-default"></i></a>
+                    <div class="dropdown action-dropdown">
+                      <button id="dLabel-{{container.name}}" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i id="option-icon" class="glyphicon glyphicon-option-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dLabel">
+                          <li>
+                              <a id="terminalContainer" onClick="$.proxy(App.containers.showTerminalContainer('{{container.name}}'));" title="Terminal to this Container">
+                                  <i class="glyphicon glyphicon-console"></i> Terminal</a>
+                          </li>
+                          <li role="separator" class="divider"></li>
+                        <li>
+                            <a id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot from Container" >
+                                <i class="glyphicon glyphicon-camera"></i>Snapshot</a>
+                        </li>
+                          <li role="separator" class="divider"></li>
+                          <li>
+                              <a id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));" title="Clone Container" >
+                                  <i class="glyphicon glyphicon-duplicate"></i>Clone</a>
+                          </li>
+                           <li>
+                              <a id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" >
+                                  <i class="glyphicon glyphicon-share"></i>  Move</a>
+                           </li>
+                           <li>
+                              <a id="exportContainer" onClick="$.proxy(App.containers.showExportContainer('{{container.name}}'));" title="Export Image from Container">
+                                  <i class="glyphicon glyphicon-export"></i>Export
+                              </a>
+                           </li>
+
+                      </ul>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
