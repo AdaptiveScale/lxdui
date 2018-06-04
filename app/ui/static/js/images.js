@@ -4,7 +4,6 @@ App.images = App.images || {
     data: [],
     remoteData: [],
     activeTab:'local',
-
     tableLocal: null,
     tableRemote: null,
     tableNightly: null,
@@ -26,7 +25,14 @@ App.images = App.images || {
             style:    'multi',
             selector: 'td:first-child'
         },
-        order: [[ 1, 'asc' ]]
+        order: [[ 1, 'asc' ]],
+        initComplete: function(settings, json) {
+            var tempButton = $('.rawJSONImages').clone();
+            tempButton.removeClass('rawJSONImages');
+            tempButton.on('click', $.proxy(App.images.showJSON, App.images));
+            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            tempButton.show();
+        },
     },
     containerTemplate:null,
     newContainerForm:null,
@@ -40,7 +46,6 @@ App.images = App.images || {
         this.rawJson = ace.edit('rawJson');
         this.rawJson.session.setMode('ace/mode/json');
         this.rawJson.setOptions({readOnly: true});
-        $('#rawJSONImages').on('click', $.proxy(this.showJSON, this));
         $('#btnLocalImages').on('click', $.proxy(this.switchView, this, 'localList'));
         $('#btnRemoteImages').on('click', $.proxy(this.switchView, this, 'remoteList'));
         $('#btnNightlyImages').on('click', $.proxy(this.switchView, this, 'nightlyList'));

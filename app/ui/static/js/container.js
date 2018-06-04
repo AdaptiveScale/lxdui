@@ -37,6 +37,13 @@ App.containers = App.containers || {
             selector: 'td:first-child'
         },
         order: [[ 1, 'asc' ]],
+        initComplete: function(settings, json) {
+            var tempButton = $('.rawJSONContainers').clone();
+            tempButton.removeClass('rawJSONContainers');
+            tempButton.on('click', $.proxy(App.containers.showJSON, App.containers));
+            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            tempButton.show();
+        },
     },
     newContainerForm:null,
     rawJson:null,
@@ -47,7 +54,6 @@ App.containers = App.containers || {
         this.rawJson.session.setMode('ace/mode/json');
         this.rawJson.setOptions({readOnly: true});
         $('#refreshContainers').on('click', $.proxy(this.refreshContainers, this));
-        $('#rawJSONContainers').on('click', $.proxy(this.showJSON, this));
         $('#buttonStart').on('click', $.proxy(this.startContainer, this));
         $('#buttonStop').on('click', $.proxy(this.stopContainer, this));
         $('#buttonRestart').on('click', $.proxy(this.restartContainer, this));
