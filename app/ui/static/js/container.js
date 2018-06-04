@@ -513,5 +513,8 @@ App.containers = App.containers || {
     },
     updateValue:function(target, event){
         target.val(event.target.value);
+    },
+    showTerminalContainer: function(container) {
+        window.open('/terminal/new/' + container + '/' + sessionStorage.getItem('authToken'), '_blank');
     }
 }
