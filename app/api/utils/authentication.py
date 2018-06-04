@@ -1,3 +1,5 @@
+import jwt
+
 from app.lib.auth import User
 from app.lib.conf import Config
 from datetime import timedelta
@@ -34,3 +36,12 @@ def initAuth(app):
     app.config['JWT_AUTH_URL_RULE'] = authUrlRule
     app.config['JWT_EXPIRATION_DELTA'] = timedelta(seconds=tokenExpiration)
     JWT(app, authenticate, identity)
+
+def jwt_decode_handler(token):
+    try:
+        APP = meta.APP_NAME
+        secretKey = Config().get(APP, '{}.jwt.secret.key'.format(APP.lower()))
+        payload = jwt.decode(token, secretKey, algorithm='HS256')
+        return True
+    except jwt.InvalidTokenError:
+        return False
