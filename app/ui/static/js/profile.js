@@ -54,6 +54,7 @@ App.profiles = App.profiles || {
         this.dataTable.on('deselect', $.proxy(this.onItemSelectChange, this));
         App.setActiveLink('profile');
         this.getData();
+        $('#profileForm > ul > li:nth-child(1)').addClass('active');
     },
     refreshProfiles: function(e){
         console.log('refreshProfiles');
