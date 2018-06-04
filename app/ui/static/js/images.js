@@ -59,6 +59,8 @@ App.images = App.images || {
         this.itemTemplate = $('.itemTemplate').clone();
         $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
         $('#exTab2 > ul > li:nth-child(1)').addClass('active');// set first tab as active
+
+        this.initKeyValuePairs();
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
@@ -71,6 +73,31 @@ App.images = App.images || {
             return $('#tableImagesLocalWrapper')[tempTableState]();
         else
             return $('#tableImagesRemoteWrapper')[tempTableState]();
+    },
+    initKeyValuePairs: function() {
+        for (key in App.properties.keyValues) {
+            $('#advancedSettingsMultipleContainer').append('<div class="row">' +
+                    '<div class="col-lg-5">'+
+                        '<div class="form-group row">' +
+                            '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
+                        '</div>' +
+                    '</div>'+
+                    '<div class="col-lg-5">' +
+                        '<div class="form-group row">' +
+                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                        '</div>' +
+                    '</div>' +
+                     '<div class="col-lg-2">' +
+                         '<div class="btn-group" role="group">' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-default" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
+                        '</div>' +
+                     '</div>' +
+                '</div>');
+        }
     },
     initLocalTable: function(){
         this.tableLocal =$('#tableImagesLocal').DataTable(App.mergeProps(this.tableSettings, {rowId: 'fingerprint'}));
@@ -278,6 +305,16 @@ App.images = App.images || {
         tempSection.find('select[name="containers['+pos+'][profiles]"]').prop('id', image.fingerprint+'_profiles');
 
         tempSection.find('.imageName').text(image.properties.description);
+
+        tempSection.find('#accordion').prop('id', 'accordion_'+pos);
+        tempSection.find('#accordion_link').prop('id', 'accordion_link_'+pos);
+        tempSection.find('#accordion_link_'+pos).prop('data-parent', '#accordion_'+pos);
+        tempSection.find('#accordion_link_'+pos).prop('href', '#collapse_'+pos);
+
+        tempSection.find('#advancedSettingsMultipleContainer').prop('id', 'advancedSettingsMultipleContainer_'+image.fingerprint);
+
+        tempSection.find('#collapse').prop('id', 'collapse_'+pos);
+
         tempSection.show();
         return tempSection;
     },
@@ -355,6 +392,8 @@ App.images = App.images || {
         if($('#'+specs.image+'_profiles').val()){
             specs['profiles'] = $('#'+specs.image+'_profiles').val();
         }
+
+        specs['config'] = this.readKeyValuePairs('#advancedSettingsMultipleContainer_'+specs.image);
         return specs;
     },
     generateRequest: function(inputJSON){
@@ -384,6 +423,14 @@ App.images = App.images || {
     onCreateSuccess: function(response){
         this.switchView('localList');
         window.location = App.baseWEB +'containers';
+    },
+    readKeyValuePairs: function(selector) {
+        keyValues = {}
+        $(selector).find('input:enabled').each(function() {
+            keyValues[this.name] = this.value;
+        })
+
+        return keyValues;
     },
     launchContainer:function(fingerprint){
         this.tableLocal.row('#'+fingerprint).select();

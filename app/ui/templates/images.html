@@ -3,257 +3,277 @@
 <script>
     var constLocalImages = {{jsData.local|safe}} || {};
     var constRemoteImages = {{jsData.remote|safe}} || {};
+
+
 </script>
 
 <div class="col-lg-12 main-div" id="set-div">
-        <legend class="legend">
-            <span>Images </span><span class="glyphicon glyphicon-refresh spinning loader"></span>
-            <!--<div class="btn-group btn-group-s pull-right" id="imageType">-->
-                <!--<button id="btnLocalImages" type="button" class="btn btn-info">-->
-                    <!--<span class="glyphicon glyphicon-hdd"> </span>-->
-                    <!--Local <span class="badge">{{localImages|length}}</span>-->
-                <!--</button>-->
-                <!--<button type="button" id="btnRemoteImages" class="btn btn-primary">-->
-                    <!--<span class="glyphicon glyphicon-globe"> </span>-->
-                    <!--Remote <span class="badge">{{remoteImages|length}}</span>-->
-                <!--</button>-->
-            <!--</div>-->
-        </legend>
-</div>
-    <div>
-        <!--<div class="col-lg-12 mg-bottom15">-->
-            <!--<div class="form-inline">-->
-                 <!--<div class="form-group">-->
-                     <!--<button id="buttonLaunchContainers" class="btn btn-success" disabled><span class="glyphicon glyphicon-send"></span> Launch Container(s)</button>-->
-                     <!--<button id="buttonDelete" class="btn btn-danger" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete </button>-->
-                     <!--<button id="buttonDownload" class="btn btn-success" style="display:none;" disabled><span class="glyphicon glyphicon-download-alt"></span> Download</button>-->
-                <!--</div>-->
-            <!--</div>-->
+    <legend class="legend">
+        <span>Images </span><span class="glyphicon glyphicon-refresh spinning loader"></span>
+        <!--<div class="btn-group btn-group-s pull-right" id="imageType">-->
+        <!--<button id="btnLocalImages" type="button" class="btn btn-info">-->
+        <!--<span class="glyphicon glyphicon-hdd"> </span>-->
+        <!--Local <span class="badge">{{localImages|length}}</span>-->
+        <!--</button>-->
+        <!--<button type="button" id="btnRemoteImages" class="btn btn-primary">-->
+        <!--<span class="glyphicon glyphicon-globe"> </span>-->
+        <!--Remote <span class="badge">{{remoteImages|length}}</span>-->
+        <!--</button>-->
         <!--</div>-->
+    </legend>
+</div>
+<div>
+    <!--<div class="col-lg-12 mg-bottom15">-->
+    <!--<div class="form-inline">-->
+    <!--<div class="form-group">-->
+    <!--<button id="buttonLaunchContainers" class="btn btn-success" disabled><span class="glyphicon glyphicon-send"></span> Launch Container(s)</button>-->
+    <!--<button id="buttonDelete" class="btn btn-danger" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete </button>-->
+    <!--<button id="buttonDownload" class="btn btn-success" style="display:none;" disabled><span class="glyphicon glyphicon-download-alt"></span> Download</button>-->
+    <!--</div>-->
+    <!--</div>-->
+    <!--</div>-->
 
-        <div class="image-tabs">
-            <div id="exTab2">
-                <ul class="nav nav-tabs">
-                    <li class="active">
-                        <a href="#1" id="btnLocalImages" aria-expanded="true" data-toggle="tab">Local <span class="badge">{{localImages|length}}</span></a>
-                    </li>
-                    <li>
-                        <a href="#2" id="btnNightlyImages" aria-expanded="false" data-toggle="tab">Nightly <span class="badge">0</span></a>
-                    </li>
-                    <li>
-                        <a href="#3" id="btnRemoteImages" aria-expanded="false" data-toggle="tab">Remote <span class="badge">{{remoteImages|length}}</span></a>
-                    </li>
-                        <!--<a href="" class="btn btn-default btn-xs buttonAddRemoteModal" data-toggle="modal" data-target="#addRemoteModal">-->
-                            <!--<span class="glyphicon glyphicon-plus-sign"></span></a>-->
-                </ul>
+    <div class="image-tabs">
+        <div id="exTab2">
+            <ul class="nav nav-tabs">
+                <li class="active">
+                    <a href="#1" id="btnLocalImages" aria-expanded="true" data-toggle="tab">Local <span class="badge">{{localImages|length}}</span></a>
+                </li>
+                <li>
+                    <a href="#2" id="btnNightlyImages" aria-expanded="false" data-toggle="tab">Nightly <span
+                            class="badge">0</span></a>
+                </li>
+                <li>
+                    <a href="#3" id="btnRemoteImages" aria-expanded="false" data-toggle="tab">Remote <span
+                            class="badge">{{remoteImages|length}}</span></a>
+                </li>
+                <!--<a href="" class="btn btn-default btn-xs buttonAddRemoteModal" data-toggle="modal" data-target="#addRemoteModal">-->
+                <!--<span class="glyphicon glyphicon-plus-sign"></span></a>-->
+            </ul>
 
-                <div class="tab-content">
-                     <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders active local-tab" id="1">
-                       <div class="col-sm-12 col-md-12 col-lg-12 local-tab-action-buttons">
-                            <div class="form-group">
-                               <h5 class="bg-bottom">
-                                    <div class="form-inline">
-                                         <div class="form-group">
-                                             <button id="buttonLaunchContainers" class="btn btn-success" disabled><span class="glyphicon glyphicon-send"></span> Launch Container(s)</button>
-                                             <button id="buttonDelete" class="btn btn-danger" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete </button>
-                                        </div>
-                                         <button class="btn btn-primary pull-right mgright-5" href="#" id="rawJSONImages">JSON</button>
-                                    </div>
-                               </h5>
-                            </div>
-                           <!--form-group end-->
-                           <div class="col-lg-12" id="tableImagesLocalWrapper">
-                                    <div class="">
-                                        <table id="tableImagesLocal" class="table table-bordered table-fixed width100">
-                                            <thead>
-                                            <th><input type="checkbox" id="selectAllLocal"/></th>
-                                            <th>OS</th>
-                                            <th>Description</th>
-                                            <th>Alias</th>
-                                            <th>Ver</th>
-                                            <th>Arch</th>
-                                            <th>Size</th>
-                                            </thead>
-                                            <tbody>
-                                            {% for image in localImages %}
-                                            <tr id="{{image.fingerprint}}">
-                                                <td></td>
-                                                {% if image.properties.get('description') == None %}
-                                                <td>
-                                                    <a class="pointer"
-                                                       onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
-                                                </td>
-                                                <td>{{image.aliases[0].description}}</td>
-                                                 {% else %}
-                                                <td>
-                                                    <a class="pointer"
-                                                       onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
-                                                </td>
-                                                <td>{{ image.properties.description }}</td>
-                                                 {% endif %}
-                                                <td>
-                                                    {% for alias in image.aliases %}
-                                                        <li>{{alias.name}}</li>
-                                                    {% endfor %}
-                                                </td>
-                                                <td>{{ image.properties.release }}</td>
-                                                <td>{{ image.properties.architecture }}</td>
-                                                <td class="imageSize">{{ image.size }}</td>
-                                            </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                            </div>
-                           <!--tableImagesLocalWrapper end-->
-                       </div>
-                         <div id="createMultipleContainersForm" style="display:none;">
-                                <div class="col-lg-12 main-div">
-                                    <div>
-                                        <div class="form-group">
-                                            <div class="row">
-                                                <div class="col-lg-2">
-                                                    <button class="btn btn-defult" id="buttonBack">
-                                                        <span class="glyphicon glyphicon-chevron-left"> </span> Back
-                                                    </button>
-                                                </div>
-                                                 <div class="col-lg-7 text-center">
-                                                     <h4><b>Create Container from Image</b></h4>
-                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                             <!--col-lg-12 main-div end-->
-
-                                <div class="col-lg-12">
-                                    <form id="newContainerForm">
-                                        <div class="form-group" id="multiContainerSection">
-
-                                        </div>
-                                        <!--multiContainerSection end-->
-                                        <button type="submit" class="btn btn-primary">Create <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-                                    </form>
-                                    <!--newContainerForm end-->
-                                </div>
-                            </div>
-
-                    </div> <!--col-sm-12 end-->
-
-
-                   <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="2">
-                       <div class="col-sm-12 col-md-12 col-lg-12">
-                            <div class="col-lg-12" id="loader" style="display:none;">
-                                    <div class="col-lg-offset-4 col-lg-4">
-                                        <img src="static/images/loader.gif" class="text-center" width="150px">
-                                    </div>
-                            </div>
+            <div class="tab-content">
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders active local-tab" id="1">
+                    <div class="col-sm-12 col-md-12 col-lg-12 local-tab-action-buttons">
+                        <div class="form-group">
                             <h5 class="bg-bottom">
                                 <div class="form-inline">
-                                     <div class="form-group">
-                                        <button id="buttonDownloadNightly" class="btn btn-success left" disabled><span class="glyphicon glyphicon-download-alt"></span> Download</button>
-                                          <div class="left">
-                                        <p class="remote-link">Remote: <a target="_blank" href="https://image.linuxcontainers.org">https://image.linuxcontainers.org</a></p>
+                                    <div class="form-group">
+                                        <button id="buttonLaunchContainers" class="btn btn-success" disabled><span
+                                                class="glyphicon glyphicon-send"></span> Launch Container(s)
+                                        </button>
+                                        <button id="buttonDelete" class="btn btn-danger" disabled><span
+                                                class="glyphicon glyphicon-remove-sign"></span> Delete
+                                        </button>
                                     </div>
-                                    </div>
-
+                                    <button class="btn btn-primary pull-right mgright-5" href="#" id="rawJSONImages">
+                                        JSON
+                                    </button>
                                 </div>
-                           </h5>
-
-                                <div class="col-lg-12" id="tableImagesNightlyWrapper">
-                                    <div class="">
-                                        <table id="tableImagesNightly" class="table table-bordered table-responsive table-fixed width100">
-                                            <thead>
-                                                <th><input type="checkbox" id="selectAllNightly" class="width100"/></th>
-                                                <th>OS</th>
-                                                <th>Description</th>
-                                                <th>Alias</th>
-                                                <th>Ver</th>
-                                                <th>Arch</th>
-                                            </thead>
-                                            <tbody>
-                                            <!--{% for image in nightlyImages %}-->
-                                            <!--<tr id="{{image.image}}">-->
-                                            <tr>
-                                                <!--<td></td>-->
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <td></td>
-                                                <!--<td><a class="pointer" onClick="App.images.showRemoteDetails('{{image.image}}');" data-keyboard="true">{{ image.name}}</a></td>-->
-                                                <!--<td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>-->
-                                                <!--<td>{{ image.image }}</td>-->
-                                                <!--<td>{{ image.distribution }}</td>-->
-                                                <!--<td>{{ image.architecture }}</td>-->
-                                            </tr>
-                                            <!--{% endfor %}-->
-                                            </tbody>
-                                        </table>
+                            </h5>
+                        </div>
+                        <!--form-group end-->
+                        <div class="col-lg-12" id="tableImagesLocalWrapper">
+                            <div class="">
+                                <table id="tableImagesLocal" class="table table-bordered table-fixed width100">
+                                    <thead>
+                                    <th><input type="checkbox" id="selectAllLocal"/></th>
+                                    <th>OS</th>
+                                    <th>Description</th>
+                                    <th>Alias</th>
+                                    <th>Ver</th>
+                                    <th>Arch</th>
+                                    <th>Size</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for image in localImages %}
+                                    <tr id="{{image.fingerprint}}">
+                                        <td></td>
+                                        {% if image.properties.get('description') == None %}
+                                        <td>
+                                            <a class="pointer"
+                                               onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
+                                        </td>
+                                        <td>{{image.aliases[0].description}}</td>
+                                        {% else %}
+                                        <td>
+                                            <a class="pointer"
+                                               onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
+                                        </td>
+                                        <td>{{ image.properties.description }}</td>
+                                        {% endif %}
+                                        <td>
+                                            {% for alias in image.aliases %}
+                                            <li>{{alias.name}}</li>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ image.properties.release }}</td>
+                                        <td>{{ image.properties.architecture }}</td>
+                                        <td class="imageSize">{{ image.size }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <!--tableImagesLocalWrapper end-->
+                    </div>
+                    <div id="createMultipleContainersForm" style="display:none;">
+                        <div class="col-lg-12 main-div">
+                            <div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-lg-2">
+                                            <button class="btn btn-defult" id="buttonBack">
+                                                <span class="glyphicon glyphicon-chevron-left"> </span> Back
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-7 text-center">
+                                            <h4><b>Create Container from Image</b></h4>
+                                        </div>
                                     </div>
-                                </div>
-                       </div>
-                    </div> <!--col-sm-12 end-->
-
-
-                    <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="3">
-                       <div class="col-sm-12 col-md-12 col-lg-12">
-                            <div class="col-lg-12" id="loader" style="display:none;">
-                                <div class="col-lg-offset-4 col-lg-4">
-                                    <img src="static/images/loader.gif" class="text-center" width="150px">
                                 </div>
                             </div>
-                           <h5 class="bg-bottom">
-                                <div class="form-inline">
-                                     <div class="form-group">
-                                        <button id="buttonDownload" class="btn btn-success" disabled><span class="glyphicon glyphicon-download-alt"></span> Download</button>
+                        </div>
+                        <!--col-lg-12 main-div end-->
+
+                        <div class="col-lg-12">
+                            <form id="newContainerForm">
+                                <div class="form-group" id="multiContainerSection">
+
+                                </div>
+                                <!--multiContainerSection end-->
+                                <button type="submit" class="btn btn-primary">Create <span
+                                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                            </form>
+                            <!--newContainerForm end-->
+                        </div>
+                    </div>
+
+                </div> <!--col-sm-12 end-->
+
+
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="2">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-lg-12" id="loader" style="display:none;">
+                            <div class="col-lg-offset-4 col-lg-4">
+                                <img src="static/images/loader.gif" class="text-center" width="150px">
+                            </div>
+                        </div>
+                        <h5 class="bg-bottom">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <button id="buttonDownloadNightly" class="btn btn-success left" disabled><span
+                                            class="glyphicon glyphicon-download-alt"></span> Download
+                                    </button>
+                                    <div class="left">
+                                        <p class="remote-link">Remote: <a target="_blank"
+                                                                          href="https://image.linuxcontainers.org">https://image.linuxcontainers.org</a>
+                                        </p>
                                     </div>
                                 </div>
-                           </h5>
 
-                                <!--<div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">-->
-                                    <div class="col-lg-12" id="tableImagesRemoteWrapper">
-                                    <div class="">
-                                        <table id="tableImagesRemote" class="table table-bordered table-responsive table-fixed width100">
-                                            <thead>
-                                                <th><input type="checkbox" id="selectAllRemote" class="width100"/></th>
-                                                <th>OS</th>
-                                                <th>Description</th>
-                                                <th>Alias</th>
-                                                <th>Ver</th>
-                                                <th>Arch</th>
-                                                </thead>
-                                            <tbody>
-                                            {% for image in remoteImages %}
-                                            <tr id="{{image.image}}">
-                                                <td></td>
-                                                <td><a class="pointer"
-                                                       onClick="App.images.showRemoteDetails('{{image.image}}');" data-keyboard="true">{{ image.name}}</a></td>
-                                                <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>
-                                                <td>{{ image.image }}</td>
-                                                <td>{{ image.distribution }}</td>
-                                                <td>{{ image.architecture }}</td>
-                                            </tr>
-                                            {% endfor %}
-                                            </tbody>
-                                        </table>
-                                    </div>
+                            </div>
+                        </h5>
+
+                        <div class="col-lg-12" id="tableImagesNightlyWrapper">
+                            <div class="">
+                                <table id="tableImagesNightly"
+                                       class="table table-bordered table-responsive table-fixed width100">
+                                    <thead>
+                                    <th><input type="checkbox" id="selectAllNightly" class="width100"/></th>
+                                    <th>OS</th>
+                                    <th>Description</th>
+                                    <th>Alias</th>
+                                    <th>Ver</th>
+                                    <th>Arch</th>
+                                    </thead>
+                                    <tbody>
+                                    <!--{% for image in nightlyImages %}-->
+                                    <!--<tr id="{{image.image}}">-->
+                                    <tr>
+                                        <!--<td></td>-->
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <!--<td><a class="pointer" onClick="App.images.showRemoteDetails('{{image.image}}');" data-keyboard="true">{{ image.name}}</a></td>-->
+                                        <!--<td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>-->
+                                        <!--<td>{{ image.image }}</td>-->
+                                        <!--<td>{{ image.distribution }}</td>-->
+                                        <!--<td>{{ image.architecture }}</td>-->
+                                    </tr>
+                                    <!--{% endfor %}-->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!--col-sm-12 end-->
+
+
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="3">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-lg-12" id="loader" style="display:none;">
+                            <div class="col-lg-offset-4 col-lg-4">
+                                <img src="static/images/loader.gif" class="text-center" width="150px">
+                            </div>
+                        </div>
+                        <h5 class="bg-bottom">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <button id="buttonDownload" class="btn btn-success" disabled><span
+                                            class="glyphicon glyphicon-download-alt"></span> Download
+                                    </button>
                                 </div>
-                       </div>
-                    </div> <!--col-sm-12 end-->
-                     <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="4">
-                       <div class="col-sm-12 col-md-12 col-lg-12">
+                            </div>
+                        </h5>
 
-                       </div>
-                    </div> <!--col-sm-12 end-->
+                        <!--<div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">-->
+                        <div class="col-lg-12" id="tableImagesRemoteWrapper">
+                            <div class="">
+                                <table id="tableImagesRemote"
+                                       class="table table-bordered table-responsive table-fixed width100">
+                                    <thead>
+                                    <th><input type="checkbox" id="selectAllRemote" class="width100"/></th>
+                                    <th>OS</th>
+                                    <th>Description</th>
+                                    <th>Alias</th>
+                                    <th>Ver</th>
+                                    <th>Arch</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for image in remoteImages %}
+                                    <tr id="{{image.image}}">
+                                        <td></td>
+                                        <td><a class="pointer"
+                                               onClick="App.images.showRemoteDetails('{{image.image}}');"
+                                               data-keyboard="true">{{ image.name}}</a></td>
+                                        <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})
+                                        </td>
+                                        <td>{{ image.image }}</td>
+                                        <td>{{ image.distribution }}</td>
+                                        <td>{{ image.architecture }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!--col-sm-12 end-->
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="4">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
 
-				</div>
-
-
+                    </div>
+                </div> <!--col-sm-12 end-->
 
             </div>
+
+
         </div>
+    </div>
 
     <div class="panel panel-default multiContainerTemplate" style="display:none;">
         <div class="panel-heading" role="tab">
@@ -272,7 +292,7 @@
                 <div class="form-group">
                     <label class="col-sm-4 control-label">Container Name</label>
                     <label class="col-sm-2 control-label">Quantity</label>
-                    <label class="col-sm-2 form-check-label text-center" >Persistent</label>
+                    <label class="col-sm-2 form-check-label text-center">Persistent</label>
                     <label class="col-sm-2 form-check-label text-center">Autostart</label>
                     <div class="clearfix"></div>
                     <div class="col-sm-4">
@@ -283,7 +303,8 @@
                         <input type="number" class="cntNrs form-control" min="1" value="1" name="count">
                     </div>
                     <div class="col-sm-2 text-center">
-                         <input type="checkbox" class="form-check-input containerStateful" width100 name="stateful" checked value="true">
+                        <input type="checkbox" class="form-check-input containerStateful" width100 name="stateful"
+                               checked value="true">
                     </div>
                     <div class="col-sm-2">
                         <input type="checkbox" class="form-check-input width100" name="autostart" checked value="true">
@@ -294,15 +315,18 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label">CPU allocation in %</label>
                     <div class="col-sm-3">
-                        <input type="range" class="form-control" id="cpu_percentage" min="5" max="100" value="100" step="5">
+                        <input type="range" class="form-control" id="cpu_percentage" min="5" max="100" value="100"
+                               step="5">
                     </div>
                     <div class="col-sm-2">
-                        <input type="number" class="form-control" name="cpu[percentage]" min="5" max="100" value="100" step="5">
+                        <input type="number" class="form-control" name="cpu[percentage]" min="5" max="100" value="100"
+                               step="5">
                     </div>
                     <div class="col-sm-2">
                         <label class="form-check-label">Hard Limit</label>
-                        <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]"
-                       value="true">
+                        <input type="checkbox" class="form-check-input" id="containerCPUHardLimit"
+                               name="cpu[hardLimitation]"
+                               value="true">
                     </div>
                 </div>
             </div>
@@ -310,10 +334,12 @@
                 <div class="form-group">
                     <label class="col-sm-3 control-label">Memory usage in MB:</label>
                     <div class="col-sm-3">
-                        <input type="range" class="form-control" id="memory_percentage" min="5" max="{{memory}}" value="100" step="5">
+                        <input type="range" class="form-control" id="memory_percentage" min="5" max="{{memory}}"
+                               value="100" step="5">
                     </div>
                     <div class="col-sm-2">
-                        <input type="number" class="form-control" name="memory[sizeInMB]" min="32" max="{{memory}}" value="32">
+                        <input type="number" class="form-control" name="memory[sizeInMB]" min="32" max="{{memory}}"
+                               value="32">
                         <b>(max: {{memory}} MB)</b>
                     </div>
                     <div class="col-sm-2">
@@ -328,9 +354,37 @@
                     <div class="col-sm-4">
                         <select multiple name="profiles">
                             {% for profile in profiles %}
-                                <option>{{profile.name}}</option>
+                            <option>{{profile.name}}</option>
                             {% endfor %}
                         </select>
+                    </div>
+                </div>
+            </div>
+            <div class="panel-body">
+                <div class="panel-group" id="accordion">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" id="accordion_link" href="#collapse">Advanced
+                                    Settings</a>
+                            </h4>
+                        </div>
+                        <div id="collapse" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="col-lg-12 col-sm-12 col-xs-12" id="advancedSettingsMultipleContainer">
+                                    <div class="row">
+                                        <div class="col-lg-5">
+                                            <div class="row"><label for="Key">Key</label></div>
+                                        </div>
+                                        <div class="col-lg-5">
+                                            <div class="row"><label for="Value">Value</label></div>
+                                        </div>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -348,59 +402,61 @@
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog images-modal">
+    <div class="modal-dialog images-modal">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Remote Image: <label class="imageName"></label></h4>
-      </div>
-      <div class="modal-body" id="modalBody">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Remote Image: <label class="imageName"></label></h4>
+            </div>
+            <div class="modal-body" id="modalBody">
 
-      </div>
-      <div class="modal-footer" style="border: none;">
-          <button type="button" class="btn btn-success" id="modalDownloadButton">Download</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
+            </div>
+            <div class="modal-footer" style="border: none;">
+                <button type="button" class="btn btn-success" id="modalDownloadButton">Download</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
     </div>
-
-  </div>
 </div>
 
 <!-- Modal -->
 <div id="addRemoteModal" class="modal fade" role="dialog" tabindex="-1">
-  <div class="modal-dialog images-modal">
+    <div class="modal-dialog images-modal">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add remote <label class="imageName"></label></h4>
-      </div>
-      <div class="modal-body" id="modalAddRemoteBody">
-            <form id="cloneForm" class="form-horizontal">
-                <div class="form-group">
-                    <label for="" class="col-sm-2 control-label">Name</label>
-                    <div class="col-sm-9">
-                        <input id="inputremoteName" name="inputremoteName" class="form-control" type="text" placeholder="LXD Server" title="LXD Server" required/>
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add remote <label class="imageName"></label></h4>
+            </div>
+            <div class="modal-body" id="modalAddRemoteBody">
+                <form id="cloneForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="" class="col-sm-2 control-label">Name</label>
+                        <div class="col-sm-9">
+                            <input id="inputremoteName" name="inputremoteName" class="form-control" type="text"
+                                   placeholder="LXD Server" title="LXD Server" required/>
+                        </div>
                     </div>
-                </div>
-                <div class="form-group">
+                    <div class="form-group">
                         <label for="" class="col-sm-2 control-label">URL</label>
                         <div class="col-sm-9">
-                            <input id="inputUrl" name="inputUrlName" class="form-control" type="text" placeholder="URL" title="Url Name" required/>
+                            <input id="inputUrl" name="inputUrlName" class="form-control" type="text" placeholder="URL"
+                                   title="Url Name" required/>
                         </div>
-                </div>
-            </form>
-      </div>
-      <div class="modal-footer" style="border: none;">
-          <button type="button" class="btn btn-success" id="buttonAddRemote">Save</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer" style="border: none;">
+                <button type="button" class="btn btn-success" id="buttonAddRemote">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
 
-  </div>
+    </div>
 </div>
 
 {% endblock %}
