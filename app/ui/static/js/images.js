@@ -311,6 +311,8 @@ App.images = App.images || {
         tempSection.find('#accordion_link_'+pos).prop('data-parent', '#accordion_'+pos);
         tempSection.find('#accordion_link_'+pos).prop('href', '#collapse_'+pos);
 
+        tempSection.find('#advancedSettingsMultipleContainer').prop('id', 'advancedSettingsMultipleContainer_'+image.fingerprint);
+
         tempSection.find('#collapse').prop('id', 'collapse_'+pos);
 
         tempSection.show();
@@ -390,6 +392,8 @@ App.images = App.images || {
         if($('#'+specs.image+'_profiles').val()){
             specs['profiles'] = $('#'+specs.image+'_profiles').val();
         }
+
+        specs['config'] = this.readKeyValuePairs('#advancedSettingsMultipleContainer_'+specs.image);
         return specs;
     },
     generateRequest: function(inputJSON){
@@ -419,6 +423,14 @@ App.images = App.images || {
     onCreateSuccess: function(response){
         this.switchView('localList');
         window.location = App.baseWEB +'containers';
+    },
+    readKeyValuePairs: function(selector) {
+        keyValues = {}
+        $(selector).find('input:enabled').each(function() {
+            keyValues[this.name] = this.value;
+        })
+
+        return keyValues;
     },
     launchContainer:function(fingerprint){
         this.tableLocal.row('#'+fingerprint).select();
