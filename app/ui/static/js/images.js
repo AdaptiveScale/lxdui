@@ -53,6 +53,7 @@ App.images = App.images || {
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
         this.initLocalTable();
         this.initRemoteTable();
+        this.initNightlyTable();
         $('.imageSize').each(this.convertImageSize);
         $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
@@ -114,6 +115,14 @@ App.images = App.images || {
     setRemoteTableEvents: function(){
         this.tableRemote.on('select', $.proxy(this.onItemSelectChange, this));
         this.tableRemote.on('deselect', $.proxy(this.onItemSelectChange, this));
+    },
+    initNightlyTable: function(){
+        this.tableLocal =$('#tableImagesNightly').DataTable(App.mergeProps(this.tableSettings, {rowId: 'fingerprint'}));
+        this.setNightlyTableEvents();
+    },
+    setNightlyTableEvents: function(){
+        this.tableLocal.on('select', $.proxy(this.onItemSelectChange, this));
+        this.tableLocal.on('deselect', $.proxy(this.onItemSelectChange, this));
     },
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
