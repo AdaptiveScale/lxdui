@@ -93,13 +93,16 @@ def images():
     localImages = getLocalImages()
     profiles = getProfiles()
     remoteImages = getRemoteImages()
+    nightlyImages = getNightlyImages()
     return render_template('images.html', currentpage='Images',
                            localImages=localImages,
                            remoteImages=remoteImages,
+                           nightlyImages=nightlyImages,
                            profiles=profiles,
                            jsData={
                                'local': json.dumps(localImages),
                                'remote': json.dumps(remoteImages),
+                               'nightly': json.dumps(nightlyImages)
                            },
                            memory=memory(),
                            lxdui_current_version=VERSION)
@@ -120,6 +123,18 @@ def getRemoteImages():
         remoteImages = []
 
     return remoteImages
+
+def getNightlyImages():
+    try:
+        nightlyImages = LXDModule().listNightlyImages()
+        images = []
+        for image in nightlyImages:
+            images.append(image['metadata'])
+        nightlyImages=images
+    except:
+        nightlyImages = []
+
+    return nightlyImages
 
 def getProfiles():
     try:

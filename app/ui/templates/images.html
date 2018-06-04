@@ -41,7 +41,7 @@
                 </li>
                 <li>
                     <a href="#2" id="btnNightlyImages" aria-expanded="false" data-toggle="tab">Nightly <span
-                            class="badge">0</span></a>
+                            class="badge">{{nightlyImages|length}}</span></a>
                 </li>
                 <li>
                     <a href="#3" id="btnRemoteImages" aria-expanded="false" data-toggle="tab">Remote <span
@@ -180,31 +180,41 @@
                                 <table id="tableImagesNightly"
                                        class="table table-bordered table-responsive table-fixed width100">
                                     <thead>
-                                    <th><input type="checkbox" id="selectAllNightly" class="width100"/></th>
+                                    <th><input type="checkbox" id="selectAllNightly"/></th>
                                     <th>OS</th>
                                     <th>Description</th>
                                     <th>Alias</th>
                                     <th>Ver</th>
                                     <th>Arch</th>
+                                    <th>Size</th>
                                     </thead>
                                     <tbody>
-                                    <!--{% for image in nightlyImages %}-->
-                                    <!--<tr id="{{image.image}}">-->
-                                    <tr>
-                                        <!--<td></td>-->
+                                    {% for image in nightlyImages %}
+                                    <tr id="{{image.fingerprint}}">
                                         <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <td></td>
-                                        <!--<td><a class="pointer" onClick="App.images.showRemoteDetails('{{image.image}}');" data-keyboard="true">{{ image.name}}</a></td>-->
-                                        <!--<td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})</td>-->
-                                        <!--<td>{{ image.image }}</td>-->
-                                        <!--<td>{{ image.distribution }}</td>-->
-                                        <!--<td>{{ image.architecture }}</td>-->
+                                        {% if image.properties.get('description') == None %}
+                                        <td>
+                                            <a class="pointer"
+                                               onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
+                                        </td>
+                                        <td>{{image.aliases[0].description}}</td>
+                                        {% else %}
+                                        <td>
+                                            <a class="pointer"
+                                               onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
+                                        </td>
+                                        <td>{{ image.properties.description }}</td>
+                                        {% endif %}
+                                        <td>
+                                            {% for alias in image.aliases %}
+                                            <li>{{alias.name}}</li>
+                                            {% endfor %}
+                                        </td>
+                                        <td>{{ image.properties.release }}</td>
+                                        <td>{{ image.properties.architecture }}</td>
+                                        <td class="imageSize">{{ image.size }}</td>
                                     </tr>
-                                    <!--{% endfor %}-->
+                                    {% endfor %}
                                     </tbody>
                                 </table>
                             </div>
