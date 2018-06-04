@@ -65,9 +65,12 @@ class LXDModule(Base):
 
     def downloadImage(self, image):
         try:
-            logging.info('Downloading remote iamge:', image)
+            logging.info('Downloading remote image:', image)
             remoteClient = Client(endpoint='https://images.linuxcontainers.org')
-            remoteImage = remoteClient.images.get_by_alias(image)
+            try:
+                remoteImage = remoteClient.images.get_by_alias(image)
+            except:
+                remoteImage = remoteClient.images.get(image)
             newImage = remoteImage.copy(self.client, auto_update=False, public=False, wait=True)
             return self.client.api.images[newImage.fingerprint].get().json()['metadata']
         except Exception as e:

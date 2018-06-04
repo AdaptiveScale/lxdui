@@ -7,6 +7,7 @@ App.images = App.images || {
 
     tableLocal: null,
     tableRemote: null,
+    tableNightly: null,
     tableSettings: {
         searching:true,
         responsive: {
@@ -42,9 +43,12 @@ App.images = App.images || {
         $('#rawJSONImages').on('click', $.proxy(this.showJSON, this));
         $('#btnLocalImages').on('click', $.proxy(this.switchView, this, 'localList'));
         $('#btnRemoteImages').on('click', $.proxy(this.switchView, this, 'remoteList'));
+        $('#btnNightlyImages').on('click', $.proxy(this.switchView, this, 'nightlyList'));
+
         $('#buttonUpdate').on('click', $.proxy(this.getData, this));
         $('#buttonDelete').on('click', $.proxy(this.doDeleteLocalImages, this));
         $('#buttonDownload').on('click', $.proxy(this.doDownload, this));
+        $('#buttonDownloadNightly').on('click', $.proxy(this.doDownload, this));
         $('#buttonLaunchContainers').on('click', $.proxy(this.launchContainers, this));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'localList'));
         $('.image').on('click', $.proxy(this.setActive, this));
@@ -117,12 +121,12 @@ App.images = App.images || {
         this.tableRemote.on('deselect', $.proxy(this.onItemSelectChange, this));
     },
     initNightlyTable: function(){
-        this.tableLocal =$('#tableImagesNightly').DataTable(App.mergeProps(this.tableSettings, {rowId: 'fingerprint'}));
+        this.tableNightly =$('#tableImagesNightly').DataTable(App.mergeProps(this.tableSettings, {rowId: 'fingerprint'}));
         this.setNightlyTableEvents();
     },
     setNightlyTableEvents: function(){
-        this.tableLocal.on('select', $.proxy(this.onItemSelectChange, this));
-        this.tableLocal.on('deselect', $.proxy(this.onItemSelectChange, this));
+        this.tableNightly.on('select', $.proxy(this.onItemSelectChange, this));
+        this.tableNightly.on('deselect', $.proxy(this.onItemSelectChange, this));
     },
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
@@ -138,6 +142,13 @@ App.images = App.images || {
             var visibility= !state?'attr':'removeAttr';
             $('#buttonDownload')[visibility]('disabled', 'disabled');
             $('#selectAllRemote').prop('checked',this.tableRemote.rows({selected:true}).count()==this.tableRemote.rows().count());
+            return;
+        }
+        if(this.activeTab=='nightly'){
+            var state = this.tableNightly.rows({selected:true}).count()>0
+            var visibility= !state?'attr':'removeAttr';
+            $('#buttonDownloadNightly')[visibility]('disabled', 'disabled');
+            $('#selectAllNightly').prop('checked',this.tableNightly.rows({selected:true}).count()==this.tableNightly.rows().count());
             return;
         }
     },
@@ -157,19 +168,35 @@ App.images = App.images || {
     },
     doDownload: function(){
         $('#modalDownloadButton').attr('disabled', 'disabled');
-        this.tableRemote.rows({selected: true}).data().map(function(row){
-            $.ajax({
-                url:App.baseAPI+'image/remote',
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    image:row['image']
-                }),
-                success: $.proxy(this.onDownloadSuccess, this, row['image'])
-            });
-            this.tableRemote.row('#'+row['image']).remove().draw(false);
-        }.bind(this));
+        if(this.activeTab=='nightly') {
+            this.tableNightly.rows({selected: true}).data().map(function(row){
+                $.ajax({
+                    url:App.baseAPI+'image/remote',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        image:row['fingerprint']
+                    }),
+                    success: $.proxy(this.onDownloadSuccess, this, row['image'])
+                });
+                this.tableRemote.row('#'+row['image']).remove().draw(false);
+            }.bind(this));
+        } else if(this.activeTab=='remote') {
+            this.tableRemote.rows({selected: true}).data().map(function(row){
+                $.ajax({
+                    url:App.baseAPI+'image/remote',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        image:row['image']
+                    }),
+                    success: $.proxy(this.onDownloadSuccess, this, row['image'])
+                });
+                this.tableRemote.row('#'+row['image']).remove().draw(false);
+            }.bind(this));
+        }
     },
     onDownloadSuccess: function(imageName, response){
          location.reload();
@@ -213,6 +240,10 @@ App.images = App.images || {
             $('#buttonDownload').show();
             $('#buttonDelete').hide();
             this.activeTab = 'remote';
+            return;
+        }
+        if(screen=='nightly') {
+            this.activeTab = 'nightly';
             return;
         }
     },
@@ -363,6 +394,9 @@ App.images = App.images || {
         }
         if(view=='localList'){
             return this.activateScreen('local');
+        }
+        if(view=='nightlyList'){
+            return this.activateScreen('nightly');
         }
         $('#buttonLaunchContainers').hide();
         $('#buttonDelete').hide();
