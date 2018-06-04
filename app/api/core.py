@@ -132,5 +132,5 @@ def start(port, debug=False, uiPages=None):
 
     print("LXDUI started. Running on http://0.0.0.0:{}".format(port))
     print("PID={}, Press CTRL+C to quit".format(pid))
-    terminal(app, port)
+    terminal(app, port, debug)
     # app.run(debug=debug, host='0.0.0.0', port=port)
