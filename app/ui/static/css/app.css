@@ -446,6 +446,10 @@ color: #000 !important;
     boder: none;
 }
 
+.container-details-tabs #buttonDeleteSnapshot {
+    margin-left: 15px;
+}
+
 
 
 /* Container details end */
@@ -470,7 +474,39 @@ color: #000 !important;
 }
 
 .td-width-action {
-    width:157px !important;
+    /*width:157px !important; */
+   /* min-width: 200px !important;*/
+}
+
+.td-status {
+    min-width: 75px !important;
+}
+/*
+.action-dropdown .dropdown-menu>li>a{
+    display: inline-block !important;
+}
+*/
+
+.action-dropdown .glyphicon {
+    margin-right: 10px;
+    font-size: 15px;
+}
+
+.action-dropdown #option-icon {
+    font-size: 11px;
+    margin-right: 0px;
+}
+
+.action-dropdown .divider {
+    margin: 1px 0px !important;
+}
+
+.action-dropdown a {
+    cursor: pointer;
+}
+
+#snapshotForm .form-check-input {
+    margin: 10px 0 0 !important;
 }
 
 /* Containers end */
@@ -551,6 +587,19 @@ color: #000 !important;
     position: relative;
     top: 9px;
     right: 0px;
+}
+
+.left {
+    float: left;
+}
+
+.remote-link {
+    margin-top: 9px;
+    margin-left: 15px;
+}
+
+#tableImagesLocalWrapper, #tableImagesNightlyWrapper, #tableImagesRemoteWrapper {
+    padding: 0px;
 }
 
 /* Image page end */
