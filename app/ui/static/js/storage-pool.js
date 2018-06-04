@@ -22,6 +22,13 @@ App.storagePool = App.storagePool || {
             selector: 'td:first-child'
         },
         order: [[ 1, 'asc' ]],
+        initComplete: function(settings, json) {
+            var tempButton = $('.rawJSONStoragePool').clone();
+            tempButton.removeClass('rawJSONStoragePool');
+            tempButton.on('click', $.proxy(App.storagePool.showJSON, App.storagePool));
+            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            tempButton.show();
+        },
     },
     configEditor:null,
     rawJson: null,
@@ -33,7 +40,6 @@ App.storagePool = App.storagePool || {
         this.rawJson.session.setMode('ace/mode/json');
         this.rawJson.setOptions({readOnly: true});
         this.dataTable = $('#tableStoragePools').DataTable(this.tableSettings);
-        $('#rawJSONStoragePool').on('click', $.proxy(this.showJSON, this));
         $('#buttonNewStoragePool').on('click', $.proxy(this.showNewStoragePool, this));
         $('#backStoragePool').on('click', $.proxy(this.backToStoragePools, this));
         $('#buttonCreateStoragePool').on('click', $.proxy(this.createStoragePool, this));

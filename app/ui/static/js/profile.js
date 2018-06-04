@@ -23,6 +23,13 @@ App.profiles = App.profiles || {
             selector: 'td:first-child'
         },
         order: [[ 1, 'asc' ]],
+        initComplete: function(settings, json) {
+            var tempButton = $('.rawJSONProfiles').clone();
+            tempButton.removeClass('rawJSONProfiles');
+            tempButton.on('click', $.proxy(App.profiles.showJSON, App.profiles));
+            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            tempButton.show();
+        },
     },
     configEditor:null,
     devicesEditor:null,
@@ -37,7 +44,6 @@ App.profiles = App.profiles || {
         this.rawJson.session.setMode('ace/mode/json');
         this.rawJson.setOptions({readOnly: true});
         this.dataTable = $('#tableProfiles').DataTable(this.tableSettings);
-        $('#rawJSONProfiles').on('click', $.proxy(this.showJSON, this));
         $('#buttonNewProfile').on('click', $.proxy(this.showNewProfile, this));
         $('#backProfile').on('click', $.proxy(this.backToProfiles, this));
         $('#buttonCreateProfile').on('click', $.proxy(this.createProfile, this));

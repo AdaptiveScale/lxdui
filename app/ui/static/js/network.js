@@ -19,6 +19,13 @@ App.network = App.network || {
             selector: 'td:first-child'
         },
         order: [[ 1, 'asc' ]],
+        initComplete: function(settings, json) {
+            var tempButton = $('.rawJSONNetworks').clone();
+            tempButton.removeClass('rawJSONNetworks');
+            tempButton.on('click', $.proxy(App.network.showJSON, App.network));
+            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            tempButton.show();
+        },
     },
     activeNetwork: {},
     rawJson: null,
@@ -28,7 +35,6 @@ App.network = App.network || {
         this.rawJson = ace.edit('rawJson');
         this.rawJson.session.setMode('ace/mode/json');
         this.rawJson.setOptions({readOnly: true});
-        $('#rawJSONNetworks').on('click', $.proxy(this.showJSON, this));
         $('#buttonUpdateNetwork').on('click', $.proxy(this.updateNetwork, this));
         $('#buttonCreateNetwork').on('click', $.proxy(this.createNetwork, this));
         $('#buttonNewNetwork').on('click', $.proxy(this.showNewUpdateNetwork, this));
