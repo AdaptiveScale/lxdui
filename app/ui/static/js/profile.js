@@ -36,6 +36,8 @@ App.profiles = App.profiles || {
     rawJson:null,
     init: function(){
         console.log('Profiles init');
+        console.log('active', $('#profileForm > ul > li:nth-child(1)').addClass('active'));
+        $('#profileForm > ul > li:nth-child(1)').addClass('active');
         this.configEditor = ace.edit('configEditor');
         this.devicesEditor = ace.edit('devicesEditor');
         this.configEditor.session.setMode('ace/mode/json');
@@ -54,6 +56,7 @@ App.profiles = App.profiles || {
         this.dataTable.on('deselect', $.proxy(this.onItemSelectChange, this));
         App.setActiveLink('profile');
         this.getData();
+        $('#profileForm > ul > li:nth-child(1)').addClass('active');
     },
     refreshProfiles: function(e){
         console.log('refreshProfiles');
