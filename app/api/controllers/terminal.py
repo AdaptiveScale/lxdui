@@ -50,7 +50,7 @@ class NewTerminalHandler(tornado.web.RequestHandler):
         name, terminal = self.application.settings['term_manager'].new_named_terminal(shell_command=shell)
         self.redirect("/terminal/open/" + name+'/'+token, permanent=False)
 
-def terminal(app, port):
+def terminal(app, port, debug=False):
     term_manager = NamedTermManager(shell_command=None, max_terminals=100)
     wrapped_app = WSGIContainer(app)
     handlers = [
@@ -65,7 +65,8 @@ def terminal(app, port):
     tornado_app = tornado.web.Application(handlers, static_path=STATIC_DIR,
                               template_path=TEMPLATE_DIR,
                               xstatic_url=tornado_xstatic.url_maker('/xstatic/'),
-                              term_manager=term_manager)
+                              term_manager=term_manager,
+                              debug=debug)
     http_server = HTTPServer(tornado_app)
     http_server.listen(port, '0.0.0.0')
     IOLoop.instance().start()

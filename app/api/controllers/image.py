@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_jwt import jwt_required
 
 from app.api.models.LXCImage import LXCImage
@@ -59,6 +59,16 @@ def remoteDetails():
             alias = args['alias']
         client = LXDModule()
         return response.replySuccess(client.detailsRemoteImage(alias))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
+@image_api.route('/remote/nightly/list')
+@jwt_required()
+def nightly():
+    try:
+        client = LXDModule()
+        return response.replySuccess(client.listNightlyImages())
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
