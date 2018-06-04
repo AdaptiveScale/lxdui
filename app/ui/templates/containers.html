@@ -2,14 +2,13 @@
 {% block content %}
 <div id="containers">
     <div class="col-lg-12 main-div">
-        <legend class="legend"><span>Containers </span> <span
-                class="glyphicon glyphicon-refresh spinning loader"></span>
-            <button class="btn btn-primary pull-right mgright-5" href="#" id="refreshContainers">
-                <span class="glyphicon glyphicon-refresh"> </span> Refresh List
-            </button>
-            <button class="btn btn-primary pull-right mgright-5" href="#" id="rawJSONContainers">
-                Raw JSON
-            </button>
+        <legend class="legend"><span>Containers </span> <span class="glyphicon glyphicon-refresh spinning loader"></span>
+                <button class="btn btn-primary pull-right mgright-5" href="#" id="refreshContainers">
+                   <span class="glyphicon glyphicon-refresh"> </span> Refresh List
+                </button>
+                <button class="btn btn-primary pull-right mgright-5" href="#" id="rawJSONContainers">
+                   JSON
+                </button>
         </legend>
         <div>
             <div class="form-group">
@@ -33,8 +32,8 @@
                 </button>
                 <!--- right -->
                 <a class="btn btn-success pull-right" id="buttonNewInstance">
-                    <span class="glyphicon glyphicon-plus-sign"> </span>
-                    New Instance
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                         New Instance
                 </a>
             </div>
         </div>
@@ -42,7 +41,7 @@
     <div class="col-lg-12">
         <table class="table table-bordered" id="tableContainers">
             <thead>
-            <th><input id="selectAllContainers" type="checkbox"/></th>
+            <th><input id="selectAllContainers" type="checkbox" /></th>
             <th>Name</th>
             <th>Status</th>
             <th>IP Address</th>
@@ -58,45 +57,63 @@
                 <td class="td-width"><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
                 <td>
                     {% if container.status == 'Running' %}
-                    <i class="glyphicon glyphicon-off icon-style"></i>
+                       <i class="glyphicon glyphicon-off icon-style"></i>
                     {% elif container.status == 'Stopped' %}
-                    <i class="glyphicon glyphicon-off icon-style"></i>
+                        <i class="glyphicon glyphicon-off icon-style"></i>
                     {% endif %}
                     {{container.status}}
                 </td>
                 <td>{{container.ip}}</td>
                 {% if container.ephemeral %}
-                <td>Ephemeral</td>
+                    <td>Ephemeral</td>
                 {% else %}
-                <td>Persistent</td>
+                    <td>Persistent</td>
                 {% endif %}
                 <td>{{container.image}}</td>
                 <td>{{container.created_at}}</td>
                 <td class="td-width-action">
-                    <a><i id="snapshotContainer"
-                          onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));"
-                          title="Snapshot" class="glyphicon glyphicon-camera btn btn-sm btn-default"></i></a>
-                    <a><i id="cloneContainer"
-                          onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));"
-                          title="Clone Container" class="glyphicon glyphicon-duplicate btn btn-sm btn-default"></i></a>
-                    <a><i id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));"
-                          title="Move Container" class="glyphicon glyphicon-share btn btn-sm btn-default"></i></a>
-                    <a><i id="exportContainer"
-                          onClick="$.proxy(App.containers.showExportContainer('{{container.name}}'));"
-                          title="Export Image from Container"
-                          class="glyphicon glyphicon-export btn btn-sm btn-default"></i></a>
+                    <div class="dropdown action-dropdown">
+                      <button id="dLabel-{{container.name}}" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i id="option-icon" class="glyphicon glyphicon-option-vertical"></i>
+                      </button>
+                      <ul class="dropdown-menu" aria-labelledby="dLabel">
+                          <li>
+                              <a id="terminalContainer" onClick="$.proxy(App.containers.showTerminalContainer('{{container.name}}'));" title="Terminal to this Container">
+                                  <i class="glyphicon glyphicon-console"></i> Terminal</a>
+                          </li>
+                          <li role="separator" class="divider"></li>
+                        <li>
+                            <a id="snapshotContainer" onClick="$.proxy(App.containers.showSnapshotContainer('{{container.name}}'));" title="Snapshot from Container" >
+                                <i class="glyphicon glyphicon-camera"></i>Snapshot</a>
+                        </li>
+                          <li role="separator" class="divider"></li>
+                          <li>
+                              <a id="cloneContainer" onClick="$.proxy(App.containers.showCloneContainer('{{container.name}}'));" title="Clone Container" >
+                                  <i class="glyphicon glyphicon-duplicate"></i>Clone</a>
+                          </li>
+                           <li>
+                              <a id="moveContainer" onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));" title="Move Container" >
+                                  <i class="glyphicon glyphicon-share"></i>  Move</a>
+                           </li>
+                           <li>
+                              <a id="exportContainer" onClick="$.proxy(App.containers.showExportContainer('{{container.name}}'));" title="Export Image from Container">
+                                  <i class="glyphicon glyphicon-export"></i>Export
+                              </a>
+                           </li>
+
+                      </ul>
+                    </div>
                 </td>
             </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
-</div>
+    </div>
 
 <div id="createContainerForm" style="display:none;">
     <div class="col-lg-12 main-div">
-        <legend class="legend"><span>Containers </span> <span
-                class="glyphicon glyphicon-refresh spinning loader"></span></legend>
+        <legend class="legend"><span>Containers </span> <span class="glyphicon glyphicon-refresh spinning loader"></span></legend>
         <div>
             <div class="form-group">
                 <button class="btn btn-defult" id="buttonBack">
@@ -114,14 +131,14 @@
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="containerImage">Select image:</label>
                     <div class="col-md-3">
-                        <select class="form-control" id="containerImage" name="image">
-                            {% for image in images %}
-                            {% if image.properties.get('description') == None %}
-                            <option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>
-                            {% else %}
+                         <select class="form-control" id="containerImage" name="image">
+                          {% for image in images %}
+                             {% if image.properties.get('description') == None %}
+                             <option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>
+                             {% else %}
                             <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
-                            {% endif %}
-                            {% endfor %}
+                             {% endif %}
+                          {% endfor %}
                         </select>
                     </div>
                 </div>
@@ -131,39 +148,35 @@
                     <div class="form-group">
                         <label class="col-sm-4 control-label">Container Name</label>
                         <!--<label class="col-sm-2 control-label"></label>-->
-                        <label class="col-sm-2 form-check-label text-center">Persistent</label>
+                        <label class="col-sm-2 form-check-label text-center" >Persistent</label>
                         <label class="col-sm-2 form-check-label text-center">Autostart</label>
                         <div class="clearfix"></div>
-                        <div class="col-sm-4">
-                            <input type="text" class="form-control" id="containerName" aria-describedby="name"
-                                   placeholder="Enter container name" name="name">
-                        </div>
+                            <div class="col-sm-4">
+                                 <input type="text" class="form-control" id="containerName" aria-describedby="name"
+                               placeholder="Enter container name" name="name">
+                            </div>
                         <!--<div class="col-sm-2"></div>-->
-                        <div class="col-sm-2 text-center">
-                            <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful"
-                                   checked value="true">
-                        </div>
-                        <div class="col-sm-2 text-center">
-                            <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart"
-                                   checked value="true">
-                        </div>
+                             <div class="col-sm-2 text-center">
+                                <input type="checkbox" class="form-check-input" id="containerStateful" name="stateful" checked value="true">
+                            </div>
+                             <div class="col-sm-2 text-center">
+                                <input type="checkbox" class="form-check-input" id="containerAutostart" name="autostart" checked value="true">
+                            </div>
                     </div>
                 </div>
                 <div class="panel-body">
                     <div class="form-group">
                         <label class="col-md-3 control-label" for="containerCPUPercentage">CPU allocation (%):</label>
                         <div class="col-sm-3">
-                            <input type="range" class="form-control" id="cpu_percentage" min="5" max="100" value="100"
-                                   step="5">
+                            <input type="range" class="form-control" id="cpu_percentage" min="5" max="100" value="100" step="5">
                         </div>
                         <div class="col-md-2">
                             <input type="number" class="form-control" id="containerCPUPercentage" name="cpu[percentage]"
-                                   min="5" max="100" value="100">
+                               min="5" max="100" value="100">
                         </div>
                         <div class="col-md-2">
-                            <label class="form-check-label control-label" for="containerCPUHardLimit">Hard Limit</label>
-                            <input type="checkbox" class="form-check-input" id="containerCPUHardLimit"
-                                   name="cpu[hardLimitation]" value="true">
+                              <label class="form-check-label control-label" for="containerCPUHardLimit">Hard Limit</label>
+                             <input type="checkbox" class="form-check-input" id="containerCPUHardLimit" name="cpu[hardLimitation]" value="true">
                         </div>
                     </div>
                 </div>
@@ -171,71 +184,150 @@
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Memory usage in MB:</label>
                         <div class="col-sm-3">
-                            <input type="range" class="form-control" id="memory_percentage" min="5" max="{{memory}}"
-                                   value="100" step="5">
+                            <input type="range" class="form-control" id="memory_percentage" min="5" max="{{memory}}" value="100" step="5">
                         </div>
                         <div class="col-sm-2">
-                            <input type="number" class="form-control" id="containerMemoryPercentage"
-                                   name="memory[sizeInMB]"
-                                   min="32" max="{{memory}}" value="32">
-                            (Max: {{memory}} MB)
+                            <input type="number" class="form-control" id="containerMemoryPercentage" name="memory[sizeInMB]"
+                           min="32" max="{{memory}}" value="32">
+                         (Max: {{memory}} MB)
                         </div>
                         <div class="col-sm-2">
-                            <label class="form-check-label control-label" for="containerMemoryHardLimit">Hard
-                                Limit</label>
-                            <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit"
-                                   name="memory[hardLimitation]" value="true">
+                             <label class="form-check-label control-label" for="containerMemoryHardLimit">Hard Limit</label>
+                                <input type="checkbox" class="form-check-input" id="containerMemoryHardLimit" name="memory[hardLimitation]" value="true">
                         </div>
                     </div>
                 </div>
-                <div class="panel-body">
+                 <div class="panel-body">
                     <div class="form-group">
-                        <label class="col-md-2 control-label" for="containerProfiles">Profiles:</label>
+                         <label class="col-md-2 control-label" for="containerProfiles">Profiles:</label>
                         <div class="col-sm-3">
                             <select class="selectpicker" multiple id="containerProfiles" name="profiles">
-                                {% for profile in profiles %}
+                             {% for profile in profiles %}
                                 <option>{{profile.name}}</option>
-                                {% endfor %}
+                             {% endfor %}
                             </select>
                         </div>
                     </div>
-                </div>
+                 </div>
                 <div class="panel-body">
                     <div class="panel-group" id="accordion">
                         <div class="panel panel-default">
-                            <div class="panel-heading">
+                              <div class="panel-heading">
                                 <h4 class="panel-title">
-                                    <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Advanced
-                                        Settings</a>
+                                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">Advanced Settings</a>
                                 </h4>
-                            </div>
-                            <div id="collapse1" class="panel-collapse collapse">
+                              </div>
+                              <div id="collapse1" class="panel-collapse collapse">
                                 <div class="panel-body">
-                                    <div class="col-lg-12 col-sm-12 col-xs-12" id="advancedSettingsContainer">
+                                    <div class="col-lg-12 col-sm-12 col-xs-12">
                                         <div class="row">
-                                            <div class="col-lg-5">
-                                                <div class="row"><label for="Key">Key</label></div>
-                                            </div>
-                                            <div class="col-lg-5">
-                                                <div class="row"><label for="Value">Value</label></div>
-                                            </div>
+                             <div class="col-lg-5">
+                                <div class="row"><label for="Key">Key</label></div>
+                             </div>
+                             <div class="col-lg-5">
+                                <div class="row"><label for="Value">Value</label></div>
+                             </div>
 
-                                        </div>
-                                    </div>
+                        </div>
+                        <div class="row" id="row1">
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <input type="text" class="form-control" placeholder="ipv4.address" />
                                 </div>
                             </div>
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <input type="text" class="form-control" placeholder="" value="10.3.2.1" />
+                                </div>
+                            </div>
+                             <div class="col-lg-2">
+                                 <div class="btn-group" role="group">
+                                    <button type="button" id="" class="formModifier btn btn-sm btn-success">On</button>
+                                    <button type="button" id="" class="formModifier btn btn-sm btn-default">Off</button>
+                                </div>
+                             </div>
+                        </div>
+                         <div class="row" id="row2">
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <input type="text" class="form-control" placeholder="lxd.setting.key" disabled/>
+                                     <a href="#" class="hover-info" title="Information" data-toggle="popover" data-trigger="hover" data-content="Hello how are you ;kadslfh">
+                                         <span class="glyphicon glyphicon-info-sign"></span>
+                                     </a>
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <input type="text" class="form-control" placeholder="" disabled/>
+                                </div>
+                            </div>
+                             <div class="col-lg-2">
+                                 <div class="btn-group" role="group">
+                                    <button type="button" id="" class="formModifier btn btn-sm btn-default">On</button>
+                                    <button type="button" id="" class="formModifier btn btn-sm btn-danger">Off</button>
+                                </div>
+                             </div>
+                        </div><!--end row-->
+                                    </div>
+                                </div>
+                              </div>
+                        </div>
+                        <div class="panel panel-default">
+                              <div class="panel-heading">
+                                <h4 class="panel-title">
+                                  <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">User Defined Settings</a>
+                                </h4>
+                              </div>
+                              <div id="collapse2" class="panel-collapse collapse">
+                                <div class="panel-body">
+                                    <div class="col-lg-12 col-md-12 col-sm-12">
+                                        <div class="row">
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <input type="text" class="form-control" placeholder="" value="project_code" />
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <input type="text" class="form-control" placeholder="" value="awesomesouce" />
+                                </div>
+
+                            </div>
+                              <div class="col-lg-2">
+                                  <span class="glyphicon btn btn-default glyphicon-trash"></span>
+                              </div>
+                        </div><!--end row-->
+                        <div class="row">
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <input type="text" class="form-control" placeholder="" value="foo" />
+                                </div>
+                            </div>
+                            <div class="col-lg-5">
+                                <div class="form-group row">
+                                    <input type="text" class="form-control" placeholder="" value="bar" />
+                                </div>
+
+                            </div>
+                              <div class="col-lg-2">
+                                  <span class="glyphicon btn btn-default glyphicon-trash"></span>
+                                   <span class="glyphicon btn btn-default glyphicon-plus"></span>
+                              </div>
+                        </div><!--end row-->
+                                    </div>
+                                </div>
+                              </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="form inline col-md-12 mgtop-10">
-                    <div class="row">
-                        <button type="submit" class="btn btn-primary">Create <span
-                                class="glyphicon glyphicon-refresh spinning loader"></span></button>
-                    </div>
+               <div class="form inline col-md-12 mgtop-10">
+                   <div class="row">
+                   <button type="submit" class="btn btn-primary">Create <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+               </div>
+               </div>
                 </div>
-            </div>
-        </form>
+            </form>
     </div>
 </div>
 
@@ -244,110 +336,102 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" role="dialog" tabindex="-1">
+  <div class="modal fade" id="myModal" role="dialog" tabindex="-1">
     <div class="modal-dialog">
 
-        <!-- Modal content-->
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title"></h4>
-            </div>
-            <div class="modal-body">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title"></h4>
+        </div>
+        <div class="modal-body">
 
 
-                <div id="cloneContainerForm" hidden>
+<div id="cloneContainerForm" hidden>
 
-                    <form id="cloneForm" class="form-horizontal">
-                        <div class="form-group">
-                            <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
-                            <div class="col-sm-8">
-                                <input id="newContainerClone" name="newContainer" class="form-control" type="text"
-                                       placeholder="Clone Name" title="Clone Name" required/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
-                                <!--<button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="moveContainerForm" hidden>
-
-                    <form id="moveForm" class="form-horizontal">
-                        <div class="form-group">
-                            <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
-                            <div class="col-sm-8">
-                                <input id="newContainerMove" name="newContainer" class="form-control" type="text"
-                                       placeholder="Move Container Name" title="Move Container Name" required/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="exportContainerForm" hidden>
-
-                    <form id="exportForm" class="form-horizontal">
-                        <div class="form-group">
-                            <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
-                            <div class="col-sm-8">
-                                <input id="imageAlias" name="imageAlias" class="form-control" type="text"
-                                       placeholder="Image Alias" title="Image Alias" required/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
-
-                <div id="snapshotContainerForm" hidden>
-
-                    <form id="snapshotForm" class="form-horizontal">
-                        <div class="form-group">
-                            <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
-                            <div class="col-sm-8">
-                                <input id="snapshotName" name="snapshotName" class="form-control" type="text"
-                                       placeholder="Snapshot Name" title="Snapshot Name" required/>
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label for="snapshotStateful2" class="col-sm-3 control-label">Stateful</label>
-                            <input type="checkbox" class="form-check-input" id="snapshotStateful2" name="stateful">
-                        </div>
-                        <div class="form-group">
-                            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
-
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button id="buttonExportContainer" class="btn btn-primary">Export Container <span
-                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
-                <button id="buttonSnapshotContainer" class="btn btn-primary">Snapshot <span
-                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
-                <button id="buttonMoveContainer" class="btn btn-primary">Move Container <span
-                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
-                <button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span
-                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
-                <!--<button type="button" class="btn btn-primary">Save</button>-->
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+    <form id="cloneForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
+            <div class="col-sm-8">
+                <input id="newContainerClone" name="newContainer" class="form-control" type="text" placeholder="Clone Name" title="Clone Name" required/>
             </div>
         </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
+                <!--<button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="moveContainerForm" hidden>
+
+    <form id="moveForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
+            <div class="col-sm-8">
+                <input id="newContainerMove" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Move Container Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="exportContainerForm" hidden>
+
+    <form id="exportForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
+            <div class="col-sm-8">
+                <input id="imageAlias" name="imageAlias" class="form-control" type="text" placeholder="Image Alias" title="Image Alias" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
+
+            </div>
+        </div>
+    </form>
+</div>
+
+<div id="snapshotContainerForm" hidden>
+
+    <form id="snapshotForm" class="form-horizontal">
+        <div class="form-group">
+            <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
+            <div class="col-sm-8">
+                <input id="snapshotName" name="snapshotName" class="form-control" type="text" placeholder="Snapshot Name" title="Snapshot Name" required/>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="snapshotStateful2" class="col-sm-3 control-label">Stateful</label>
+            <input type="checkbox" class="form-check-input" id="snapshotStateful2" name="stateful">
+        </div>
+        <div class="form-group">
+            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
+
+            </div>
+        </div>
+    </form>
+</div>
+        </div>
+        <div class="modal-footer">
+             <button id="buttonExportContainer" class="btn btn-primary">Export Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonSnapshotContainer" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+             <button id="buttonMoveContainer" class="btn btn-primary">Move Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            <!--<button type="button" class="btn btn-primary">Save</button>-->
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
+      </div>
 
     </div>
-</div>
+  </div>
 
 </div>
 {% endblock %}
