@@ -74,6 +74,7 @@ App.containerDetails = App.containerDetails || {
         $('[data-toggle="popover"]').popover();
         $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
         $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
+        $('#buttonNewContainerSnapshot').on('click', $.proxy(this.showCloneContainerfromSnapshot, this));
 
         this.initKeyValuePairs();
     },
@@ -234,12 +235,24 @@ App.containerDetails = App.containerDetails || {
 
     },
      onRowSelected: function(e, dt, type, indexes ){
-        var state = this.dataTable.rows({selected:true}).count()>0;
-        $('#selectAllSnapshots').prop('checked',state);
-        var action = state?'removeAttr':'attr';
-        $('#buttonNewContainerSnapshot')[action]('disabled', 'disabled');
-        $('#buttonRestoreSnapshot')[action]('disabled', 'disabled');
-        $('#buttonDeleteSnapshot')[action]('disabled', 'disabled');
+            if(this.dataTable.rows({selected:true}).count() > 0) {
+             if(this.dataTable.rows({selected:true}).count() == 1){
+                $('#buttonDeleteSnapshot').removeAttr('disabled', 'disabled');
+                $('#buttonRestoreSnapshot').removeAttr('disabled', 'disabled');
+                $('#buttonNewContainerSnapshot').removeAttr('disabled', 'disabled');
+              }
+              else {
+                 $('#buttonRestoreSnapshot').attr('disabled', 'disabled');
+                $('#buttonNewContainerSnapshot').attr('disabled', 'disabled');
+                $('#buttonDeleteSnapshot').removeAttr('disabled', 'disabled');
+                }
+            }
+            else {
+                $('#buttonRestoreSnapshot').attr('disabled', 'disabled');
+                $('#buttonNewContainerSnapshot').attr('disabled', 'disabled');
+                $('#buttonDeleteSnapshot').attr('disabled', 'disabled');
+            }
+
     },
 
     showCloneContainer: function(name) {
@@ -251,6 +264,25 @@ App.containerDetails = App.containerDetails || {
         $('#cloneContainerForm').show();
         $('#buttonCloneContainer2').show();
 
+
+        $('#buttonNewContainerSnapshot2').hide();
+        $('#createContainerSnapshotForm').hide();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
+        $('#buttonExportContainer2').hide();
+        $('#buttonSnapshotContainer2').hide();
+        $('#buttonMoveContainer2').hide();
+        $('#buttonCloneContainer2').show();
+    },
+    showCloneContainerfromSnapshot: function(name) {
+        $('.modal-title').text('');
+        $('#newContainerClone').val('');
+        $('.modal-title').text('Clone Container: ' + this.name);
+        $("#containerDetailModal").modal("show");
+
+        $('#cloneContainerForm').show();
+        $('#buttonCloneContainer2').show();
 
         $('#buttonNewContainerSnapshot2').hide();
         $('#createContainerSnapshotForm').hide();
