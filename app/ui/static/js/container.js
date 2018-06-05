@@ -12,6 +12,9 @@ App.containers = App.containers || {
         searching:true,
         responsive: false,
         select: true,
+        dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
         buttons: [
             {
                 text: 'JSON',
@@ -38,11 +41,16 @@ App.containers = App.containers || {
         },
         order: [[ 1, 'asc' ]],
         initComplete: function(settings, json) {
-            var tempButton = $('.rawJSONContainers').clone();
-            tempButton.removeClass('rawJSONContainers');
-            tempButton.on('click', $.proxy(App.containers.showJSON, App.containers));
-            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
-            tempButton.show();
+            var tempButtonJson = $('.rawJSONContainers').clone();
+            var tempButtonRefresh = $('#refreshContainers').clone();
+            tempButtonRefresh.removeClass('.refreshContainers');
+            tempButtonJson.removeClass('rawJSONContainers');
+            tempButtonJson.on('click', $.proxy(App.containers.showJSON, App.containers));
+            tempButtonRefresh.on('click', $.proxy(App.containers.refreshContainers));
+            $('.json-place').append(tempButtonJson);
+            $('.refresh-list-place').append(tempButtonRefresh);
+            tempButtonJson.show();
+            tempButtonRefresh.show();
         },
     },
     newContainerForm:null,
