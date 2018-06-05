@@ -26,11 +26,9 @@
                 <button class="btn btn-default btn-delete_container btn-sm" id="buttonDeleteDetail">
                         <span class="glyphicon glyphicon-remove-sign"> </span> Delete
                 </button>
+                <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                 <button class="btn btn-default btn-freeze_container btn-sm" id="buttonFreezeDetail">
                     <span class="glyphicon glyphicon-ok-circle"> </span> Freeze
-                </button>
-                <button class="btn btn-default btn-unfreeze_container btn-sm" id="buttonUnfreezeDetail">
-                    <span class="glyphicon glyphicon-remove-circle"> </span> Unfreeze
                 </button>
             {% else %}
                 <button class="btn btn-default btn-start_container btn-sm" id="buttonStartDetail">
@@ -39,12 +37,16 @@
                 <button class="btn btn-default btn-delete_container btn-sm" id="buttonDeleteDetail">
                         <span class="glyphicon glyphicon-remove-sign"> </span> Delete
                 </button>
+            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+            {% if container.status != 'Frozen' %}
                 <button class="btn btn-default btn-freeze_container btn-sm" id="buttonFreezeDetail">
                     <span class="glyphicon glyphicon-ok-circle"> </span> Freeze
                 </button>
+            {% else %}
                 <button class="btn btn-default btn-unfreeze_container btn-sm" id="buttonUnfreezeDetail">
                     <span class="glyphicon glyphicon-remove-circle"> </span> Unfreeze
                 </button>
+            {% endif %}
             {% endif %}
 
             <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
@@ -288,47 +290,7 @@
 
                         </div>
                     </div>
-                    <!--<div class="col-lg-12 col-md-12 col-sm-12 user-defined-settings">-->
-                        <!--<div class="form-group">-->
-                            <!--<h5 class="bg-bottom"><b> User Defined Settings (Raw) :</b></h5>-->
-                        <!--</div>-->
-                         <!--<div class="row">-->
-                            <!--<div class="col-lg-5">-->
-                                <!--<div class="form-group row">-->
-                                    <!--<input type="text" class="form-control" placeholder="" value="project_code" />-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--<div class="col-lg-5">-->
-                                <!--<div class="form-group row">-->
-                                    <!--<input type="text" class="form-control" placeholder="" value="awesomesouce" />-->
-                                <!--</div>-->
-
-                            <!--</div>-->
-                              <!--<div class="col-lg-2">-->
-                                  <!--<span class="glyphicon btn btn-default glyphicon-trash"></span>-->
-                              <!--</div>-->
-                        <!--</div>&lt;!&ndash;end row&ndash;&gt;-->
-                        <!--<div class="row">-->
-                            <!--<div class="col-lg-5">-->
-                                <!--<div class="form-group row">-->
-                                    <!--<input type="text" class="form-control" placeholder="" value="foo" />-->
-                                <!--</div>-->
-                            <!--</div>-->
-                            <!--<div class="col-lg-5">-->
-                                <!--<div class="form-group row">-->
-                                    <!--<input type="text" class="form-control" placeholder="" value="bar" />-->
-                                <!--</div>-->
-
-                            <!--</div>-->
-                              <!--<div class="col-lg-2">-->
-                                  <!--<span class="glyphicon btn btn-default glyphicon-trash"></span>-->
-                                   <!--<span class="glyphicon btn btn-default glyphicon-plus"></span>-->
-                              <!--</div>-->
-                        <!--</div>&lt;!&ndash;end row&ndash;&gt;-->
-
-                <!--</div>-->
 			</div>
-
          </div>
         </div>
 </div>
