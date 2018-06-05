@@ -466,6 +466,17 @@ color: #000 !important;
 
 /*Containers start */
 
+.text-left .dataTables_filter {
+    text-align: left !important;
+}
+
+.json-place {
+    text-align: right;
+}
+
+.text-right {
+    text-align: right;
+}
 
 .mgright-5 {
     margin-right:5px;
