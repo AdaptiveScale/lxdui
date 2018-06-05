@@ -165,11 +165,6 @@
                                     <button id="buttonDownloadNightly" class="btn btn-success left" disabled><span
                                             class="glyphicon glyphicon-download-alt"></span> Download
                                     </button>
-                                    <div class="left">
-                                        <p class="remote-link">Remote: <a target="_blank"
-                                                                          href="https://image.linuxcontainers.org">https://image.linuxcontainers.org</a>
-                                        </p>
-                                    </div>
                                 </div>
 
                             </div>
@@ -233,9 +228,14 @@
                         <h5 class="bg-bottom">
                             <div class="form-inline">
                                 <div class="form-group">
-                                    <button id="buttonDownload" class="btn btn-success" disabled><span
+                                    <button id="buttonDownload" class="btn btn-success left" disabled><span
                                             class="glyphicon glyphicon-download-alt"></span> Download
                                     </button>
+                                    <div class="left">
+                                        <p class="remote-link">Remote: <a target="_blank"
+                                                                          href="{{ remoteImagesLink }}">{{ remoteImagesLink }}</a>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </h5>
