@@ -488,6 +488,10 @@ color: #000 !important;
    border-width: thin;
 }
 
+.dataTables_length > label {
+    margin-top: 2px;
+}
+
 .dataTables_filter > label {
     margin-top: 3px;
 }
