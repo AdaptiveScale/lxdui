@@ -21,6 +21,7 @@ DEFAULT_CONFIG_FORMAT = 'ini'
 __default_config__ = """
 [LXDUI]
 lxdui.port = 15151
+lxdui.images.remote = https://images.linuxcontainers.org
 lxdui.jwt.token.expiration = 1200
 lxdui.jwt.secret.key = AC8d83&21Almnis710sds
 lxdui.jwt.auth.url.rule = /api/user/login
