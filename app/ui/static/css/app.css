@@ -466,8 +466,48 @@ color: #000 !important;
 
 /*Containers start */
 
+.btn-rounded-corners {
+    border-radius: 20px;
+    margin-top: 8px;
+    margin-right: 10px;
+    padding: 1px 12px;
+}
+
+.dataTables_wrapper .table {
+    margin-top: 0px !important;
+}
+
+.refreshContainers {
+    background: none;
+}
+
+.refreshContainers .btn-default {
+   padding: 4px;
+   border-radius: 3px;
+   border: 1px solid black;
+   border-width: thin;
+}
+
+.dataTables_length > label {
+    margin-top: 2px;
+}
+
+.dataTables_filter > label {
+    margin-top: 3px;
+}
+
+.dataTables_filter input {
+    border-radius: 10px;
+    border: 1px solid #000;
+    border-width: thin;
+}
+
 .text-left .dataTables_filter {
     text-align: left !important;
+}
+
+.dataTables_filter {
+    padding-left: 15px;
 }
 
 .json-place {
@@ -526,6 +566,12 @@ color: #000 !important;
 
 #snapshotForm .form-check-input {
     margin: 10px 0 0 !important;
+}
+
+.tbl-header {
+    -webkit-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0;
+    background: #ccc;
 }
 
 /* Containers end */
