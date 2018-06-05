@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template
 from app.api.models.LXCContainer import LXDModule, LXCContainer
 from app.api.utils.containerMapper import getContainerDetails
+from app.lib.conf import Config
+from app import __metadata__ as meta
 from app.__metadata__ import VERSION
 import json
 import os
@@ -94,6 +96,7 @@ def images():
     profiles = getProfiles()
     remoteImages = getRemoteImages()
     nightlyImages = getNightlyImages()
+    remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
     return render_template('images.html', currentpage='Images',
                            localImages=localImages,
                            remoteImages=remoteImages,
@@ -105,7 +108,8 @@ def images():
                                'nightly': json.dumps(nightlyImages)
                            },
                            memory=memory(),
-                           lxdui_current_version=VERSION)
+                           lxdui_current_version=VERSION,
+                           remoteImagesLink=remoteImagesLink)
 
 
 def getLocalImages():

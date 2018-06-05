@@ -1,5 +1,7 @@
 from app.api.models.Base import Base
 from app.api.utils.remoteImageMapper import remoteImagesList
+from app.lib.conf import Config
+from app import __metadata__ as meta
 
 from pylxd import Client
 import requests
@@ -37,9 +39,10 @@ class LXDModule(Base):
 
     def listRemoteImages(self):
         try:
+            remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
             logging.info('Reading remote image list')
-            images = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases')
-            return remoteImagesList(images.json())
+            remoteClient = Client(endpoint=remoteImagesLink)
+            return remoteImagesList(remoteClient.api.images.aliases.get().json())
         except Exception as e:
             logging.error('Failed to get remote container images: ')
             logging.exception(e)
@@ -57,16 +60,18 @@ class LXDModule(Base):
 
     def detailsRemoteImage(self, alias):
         try:
-            response = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases/{}'.format(alias))
-            image_details = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/{}'.format(response.json()['metadata']['target']))
-            return image_details.json()['metadata']
+            remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
+            remoteClient = Client(endpoint=remoteImagesLink)
+            fingerprint = remoteClient.api.images.aliases[alias].get().json()['metadata']['target']
+            return remoteClient.api.images[fingerprint].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
 
     def downloadImage(self, image):
         try:
+            remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
             logging.info('Downloading remote image:', image)
-            remoteClient = Client(endpoint='https://images.linuxcontainers.org')
+            remoteClient = Client(endpoint=remoteImagesLink)
             try:
                 remoteImage = remoteClient.images.get_by_alias(image)
             except:
