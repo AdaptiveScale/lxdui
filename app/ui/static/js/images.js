@@ -319,9 +319,9 @@ App.images = App.images || {
         tempSection.find('input[name="name"]').prop('name', 'containers['+pos+'][name]');
         //Handle exported containers
         if (image.properties.os !== undefined)
-            tempSection.find('input[name="containers['+pos+'][name]"]').val(image.properties.os.toLowerCase()+'-');
+            tempSection.find('input[name="containers['+pos+'][name]"]').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
         else
-            tempSection.find('input[name="containers['+pos+'][name]"]').val('cnt-');
+            tempSection.find('input[name="containers['+pos+'][name]"]').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
 
         tempSection.find('input[name="image"]').prop('name', 'containers['+pos+'][image]');
         tempSection.find('input[name="containers['+pos+'][image]"]').val(image.fingerprint);
