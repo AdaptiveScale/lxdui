@@ -38,8 +38,8 @@ class LXDModule(Base):
     def listRemoteImages(self):
         try:
             logging.info('Reading remote image list')
-            images = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases')
-            return remoteImagesList(images.json())
+            remoteClient = Client(endpoint='https://images.linuxcontainers.org')
+            return remoteImagesList(remoteClient.api.images.aliases.get().json())
         except Exception as e:
             logging.error('Failed to get remote container images: ')
             logging.exception(e)
@@ -57,9 +57,9 @@ class LXDModule(Base):
 
     def detailsRemoteImage(self, alias):
         try:
-            response = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases/{}'.format(alias))
-            image_details = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/{}'.format(response.json()['metadata']['target']))
-            return image_details.json()['metadata']
+            remoteClient = Client(endpoint='https://images.linuxcontainers.org')
+            fingerprint = remoteClient.api.images.aliases[alias].get().json()['metadata']['target']
+            return remoteClient.api.images[fingerprint].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
 
