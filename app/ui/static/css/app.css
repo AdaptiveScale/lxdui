@@ -460,6 +460,8 @@ color: #000 !important;
 
 
 
+
+
 /* Container details end */
 
 
@@ -526,6 +528,11 @@ color: #000 !important;
 
 #snapshotForm .form-check-input {
     margin: 10px 0 0 !important;
+}
+
+.dropdown-menu {
+    top: -95px !important;
+    left: -169px !important;
 }
 
 /* Containers end */
