@@ -647,6 +647,14 @@ color: #000 !important;
 
 /* Image page start */
 
+.image-tabs .nav-tabs>li>a {
+    color: #555 !important;
+}
+
+.nav-tabs>li>a {
+    color: #555 !important;
+}
+
 .image-tabs .tab-content .active {
     background: #fff;
 }
