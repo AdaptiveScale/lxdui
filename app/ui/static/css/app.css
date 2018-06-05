@@ -460,6 +460,8 @@ color: #000 !important;
 
 
 
+
+
 /* Container details end */
 
 
@@ -568,6 +570,11 @@ color: #000 !important;
     margin: 10px 0 0 !important;
 }
 
+
+.dropdown-menu {
+    top: -95px !important;
+    left: -169px !important;
+}
 .tbl-header {
     -webkit-border-radius: 10px 10px 0 0;
     border-radius: 10px 10px 0 0;
