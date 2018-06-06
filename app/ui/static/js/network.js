@@ -14,6 +14,12 @@ App.network = App.network || {
                 targets:   0
             }
         ],
+        dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "oLanguage": {
+          "sLengthMenu": "List _MENU_ ",
+        },
         select: {
             style:    'multi',
             selector: 'td:first-child'
@@ -23,7 +29,8 @@ App.network = App.network || {
             var tempButton = $('.rawJSONNetworks').clone();
             tempButton.removeClass('rawJSONNetworks');
             tempButton.on('click', $.proxy(App.network.showJSON, App.network));
-            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+//            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            $('.json-place').append(tempButton);
             tempButton.show();
         },
     },

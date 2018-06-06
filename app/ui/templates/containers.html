@@ -57,11 +57,13 @@
             <tr id="{{container.name}}">
                 <td></td>
                 <td class="td-width"><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
-                <td>
+                <td class="status">
                     {% if container.status == 'Running' %}
-                    <i class="glyphicon glyphicon-off icon-style"></i>
+                    <i class="glyphicon glyphicon-off green icon-style"></i>
                     {% elif container.status == 'Stopped' %}
-                    <i class="glyphicon glyphicon-off icon-style"></i>
+                    <i class="glyphicon glyphicon-off red icon-style"></i>
+                    {% elif container.status == 'Frozen' %}
+                     <i class="glyphicon glyphicon-off blue icon-style"></i>
                     {% endif %}
                     {{container.status}}
                 </td>
@@ -73,7 +75,7 @@
                 {% endif %}
                 <td>{{container.image}}</td>
                 <td>{{container.created_at}}</td>
-                <td class="td-width-action">
+                <td class="td-width-action text-center">
                     <div class="dropdown action-dropdown">
                         <button id="dLabel-{{container.name}}" type="button" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">
@@ -144,7 +146,7 @@
             <div class="panel-body">
                 <div class="form-group">
                     <label class="col-md-2 control-label" for="containerImage">Select image:</label>
-                    <div class="col-md-3">
+                    <div class="col-md-5">
                         <select class="form-control" id="containerImage" name="image">
                             {% for image in images %}
                             {% if image.properties.get('description') == None %}
@@ -244,9 +246,11 @@
                                 <div class="panel-body">
                                     <div class="col-lg-12 col-sm-12 col-xs-12" id="advancedSettingsContainer">
                                         <div class="row">
+                                            <div class="col-lg-1"></div>
                                             <div class="col-lg-5">
                                                 <div class="row"><label for="Key">Key</label></div>
                                             </div>
+                                            <div class="col-lg-1"></div>
                                             <div class="col-lg-5">
                                                 <div class="row"><label for="Value">Value</label></div>
                                             </div>

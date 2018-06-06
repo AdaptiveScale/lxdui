@@ -21,6 +21,12 @@ App.images = App.images || {
                 targets:   0
             }
         ],
+         dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "oLanguage": {
+          "sLengthMenu": "List _MENU_ ",
+        },
         select: {
             style:    'multi',
             selector: 'td:first-child'
@@ -29,6 +35,7 @@ App.images = App.images || {
         initComplete: function(settings, json) {
             var tempButton = $('.rawJSONImages').clone();
             tempButton.removeClass('rawJSONImages');
+            console.log('this', $(this).closest('table').attr('id'));
             tempButton.on('click', $.proxy(App.images.showJSON, App.images));
             $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
             tempButton.show();
@@ -87,7 +94,8 @@ App.images = App.images || {
     initKeyValuePairs: function() {
         for (key in App.properties.keyValues) {
             $('#advancedSettingsMultipleContainer').append('<div class="row">' +
-                    '<div class="col-lg-5">'+
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">'+
                         '<div class="form-group row">' +
                             '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
                             '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
@@ -95,7 +103,8 @@ App.images = App.images || {
                              '</a>' +
                         '</div>' +
                     '</div>'+
-                    '<div class="col-lg-5">' +
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">' +
                         '<div class="form-group row">' +
                             '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
                         '</div>' +
