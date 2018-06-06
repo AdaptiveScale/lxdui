@@ -58,9 +58,11 @@
                 <td class="td-width"><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
                 <td>
                     {% if container.status == 'Running' %}
-                    <i class="glyphicon glyphicon-off icon-style"></i>
+                    <i class="glyphicon glyphicon-off green icon-style"></i>
                     {% elif container.status == 'Stopped' %}
-                    <i class="glyphicon glyphicon-off icon-style"></i>
+                    <i class="glyphicon glyphicon-off red icon-style"></i>
+                    {% elif container.status == 'Frozen' %}
+                     <i class="glyphicon glyphicon-off blue icon-style"></i>
                     {% endif %}
                     {{container.status}}
                 </td>
@@ -72,7 +74,7 @@
                 {% endif %}
                 <td>{{container.image}}</td>
                 <td>{{container.created_at}}</td>
-                <td class="td-width-action">
+                <td class="td-width-action text-center">
                     <div class="dropdown action-dropdown">
                         <button id="dLabel-{{container.name}}" type="button" data-toggle="dropdown" aria-haspopup="true"
                                 aria-expanded="false">

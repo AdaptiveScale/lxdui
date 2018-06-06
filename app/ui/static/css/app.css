@@ -502,6 +502,8 @@ color: #000 !important;
     border-radius: 10px;
     border: 1px solid #000;
     border-width: thin;
+    height: 24px;
+    margin-top: 5px;
 }
 
 .text-left .dataTables_filter {
@@ -525,18 +527,28 @@ color: #000 !important;
 }
 
 .td-width {
-    min-width: 65px;
+    min-width: 145px;
     max-width: 55px;
 }
 
 .icon-style {
-    color:green;
     font-size:10px;
 }
 
+.blue {
+    color:#337ab7;
+}
+
+.green {
+    color:#008000;
+}
+
+.red {
+    color:#ff0000;
+   }
+
 .td-width-action {
-    /*width:157px !important; */
-   /* min-width: 200px !important;*/
+   min-width: 50px !important;
 }
 
 .td-status {
