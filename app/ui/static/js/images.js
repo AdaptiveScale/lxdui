@@ -21,6 +21,12 @@ App.images = App.images || {
                 targets:   0
             }
         ],
+         dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "oLanguage": {
+          "sLengthMenu": "List _MENU_ ",
+        },
         select: {
             style:    'multi',
             selector: 'td:first-child'
@@ -29,6 +35,7 @@ App.images = App.images || {
         initComplete: function(settings, json) {
             var tempButton = $('.rawJSONImages').clone();
             tempButton.removeClass('rawJSONImages');
+            console.log('this', $(this).closest('table').attr('id'));
             tempButton.on('click', $.proxy(App.images.showJSON, App.images));
             $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
             tempButton.show();
