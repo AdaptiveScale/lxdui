@@ -207,6 +207,8 @@
 .profiles .label .btn {
     color: #fff;
     padding: 0px 2px;
+    /*adding font size container details remove profile icon*/
+    font-size: 13px;
 }
 
 .profiles select {
@@ -437,6 +439,11 @@ color: #000 !important;
     background: none;
 }
 
+.tab-details img {
+    width:63%;
+    margin-top: 30px;
+}
+
 .tab-details h5 {
     font-size: 14px !important;
     font-weight: bold !important;
@@ -452,6 +459,10 @@ color: #000 !important;
 
 .tab-details .formModifier {
     font-size: 12px;
+    margin-top: 0px;
+}
+
+.tab-details #containerNameInput {
     margin-top:0px;
     font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
     font-size: 14px;
@@ -724,7 +735,7 @@ color: #000 !important;
 
 #entire_form > ul > li > a {
     background: white;
-    boder: 1px solid #eee;
+    border: 1px solid #eee;
 }
 
 /*Network end*/

@@ -17,6 +17,12 @@ App.storagePool = App.storagePool || {
                 targets:   0
             }
         ],
+        dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "oLanguage": {
+          "sLengthMenu": "List _MENU_ ",
+        },
         select: {
             style:    'multi',
             selector: 'td:first-child'
@@ -26,7 +32,8 @@ App.storagePool = App.storagePool || {
             var tempButton = $('.rawJSONStoragePool').clone();
             tempButton.removeClass('rawJSONStoragePool');
             tempButton.on('click', $.proxy(App.storagePool.showJSON, App.storagePool));
-            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+//            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            $('.json-place').append(tempButton);
             tempButton.show();
         },
     },
@@ -49,6 +56,7 @@ App.storagePool = App.storagePool || {
         this.dataTable.on('deselect', $.proxy(this.onItemSelectChange, this));
         App.setActiveLink('storage');
         this.getData();
+        $('#storagePoolForm>ul>li').addClass('active');
     },
     refreshStoragePools: function(e){
         console.log('refreshStorage Pools');
