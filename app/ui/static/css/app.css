@@ -225,15 +225,34 @@
     font-size: 10px;
 }
 
+#accordion_0 .panel-default > .panel-heading + .panel-collapse > .panel-body:nth-child(1) {
+    border: none !important;
+}
+
+
 .panel-default > .panel-heading + .panel-collapse > .panel-body:nth-child(1) {
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
 }
+
+#accordion_0 .panel > div:nth-child(1) {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+
 .panel > div:nth-child(1) {
     border-top: 1px solid #ddd;
     border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+#accordion_0 .panel-default > .panel-heading + .panel-collapse > .panel-body:nth-child(2){
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
 }
@@ -243,7 +262,17 @@
     border-right: 1px solid #ddd;
 }
 
+#accordion_0 .panel > div:nth-child(2)  {
+    border: none !important;
+}
+
 .panel > div:nth-child(2)  {
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+#accordion_0 .panel-default > .panel-heading + .panel-collapse > .panel-body:nth-child(3){
+    border-bottom: 1px solid #ddd;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
 }
@@ -254,8 +283,20 @@
     border-right: 1px solid #ddd;
 }
 
+#accordion_0 .panel > div:nth-child(3) {
+     border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
 .panel > div:nth-child(3) {
      border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
+    border-right: 1px solid #ddd;
+}
+
+#accordion_0 .panel-default > .panel-heading + .panel-collapse > .panel-body:nth-child(4) {
+    border-bottom: 1px solid #ddd;
     border-left: 1px solid #ddd;
     border-right: 1px solid #ddd;
 }
@@ -317,6 +358,20 @@ color: #000 !important;
 }
 
 #accordion > .panel-collapse {
+    border: none !important;
+}
+
+#accordion_0 > .panel-default .panel-heading {
+    border: none !important;
+    background: none !important;
+}
+
+#accordion_0 .panel-title {
+    font-size: 14px !important;
+    font-weight: bold;
+}
+
+#accordion_0 > .panel-collapse {
     border: none !important;
 }
 
@@ -398,6 +453,9 @@ color: #000 !important;
 .tab-details .formModifier {
     font-size: 12px;
     margin-top:0px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    font-size: 14px;
+    line-height: 1.42857143;
 }
 
 .network-tab .glyphicon,
@@ -443,11 +501,7 @@ color: #000 !important;
 }
 
 .container-details-tabs .nav-tabs {
-    boder: none;
-}
-
-.container-details-tabs #buttonDeleteSnapshot {
-    margin-left: 15px;
+    border: none;
 }
 
 .popover {
@@ -458,8 +512,13 @@ color: #000 !important;
     width: 300px !important;
 }
 
-
-
+.btn-json {
+    padding: 7px;
+    font-size: 12px;
+}
+.font400 {
+    font-weight: 400 !important;
+}
 
 
 /* Container details end */
@@ -467,6 +526,14 @@ color: #000 !important;
 
 
 /*Containers start */
+
+.status {
+    width: 100px !important;
+}
+
+#tableContainers > thead > tr > th:nth-child(8)::after {
+    content: none;
+}
 
 .btn-rounded-corners {
     border-radius: 20px;
@@ -648,11 +715,16 @@ color: #000 !important;
 }
 
 .left-align {
-     text-align:left;
+     text-align:left !important;
 }
 
 .ipv4-config-bg {
      background:#F2F1F0;
+}
+
+#entire_form > ul > li > a {
+    background: white;
+    boder: 1px solid #eee;
 }
 
 /*Network end*/

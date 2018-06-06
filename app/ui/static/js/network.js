@@ -44,6 +44,7 @@ App.network = App.network || {
         $('#selectAllNetworks').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
         this.dataTable.on('select', $.proxy(this.onItemSelectChange, this));
         this.dataTable.on('deselect', $.proxy(this.onItemSelectChange, this));
+        $('')
 
     },
     setLoading: function(state){

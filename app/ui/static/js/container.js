@@ -107,7 +107,8 @@ App.containers = App.containers || {
     initKeyValuePairs: function() {
         for (key in App.properties.keyValues) {
             $('#advancedSettingsContainer').append('<div class="row">' +
-                    '<div class="col-lg-5">'+
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">'+
                         '<div class="form-group row">' +
                             '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
                             '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
@@ -115,7 +116,8 @@ App.containers = App.containers || {
                              '</a>' +
                         '</div>' +
                     '</div>'+
-                    '<div class="col-lg-5">' +
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">' +
                         '<div class="form-group row">' +
                             '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
                         '</div>' +

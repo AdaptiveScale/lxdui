@@ -14,7 +14,7 @@
         });
     </script>
     <div class="col-lg-12">
-        <legend>Container Details : <b>{{container.name}}</b> <span class="cont-details label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}"><span class="glyphicon glyphicon-off"></span> {{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span><button class="label btn btn-primary pull-right" href="#" id="rawJSONContainerDetails">JSON</button> <button class="label btn btn-primary pull-right" id="buttonSave" style="display:none;">Save</button> </legend>
+        <legend>Container Details : <b>{{container.name}}</b> <span class="cont-details label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}"><span class="glyphicon glyphicon-off"></span> {{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span> <button class="label btn btn-primary pull-right" id="buttonSave" style="display:none;">Save</button> </legend>
         <div class="form-group">
             {% if container.status == 'Running' %}
                 <button class="btn btn-default btn-stop_container btn-sm" id="buttonStopDetail">
@@ -23,13 +23,15 @@
                 <button class="btn btn-default btn-restart_container btn-sm" id="buttonRestartDetail">
                     <span class="glyphicon glyphicon-repeat"> </span> Restart
                 </button>
-                <button class="btn btn-default btn-delete_container btn-sm" id="buttonDeleteDetail">
-                        <span class="glyphicon glyphicon-remove-sign"> </span> Delete
-                </button>
-                <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
                 <button class="btn btn-default btn-freeze_container btn-sm" id="buttonFreezeDetail">
                     <span class="glyphicon glyphicon-ok-circle"> </span> Freeze
                 </button>
+
+                <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <button class="btn btn-default btn-delete_container btn-sm" id="buttonDeleteDetail">
+                        <span class="glyphicon glyphicon-remove-sign"> </span> Delete
+                </button>
+
             {% else %}
                 <button class="btn btn-default btn-start_container btn-sm" id="buttonStartDetail">
                     <span class="glyphicon glyphicon-play"> </span> Start
@@ -64,14 +66,17 @@
                     <li class="active">
                         <a href="#1" aria-expanded="true" data-toggle="tab">Details</a>
                     </li>
-                    <li>
+                    <li class="">
                         <a href="#2" data-toggle="tab">Networking</a>
                     </li>
-                    <li>
+                   <li>
                         <a href="#3" data-toggle="tab">Snapshots</a>
                     </li>
                     <li>
                         <a href="#4" data-toggle="tab">Advanced</a>
+                    </li>
+                    <li class="pull-right">
+                        <button class="btn btn-primary btn-json" href="#" id="rawJSONContainerDetails">JSON</button>
                     </li>
                 </ul>
 
@@ -123,35 +128,42 @@
                               </div>
                           </div>
                       </div>
-                  <div class="col-lg-12 add-borders padding-top-25">
+                  <div class="col-lg-12 add-borders container-little-details padding-top-25">
                         <div class="col-sm-6">
                             <div class="form-group">
                                 <h5 class="inline">Name :</h5>
-                                <b contenteditable="true" id="containerNameInput" class="formModifier">{{container.name}}</b>
+                                <label contenteditable="true" id="containerNameInput" class="formModifier font400">{{container.name}}</label>
                                 <span class="btn btn-xs btn-default glyphicon glyphicon-pencil formModifier" id="editNameButton"></span>
                             </div>
                             <div class="form-group">
                                 <h5 class="inline">Type :</h5>
                                 {% if container.ephemeral %}
-                                    <b>Ephemeral</b>
+                                    <label class="font400">Ephemeral</label>
                                 {% else %}
-                                    <b>Persistent</b>
+                                    <label class="font400">Persistent</label>
                                 {% endif %}
                             </div>
                             <div class="form-group">
                                 <h5 class="inline">Architecture :</h5>
-                                <b>{{container.architecture}}</b>
+                                <label class="font400">{{container.architecture}}</label>
                             </div>
 
                             <div class="form-group">
                                 <h5 class="inline">OS Image :</h5>
-                                <b>{{container.expanded_config['image.os']}} {{container.expanded_config['image.release']}} ({{container.expanded_config['image.architecture']}})</b>
+                                <label class="font400">{{container.expanded_config['image.os']}} {{container.expanded_config['image.release']}} ({{container.expanded_config['image.architecture']}})</label>
                             </div>
                             <div class="form-group">
                                 <h5 class="inline">Created On:</h5>
-                                <b>{{container.created_at}}</b>
+                                <label class="font400">{{container.created_at}}</label>
                             </div>
 
+                            <div class="form-group">
+                                <h5 class="inline">Is set to Autostart :</h5>
+                                <div class="btn-group" role="group">
+                                    <button type="button" id="buttonAutostartActive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='1' else 'default'}}">Yes</button>
+                                    <button type="button" id="buttonAutostartInactive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='0' else 'default'}}">No</button>
+                                </div>
+                            </div>
                             <div class="form-group profiles">
                                 <h5 class="inline">Profiles :</h5>
                                 <span id="profileList">
@@ -176,13 +188,6 @@
                                     <!--</span>-->
                             </div>
 
-                            <div class="form-group">
-                                <h5 class="inline">Is set to Autostart :</h5>
-                                <div class="btn-group" role="group">
-                                    <button type="button" id="buttonAutostartActive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='1' else 'default'}}">Yes</button>
-                                    <button type="button" id="buttonAutostartInactive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='0' else 'default'}}">No</button>
-                                </div>
-                            </div>
                     </div>
                      <div class="col-sm-6">
                          <div class="row">
@@ -193,18 +198,18 @@
                                 </div>
                                 <div class="form-group">
                                      <h5 class="inline">Currently Running Processes :</h5>
-                                    <span class="label label-info">{{container.processes}}</span>
+                                    <span class="label label-info ">{{container.processes}}</span>
                                 </div>
                                 {% endif %}
                             </div>
                          <div class="row border-space">
                              <div class="form-group">
                                     <h5 class="inline">CPU Allocation :</h5>
-                                    <b>{{container.config['limits.cpu.allowance']}}</b>
+                                    <span class="font400">{{container.config['limits.cpu.allowance']}}</span>
                                 </div>
                                 <div class="form-group">
                                     <h5 class="inline">Memory Allocation :</h5>
-                                    <b>{{container.config['limits.memory']}}</b>
+                                    <span class="font400">{{container.config['limits.memory']}}</span>
                                 </div>
                             </div>
                         </div>
@@ -215,7 +220,7 @@
                    <div class="col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group">
                                 {% if container.network is mapping %}
-                            <h5 class="bg-bottom"><b>Network Interfaces : </b></h5>
+                            <h5 class="bg-bottom"><b>Network Interfaces </b></h5>
                                 {% for key, value in container.network.items() %}
                                 {% if key!='lo' %}
                                 <div class="row space">
@@ -253,8 +258,8 @@
                 <div class="tab-pane snapshots-tab col-sm-12 col-md-12 col-lg-12 pd-left0 pd-right0 add-borders" id="3">
                     <div class="col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group">
-                               <h5 class="bg-bottom"><b>List of Snapshots : </b><span class="glyphicon glyphicon-camera"></span>
-                                    <button id="buttonNewContainerSnapshot" class="btn btn-sm btn-default mg-left60" disabled><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>
+                               <h5 class="bg-bottom"></span>
+                                    <button id="buttonNewContainerSnapshot" class="btn btn-sm btn-default" disabled><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>
                                     <button id="buttonRestoreSnapshot" class="btn btn-sm btn-default" disabled><span class="glyphicon glyphicon-repeat"></span> Restore</button>
                                     <button id="buttonDeleteSnapshot" class="btn btn-sm btn-default" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>
                                </h5>
@@ -281,10 +286,12 @@
                             <h5 class="bg-bottom"><b>Advanced Settings : </b></h5>
                         </div>
                         <div class="row">
-                             <div class="col-lg-5">
+                            <div class="col-lg-1"></div>
+                             <div class="col-lg-4">
                                 <div class="row"><label for="Key">Key</label></div>
                              </div>
-                             <div class="col-lg-5">
+                             <div class="col-lg-1"></div>
+                             <div class="col-lg-4">
                                 <div class="row"><label for="Value">Value</label></div>
                              </div>
 
