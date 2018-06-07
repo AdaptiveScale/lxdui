@@ -75,7 +75,7 @@ App.containerDetails = App.containerDetails || {
         $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
         $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
         $('#buttonNewContainerSnapshot').on('click', $.proxy(this.showCloneContainerfromSnapshot, this));
-        $('#exTab2 > ul > li:nth-child(1)').addClass('active');
+        $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
     },
