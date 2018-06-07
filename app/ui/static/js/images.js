@@ -37,7 +37,7 @@ App.images = App.images || {
             tempButton.removeClass('rawJSONImages');
             console.log('this', $(this).closest('table').attr('id'));
             tempButton.on('click', $.proxy(App.images.showJSON, App.images));
-            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            $('#'+$(this).closest('table').attr('id')+'_wrapper .json-place').prepend(tempButton);
             tempButton.show();
         },
     },
