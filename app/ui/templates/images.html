@@ -117,37 +117,7 @@
                         </div>
                         <!--tableImagesLocalWrapper end-->
                     </div>
-                    <div id="createMultipleContainersForm" style="display:none;">
-                        <div class="col-lg-12 main-div">
-                            <div>
-                                <div class="form-group">
-                                    <div class="row">
-                                        <div class="col-lg-2">
-                                            <button class="btn btn-defult" id="buttonBack">
-                                                <span class="glyphicon glyphicon-chevron-left"> </span> Back
-                                            </button>
-                                        </div>
-                                        <div class="col-lg-7 text-center">
-                                            <h4><b>Create Container from Image</b></h4>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <!--col-lg-12 main-div end-->
 
-                        <div class="col-lg-12">
-                            <form id="newContainerForm">
-                                <div class="form-group" id="multiContainerSection">
-
-                                </div>
-                                <!--multiContainerSection end-->
-                                <button type="submit" class="btn btn-primary">Create <span
-                                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
-                            </form>
-                            <!--newContainerForm end-->
-                        </div>
-                    </div>
 
                 </div> <!--col-sm-12 end-->
 
@@ -370,12 +340,12 @@
                     </div>
                 </div>
             </div>
-            <div class="panel-body">
+            <div class="panel-body advanced-settings-accordion">
                 <div class="panel-group" id="accordion">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">
-                            <h4 class="panel-title">
-                                <a data-toggle="collapse" id="accordion_link" href="#collapse">Advanced
+                    <div class="panel-default">
+                        <div>
+                            <h4>
+                                <a data-toggle="collapse" class="collapse-acc" id="accordion_link" href="#collapse">Advanced
                                     Settings</a>
                             </h4>
                         </div>
@@ -403,6 +373,37 @@
             <input class="imageNameInput" type="hidden" name="image" value="">
         </div>
     </div>
+    <div id="createMultipleContainersForm" style="display:none;">
+                        <div class="col-lg-12 main-div">
+                            <div>
+                                <div class="form-group">
+                                    <div class="row">
+                                        <div class="col-lg-2">
+                                            <button class="btn btn-defult" id="buttonBack">
+                                                <span class="glyphicon glyphicon-chevron-left"> </span> Back
+                                            </button>
+                                        </div>
+                                        <div class="col-lg-7 text-center">
+                                            <h4><b>Create Container from Image</b></h4>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--col-lg-12 main-div end-->
+
+                        <div class="col-lg-12">
+                            <form id="newContainerForm">
+                                <div class="form-group" id="multiContainerSection">
+
+                                </div>
+                                <!--multiContainerSection end-->
+                                <button type="submit" class="btn btn-primary">Create <span
+                                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                            </form>
+                            <!--newContainerForm end-->
+                        </div>
+                    </div>
 </div>
 
 <div class="hidden">
