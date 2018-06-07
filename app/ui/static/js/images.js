@@ -392,13 +392,14 @@ App.images = App.images || {
         //initialize profile pickers
         $('.selectpicker').selectpicker();
         this.switchView('form');
-//        $('.image-tabs').toggleClass('hidden');
+        $('.image-tabs').addClass('hidden');
     },
     switchView: function(view){
         $('#createMultipleContainersForm')[view=='form'?'show':'hide']();
         $('#tableImagesLocalWrapper')[view=='localList'?'show':'hide']();
         $('#tableImagesRemoteWrapper')[view=='remoteList'?'show':'hide']();
         if(view!=='form'){
+            $('.image-tabs').removeClass('hidden');
             $('#multiContainerSection').empty();
         }else{
             $('.mg-bottom15').hide();
