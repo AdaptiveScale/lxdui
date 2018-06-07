@@ -76,7 +76,7 @@ def createContainerSnapshot(name, container):
     input['container'] = container
     try:
         snapshot = LXCSnapshot(input)
-        return response.replySuccess(snapshot.snapshotCreateContainer(), message='Container {} created from {} snapshot successfully.'.format(container, name))
+        return response.replySuccess(snapshot.snapshotCreateContainer(), message='Container {} created from {} snapshot successfully.'.format(input['newContainer'], name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 

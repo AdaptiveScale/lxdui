@@ -34,7 +34,6 @@ App.containerDetails = App.containerDetails || {
     loading:false,
     rawJson:null,
     init: function(){
-        console.log('Container Details init');
         this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
         this.rawJson = ace.edit('rawJson');
         this.rawJson.session.setMode('ace/mode/json');
@@ -132,7 +131,6 @@ App.containerDetails = App.containerDetails || {
         $(e).popover('show');
     },
     refreshContainers: function(e){
-        console.log('refreshContainers');
         location.reload();
     },
     setLoading: function(state){
@@ -163,7 +161,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onStartSuccess: function(name){
-        console.log('onStartSuccess', name);
         location.reload();
     },
     stopContainer: function() {
@@ -174,7 +171,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onStopSuccess: function(name){
-        console.log('onStopSuccess', name);
         location.reload();
     },
     restartContainer: function() {
@@ -210,7 +206,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onDeleteSuccess: function(name){
-        console.log('onDelete', name);
         window.location = '/ui/containers';
     },
     getSnapshotList: function(){
@@ -219,6 +214,7 @@ App.containerDetails = App.containerDetails || {
     },
     getSnapshotSuccess: function (response){
         var container = this.name;
+        this.dataTable.rows().remove().draw();
         $.each(response.data, function(index, value) {
             var tempPlaceholder = $('<div class="col-sm-6"></div>');
             var inputPlaceholder = $('div');
@@ -254,7 +250,6 @@ App.containerDetails = App.containerDetails || {
             }
 
     },
-
     showCloneContainer: function(name) {
         $('.modal-title').text('');
         $('#newContainerClone').val('');
@@ -410,7 +405,10 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onSnapshotSuccess: function(response){
-         location.reload();
+         setTimeout(function() {
+            App.containerDetails.getSnapshotList();
+            $("#containerDetailModal").modal("hide");
+        }, 1000);
     },
     restoreSnapshots: function() {
       this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -426,7 +424,6 @@ App.containerDetails = App.containerDetails || {
     },
 
     restoreSnapshot: function() {
-        console.log("Restore");
         var snapshotName = $(event.target).prop('name');
         var container = this.name;
         $.ajax({
@@ -443,7 +440,6 @@ App.containerDetails = App.containerDetails || {
         }, 3000)
     },
     createContainerSnapshot: function() {
-        console.log("Create Container");
         var snapshotName = $(event.target).prop('name');
         var container = this.name;
         this.activeSnapshot = snapshotName;
@@ -482,10 +478,9 @@ App.containerDetails = App.containerDetails || {
          }.bind(this));
     },
     onCreateFromSnapshotSuccess: function() {
-        location.reload();
+        $("#containerDetailModal").modal("hide");
     },
     deleteSnapshot: function() {
-        console.log("Delete Snapshot");
         var snapshotName = $(event.target).prop('name');
         var container = this.name;
         $.ajax({
@@ -502,7 +497,6 @@ App.containerDetails = App.containerDetails || {
     },
     deleteSnapshots: function() {
         this.dataTable.rows( { selected: true } ).data().map(function(row){
-        console.log('row', row);
         var name = this.name;
         $.ajax({
                 url:App.baseAPI+'snapshot/'+row[1]+'/container/'+name,
@@ -518,7 +512,9 @@ App.containerDetails = App.containerDetails || {
         }.bind(this));
     },
     onSnapshotDeleteSuccess: function(response) {
-        location.reload();
+        setTimeout(function() {
+            App.containerDetails.getSnapshotList();
+        }, 1000);
     },
     deleteProfile: function(event){
         this.data.profiles.splice(this.data.profiles.indexOf($(event.target).data('id')),1);
@@ -555,7 +551,6 @@ App.containerDetails = App.containerDetails || {
     saveChanges:function(){
 
         this.updates['config'] = this.readKeyValuePairs();
-        console.log(this.updates);
         $.ajax({
             url: App.baseAPI+'container/',
             type:'PUT',
@@ -584,7 +579,6 @@ App.containerDetails = App.containerDetails || {
         this.updates['name'] = this.data.name;
     },
     formChanged: function(){
-        console.log('enableSave');
         $('#buttonSave').show();
         $('.formChanged').unbind('click');
     },
@@ -595,7 +589,6 @@ App.containerDetails = App.containerDetails || {
         this.updates['newName'] = event.target.textContent;
     },
     onAutoStartToggle:function(state){
-    console.log('newState', state);
         this.updates['autostart']=state;
         if(state){
              $('#buttonAutostartActive').removeClass('btn-default');
