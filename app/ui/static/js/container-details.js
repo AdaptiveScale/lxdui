@@ -74,7 +74,7 @@ App.containerDetails = App.containerDetails || {
         $('[data-toggle="popover"]').popover();
         $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
         $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
-        $('#buttonNewContainerSnapshot').on('click', $.proxy(this.showCloneContainerfromSnapshot, this));
+        $('#buttonNewContainerSnapshot').on('click', $.proxy(this.createContainerSnapshot, this));
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
@@ -224,8 +224,8 @@ App.containerDetails = App.containerDetails || {
             var inputPlaceholder = $('div');
             inputPlaceholder.append('<td></td>');
 //            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="delete-'+value.name+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="restore-'+value.name+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="create-'+value.name+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());"><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>');
+            //tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="restore-'+value.name+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
+            //tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="create-'+value.name+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());"><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>');
             this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
             this.dataTable.row.add([
                 null,
@@ -417,19 +417,13 @@ App.containerDetails = App.containerDetails || {
     },
     restoreSnapshots: function() {
       this.dataTable.rows( { selected: true } ).data().map(function(row){
-        console.log('row', row);
         var name = this.name;
         $.ajax({
-//              url:App.baseAPI+'snapshot/'+snapshotName+'/container/'+container,
             url:App.baseAPI+'snapshot/'+row[1]+'/container/'+name,
-            type: 'DELETE',
+            type: 'PUT',
             dataType: 'json',
             contentType: 'application/json',
-            data: JSON.stringify({
-                imageAlias: $('#imageAlias').val(),
-                force: true
-            }),
-            success: $.proxy(this.onSnapshotDeleteSuccess, this)
+            success: $.proxy(this.onRestoreSuccess, this)
         });
         }.bind(this));
     },
@@ -474,18 +468,21 @@ App.containerDetails = App.containerDetails || {
         $('#exportContainerForm').hide();
     },
     newContainerFromSnapshotDetail: function() {
-         var container = this.name;
-         $.ajax({
-            url:App.baseAPI+'snapshot/'+ this.activeSnapshot +'/container/'+this.name+'/create',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                newContainer: $('#newContainerSnapshot').val(),
-                force: true
-            }),
-            success: $.proxy(this.onCreateFromSnapshotSuccess, this)
-        });
+         this.dataTable.rows( { selected: true } ).data().map(function(row){
+            var name = this.name;
+            var container = this.name;
+             $.ajax({
+                url:App.baseAPI+'snapshot/'+ row[1] +'/container/'+this.name+'/create',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    newContainer: $('#newContainerSnapshot').val(),
+                    force: true
+                }),
+                success: $.proxy(this.onCreateFromSnapshotSuccess, this)
+            });
+         }.bind(this));
     },
     onCreateFromSnapshotSuccess: function() {
         location.reload();
