@@ -470,6 +470,7 @@ App.containers = App.containers || {
          console.log(response);
          console.log('clonedSuccess:', 'TODO - add alert and refresh local data');
          $("#myModal").modal("hide");
+         location.reload();
     },
     moveContainer: function() {
         $.ajax({
@@ -487,6 +488,7 @@ App.containers = App.containers || {
          console.log(response);
          console.log('Moved Success:', 'TODO - add alert and refresh local data');
          $("#myModal").modal("hide");
+         location.reload();
     },
     exportContainer: function() {
         $.ajax({
