@@ -160,13 +160,14 @@
                                         {% if image.properties.get('description') == None %}
                                         <td>
                                             <a class="pointer"
-                                               onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
+                                               onClick="App.images.showRemoteDetails('{{image.image}}');"
+                                               data-keyboard="true">{{ image.name}}</a>
                                         </td>
                                         <td>{{image.aliases[0].description}}</td>
                                         {% else %}
                                         <td>
                                             <a class="pointer"
-                                               onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.properties.os}}</a>
+                                               onClick="App.images.showRemoteDetails('{{image.properties.os}}/{{ image.properties.release }}/{{ image.properties.architecture }}');">{{image.properties.os}}</a>
                                         </td>
                                         <td>{{ image.properties.description }}</td>
                                         {% endif %}

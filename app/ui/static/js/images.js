@@ -230,6 +230,8 @@ App.images = App.images || {
             return $.get(App.baseAPI+'image', $.proxy(this.getDataSuccess, this));
         if(this.activeTab=='remote')
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
+       if(this.activeTab=='nightly')
+            return $.get(App.baseAPI+'image/remote/nightly/list', $.proxy(this.getDataSuccess, this));
     },
     activateScreen: function(screen){
         this.tableLocal.rows({selected:true}).deselect();
