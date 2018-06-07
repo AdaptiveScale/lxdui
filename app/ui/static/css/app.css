@@ -222,7 +222,7 @@
     padding: 5px;
 }
 
-.label-success, .label-danger {
+.label-success, .label-danger, .label-info {
     padding: 2px 3px;
     font-size: 10px;
 }
@@ -439,6 +439,51 @@ color: #000 !important;
     background: none;
 }
 
+.container-details-tabs
+
+.nav-tabs>li.active>a, .nav-tabs>li.active>a:focus, .nav-tabs>li.active>a:hover {
+    background: #7d7b7b;
+    color: #fff !important;
+}
+
+#exTab2 > ul > li.tab-background.active a {
+    background: #7d7b7b;
+    color: #fff !important;
+}
+
+#exTab2 > ul > li.active > a span {
+    background: #fff;
+    color: #000;
+}
+
+#exTab2 > ul > li.active > a {
+    background: #7d7b7b;
+    color: #fff !important;
+}
+
+#exTab2 .nav-tabs>li>a {
+    color: #000 !important;
+    font-weight: 700;
+}
+
+
+
+#exTab3 > ul > li > a {
+    background: #dddddd;
+    color: #000;
+}
+
+#exTab3 > ul > li.active > a {
+    background: #7d7b7b;
+    color: #fff !important;
+}
+
+#exTab2 > ul > li:nth-child(2) > a > span,
+#exTab2 > ul > li:nth-child(3) > a > span{
+    background: #fff;
+    color: #000;
+}
+
 .tab-details img {
     width:63%;
     margin-top: 30px;
@@ -529,6 +574,12 @@ color: #000 !important;
 }
 .font400 {
     font-weight: 400 !important;
+}
+
+.img-network-interfaces {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
 }
 
 
@@ -684,7 +735,7 @@ color: #000 !important;
 }
 
 .tab-background {
-    background:#F2F1F0;
+    background: #dddddd;
 }
 
 .tab-content > .active {
