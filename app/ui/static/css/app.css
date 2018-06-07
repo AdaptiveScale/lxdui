@@ -613,10 +613,13 @@ color: #000 !important;
 }
 
 .refreshContainers .btn-default {
-   padding: 4px;
-   border-radius: 3px;
-   border: 1px solid black;
-   border-width: thin;
+    padding: 3px 0px 2px 5px;
+    border-radius: 3px;
+    border: 1px solid black;
+    font-size: 18px;
+    border-width: thin;
+    font-weight: bold;
+    margin-right: 6px;
 }
 
 .dataTables_length > label {
