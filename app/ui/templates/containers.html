@@ -59,11 +59,11 @@
                 <td class="td-width"><a href="containers/{{container.name}}" href="#">{{container.name}}</a></td>
                 <td class="status">
                     {% if container.status == 'Running' %}
-                    <i class="glyphicon glyphicon-off green icon-style"></i>
+                    <i class="glyphicon glyphicon-off green"></i>
                     {% elif container.status == 'Stopped' %}
-                    <i class="glyphicon glyphicon-off red icon-style"></i>
+                    <i class="glyphicon glyphicon-off red"></i>
                     {% elif container.status == 'Frozen' %}
-                     <i class="glyphicon glyphicon-off blue icon-style"></i>
+                     <i class="glyphicon glyphicon-off blue"></i>
                     {% endif %}
                     {{container.status}}
                 </td>
