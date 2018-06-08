@@ -14,16 +14,34 @@ App.network = App.network || {
                 targets:   0
             }
         ],
+        dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "oLanguage": {
+          "sLengthMenu": "List _MENU_ ",
+        },
         select: {
             style:    'multi',
             selector: 'td:first-child'
         },
         order: [[ 1, 'asc' ]],
+        initComplete: function(settings, json) {
+            var tempButton = $('.rawJSONNetworks').clone();
+            tempButton.removeClass('rawJSONNetworks');
+            tempButton.on('click', $.proxy(App.network.showJSON, App.network));
+//            $('#'+$(this).closest('table').attr('id')+'_filter').prepend(tempButton);
+            $('.json-place').append(tempButton);
+            tempButton.show();
+        },
     },
     activeNetwork: {},
+    rawJson: null,
     init: function(opts){
         console.log('Network initialized')
         this.dataTable = $('#tableNetworks').DataTable(this.tableSettings);
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
         $('#buttonUpdateNetwork').on('click', $.proxy(this.updateNetwork, this));
         $('#buttonCreateNetwork').on('click', $.proxy(this.createNetwork, this));
         $('#buttonNewNetwork').on('click', $.proxy(this.showNewUpdateNetwork, this));
@@ -43,6 +61,25 @@ App.network = App.network || {
             return $('#tableImagesLocalWrapper')[tempTableState]();
         else
             return $('#tableImagesRemoteWrapper')[tempTableState]();
+    },
+    getData: function(){
+        this.setLoading(true);
+        $.get(App.baseAPI+'network', $.proxy(this.getDataSuccess2, this));
+    },
+    getDataSuccess2: function(response){
+        this.setLoading(false);
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
+        //this.updateLocalTable(response.data);
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Networks');
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getData();
+
     },
     getNetwork: function(name){
         $('#name').val(name);

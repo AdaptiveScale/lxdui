@@ -14,176 +14,294 @@
         });
     </script>
     <div class="col-lg-12">
-        <legend>Container Details : <b>{{container.name}}</b> <span style="position:relative;top:-3px;" class="label status_{{container.name}} label-{%if container.status == 'Running' %}success{% else %}danger{% endif %}"><span class="glyphicon glyphicon-off"></span> {{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span><button class="label btn btn-primary pull-right" style="display:none;" id="buttonSave">Save</button> </legend>
+        <legend>Container Details : <b>{{container.name}}</b> <span class="cont-details label status_{{container.name}} label-{%if container.status == 'Running' %}success{% elif container.status == 'Stopped' %}danger{%else %}info{% endif %}"><span class="glyphicon glyphicon-off"></span> {{container.status}}</span> <span class="glyphicon glyphicon-refresh spinning loader"></span> <button class="label btn btn-primary pull-right" id="buttonSave" style="display:none;">Save</button> </legend>
         <div class="form-group">
             {% if container.status == 'Running' %}
-                <button class="btn btn-default btn-stop_container" id="buttonStopDetail">
+                <button class="btn btn-default btn-stop_container btn-sm" id="buttonStopDetail">
                     <span class="glyphicon glyphicon-stop"> </span> Stop
                 </button>
-                <button class="btn btn-default btn-restart_container" id="buttonRestartDetail">
+                <button class="btn btn-default btn-restart_container btn-sm" id="buttonRestartDetail">
                     <span class="glyphicon glyphicon-repeat"> </span> Restart
                 </button>
-                <button class="btn btn-default btn-delete_container" id="buttonDeleteDetail">
+                <button class="btn btn-default btn-freeze_container btn-sm" id="buttonFreezeDetail">
+                    <span class="glyphicon glyphicon-ok-circle"> </span> Freeze
+                </button>
+
+                <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <button class="btn btn-default btn-delete_container btn-sm" id="buttonDeleteDetail">
                         <span class="glyphicon glyphicon-remove-sign"> </span> Delete
                 </button>
+
             {% else %}
-                <button class="btn btn-default btn-start_container" id="buttonStartDetail">
+                <button class="btn btn-default btn-start_container btn-sm" id="buttonStartDetail">
                     <span class="glyphicon glyphicon-play"> </span> Start
                 </button>
-                <button class="btn btn-default btn-delete_container" id="buttonDeleteDetail">
+                {% if container.status == 'Frozen' %}
+                 <button class="btn btn-default btn-unfreeze_container btn-sm" id="buttonUnfreezeDetail">
+                        <span class="glyphicon glyphicon-remove-circle"> </span> Unfreeze
+                 </button>
+                {% endif %}
+                <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                <button class="btn btn-default btn-delete_container btn-sm" id="buttonDeleteDetail">
                         <span class="glyphicon glyphicon-remove-sign"> </span> Delete
                 </button>
+
+            <!--<label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>-->
+            {% if container.status != 'Frozen' %}
+                <button class="btn btn-default btn-freeze_container btn-sm" id="buttonFreezeDetail">
+                    <span class="glyphicon glyphicon-ok-circle"> </span> Freeze
+                </button>
+            {% endif %}
             {% endif %}
 
             <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
-            <button id="buttonSnapshotContainerDetail" class="btn btn-default"><span class="glyphicon glyphicon-camera"></span> Snapshot</button>
-            <button id="buttonCloneContainerDetail" class="btn btn-default"><span class="glyphicon  glyphicon-duplicate"></span> Clone</button>
-            <button id="buttonMoveContainerDetail" class="btn btn-default"><span class="glyphicon glyphicon-share"></span> Move</button>
-            <button id="buttonExportContainerDetail" class="btn btn-default"><span class="glyphicon glyphicon-export"></span> Export</button>
+            <button id="buttonSnapshotContainerDetail" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-camera"></span> Snapshot</button>
+            <button id="buttonCloneContainerDetail" class="btn btn-default btn-sm"><span class="glyphicon  glyphicon-duplicate"></span> Clone</button>
+            <button id="buttonMoveContainerDetail" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-share"></span> Move</button>
+            <button id="buttonExportContainerDetail" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-export"></span> Export</button>
 
 
 
         </div>
-        <div class="col-sm-6">
-            <div class="form-group">
-                <h5 style="display:inline">Name :</h5>
-                <b contenteditable="true" id="containerNameInput" class="formModifier">{{container.name}}</b>
-                <span class="btn btn-xs btn-default glyphicon glyphicon-pencil formModifier" id="editNameButton"></span>
-            </div>
-    <div class="form-group">
-        <h5 style="display:inline">Type :</h5>
-        {% if container.ephemeral %}
-            <b>Ephemeral</b>
-        {% else %}
-            <b>Persistent</b>
-        {% endif %}
-    </div>
-    <div class="form-group">
-        <h5 style="display:inline">Architecture :</h5>
-        <b>{{container.architecture}}</b>
-    </div>
+        <div class="container-details-tabs">
+            <div id="exTab3">
+                <ul class="nav nav-tabs">
+                    <li class="active">
+                        <a href="#1" aria-expanded="true" class="tab-background" data-toggle="tab">Details</a>
+                    </li>
+                    <li>
+                        <a href="#2" data-toggle="tab">Networking</a>
+                    </li>
+                   <li>
+                        <a href="#3" data-toggle="tab">Snapshots</a>
+                    </li>
+                    <li>
+                        <a href="#4" data-toggle="tab">Advanced</a>
+                    </li>
+                    <li class="pull-right">
+                        <button class="btn btn-default btn-rounded-corners btn-xs btn-json" href="#" id="rawJSONContainerDetails">JSON</button>
+                    </li>
+                </ul>
 
-    <div class="form-group">
-        <h5 style="display:inline">OS Image :</h5>
-        <b>{{container.expanded_config['image.os']}} {{container.expanded_config['image.release']}} ({{container.expanded_config['image.architecture']}})</b>
-    </div>
-    <div class="form-group">
-        <h5 style="display:inline">Created On:</h5>
-        <b>{{container.created_at}}</b>
-    </div>
+			<div class="tab-content">
+			  <div class="tab-pane tab-details active" id="1">
+                  <div class="col-lg-12 add-borders text-center">
+                          <div class="col-md-3">
+                              <div class="col-md-12 text-center">
+                                  <img src="../static/images/CPU-icon.png" alt="">
 
-    <div class="form-group profiles">
-        <h5 style="display:inline">Profiles :</h5>
-        <span id="profileList">
-        {% for p in container.profiles %}
-            <span class="label label-default no-right-padding mg-right">{{ p }}
-                <a id="button_{{p}}" class="btn tag-button glyphicon glyphicon-remove profileTag formModifier" data-id="{{p}}" data-container="{{container.name}}"></a>
-            </span>
-        {% endfor %}
-        </span>
-            <select id="containerProfiles" name="profiles" style="display:none;">
-             {% for profile in profiles %}
-                {% if profile in container.profiles %}
-                    <option>here</option>
-                    <option selected>{{profile.name}}</option>
-                {% else %}
-                    <option value="{{profile.name}}">{{profile.name}}</option>
-                {% endif %}
-             {% endfor %}
-            </select>
-            <!--<span class="label label-success no-right-padding mg-right">{{ p }}-->
-                <a id="buttonAdd" class="btn btn-default btn-xs glyphicon glyphicon-plus formModifier"></a>
-            <!--</span>-->
-    </div>
+                              </div>
+                              <div class="col-md-12">
+                                  <h5>CPU</h5>
+                                  <p>{{'%0.1f'|format(container.cpu.usage/1000000000)}}(sec)</p>
+                              </div>
+                          </div>
+                          <div class="col-md-3">
+                              <div class="col-md-12 text-center">
+                                 <img src="../static/images/Ram-icon.png" alt="">
+                              </div>
+                              <div class="col-md-12">
+                                  <h5>Memory</h5>
+                                  <p>current: {{'%0.2f'|format(container.memory.usage/(1024*1024))}}MB</p>
+                                  <p>peak: {{'%0.2f'|format(container.memory.usage_peak/(1024*1024))}}MB</p>
+                              </div>
 
-    <div class="form-group">
-        <h5 style="display:inline">Is set to Autostart :</h5>
-        <div class="btn-group" role="group">
-            <button type="button" id="buttonAutostartActive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='1' else 'default'}}">Yes</button>
-            <button type="button" id="buttonAutostartInactive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='0' else 'default'}}">No</button>
-        </div>
-    </div>
-
-
-        </div>
-         <div class="col-sm-6">
-             <div class="row">
-                 {% if container.pid != 'N/A' %}
-                    {% endif %} {% if container.processes != 'N/A' %}
-                    <div class="form-group">
-                        PID: <span class="label label-primary"> {{container.pid}}</span>
-                    </div>
-                    <div class="form-group">
-                         <h5 style="display:inline">Currently Running Processes :</h5>
-                        <span class="label label-info">{{container.processes}}</span>
-                    </div>
-                    {% endif %}
-                </div>
-             <div class="row border-space">
-                 <div class="form-group">
-                        <h5 style="display:inline">CPU Allocation :</h5>
-                        <b>{{container.config['limits.cpu.allowance']}}</b>
-                    </div>
-                    <div class="form-group">
-                        <h5 style="display:inline">Memory Allocation :</h5>
-                        <b>{{container.config['limits.memory']}}</b>
-                    </div>
-                </div>
-            </div>
-        <div class="col-sm-12">
-            <div class="form-group">
-                    {% if container.network is mapping %}
-                    <h5 style="border-bottom:1px solid #eee;padding-bottom:10px;">Network Interfaces :</h5>
-                    {% for key, value in container.network.items() %}
-                    {% if key!='lo' %}
-                    <div class="row" style="margin: 30px 0px;">
+                          </div>
+                          <div class="col-md-3">
+                               <div class="col-md-12 text-center">
+                                    <img src="../static/images/HDD-icon.jpg" alt="">
+                               </div>
+                              <div class="col-md-12">
+                                  <h5>Disk</h5>
+                                  <p>root: 308.00kB</p>
+                              </div>
+                          </div>
+                          <div class="col-md-3">
+                               <div class="col-md-12 text-center">
+                                  <img src="../static/images/NIC-icon.png" alt="">
+                               </div>
+                              <div class="col-md-12">
+                                  <h5>Network</h5>
+                                  {% if container.network is mapping %}
+                                    {% for key, value in container.network.items() %}
+                                        {% if key!='lo' %}
+                                            <p><span>{{ key }}: </span> B {{'%0.2f'|format(container.network[key]['counters']['bytes_received']/1024)}}kB | {{'%0.2f'|format(container.network[key]['counters']['bytes_sent']/1024)}}kB P {{container.network[key]['counters']['packets_received']}} | {{container.network[key]['counters']['packets_sent']}}</p>
+                                        {% endif %}
+                                    {% endfor %}
+                                  {% endif %}
+                              </div>
+                          </div>
+                      </div>
+                  <div class="col-lg-12 add-borders container-little-details padding-top-25">
                         <div class="col-sm-6">
-                            IP Interface : <span class="label label-primary"> {{ key }}</span>
-                            <br/>
-                            {% if value.addresses|length > 0 %}
-                            IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>
-                            <span class="label label-warning" style="color:black">/{{value.addresses.0.netmask}}</span>
-                            {% endif %}
-                            <br/>
-                            MAC Address
-                            : <b style="font-size:75%">{{value.hwaddr}}</b>
-                            <br/>
-                            State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
+                            <div class="form-group">
+                                <h5 class="inline">Name :</h5>
+                                <label contenteditable="true" id="containerNameInput" class="formModifier font400">{{container.name}}</label>
+                                <span class="btn btn-xs btn-default glyphicon glyphicon-pencil formModifier" id="editNameButton"></span>
+                            </div>
+                            <div class="form-group">
+                                <h5 class="inline">Type :</h5>
+                                {% if container.ephemeral %}
+                                    <label class="font400">Ephemeral</label>
+                                {% else %}
+                                    <label class="font400">Persistent</label>
+                                {% endif %}
+                            </div>
+                            <div class="form-group">
+                                <h5 class="inline">Architecture :</h5>
+                                <label class="font400">{{container.architecture}}</label>
+                            </div>
+
+                            <div class="form-group">
+                                <h5 class="inline">OS Image :</h5>
+                                <label class="font400">{{container.expanded_config['image.os']}} {{container.expanded_config['image.release']}} ({{container.expanded_config['image.architecture']}})</label>
+                            </div>
+                            <div class="form-group">
+                                <h5 class="inline">Created On:</h5>
+                                <label class="font400">{{container.created_at}}</label>
+                            </div>
+
+                            <div class="form-group">
+                                <h5 class="inline">Is set to Autostart :</h5>
+                                <div class="btn-group" role="group">
+                                    <button type="button" id="buttonAutostartActive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='1' else 'default'}}">Yes</button>
+                                    <button type="button" id="buttonAutostartInactive" class="formModifier btn btn-xs btn-{{'success' if container.expanded_config['boot.autostart']=='0' else 'default'}}">No</button>
+                                </div>
+                            </div>
+                            <div class="form-group profiles">
+                                <h5 class="inline">Profiles :</h5>
+                                <span id="profileList">
+                                {% for p in container.profiles %}
+                                    <span class="label label-default no-right-padding mg-right">{{ p }}
+                                        <a id="button_{{p}}" class="btn tag-button glyphicon glyphicon-remove profileTag formModifier" data-id="{{p}}" data-container="{{container.name}}"></a>
+                                    </span>
+                                {% endfor %}
+                                </span>
+                                    <select id="containerProfiles" name="profiles" style="display:none;">
+                                     {% for profile in profiles %}
+                                        {% if profile in container.profiles %}
+                                            <option>here</option>
+                                            <option selected>{{profile.name}}</option>
+                                        {% else %}
+                                            <option value="{{profile.name}}">{{profile.name}}</option>
+                                        {% endif %}
+                                     {% endfor %}
+                                    </select>
+                                    <!--<span class="label label-success no-right-padding mg-right">{{ p }}-->
+                                        <a id="buttonAdd" class="btn btn-default btn-xs glyphicon glyphicon-plus formModifier"></a>
+                                    <!--</span>-->
+                            </div>
+
+                    </div>
+                     <div class="col-sm-6">
+                         <div class="row">
+                             {% if container.pid != 'N/A' %}
+                                {% endif %} {% if container.processes != 'N/A' %}
+                                <div class="form-group">
+                                    PID: <span class="label label-primary"> {{container.pid}}</span>
+                                </div>
+                                <div class="form-group">
+                                     <h5 class="inline">Currently Running Processes :</h5>
+                                    <span class="label label-info ">{{container.processes}}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                         <div class="row border-space">
+                             <div class="form-group">
+                                    <h5 class="inline">CPU Allocation :</h5>
+                                    <span class="font400">{{container.config['limits.cpu.allowance']}}</span>
+                                </div>
+                                <div class="form-group">
+                                    <h5 class="inline">Memory Allocation :</h5>
+                                    <span class="font400">{{container.config['limits.memory']}}</span>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-sm-5">
-                            {% for counterkey, counterval in value.counters.items() %}
-                                {{counterkey|upper}} :
-                                <span class="label label-default">{{counterval}}</span>
-                                <br/>
+
+                  </div>
+              </div>
+				<div class="tab-pane network-tab col-lg-12 col-md-12 col-sm-12 add-borders" id="2">
+                   <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-group">
+                                {% if container.network is mapping %}
+                            <h5 class="bg-bottom"><b><img src="../static/images/NIC-icon.png" class="img-network-interfaces" alt="" /> Network Interfaces </b></h5>
+                                {% for key, value in container.network.items() %}
+                                {% if key!='lo' %}
+                                <div class="row space">
+                                    <div class="col-sm-6">
+                                        IP Interface : <span class="label label-primary"> {{ key }}</span>
+                                        <br/>
+                                        {% if value.addresses|length > 0 %}
+                                        IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>
+                                        <span class="label label-warning">/{{value.addresses.0.netmask}}</span>
+                                        {% endif %}
+                                        <br/>
+                                        MAC Address
+                                        : <b class="big-font">{{value.hwaddr}}</b>
+                                        <br/>
+                                        State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
+                                    </div>
+                                    <div class="col-sm-5">
+                                        {% for counterkey, counterval in value.counters.items() %}
+                                            {{counterkey|upper}} :
+                                            <span class="label label-default">{{counterval}}</span>
+                                            <br/>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <!--netint_data row end-->
+                            {% endif %}
                             {% endfor %}
+                            {% else %}
+                                <h5 class="inline">Network Interfaces : </h5>
+                                <span class="label label-default"> N/A </span>
+                            {% endif %}
+                        </div> <!-- form-group end-->
+                    </div> <!--col-sm-12 end-->
+				</div>
+                <div class="tab-pane snapshots-tab col-sm-12 col-md-12 col-lg-12 pd-left0 pd-right0 add-borders" id="3">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="form-group">
+                               <h5 class="bg-bottom"></span>
+                                    <button id="buttonNewContainerSnapshot" class="btn btn-sm btn-success" disabled><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>
+                                    <button id="buttonRestoreSnapshot" class="btn btn-sm btn-info" disabled><span class="glyphicon glyphicon-repeat"></span> Restore</button>
+                                    <button id="buttonDeleteSnapshot" class="btn btn-sm btn-danger" disabled><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>
+                               </h5>
+                            <div id="snapshotList" class="row space">
+                                 <table class="table" id="tableSnapshots">
+                                    <thead>
+                                        <th></th>
+                                        <th>Name</th>
+                                        <th>Created at</th>
+                                        <th>Stateful</th>
+                                    </thead>
+                                    <tbody>
+
+                                    </tbody>
+                                </table>
+                            </div>
                         </div>
                     </div>
-                    <!--netint_data row end-->
-                {% endif %}
-                {% endfor %}
-                {% else %}
-                    <h5 style="display:inline">Network Interfaces :</h5>
-                    <span class="label label-default"> N/A </span>
-                {% endif %}
-            </div> <!-- form-group end-->
-        </div> <!--col-sm-12 end-->
-        <div class="col-sm-12">
-            <div class="form-group">
-                <h5 style="border-bottom:1px solid #eee;padding-bottom:10px;">List of Snapshots :</h5>
-                <div id="snapshotList" class="row"  style="margin: 30px 0px;">
-                     <table class="table" id="tableSnapshots">
-                        <thead>
-                            <th>Name</th>
-                            <th>Created at</th>
-                            <th>Stateful</th>
-                            <th style="width:300px !important;"></th>
-                        </thead>
-                        <tbody>
-
-                        </tbody>
-                    </table>
                 </div>
-            </div>
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 advanced-settings-tab add-borders" id="4">
+                    <div class="col-lg-12 col-md-12 col-sm-12" id="advancedSettings">
+                        <div class="form-group">
+                            <h5 class="bg-bottom"><b>Advanced Settings : </b></h5>
+                        </div>
+                        <div class="row">
+                            <div class="col-lg-1"></div>
+                             <div class="col-lg-4">
+                                <div class="row"><label for="Key">Key</label></div>
+                             </div>
+                             <div class="col-lg-1"></div>
+                             <div class="col-lg-4">
+                                <div class="row"><label for="Value">Value</label></div>
+                             </div>
+
+                        </div>
+                    </div>
+			</div>
+         </div>
         </div>
 </div>
 {% endif %}
@@ -211,7 +329,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
                 <!--<button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
             </div>
         </div>
@@ -228,7 +346,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
 
             </div>
         </div>
@@ -241,11 +359,11 @@
         <div class="form-group">
             <label for="newContainerSnapshot" class="col-sm-3 control-label">New Container Name</label>
             <div class="col-sm-8">
-                <input id="newContainerSnapshot" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Create Container Name" required/>
+                <input id="newContainerSnapshot" name="newContainer" class="form-control" type="text" placeholder="Container Name" title="Create Container Name" required/>
             </div>
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
 
             </div>
         </div>
@@ -262,7 +380,7 @@
             </div>
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
 
             </div>
         </div>
@@ -283,7 +401,7 @@
             <input type="checkbox" class="form-check-input" id="snapshotStateful" name="stateful">
         </div>
         <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" style="margin-top:10px;">
+            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
 
             </div>
         </div>

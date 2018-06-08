@@ -12,6 +12,25 @@ App.containers = App.containers || {
         searching:true,
         responsive: false,
         select: true,
+        dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "oLanguage": {
+          "sLengthMenu": "List _MENU_ ",
+        },
+        buttons: [
+            {
+                text: 'JSON',
+                action: function ( e, dt, node, config ) {
+                    dt.button().add( 1, {
+                        text: 'Button '+(counter++),
+                        action: function () {
+                            this.remove();
+                        }
+                    } );
+                }
+            }
+        ],
         columnDefs: [
             {
                 orderable: false,
@@ -24,15 +43,33 @@ App.containers = App.containers || {
             selector: 'td:first-child'
         },
         order: [[ 1, 'asc' ]],
+        initComplete: function(settings, json) {
+            var tempButtonJson = $('.rawJSONContainers').clone();
+            var tempButtonRefresh = $('#refreshContainers').clone();
+            tempButtonRefresh.removeClass('.refreshContainers');
+            tempButtonJson.removeClass('rawJSONContainers');
+            tempButtonJson.on('click', $.proxy(App.containers.showJSON, App.containers));
+            tempButtonRefresh.on('click', $.proxy(App.containers.refreshContainers));
+            $('.json-place').append(tempButtonJson);
+            $('.refresh-list-place').append(tempButtonRefresh);
+            tempButtonJson.show();
+            tempButtonRefresh.show();
+        },
     },
     newContainerForm:null,
+    rawJson:null,
     init: function(){
         console.log('Containers init');
         this.dataTable = $('#tableContainers').DataTable(this.tableSettings);
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
         $('#refreshContainers').on('click', $.proxy(this.refreshContainers, this));
         $('#buttonStart').on('click', $.proxy(this.startContainer, this));
         $('#buttonStop').on('click', $.proxy(this.stopContainer, this));
         $('#buttonRestart').on('click', $.proxy(this.restartContainer, this));
+        $('#buttonFreeze').on('click', $.proxy(this.freezeContainer, this));
+        $('#buttonUnfreeze').on('click', $.proxy(this.unfreezeContainer, this));
         $('#buttonDelete').on('click', $.proxy(this.deleteContainer, this));
         $('#buttonNewInstance').on('click', $.proxy(this.switchView, this, 'form'));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'list'));
@@ -54,7 +91,9 @@ App.containers = App.containers || {
         $('#containerMemoryPercentage').on('change', $.proxy(this.updateValue, this, $('#memory_percentage')));
 
         if(window.location.hash && window.location.hash=='#createContainer')
-            this.switchView('form')
+            this.switchView('form');
+
+        this.initKeyValuePairs();
     },
     refreshContainers: function(e){
         console.log('refreshContainers');
@@ -65,15 +104,47 @@ App.containers = App.containers || {
     setLoading: function(state){
         this.loading=true;
     },
+    initKeyValuePairs: function() {
+        for (key in App.properties.keyValues) {
+            $('#advancedSettingsContainer').append('<div class="row">' +
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">'+
+                        '<div class="form-group row">' +
+                            '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
+                        '</div>' +
+                    '</div>'+
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">' +
+                        '<div class="form-group row">' +
+                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                        '</div>' +
+                    '</div>' +
+                     '<div class="col-lg-2">' +
+                         '<div class="btn-group" role="group">' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-default" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
+                        '</div>' +
+                     '</div>' +
+                '</div>');
+        }
+    },
     getData: function(){
         this.setLoading(true);
-        $.get(App.baseAPI+'container', $.proxy(this.getDataSuccess, this));
+        $.get(App.baseAPI+'container', $.proxy(this.getDataSuccess2, this));
+    },
+    getDataSuccess2: function(response) {
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
     },
     getDataSuccess: function(response){
         this.setLoading(false);
         this.data = response.data;
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
         if(!this.initiated)
             return this.initiated = true;
+
         this.dataTable.clear();
         this.dataTable.destroy();
         this.dataTable=$('#tableContainers').DataTable(App.mergeProps(this.tableSettings, {
@@ -102,6 +173,16 @@ App.containers = App.containers || {
             ]
         }));
     },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Containers');
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getData();
+
+    },
     onRowSelected: function(e, dt, type, indexes ){
         var state = this.dataTable.rows({selected:true}).count()>0;
         $('#selectAllContainers').prop('checked',state);
@@ -110,6 +191,8 @@ App.containers = App.containers || {
         $('#buttonStop')[action]('disabled', 'disabled');
         $('#buttonRestart')[action]('disabled', 'disabled');
         $('#buttonDelete')[action]('disabled', 'disabled');
+        $('#buttonFreeze')[action]('disabled', 'disabled');
+        $('#buttonUnfreeze')[action]('disabled', 'disabled');
     },
     startContainer: function(){
         this.dataTable.rows( { selected: true } ).data().map(function(row){
@@ -148,6 +231,24 @@ App.containers = App.containers || {
             });
         }.bind(this));
     },
+    freezeContainer: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'container/freeze/' + row['name'],
+                type: 'PUT',
+                success: $.proxy(this.onRestartSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
+    unfreezeContainer: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+            $.ajax({
+                url: App.baseAPI+'container/unfreeze/' + row['name'],
+                type: 'PUT',
+                success: $.proxy(this.onRestartSuccess, this, row['name'])
+            });
+        }.bind(this));
+    },
     onRestartSuccess: function(name){
         console.log('onRestartSuccess', name);
         location.reload();
@@ -175,6 +276,7 @@ App.containers = App.containers || {
 
         $('#createContainerForm')[view=='form'?'show':'hide']();
         $('#containers')[view=='list'?'show':'hide']();
+        $('#containerName').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)]);
     },
     generateRequest: function(formData){
         return {
@@ -201,6 +303,10 @@ App.containers = App.containers || {
             jsonForm['profiles'] = $('#containerProfiles').val()
 
         var tempJSON = this.generateRequest(jsonForm);
+        if (tempJSON['name'] == '') {
+            tempJSON['name'] = App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)];
+        }
+        tempJSON['config'] = this.readKeyValuePairs();
         $.ajax({
             url: App.baseAPI +'container/',
             type:'POST',
@@ -218,6 +324,14 @@ App.containers = App.containers || {
     },
     onCreateFailed: function(response){
         console.log('createContainerFailed', response);
+    },
+    readKeyValuePairs: function() {
+        keyValues = {}
+        $('#advancedSettingsContainer').find('input:enabled').each(function() {
+            keyValues[this.name] = this.value;
+        })
+
+        return keyValues;
     },
     showCloneContainer: function(name) {
         $('.modal-title').text('');
@@ -356,6 +470,7 @@ App.containers = App.containers || {
          console.log(response);
          console.log('clonedSuccess:', 'TODO - add alert and refresh local data');
          $("#myModal").modal("hide");
+         location.reload();
     },
     moveContainer: function() {
         $.ajax({
@@ -373,6 +488,7 @@ App.containers = App.containers || {
          console.log(response);
          console.log('Moved Success:', 'TODO - add alert and refresh local data');
          $("#myModal").modal("hide");
+         location.reload();
     },
     exportContainer: function() {
         $.ajax({
@@ -418,5 +534,8 @@ App.containers = App.containers || {
     },
     updateValue:function(target, event){
         target.val(event.target.value);
+    },
+    showTerminalContainer: function(container) {
+        window.open('/terminal/new/' + container + '/' + sessionStorage.getItem('authToken'), '_blank');
     }
 }

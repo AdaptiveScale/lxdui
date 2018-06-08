@@ -1,6 +1,8 @@
 from flask import Blueprint, render_template
 from app.api.models.LXCContainer import LXDModule, LXCContainer
 from app.api.utils.containerMapper import getContainerDetails
+from app.lib.conf import Config
+from app import __metadata__ as meta
 from app.__metadata__ import VERSION
 import json
 import os
@@ -68,6 +70,16 @@ def profile():
         return render_template('profiles.html', currentpage='Profiles',
                                profiles=[], lxdui_current_version=VERSION)
 
+@uiPages.route('/storage-pools')
+def storagePools():
+    try:
+        storagePools = LXDModule().listStoragePools()
+        return render_template('storage-pools.html', currentpage='StoragePools',
+                               storagePools=storagePools, lxdui_current_version=VERSION)
+    except:
+        return render_template('storage-pools.html', currentpage='Profiles',
+                               storagePools=[], lxdui_current_version=VERSION)
+
 @uiPages.route('/network')
 def network():
     try:
@@ -83,16 +95,21 @@ def images():
     localImages = getLocalImages()
     profiles = getProfiles()
     remoteImages = getRemoteImages()
+    nightlyImages = getNightlyImages()
+    remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
     return render_template('images.html', currentpage='Images',
                            localImages=localImages,
                            remoteImages=remoteImages,
+                           nightlyImages=nightlyImages,
                            profiles=profiles,
                            jsData={
                                'local': json.dumps(localImages),
                                'remote': json.dumps(remoteImages),
+                               'nightly': json.dumps(nightlyImages)
                            },
                            memory=memory(),
-                           lxdui_current_version=VERSION)
+                           lxdui_current_version=VERSION,
+                           remoteImagesLink=remoteImagesLink)
 
 
 def getLocalImages():
@@ -110,6 +127,18 @@ def getRemoteImages():
         remoteImages = []
 
     return remoteImages
+
+def getNightlyImages():
+    try:
+        nightlyImages = LXDModule().listNightlyImages()
+        images = []
+        for image in nightlyImages:
+            images.append(image['metadata'])
+        nightlyImages=images
+    except:
+        nightlyImages = []
+
+    return nightlyImages
 
 def getProfiles():
     try:

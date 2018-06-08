@@ -57,6 +57,9 @@ class LXCContainer(LXDModule):
         if input.get('newName'):
             self.setNewName(input.get('newName'))
 
+        if input.get('config'):
+            self.setConfig(input.get('config'))
+
 
 
     def setImageType(self, input):
@@ -136,6 +139,12 @@ class LXCContainer(LXDModule):
         logging.debug('Setting new container name as: {}'.format(input))
         self.data['newName'] = input
 
+    def setConfig(self, input):
+        logging.debug('Setting key-value for container config')
+        self.initConfig()
+        for key in input.keys():
+            self.data['config'][key] = input[key]
+
     def info(self):
         try:
             logging.info('Reading container {} information'.format(self.data.get('name')))
@@ -147,6 +156,7 @@ class LXCContainer(LXDModule):
             container['network'] = c.state().network
             container['processes'] = c.state().processes
             container['pid'] = c.state().pid
+            container['disk'] = c.state().disk
 
             return container
         except Exception as e:
@@ -313,6 +323,28 @@ class LXCContainer(LXDModule):
             return self.info()
         except Exception as e:
             logging.error('Failed to rename container {}'.format(self.data.get('name')))
+            logging.exception(e)
+            raise ValueError(e)
+
+
+    def freeze(self, waitIt=True):
+        try:
+            logging.info('Freezing container {}'.format(self.data.get('name')))
+            container = self.client.containers.get(self.data.get('name'))
+            container.freeze(wait=waitIt)
+        except Exception as e:
+            logging.error('Failed to freeze container {}'.format(self.data.get('name')))
+            logging.exception(e)
+            raise ValueError(e)
+
+
+    def unfreeze(self, waitIt=True):
+        try:
+            logging.info('Unfreezing container {}'.format(self.data.get('name')))
+            container = self.client.containers.get(self.data.get('name'))
+            container.unfreeze(wait=waitIt)
+        except Exception as e:
+            logging.error('Failed to unfreeze container {}'.format(self.data.get('name')))
             logging.exception(e)
             raise ValueError(e)
 

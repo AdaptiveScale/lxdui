@@ -40,7 +40,7 @@ def createSnapshot(name, container):
                 stateful = input.get('stateful')
 
         snapshot = LXCSnapshot({'name': name, 'container': container})
-        return response.replySuccess(snapshot.snapshot(stateful))
+        return response.replySuccess(snapshot.snapshot(stateful), message='Snapshot {} for container {} created successfully.'.format(name, container))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -50,7 +50,7 @@ def createSnapshot(name, container):
 def restoreSnapshot(name, container):
     try:
         snapshot = LXCSnapshot({'name': name, 'container': container})
-        return response.replySuccess(snapshot.snapshotRestore())
+        return response.replySuccess(snapshot.snapshotRestore(), message='Container {} restored from  snapshot {} successfully.'.format(container, name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -60,7 +60,7 @@ def restoreSnapshot(name, container):
 def publishSnapshot(name, container):
     try:
         snapshot = LXCSnapshot({'name': name, 'container': container})
-        return response.replySuccess(snapshot.snapshotPublish())
+        return response.replySuccess(snapshot.snapshotPublish(), message='Container {} published from {} snapshot successfully.'.format(container, name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -76,7 +76,7 @@ def createContainerSnapshot(name, container):
     input['container'] = container
     try:
         snapshot = LXCSnapshot(input)
-        return response.replySuccess(snapshot.snapshotCreateContainer())
+        return response.replySuccess(snapshot.snapshotCreateContainer(), message='Container {} created from {} snapshot successfully.'.format(input['newContainer'], name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -86,7 +86,7 @@ def createContainerSnapshot(name, container):
 def deleteSnapshot(name, container):
     try:
         snapshot = LXCSnapshot({'name': name, 'container': container})
-        return response.replySuccess(snapshot.snapshotDelete())
+        return response.replySuccess(snapshot.snapshotDelete(), message='Snapshot {} deleted successfully from container.'.format(name, container))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 

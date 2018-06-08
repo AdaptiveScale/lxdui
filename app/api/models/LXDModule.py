@@ -1,5 +1,7 @@
 from app.api.models.Base import Base
 from app.api.utils.remoteImageMapper import remoteImagesList
+from app.lib.conf import Config
+from app import __metadata__ as meta
 
 from pylxd import Client
 import requests
@@ -37,27 +39,43 @@ class LXDModule(Base):
 
     def listRemoteImages(self):
         try:
-            logging.info('Reading remote container list')
-            images = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases')
-            return remoteImagesList(images.json())
+            remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
+            logging.info('Reading remote image list')
+            remoteClient = Client(endpoint=remoteImagesLink)
+            return remoteImagesList(remoteClient.api.images.aliases.get().json())
         except Exception as e:
             logging.error('Failed to get remote container images: ')
             logging.exception(e)
             raise ValueError(e)
 
+    def listNightlyImages(self):
+        try:
+            logging.info('Reading nightly remote image list')
+            images = requests.get(url='https://vhajdari.github.io/lxd-images/images.json')
+            return images.json()['images']
+        except Exception as e:
+            logging.error('Failed to get remote nightly container images: ')
+            logging.exception(e)
+            raise ValueError(e)
+
     def detailsRemoteImage(self, alias):
         try:
-            response = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/aliases/{}'.format(alias))
-            image_details = requests.get(url='https://us.images.linuxcontainers.org/1.0/images/{}'.format(response.json()['metadata']['target']))
-            return image_details.json()['metadata']
+            remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
+            remoteClient = Client(endpoint=remoteImagesLink)
+            fingerprint = remoteClient.api.images.aliases[alias].get().json()['metadata']['target']
+            return remoteClient.api.images[fingerprint].get().json()['metadata']
         except Exception as e:
             raise ValueError(e)
 
     def downloadImage(self, image):
         try:
-            logging.info('Downloading remote iamge:', image)
-            remoteClient = Client(endpoint='https://images.linuxcontainers.org')
-            remoteImage = remoteClient.images.get_by_alias(image)
+            remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
+            logging.info('Downloading remote image:', image)
+            remoteClient = Client(endpoint=remoteImagesLink)
+            try:
+                remoteImage = remoteClient.images.get_by_alias(image)
+            except:
+                remoteImage = remoteClient.images.get(image)
             newImage = remoteImage.copy(self.client, auto_update=False, public=False, wait=True)
             return self.client.api.images[newImage.fingerprint].get().json()['metadata']
         except Exception as e:
@@ -73,6 +91,16 @@ class LXDModule(Base):
             results = []
             for profile in self.client.api.profiles.get().json()['metadata']:
                 results.append(self.client.api.profiles[profile.split('/')[-1]].get().json()['metadata'])
+
+            return results
+        except Exception as e:
+            raise ValueError(e)
+
+    def listStoragePools(self):
+        try:
+            results = []
+            for profile in self.client.api.storage_pools.get().json()['metadata']:
+                results.append(self.client.api.storage_pools[profile.split('/')[-1]].get().json()['metadata'])
 
             return results
         except Exception as e:

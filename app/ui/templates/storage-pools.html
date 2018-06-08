@@ -1,0 +1,124 @@
+{% extends "index.html" %}
+{% block content %}
+<div id="storagePoolList">
+    <div class="col-lg-12 main-div" id="set-div">
+        <legend class="legend">
+            <span>Storage Pools <span class="glyphicon glyphicon-refresh spinning loader"></span></span>
+        </legend>
+    </div>
+        <div class="col-lg-12 mg-bottom15">
+            <div class="form-group">
+                <button id="buttonNewStoragePool" class="btn btn-success">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                         New Storage Pool
+                </button>
+                <button class="btn btn-danger btn-delete_container" style="margin-right:5px;" id="buttonDeleteStoragePool" disabled>
+                    <span class="glyphicon glyphicon-remove-sign" > </span> Delete <span class="glyphicon glyphicon-refresh spinning loader hidden"></span>
+                </button>
+                 <button class="btn btn-default btn-xs btn-rounded-corners rawJSONStoragePool" href="#" style="display:none">
+               JSON
+            </button>
+            </div>
+
+        </div>
+        <br>
+        <br>
+        <br>
+
+        <div class="col-lg-12">
+            <table class="table table-bordered" id="tableStoragePools" style="width:100%;">
+                <thead>
+                <th><input type="checkbox" id="selectAllStoragePools"/></th>
+                <th>Name</th>
+                <th>Driver</th>
+                <th>Config</th>
+
+                </thead>
+                <tbody>
+                {% for storagePool in storagePools %}
+                <tr id="{{storagePool.name}}">
+                    <td></td>
+                    <td>{{storagePool.name}}</td>
+                    <td>{{ storagePool.driver }}</td>
+                    <td>
+                        <ul>
+                            {% for key, value in storagePool.config.items() %}
+
+                            <li>{{key}}: {{value}}</li>
+                            {% endfor %}
+                        </ul>
+                    </td>
+                </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+
+<div id="newStoragePool" hidden>
+    <div class="col-lg-12 main-div" id="set-div">
+        <legend>Storage Pools <span class="glyphicon glyphicon-refresh spinning hidden"></span></legend>
+
+        <div>
+            <div class="form-group">
+                <button id="backStoragePool" class="btn btn-default">
+                        <span class="glyphicon glyphicon-chevron-left"> </span>
+                         Back
+                </button>
+            </div>
+        </div>
+
+
+        <div class="col-lg-12">
+            <form id="storagePoolForm" class="form-horizontal">
+                <div class="form-group">
+                    <label for="name" class="col-sm-2 control-label" style="margin-left: -28px;">Name</label>
+                    <div class="col-sm-4">
+                        <input id="name" name="name" class="form-control" type="text" placeholder="Storage Pool Name" title="Storage Pool Name" required/>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="driver" class="col-sm-2 control-label" style="margin-left: -28px;">Driver</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" name="driver" id="driver">
+                            <option value="dir" selected>Directory</option>
+                            <option value="ceph">CEPH</option>
+                            <option value="btrfs">Btrfs</option>
+                            <option value="lvm">LVM</option>
+                            <option value="zfs">ZFS</option>
+                        </select>
+                        <!--<input id="driver" name="driver" class="form-control" type="text" placeholder="Storage Pool Driver" title="Storage Pool Driver" required/>-->
+                    </div>
+                </div>
+
+                <!-- Nav tabs -->
+            <ul class="nav nav-tabs" role="tablist" class="col-lg-6">
+                <li class="active">
+                    <a data-toggle="tab" href="#config" role="tab">Config (JSON)</a>
+                </li>
+            </ul>
+            <!-- Tab panes -->
+            <div class="tab-content">
+                <div class="tab-pane active" id="config" role="tabpanel" style="padding-bottom:20px;background:#F2F1F0;">
+                    <div class="form-group" style="width: 100%;">
+                        <!--<div for="configEditor" class="col-sm-12" style="text-align: left; margin-left: 40px; margin-bottom: 10px;"></div>-->
+                        <div class="col-sm-12">
+                            <div id="configEditor" style="height:200px; position:relative;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+                <div class="form-group">
+                    <div class="form-inline col-md-12" style="margin-top:10px;">
+                        <button id="buttonCreateStoragePool" class="btn btn-primary">Create Storage Pool <span class="glyphicon glyphicon-refresh spinning hidden"></span></button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+{% endblock %}

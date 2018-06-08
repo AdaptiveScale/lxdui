@@ -44,7 +44,7 @@ def updateNetwork(name):
     mainConfig = network.info()
     for container in mainConfig['used_by']:
         LXCContainer({'name': container}).restart()
-    return response.replySuccess(mainConfig['result'])
+    return response.replySuccess(mainConfig['result'], message='Network {} updated successfully.'.format(name))
 
 @network_api.route('/<string:name>', methods=['POST'])
 @jwt_required()
@@ -59,7 +59,7 @@ def creatNetwork(name):
     network.createNetwork(input, name)
 
     mainConfig = network.info()
-    return response.replySuccess(mainConfig['result'])
+    return response.replySuccess(mainConfig['result'], message='Network {} created successfully.'.format(name))
 
 @network_api.route('/<string:name>', methods=['DELETE'])
 @jwt_required()
@@ -68,4 +68,4 @@ def deleteNetwork(name):
     network.deleteNetwork()
 
     client = LXDModule()
-    return response.replySuccess(client.listNetworks())
+    return response.replySuccess(client.listNetworks(), message='Network {} deleted successfully.'.format(name))

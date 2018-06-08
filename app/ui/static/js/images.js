@@ -4,9 +4,9 @@ App.images = App.images || {
     data: [],
     remoteData: [],
     activeTab:'local',
-
     tableLocal: null,
     tableRemote: null,
+    tableNightly: null,
     tableSettings: {
         searching:true,
         responsive: {
@@ -21,38 +21,63 @@ App.images = App.images || {
                 targets:   0
             }
         ],
+         dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "oLanguage": {
+          "sLengthMenu": "List _MENU_ ",
+        },
         select: {
             style:    'multi',
             selector: 'td:first-child'
         },
-        order: [[ 1, 'asc' ]]
+        order: [[ 1, 'asc' ]],
+        initComplete: function(settings, json) {
+            var tempButton = $('.rawJSONImages').clone();
+            tempButton.removeClass('rawJSONImages');
+            console.log('this', $(this).closest('table').attr('id'));
+            tempButton.on('click', $.proxy(App.images.showJSON, App.images));
+            $('#'+$(this).closest('table').attr('id')+'_wrapper .json-place').prepend(tempButton);
+            tempButton.show();
+        },
     },
     containerTemplate:null,
     newContainerForm:null,
     itemTemplate:null,
+    rawJson:null,
     init: function(opts){
         console.log('Images initialized');
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
         this.containerTemplate = $('.multiContainerTemplate');
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
         $('#btnLocalImages').on('click', $.proxy(this.switchView, this, 'localList'));
         $('#btnRemoteImages').on('click', $.proxy(this.switchView, this, 'remoteList'));
+        $('#btnNightlyImages').on('click', $.proxy(this.switchView, this, 'nightlyList'));
+
         $('#buttonUpdate').on('click', $.proxy(this.getData, this));
         $('#buttonDelete').on('click', $.proxy(this.doDeleteLocalImages, this));
         $('#buttonDownload').on('click', $.proxy(this.doDownload, this));
+        $('#buttonDownloadNightly').on('click', $.proxy(this.doDownload, this));
         $('#buttonLaunchContainers').on('click', $.proxy(this.launchContainers, this));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'localList'));
         $('.image').on('click', $.proxy(this.setActive, this));
         App.setActiveLink('image');
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
+        $('.imageSize').each(this.convertImageSize);
         this.initLocalTable();
         this.initRemoteTable();
-        $('.imageSize').each(this.convertImageSize);
+        this.initNightlyTable();
         $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
         this.itemTemplate = $('.itemTemplate').clone();
         $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
+        $('#exTab2 > ul > li:nth-child(1)').addClass('active');// set first tab as active
+
+        this.initKeyValuePairs();
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
@@ -65,6 +90,33 @@ App.images = App.images || {
             return $('#tableImagesLocalWrapper')[tempTableState]();
         else
             return $('#tableImagesRemoteWrapper')[tempTableState]();
+    },
+    initKeyValuePairs: function() {
+        for (key in App.properties.keyValues) {
+            $('#advancedSettingsMultipleContainer').append('<div class="row">' +
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">'+
+                        '<div class="form-group row">' +
+                            '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
+                        '</div>' +
+                    '</div>'+
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">' +
+                        '<div class="form-group row">' +
+                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                        '</div>' +
+                    '</div>' +
+                     '<div class="col-lg-2">' +
+                         '<div class="btn-group" role="group">' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-default" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
+                        '</div>' +
+                     '</div>' +
+                '</div>');
+        }
     },
     initLocalTable: function(){
         this.tableLocal =$('#tableImagesLocal').DataTable(App.mergeProps(this.tableSettings, {rowId: 'fingerprint'}));
@@ -82,6 +134,14 @@ App.images = App.images || {
         this.tableRemote.on('select', $.proxy(this.onItemSelectChange, this));
         this.tableRemote.on('deselect', $.proxy(this.onItemSelectChange, this));
     },
+    initNightlyTable: function(){
+        this.tableNightly =$('#tableImagesNightly').DataTable(App.mergeProps(this.tableSettings, {rowId: 'fingerprint'}));
+        this.setNightlyTableEvents();
+    },
+    setNightlyTableEvents: function(){
+        this.tableNightly.on('select', $.proxy(this.onItemSelectChange, this));
+        this.tableNightly.on('deselect', $.proxy(this.onItemSelectChange, this));
+    },
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
             var state = this.tableLocal.rows({selected:true}).count()>0;
@@ -98,6 +158,13 @@ App.images = App.images || {
             $('#selectAllRemote').prop('checked',this.tableRemote.rows({selected:true}).count()==this.tableRemote.rows().count());
             return;
         }
+        if(this.activeTab=='nightly'){
+            var state = this.tableNightly.rows({selected:true}).count()>0
+            var visibility= !state?'attr':'removeAttr';
+            $('#buttonDownloadNightly')[visibility]('disabled', 'disabled');
+            $('#selectAllNightly').prop('checked',this.tableNightly.rows({selected:true}).count()==this.tableNightly.rows().count());
+            return;
+        }
     },
     doDeleteLocalImages: function(){
         this.tableLocal.rows( { selected: true } ).data().map(function(row){
@@ -112,22 +179,42 @@ App.images = App.images || {
         this.tableLocal.row("#"+fingerprint).remove().draw();
          $('#buttonLaunchContainers').hide();
          $('#buttonDelete').hide();
+         var counter = parseInt($('#btnLocalImages > span').text());
+         $('#btnLocalImages > span').text(counter-1);
     },
     doDownload: function(){
+        console.log(this.activeTab);
+        activeTab = this.activeTab;
         $('#modalDownloadButton').attr('disabled', 'disabled');
-        this.tableRemote.rows({selected: true}).data().map(function(row){
-            $.ajax({
-                url:App.baseAPI+'image/remote',
-                type: 'POST',
-                dataType: 'json',
-                contentType: 'application/json',
-                data: JSON.stringify({
-                    image:row['image']
-                }),
-                success: $.proxy(this.onDownloadSuccess, this, row['image'])
-            });
-            this.tableRemote.row('#'+row['image']).remove().draw(false);
-        }.bind(this));
+        if(activeTab=='nightly') {
+            this.tableNightly.rows({selected: true}).data().map(function(row){
+                $.ajax({
+                    url:App.baseAPI+'image/remote',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        image:row['fingerprint']
+                    }),
+                    success: $.proxy(this.onDownloadSuccess, this, row['image'])
+                });
+                this.tableRemote.row('#'+row['image']).remove().draw(false);
+            }.bind(this));
+        } else if(activeTab=='remote') {
+            this.tableRemote.rows({selected: true}).data().map(function(row){
+                $.ajax({
+                    url:App.baseAPI+'image/remote',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        image:row['image']
+                    }),
+                    success: $.proxy(this.onDownloadSuccess, this, row['image'])
+                });
+                this.tableRemote.row('#'+row['image']).remove().draw(false);
+            }.bind(this));
+        }
     },
     onDownloadSuccess: function(imageName, response){
          location.reload();
@@ -141,6 +228,15 @@ App.images = App.images || {
         if(this.activeTab=='remote')
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
     },
+    getDataJSON: function(){
+        //this.setLoading(true);
+        if(this.activeTab=='local')
+            return $.get(App.baseAPI+'image', $.proxy(this.getDataSuccess, this));
+        if(this.activeTab=='remote')
+            return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
+       if(this.activeTab=='nightly')
+            return $.get(App.baseAPI+'image/remote/nightly/list', $.proxy(this.getDataSuccess, this));
+    },
     activateScreen: function(screen){
         this.tableLocal.rows({selected:true}).deselect();
         this.tableRemote.rows({selected:true}).deselect();
@@ -150,6 +246,8 @@ App.images = App.images || {
             $('#tableImagesRemoteWrapper').hide();
             $('#buttonDelete').show();
             $('#buttonLaunchContainers').show();
+            $('.local-tab-action-buttons').show();
+            $('#buttonJSONRaw').show();
             $('#buttonDownload').hide();
             this.activeTab = 'local';
             return;
@@ -158,9 +256,14 @@ App.images = App.images || {
             $('#tableImagesLocalWrapper').hide();
             $('#tableImagesRemoteWrapper').show();
             $('#buttonLaunchContainers').hide();
+            $('#buttonJSONRaw').hide();
             $('#buttonDownload').show();
             $('#buttonDelete').hide();
             this.activeTab = 'remote';
+            return;
+        }
+        if(screen=='nightly') {
+            this.activeTab = 'nightly';
             return;
         }
     },
@@ -204,12 +307,23 @@ App.images = App.images || {
     },
     getDataSuccess: function(response){
         this.setLoading(false);
-        if(this.activeTab=='local'){
-            this.updateLocalTable(response.data);
-        }
-        if(this.activeTab == 'remote'){
-            this.updateRemoteTable(response.data);
-        }
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
+//        if(this.activeTab=='local'){
+//            this.updateLocalTable(response.data);
+//        }
+//        if(this.activeTab == 'remote'){
+//            this.updateRemoteTable(response.data);
+//        }
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Images');
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getDataJSON();
+
     },
     getRemoteData: function(){
         $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
@@ -220,9 +334,9 @@ App.images = App.images || {
         tempSection.find('input[name="name"]').prop('name', 'containers['+pos+'][name]');
         //Handle exported containers
         if (image.properties.os !== undefined)
-            tempSection.find('input[name="containers['+pos+'][name]"]').val(image.properties.os.toLowerCase()+'-');
+            tempSection.find('input[name="containers['+pos+'][name]"]').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
         else
-            tempSection.find('input[name="containers['+pos+'][name]"]').val('cnt-');
+            tempSection.find('input[name="containers['+pos+'][name]"]').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
 
         tempSection.find('input[name="image"]').prop('name', 'containers['+pos+'][image]');
         tempSection.find('input[name="containers['+pos+'][image]"]').val(image.fingerprint);
@@ -251,6 +365,16 @@ App.images = App.images || {
         tempSection.find('select[name="containers['+pos+'][profiles]"]').prop('id', image.fingerprint+'_profiles');
 
         tempSection.find('.imageName').text(image.properties.description);
+
+        tempSection.find('#accordion').prop('id', 'accordion_'+pos);
+        tempSection.find('#accordion_link').prop('id', 'accordion_link_'+pos);
+        tempSection.find('#accordion_link_'+pos).prop('data-parent', '#accordion_'+pos);
+        tempSection.find('#accordion_link_'+pos).prop('href', '#collapse_'+pos);
+
+        tempSection.find('#advancedSettingsMultipleContainer').prop('id', 'advancedSettingsMultipleContainer_'+image.fingerprint);
+
+        tempSection.find('#collapse').prop('id', 'collapse_'+pos);
+
         tempSection.show();
         return tempSection;
     },
@@ -274,12 +398,14 @@ App.images = App.images || {
         //initialize profile pickers
         $('.selectpicker').selectpicker();
         this.switchView('form');
+        $('.image-tabs').addClass('hidden');
     },
     switchView: function(view){
         $('#createMultipleContainersForm')[view=='form'?'show':'hide']();
         $('#tableImagesLocalWrapper')[view=='localList'?'show':'hide']();
         $('#tableImagesRemoteWrapper')[view=='remoteList'?'show':'hide']();
         if(view!=='form'){
+            $('.image-tabs').removeClass('hidden');
             $('#multiContainerSection').empty();
         }else{
             $('.mg-bottom15').hide();
@@ -290,8 +416,15 @@ App.images = App.images || {
         if(view=='localList'){
             return this.activateScreen('local');
         }
+        if(view=='nightlyList'){
+            return this.activateScreen('nightly');
+        }
         $('#buttonLaunchContainers').hide();
         $('#buttonDelete').hide();
+        $('#rawJSONImages').hide();
+        $('.local-tab-action-buttons').hide();
+
+        $('#containerNameImages').val(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)] + '-');
     },
     generateContainer: function(name, formData){
         return {
@@ -303,7 +436,12 @@ App.images = App.images || {
         var imageContainers = [];
         var tempData = this.cleanupFormData($.extend({}, true,formData));
         for(var i=0;i<=Number(formData.count)-1;i++){
-            imageContainers.push(this.generateContainer(tempData.name+(i+1),tempData));
+            if (tempData.name == '') {
+                imageContainers.push(this.generateContainer(App.properties.left[Math.floor((Math.random() * 93) + 1)] + '-' + App.properties.right[Math.floor((Math.random() * 160) + 1)], tempData));
+            }
+            else {
+                imageContainers.push(this.generateContainer(tempData.name+(i+1),tempData));
+            }
         }
         return imageContainers;
     },
@@ -318,6 +456,8 @@ App.images = App.images || {
         if($('#'+specs.image+'_profiles').val()){
             specs['profiles'] = $('#'+specs.image+'_profiles').val();
         }
+
+        specs['config'] = this.readKeyValuePairs('#advancedSettingsMultipleContainer_'+specs.image);
         return specs;
     },
     generateRequest: function(inputJSON){
@@ -333,6 +473,7 @@ App.images = App.images || {
         e.preventDefault();
         var tempForm = $.extend({}, true,this.newContainerForm.serializeJSON());
         var tempJSON = this.generateRequest(tempForm);
+
         $.ajax({
             url: App.baseAPI +'container/',
             type:'POST',
@@ -346,6 +487,14 @@ App.images = App.images || {
     onCreateSuccess: function(response){
         this.switchView('localList');
         window.location = App.baseWEB +'containers';
+    },
+    readKeyValuePairs: function(selector) {
+        keyValues = {}
+        $(selector).find('input:enabled').each(function() {
+            keyValues[this.name] = this.value;
+        })
+
+        return keyValues;
     },
     launchContainer:function(fingerprint){
         this.tableLocal.row('#'+fingerprint).select();
@@ -364,6 +513,11 @@ App.images = App.images || {
     showRemoteDetails: function(image){
         this.tableRemote.rows().deselect();
         this.tableRemote.rows('#'+image).select();
+        $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
+    },
+    showNightlyDetails: function(image, fingerprint) {
+        this.tableNightly.rows().deselect();
+        this.tableNightly.rows('#'+fingerprint).select();
         $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
     },
     onGetRemoteDetailsSuccess: function(response){

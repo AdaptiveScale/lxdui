@@ -7,6 +7,8 @@ App.containerDetails = App.containerDetails || {
     errorMessage:'',
     name: '',
     activeSnapshot: '',
+    selectedSnapshots: [],
+    selectedSnapshot: null,
     dataTable:null,
     initiated:false,
     tableSettings: {
@@ -17,17 +19,42 @@ App.containerDetails = App.containerDetails || {
         bInfo: false,
         bPaginate: false,
         order: [[ 1, 'asc' ]],
+        dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
+        "<'row'<'col-sm-12'tr>>" +
+        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "oLanguage": {
+          "sLengthMenu": "List _MENU_ ",
+        },
+        columnDefs: [
+            {
+                orderable: false,
+                className: 'select-checkbox',
+                targets:   0
+            }
+        ],
+        select: {
+            style:    'multi',
+            selector: 'td:first-child'
+        },
     },
     loading:false,
+    rawJson:null,
     init: function(){
-        console.log('Container Details init');
         this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
+        this.rawJson = ace.edit('rawJson');
+        this.rawJson.session.setMode('ace/mode/json');
+        this.rawJson.setOptions({readOnly: true});
         $('#refreshContainers').on('click', $.proxy(this.refreshContainers, this));
+        $('#rawJSONContainerDetails').on('click', $.proxy(this.showJSON, this));
         $('#buttonStartDetail').on('click', $.proxy(this.startContainer, this));
         $('#buttonStopDetail').on('click', $.proxy(this.stopContainer, this));
         $('#buttonRestartDetail').on('click', $.proxy(this.restartContainer, this));
+        $('#buttonFreezeDetail').on('click', $.proxy(this.freezeContainer, this));
+        $('#buttonUnfreezeDetail').on('click', $.proxy(this.unfreezeContainer, this));
         $('#buttonDeleteDetail').on('click', $.proxy(this.deleteContainerDetail, this));
         $('#buttonBackDetail').on('click', $.proxy(this.switchView, this, 'list'));
+        this.dataTable.on('select', $.proxy(this.onRowSelected, this));
+        this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
         App.setActiveLink('');
 
         $('#buttonCloneContainerDetail').on('click', $.proxy(this.showCloneContainer, this));
@@ -49,17 +76,88 @@ App.containerDetails = App.containerDetails || {
         $('#containerNameInput').on('blur', $.proxy(this.onNameChange, this));
         $('#buttonAutostartActive').on('click', $.proxy(this.onAutoStartToggle, this, true));
         $('#buttonAutostartInactive').on('click', $.proxy(this.onAutoStartToggle, this, false));
+        $('[data-toggle="popover"]').popover();
+        $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
+        $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
+        $('#buttonNewContainerSnapshot').on('click', $.proxy(this.createContainerSnapshot, this));
+        $('#exTab3 > ul > li:nth-child(1)').addClass('active');
+
+        this.initKeyValuePairs();
     },
     initContainerDetails: function(name) {
         this.name = name;
         this.getSnapshotList();
     },
+    initKeyValuePairs: function() {
+        for (key in App.properties.keyValues) {
+            $('#advancedSettings').append('<div class="row">' +
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">'+
+                        '<div class="form-group row">' +
+                            '<input type="text" class="form-control" placeholder="' + key + '"  disabled />' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ App.properties.keyValues[key].description + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
+                        '</div>' +
+                    '</div>'+
+                    '<div class="col-lg-1"></div>'+
+                    '<div class="col-lg-4">' +
+                        '<div class="form-group row">' +
+                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                        '</div>' +
+                    '</div>' +
+                     '<div class="col-lg-2">' +
+                         '<div class="btn-group" role="group">' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-default" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
+                        '</div>' +
+                     '</div>' +
+                '</div>');
+        }
+    },
+    enableInput: function(e) {
+        $('#buttonSave').show();
+        $(e).parent().parent().parent().find('input').eq(1).removeAttr('disabled', '');
+        $(e).removeClass('btn-default');
+        $(e).addClass('btn-success');
+
+        $(e).siblings().removeClass('btn-danger');
+        $(e).siblings().addClass('btn-default');
+    },
+    disableInput: function(e) {
+        $('#buttonSave').show();
+        $(e).parent().parent().parent().find('input').eq(1).attr('disabled', 'disabled');
+        $(e).removeClass('btn-default');
+        $(e).addClass('btn-danger');
+
+        $(e).siblings().removeClass('btn-success');
+        $(e).siblings().addClass('btn-default');
+    },
+    showPopover: function(e) {
+        $(e).popover('show');
+    },
     refreshContainers: function(e){
-        console.log('refreshContainers');
         location.reload();
     },
     setLoading: function(state){
         this.loading=true;
+    },
+    getData: function(){
+        this.setLoading(true);
+        $.get(App.baseAPI+'container/'+this.name, $.proxy(this.getDataSuccess, this));
+    },
+    getDataSuccess: function(response) {
+        this.rawJson.setValue(JSON.stringify(response.data, null , '\t'));
+    },
+    showJSON: function(e) {
+        this.rawJson.setValue('');
+        $('.modal-title').text('');
+        $('.modal-title').text('RAW JSON for Container ' + this.name);
+        $('.modal-title').append(' <span class="glyphicon glyphicon-refresh spinning loader">');
+        $("#jsonModal").modal("show");
+
+        this.getData();
+
     },
     startContainer: function(){
         $.ajax({
@@ -69,7 +167,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onStartSuccess: function(name){
-        console.log('onStartSuccess', name);
         location.reload();
     },
     stopContainer: function() {
@@ -80,7 +177,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onStopSuccess: function(name){
-        console.log('onStopSuccess', name);
         location.reload();
     },
     restartContainer: function() {
@@ -90,8 +186,21 @@ App.containerDetails = App.containerDetails || {
             success: $.proxy(this.onStartSuccess, this, this.name)
         });
     },
+    freezeContainer: function() {
+         $.ajax({
+            url: App.baseAPI+'container/freeze/' + this.name,
+            type: 'PUT',
+            success: $.proxy(this.onStartSuccess, this, this.name)
+        });
+    },
+    unfreezeContainer: function() {
+         $.ajax({
+            url: App.baseAPI+'container/unfreeze/' + this.name,
+            type: 'PUT',
+            success: $.proxy(this.onStartSuccess, this, this.name)
+        });
+    },
     onRestartSuccess: function(name){
-        console.log('onRestartSuccess', name);
         location.reaload();
     },
     deleteContainerDetail: function() {
@@ -103,7 +212,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onDeleteSuccess: function(name){
-        console.log('onDelete', name);
         window.location = '/ui/containers';
     },
     getSnapshotList: function(){
@@ -112,19 +220,40 @@ App.containerDetails = App.containerDetails || {
     },
     getSnapshotSuccess: function (response){
         var container = this.name;
+        this.dataTable.rows().remove().draw();
         $.each(response.data, function(index, value) {
             var tempPlaceholder = $('<div class="col-sm-6"></div>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="delete-'+value.name+'" onClick="$.proxy(App.containerDetails.deleteSnapshot());"><span class="glyphicon glyphicon-remove-sign"></span> Delete</button>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="restore-'+value.name+'" onClick="$.proxy(App.containerDetails.restoreSnapshot());"> <span class="glyphicon glyphicon-repeat"></span> Restore</button>');
-            tempPlaceholder.append('<button class="btn btn-default pull-right" name="'+value.name+'" id="create-'+value.name+'" onClick="$.proxy(App.containerDetails.createContainerSnapshot());"><span class="glyphicon glyphicon-plus-sign"></span> New Container</button>');
+            var inputPlaceholder = $('div');
+            inputPlaceholder.append('<td></td>');
             this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
             this.dataTable.row.add([
+                null,
                 value.name,
                 value.createdAt,
                 value.stateful ? 'Yes' : 'No',
                 tempPlaceholder.html(),
             ]).draw();
         });
+
+    },
+     onRowSelected: function(e, dt, type, indexes ){
+            if(this.dataTable.rows({selected:true}).count() > 0) {
+             if(this.dataTable.rows({selected:true}).count() == 1){
+                $('#buttonDeleteSnapshot').removeAttr('disabled', 'disabled');
+                $('#buttonRestoreSnapshot').removeAttr('disabled', 'disabled');
+                $('#buttonNewContainerSnapshot').removeAttr('disabled', 'disabled');
+              }
+              else {
+                 $('#buttonRestoreSnapshot').attr('disabled', 'disabled');
+                $('#buttonNewContainerSnapshot').attr('disabled', 'disabled');
+                $('#buttonDeleteSnapshot').removeAttr('disabled', 'disabled');
+                }
+            }
+            else {
+                $('#buttonRestoreSnapshot').attr('disabled', 'disabled');
+                $('#buttonNewContainerSnapshot').attr('disabled', 'disabled');
+                $('#buttonDeleteSnapshot').attr('disabled', 'disabled');
+            }
 
     },
     showCloneContainer: function(name) {
@@ -136,6 +265,25 @@ App.containerDetails = App.containerDetails || {
         $('#cloneContainerForm').show();
         $('#buttonCloneContainer2').show();
 
+
+        $('#buttonNewContainerSnapshot2').hide();
+        $('#createContainerSnapshotForm').hide();
+        $('#moveContainerForm').hide();
+        $('#snapshotContainerForm').hide();
+        $('#exportContainerForm').hide();
+        $('#buttonExportContainer2').hide();
+        $('#buttonSnapshotContainer2').hide();
+        $('#buttonMoveContainer2').hide();
+        $('#buttonCloneContainer2').show();
+    },
+    showCloneContainerfromSnapshot: function(name) {
+        $('.modal-title').text('');
+        $('#newContainerClone').val('');
+        $('.modal-title').text('Clone Container: ' + this.name);
+        $("#containerDetailModal").modal("show");
+
+        $('#cloneContainerForm').show();
+        $('#buttonCloneContainer2').show();
 
         $('#buttonNewContainerSnapshot2').hide();
         $('#createContainerSnapshotForm').hide();
@@ -263,10 +411,25 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onSnapshotSuccess: function(response){
-         location.reload();
+         setTimeout(function() {
+            App.containerDetails.getSnapshotList();
+            $("#containerDetailModal").modal("hide");
+        }, 1000);
     },
+    restoreSnapshots: function() {
+      this.dataTable.rows( { selected: true } ).data().map(function(row){
+        var name = this.name;
+        $.ajax({
+            url:App.baseAPI+'snapshot/'+row[1]+'/container/'+name,
+            type: 'PUT',
+            dataType: 'json',
+            contentType: 'application/json',
+            success: $.proxy(this.onRestoreSuccess, this)
+        });
+        }.bind(this));
+    },
+
     restoreSnapshot: function() {
-        console.log("Restore");
         var snapshotName = $(event.target).prop('name');
         var container = this.name;
         $.ajax({
@@ -283,7 +446,6 @@ App.containerDetails = App.containerDetails || {
         }, 3000)
     },
     createContainerSnapshot: function() {
-        console.log("Create Container");
         var snapshotName = $(event.target).prop('name');
         var container = this.name;
         this.activeSnapshot = snapshotName;
@@ -305,24 +467,26 @@ App.containerDetails = App.containerDetails || {
         $('#exportContainerForm').hide();
     },
     newContainerFromSnapshotDetail: function() {
-         var container = this.name;
-         $.ajax({
-            url:App.baseAPI+'snapshot/'+ this.activeSnapshot +'/container/'+this.name+'/create',
-            type: 'POST',
-            dataType: 'json',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                newContainer: $('#newContainerSnapshot').val(),
-                force: true
-            }),
-            success: $.proxy(this.onCreateFromSnapshotSuccess, this)
-        });
+         this.dataTable.rows( { selected: true } ).data().map(function(row){
+            var name = this.name;
+            var container = this.name;
+             $.ajax({
+                url:App.baseAPI+'snapshot/'+ row[1] +'/container/'+this.name+'/create',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    newContainer: $('#newContainerSnapshot').val(),
+                    force: true
+                }),
+                success: $.proxy(this.onCreateFromSnapshotSuccess, this)
+            });
+         }.bind(this));
     },
     onCreateFromSnapshotSuccess: function() {
-        location.reload();
+        $("#containerDetailModal").modal("hide");
     },
     deleteSnapshot: function() {
-        console.log("Delete Snapshot");
         var snapshotName = $(event.target).prop('name');
         var container = this.name;
         $.ajax({
@@ -337,8 +501,26 @@ App.containerDetails = App.containerDetails || {
             success: $.proxy(this.onSnapshotDeleteSuccess, this)
         });
     },
+    deleteSnapshots: function() {
+        this.dataTable.rows( { selected: true } ).data().map(function(row){
+        var name = this.name;
+        $.ajax({
+                url:App.baseAPI+'snapshot/'+row[1]+'/container/'+name,
+                 type: 'DELETE',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                imageAlias: $('#imageAlias').val(),
+                force: true
+            }),
+            success: $.proxy(this.onSnapshotDeleteSuccess, this)
+        });
+        }.bind(this));
+    },
     onSnapshotDeleteSuccess: function(response) {
-        location.reload();
+        setTimeout(function() {
+            App.containerDetails.getSnapshotList();
+        }, 1000);
     },
     deleteProfile: function(event){
         this.data.profiles.splice(this.data.profiles.indexOf($(event.target).data('id')),1);
@@ -373,6 +555,8 @@ App.containerDetails = App.containerDetails || {
         $('#buttonAdd').show();
     },
     saveChanges:function(){
+
+        this.updates['config'] = this.readKeyValuePairs();
         $.ajax({
             url: App.baseAPI+'container/',
             type:'PUT',
@@ -381,6 +565,14 @@ App.containerDetails = App.containerDetails || {
             data: JSON.stringify(this.updates),
             success:$.proxy(this.onSaveChangesSuccess, this)
         });
+    },
+    readKeyValuePairs: function() {
+        keyValues = {}
+        $('#advancedSettings').find('input:enabled').each(function() {
+            keyValues[this.name] = this.value;
+        })
+
+        return keyValues;
     },
     onSaveChangesSuccess:function(response){
         if(this.updates['newName']){
@@ -393,7 +585,6 @@ App.containerDetails = App.containerDetails || {
         this.updates['name'] = this.data.name;
     },
     formChanged: function(){
-        console.log('enableSave');
         $('#buttonSave').show();
         $('.formChanged').unbind('click');
     },
@@ -404,7 +595,6 @@ App.containerDetails = App.containerDetails || {
         this.updates['newName'] = event.target.textContent;
     },
     onAutoStartToggle:function(state){
-    console.log('newState', state);
         this.updates['autostart']=state;
         if(state){
              $('#buttonAutostartActive').removeClass('btn-default');

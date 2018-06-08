@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from flask_jwt import jwt_required
 
 from app.api.models.LXCImage import LXCImage
@@ -34,7 +34,7 @@ def image(fingerprint):
 def delete(fingerprint):
     try:
         image = LXCImage({'fingerprint': fingerprint})
-        return response.replySuccess(image.deleteImage())
+        return response.replySuccess(image.deleteImage(), message='Image {} deleted successfully.'.format(fingerprint))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
@@ -63,6 +63,16 @@ def remoteDetails():
         return response.replyFailed(message=e.__str__())
 
 
+@image_api.route('/remote/nightly/list')
+@jwt_required()
+def nightly():
+    try:
+        client = LXDModule()
+        return response.replySuccess(client.listNightlyImages())
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
 @image_api.route('/remote', methods=['POST'])
 @jwt_required()
 def downloadImage():
@@ -72,6 +82,6 @@ def downloadImage():
         return response.replyFailed(message=validation.message)
     try:
         client = LXDModule()
-        return response.replySuccess(client.downloadImage(input.get('image')))
+        return response.replySuccess(client.downloadImage(input.get('image')), message='Image {} downloaded successfully.'.format(input.get('image')))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
