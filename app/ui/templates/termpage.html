@@ -16,7 +16,10 @@
 
   h1 {
     margin-bottom: 20px;
-    font: 20px/1.5 sans-serif;
+    font: 50px/1.5 sans-serif;
+  }
+  .terminal {
+    font-size: 16px;
   }
 </style>
 <script src="{{ xstatic('termjs', 'term.js') }}"></script>
@@ -24,8 +27,8 @@
 <script>
 window.onload = function() {
     // Test size: 25x80
-    var termRowHeight = 0.0 + 1.00*document.getElementById("dummy-screen").offsetHeight / 25;
-    var termColWidth = 0.0 + (1.02*document.getElementById("dummy-screen-rows").offsetWidth / 80);
+    var termRowHeight = 0.0 + 1.00*document.getElementById("dummy-screen").offsetHeight / 17;
+    var termColWidth = 0.0 + (1.02*document.getElementById("dummy-screen-rows").offsetWidth / 55);
     document.getElementById("dummy-screen").setAttribute("style", "display: none");
 
     var protocol = (window.location.protocol.indexOf("https") === 0) ? "wss" : "ws";
