@@ -181,8 +181,10 @@ App.images = App.images || {
          $('#buttonDelete').hide();
     },
     doDownload: function(){
+        console.log(this.activeTab);
+        activeTab = this.activeTab;
         $('#modalDownloadButton').attr('disabled', 'disabled');
-        if(this.activeTab=='nightly') {
+        if(activeTab=='nightly') {
             this.tableNightly.rows({selected: true}).data().map(function(row){
                 $.ajax({
                     url:App.baseAPI+'image/remote',
@@ -196,7 +198,7 @@ App.images = App.images || {
                 });
                 this.tableRemote.row('#'+row['image']).remove().draw(false);
             }.bind(this));
-        } else if(this.activeTab=='remote') {
+        } else if(activeTab=='remote') {
             this.tableRemote.rows({selected: true}).data().map(function(row){
                 $.ajax({
                     url:App.baseAPI+'image/remote',
@@ -509,6 +511,11 @@ App.images = App.images || {
     showRemoteDetails: function(image){
         this.tableRemote.rows().deselect();
         this.tableRemote.rows('#'+image).select();
+        $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
+    },
+    showNightlyDetails: function(image, fingerprint) {
+        this.tableNightly.rows().deselect();
+        this.tableNightly.rows('#'+fingerprint).select();
         $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
     },
     onGetRemoteDetailsSuccess: function(response){
