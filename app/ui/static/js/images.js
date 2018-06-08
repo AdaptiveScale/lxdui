@@ -179,6 +179,8 @@ App.images = App.images || {
         this.tableLocal.row("#"+fingerprint).remove().draw();
          $('#buttonLaunchContainers').hide();
          $('#buttonDelete').hide();
+         var counter = parseInt($('#btnLocalImages > span').text());
+         $('#btnLocalImages > span').text(counter-1);
     },
     doDownload: function(){
         console.log(this.activeTab);
