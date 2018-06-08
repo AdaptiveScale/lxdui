@@ -167,7 +167,7 @@
                                         {% else %}
                                         <td>
                                             <a class="pointer"
-                                               onClick="App.images.showRemoteDetails('{{image.properties.os}}/{{ image.properties.release }}/{{ image.properties.architecture }}');">{{image.properties.os}}</a>
+                                               onClick="App.images.showNightlyDetails('{{image.properties.os}}/{{ image.properties.release }}/{{ image.properties.architecture }}', '{{ image.fingerprint }}');">{{image.properties.os}}</a>
                                         </td>
                                         <td>{{ image.properties.description }}</td>
                                         {% endif %}
