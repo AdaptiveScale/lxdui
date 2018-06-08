@@ -67,10 +67,10 @@ App.images = App.images || {
         App.setActiveLink('image');
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
+        $('.imageSize').each(this.convertImageSize);
         this.initLocalTable();
         this.initRemoteTable();
         this.initNightlyTable();
-        $('.imageSize').each(this.convertImageSize);
         $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
         this.itemTemplate = $('.itemTemplate').clone();
