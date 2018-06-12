@@ -99,12 +99,14 @@ App.network = App.network || {
         $('#newUpdateNetwork').show();
         $('#networkList').hide();
         $('#buttonUpdateNetwork').show();
+        $('.updateWarningText').show();
         $('#buttonCreateNetwork').hide();
     },
     showNewUpdateNetwork: function() {
         $('#newUpdateNetwork').show();
         $('#networkList').hide();
         $('#buttonUpdateNetwork').hide();
+        $('.updateWarningText').hide();
         $('#buttonCreateNetwork').show();
     },
     backToNetworks: function() {
