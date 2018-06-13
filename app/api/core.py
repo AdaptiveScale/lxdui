@@ -123,7 +123,7 @@ def start(port, debug=False, uiPages=None):
     else:
         logging.warning('UI Missing... Starting without UI.')
 
-    readInstanceDetails()
+    #readInstanceDetails()
 
     pid = os.getpid()
     logging.info('pid={}, pid_file={}'.format(pid, PID))

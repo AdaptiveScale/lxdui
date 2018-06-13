@@ -1,6 +1,7 @@
 from app import __metadata__ as meta
 from configparser import ConfigParser, ExtendedInterpolation
 from pathlib import Path
+from shutil import copy
 import os
 import io
 import logging
@@ -34,7 +35,11 @@ class MetaConf(object):
             for k in self.config.options(section):
                 v = self.config.get(section, k)
                 if '{{app_root}}' in v:
-                    v = v.replace('{{app_root}}', self.getConfRoot())
+                    if 'SNAP_USER_COMMON' in Config.envGet2('SNAP_USER_COMMON'):
+                        v = v.replace('{{app_root}}', self.getUserRoot())
+                    else:
+                        v = v.replace('{{app_root}}', self.getConfRoot())
+
                     self.config.set(section, k, v)
 
     def getConfRoot(self):
@@ -42,6 +47,17 @@ class MetaConf(object):
         module_dir = os.path.dirname(__file__)
         app_dir = os.path.dirname(module_dir)
         return os.path.dirname(app_dir)
+
+
+    def getUserRoot(self):
+        if not os.path.exists(str(Path.home()) + '/conf'):
+            os.makedirs(str(Path.home()) + '/conf')
+            os.makedirs(str(Path.home()) + '/logs')
+            Path(str(Path.home()) + '/logs/lxdui.log').touch()
+            copy(self.getConfRoot() + '/conf/auth.conf', str(Path.home()) + '/conf')
+            copy(self.getConfRoot() + '/conf/log.conf', str(Path.home()) + '/conf')
+
+        return str(Path.home())
 
 
     def getConfPaths(self):
@@ -170,6 +186,19 @@ class Config(object):
         env = {}
         for k, v in os.environ.items():
             if k in ['LXDUI_LOG', 'LXDUI_CONF']:
+                env.update({k: os.environ.get(k)})
+        return env
+
+    @staticmethod
+    def envGet2(key):
+        """
+        Retrieve the environment variables containing the log and conf paths.
+
+        :return: Returns a dictionary containing the file paths
+        """
+        env = {}
+        for k, v in os.environ.items():
+            if key == k:
                 env.update({k: os.environ.get(k)})
         return env
 
