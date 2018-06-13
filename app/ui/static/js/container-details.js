@@ -21,7 +21,7 @@ App.containerDetails = App.containerDetails || {
         order: [[ 1, 'asc' ]],
         dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "<'row'<'col-sm-4'i><'col-sm-1 text-right'l><'col-sm-7 text-right'p>>",
         "oLanguage": {
           "sLengthMenu": "List _MENU_ ",
         },
@@ -608,4 +608,8 @@ App.containerDetails = App.containerDetails || {
              $('#buttonAutostartInactive').addClass('btn-success');
         }
     }
+//    ,
+//    showTerminalContainer: function(container) {
+//        window.open('/terminal/new/' + container + '/' + sessionStorage.getItem('authToken'), '_blank');
+//    }
 }
