@@ -35,7 +35,6 @@ App.images = App.images || {
         initComplete: function(settings, json) {
             var tempButton = $('.rawJSONImages').clone();
             tempButton.removeClass('rawJSONImages');
-            console.log('this', $(this).closest('table').attr('id'));
             tempButton.on('click', $.proxy(App.images.showJSON, App.images));
             $('#'+$(this).closest('table').attr('id')+'_wrapper .json-place').prepend(tempButton);
             tempButton.show();
@@ -46,7 +45,6 @@ App.images = App.images || {
     itemTemplate:null,
     rawJson:null,
     init: function(opts){
-        console.log('Images initialized');
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
         this.containerTemplate = $('.multiContainerTemplate');
@@ -192,7 +190,6 @@ App.images = App.images || {
          $('#btnLocalImages > span').text(counter-1);
     },
     doDownload: function(){
-        console.log(this.activeTab);
         activeTab = this.activeTab;
         $('#modalDownloadButton').attr('disabled', 'disabled');
         if(activeTab=='nightly') {
@@ -227,7 +224,6 @@ App.images = App.images || {
     },
     onDownloadSuccess: function(imageName, response){
          location.reload();
-         console.log('downloadSuccess:', 'TODO - add alert and refresh local data');
     },
     getData: function(){
         //this.setLoading(true);
@@ -530,7 +526,6 @@ App.images = App.images || {
         $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
     },
     onGetRemoteDetailsSuccess: function(response){
-        console.log('remoteDetails', response.data, 'this:', this);
         this.generateModalDetails(response);
     },
     generateItem:function(key, value){
@@ -564,13 +559,17 @@ App.images = App.images || {
       modalBody.append(this.generateItem('Public', tempData.public));
 
       modalBody.append('<div class="form-group col-lg-12"><hr style="border:1px solid lightgrey;"/></div>');
+      modalBody.append('<div class="form-group"><a data-toggle="collapse" class="collapse-acc" data-parent="#aliases" href="#aliasesList">Aliases</a></div>');
+      modalBody.append('<div id="aliasesList" class="form-group panel-collapse collapse"></div>');
 
+      var aliasesList = $('#aliasesList');
       tempData.aliases.forEach(function(alias, index){
-            modalBody.append('<div class="form-group"><b>Alias '+(index+1)+'</b></div>')
-           modalBody.append(this.generateItem('Description',alias.description));
-           modalBody.append(this.generateItem('Name',alias.name));
-           modalBody.append(this.generateItem('Target',alias.target));
+            aliasesList.append('<div id="aliases" class="form-group"><b>Alias '+(index+1)+'</b></div>')
+           aliasesList.append(this.generateItem('Description',alias.description));
+           aliasesList.append(this.generateItem('Name',alias.name));
+           aliasesList.append(this.generateItem('Target',alias.target));
       }.bind(this));
+      modalBody.append(aliasesList);
       $('#myModal').modal().show();
 
     }
