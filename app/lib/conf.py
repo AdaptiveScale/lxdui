@@ -36,7 +36,7 @@ class MetaConf(object):
                 v = self.config.get(section, k)
                 if '{{app_root}}' in v:
                     if 'SNAP_USER_COMMON' in Config.envGet2('SNAP_USER_COMMON'):
-                        v = v.replace('{{app_root}}', self.getUserRoot())
+                        v = v.replace('{{app_root}}', self.getSnapPath())
                     else:
                         v = v.replace('{{app_root}}', self.getConfRoot())
 
@@ -49,7 +49,7 @@ class MetaConf(object):
         return os.path.dirname(app_dir)
 
 
-    def getUserRoot(self):
+    def getSnapPath(self):
         if not os.path.exists(str(Path.home()) + '/conf'):
             os.makedirs(str(Path.home()) + '/conf')
             os.makedirs(str(Path.home()) + '/logs')
