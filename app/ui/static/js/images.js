@@ -77,6 +77,9 @@ App.images = App.images || {
         $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
         $('#exTab2 > ul > li:nth-child(1)').addClass('active');// set first tab as active
 
+        $('#architectureRemote').on('change', $.proxy(this.filterRemoteTable, this));
+        $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
+
         this.initKeyValuePairs();
     },
     convertImageSize:function(index, item){
@@ -141,6 +144,12 @@ App.images = App.images || {
     setNightlyTableEvents: function(){
         this.tableNightly.on('select', $.proxy(this.onItemSelectChange, this));
         this.tableNightly.on('deselect', $.proxy(this.onItemSelectChange, this));
+    },
+    filterRemoteTable: function(e) {
+        this.tableRemote.search(e.target.value).draw();
+    },
+    filterNightlyTable: function(e) {
+        this.tableNightly.search(e.target.value).draw();
     },
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
