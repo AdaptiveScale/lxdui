@@ -1,4 +1,5 @@
 import platform, sys, os, subprocess
+import psutil
 from app.api.models.LXDModule import LXDModule
 
 import logging
@@ -10,9 +11,9 @@ def readInstanceDetails():
     instanceDetails +=("\nLXD Status: {}".format(getLXDInfo()['api_status']))
     instanceDetails +=("\nOS: {}".format(platform.platform()))
     instanceDetails +=("\nLXDUI Path: {}".format(sys.path[0]))
-    instanceDetails +=("\nCPU: {}".format(getProcessorDetails()))
+    instanceDetails +=("\nCPU Count: {}".format(getProcessorDetails()))
     instanceDetails +=("\nMemory: {}MB".format(getMemory()))
-    instanceDetails +=("\nDisk: {}".format(getDiskDetails()))
+    instanceDetails +=("\nDisk used percent: {}".format(getDiskDetails()))
     logging.info(instanceDetails)
 
 def getLXDInfo():
@@ -28,11 +29,10 @@ def getLXDInfo():
         }
 
 def getMemory():
-    mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
-    return int(mem_bytes / (1024. ** 2))
+    return int(psutil.virtual_memory().total / (1024*1024))
 
 def getProcessorDetails():
-    return subprocess.check_output('lscpu', shell=True).strip().decode()
+    return psutil.cpu_count()
 
 def getDiskDetails():
-    return subprocess.check_output('df -h', shell=True).strip().decode()
+    return psutil.disk_usage('/').percent
