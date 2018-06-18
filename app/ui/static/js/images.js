@@ -23,7 +23,7 @@ App.images = App.images || {
         ],
          dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "<'row'<'col-sm-4'i><'col-sm-1 text-right'l><'col-sm-7 text-right'p>>",
         "oLanguage": {
           "sLengthMenu": "List _MENU_ ",
         },
@@ -35,7 +35,6 @@ App.images = App.images || {
         initComplete: function(settings, json) {
             var tempButton = $('.rawJSONImages').clone();
             tempButton.removeClass('rawJSONImages');
-            console.log('this', $(this).closest('table').attr('id'));
             tempButton.on('click', $.proxy(App.images.showJSON, App.images));
             $('#'+$(this).closest('table').attr('id')+'_wrapper .json-place').prepend(tempButton);
             tempButton.show();
@@ -46,7 +45,6 @@ App.images = App.images || {
     itemTemplate:null,
     rawJson:null,
     init: function(opts){
-        console.log('Images initialized');
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
         this.containerTemplate = $('.multiContainerTemplate');
@@ -76,6 +74,9 @@ App.images = App.images || {
         this.itemTemplate = $('.itemTemplate').clone();
         $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
         $('#exTab2 > ul > li:nth-child(1)').addClass('active');// set first tab as active
+
+        $('#architectureRemote').on('change', $.proxy(this.filterRemoteTable, this));
+        $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
 
         this.initKeyValuePairs();
     },
@@ -142,6 +143,12 @@ App.images = App.images || {
         this.tableNightly.on('select', $.proxy(this.onItemSelectChange, this));
         this.tableNightly.on('deselect', $.proxy(this.onItemSelectChange, this));
     },
+    filterRemoteTable: function(e) {
+        this.tableRemote.search(e.target.value).draw();
+    },
+    filterNightlyTable: function(e) {
+        this.tableNightly.search(e.target.value).draw();
+    },
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
             var state = this.tableLocal.rows({selected:true}).count()>0;
@@ -183,7 +190,6 @@ App.images = App.images || {
          $('#btnLocalImages > span').text(counter-1);
     },
     doDownload: function(){
-        console.log(this.activeTab);
         activeTab = this.activeTab;
         $('#modalDownloadButton').attr('disabled', 'disabled');
         if(activeTab=='nightly') {
@@ -218,7 +224,6 @@ App.images = App.images || {
     },
     onDownloadSuccess: function(imageName, response){
          location.reload();
-         console.log('downloadSuccess:', 'TODO - add alert and refresh local data');
     },
     getData: function(){
         //this.setLoading(true);
@@ -521,7 +526,6 @@ App.images = App.images || {
         $.get(App.baseAPI+'image/remote/details?alias='+image, $.proxy(this.onGetRemoteDetailsSuccess, this));
     },
     onGetRemoteDetailsSuccess: function(response){
-        console.log('remoteDetails', response.data, 'this:', this);
         this.generateModalDetails(response);
     },
     generateItem:function(key, value){
@@ -555,13 +559,17 @@ App.images = App.images || {
       modalBody.append(this.generateItem('Public', tempData.public));
 
       modalBody.append('<div class="form-group col-lg-12"><hr style="border:1px solid lightgrey;"/></div>');
+      modalBody.append('<div class="form-group"><a data-toggle="collapse" class="collapse-acc" data-parent="#aliases" href="#aliasesList">Aliases</a></div>');
+      modalBody.append('<div id="aliasesList" class="form-group panel-collapse collapse"></div>');
 
+      var aliasesList = $('#aliasesList');
       tempData.aliases.forEach(function(alias, index){
-            modalBody.append('<div class="form-group"><b>Alias '+(index+1)+'</b></div>')
-           modalBody.append(this.generateItem('Description',alias.description));
-           modalBody.append(this.generateItem('Name',alias.name));
-           modalBody.append(this.generateItem('Target',alias.target));
+            aliasesList.append('<div id="aliases" class="form-group"><b>Alias '+(index+1)+'</b></div>')
+           aliasesList.append(this.generateItem('Description',alias.description));
+           aliasesList.append(this.generateItem('Name',alias.name));
+           aliasesList.append(this.generateItem('Target',alias.target));
       }.bind(this));
+      modalBody.append(aliasesList);
       $('#myModal').modal().show();
 
     }

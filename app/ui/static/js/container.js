@@ -14,7 +14,7 @@ App.containers = App.containers || {
         select: true,
         dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "<'row'<'col-sm-4'i><'col-sm-1 text-right'l><'col-sm-7 text-right'p>>",
         "oLanguage": {
           "sLengthMenu": "List _MENU_ ",
         },
@@ -76,9 +76,17 @@ App.containers = App.containers || {
         App.setActiveLink('container');
 
         $('#buttonCloneContainer').on('click', $.proxy(this.cloneContainer, this));
+        $('#cloneForm').on('submit', $.proxy(this.cloneContainer, this));
+
         $('#buttonMoveContainer').on('click', $.proxy(this.moveContainer, this));
+        $('#moveForm').on('submit', $.proxy(this.moveContainer, this));
+
         $('#buttonExportContainer').on('click', $.proxy(this.exportContainer, this));
+        $('#exportForm').on('submit', $.proxy(this.exportContainer, this));
+
         $('#buttonSnapshotContainer').on('click', $.proxy(this.snapshotContainer, this));
+        $('#snapshotForm').on('submit', $.proxy(this.snapshotContainer, this));
+
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
         //this.getData();
@@ -334,96 +342,31 @@ App.containers = App.containers || {
         return keyValues;
     },
     showCloneContainer: function(name) {
-        $('.modal-title').text('');
+        $('#cloneContainerModal .modal-title').text('');
         $('#newContainerClone').val('');
-        $('.modal-title').text('Clone Container: ' + name);
-        $("#myModal").modal("show");
-//        $('#selectedClone').text('Clone Container: ' + name);
-        if ($('#cloneContainerForm').is(':visible') && this.selectedContainer === name) {
-            $('#cloneContainerForm').hide();
-            $('#buttonCloneContainer').hide();
-        }
-        else {
-            $('#cloneContainerForm').show();
-            $('#buttonCloneContainer').show();
-        }
-        $('#moveContainerForm').hide();
-        $('#snapshotContainerForm').hide();
-        $('#exportContainerForm').hide();
-        $('#snapshotList').hide();
-        $('#buttonExportContainer').hide();
-        $('#buttonSnapshotContainer').hide();
-        $('#buttonMoveContainer').hide();
-        $('#buttonCloneContainer').show();
+        $('#cloneContainerModal .modal-title').text('Clone Container: ' + name);
+        $("#cloneContainerModal").modal("show");
         this.selectedContainer = name;
     },
     showMoveContainer: function(name) {
-        $('.modal-title').text('');
-        $('.modal-title').text('Move Container: ' + name);
+        $('#moveContainerModal .modal-title').text('');
+        $('#moveContainerModal .modal-title').text('Move Container: ' + name);
         $('#newContainerMove').val('');
-        $("#myModal").modal("show");
-        $('#cloneContainerForm').hide();
-
-        $('#buttonExportContainer').hide();
-        $('#buttonCloneContainer').hide();
-        $('#buttonSnapshotContainer').hide();
-        $('#buttonMoveContainer').show();
-
-        if ($('#moveContainerForm').is(':visible') && this.selectedContainer === name) {
-            $('#moveContainerForm').hide();
-        }
-        else {
-            $('#moveContainerForm').show();
-        }
-        $('#snapshotContainerForm').hide();
-        $('#exportContainerForm').hide();
-        $('#snapshotList').hide();
+        $("#moveContainerModal").modal("show");
         this.selectedContainer = name;
     },
     showExportContainer: function(name) {
-        $('.modal-title').text('');
-        $('.modal-title').text('Export Image from Container: ' + name);
+        $('#exportContainerModal .modal-title').text('');
+        $('#exportContainerModal .modal-title').text('Export Image from Container: ' + name);
         $('#imageAlias').val('');
-        $("#myModal").modal("show");
-
-        $('#cloneContainerForm').hide();
-        $('#moveContainerForm').hide();
-        $('#snapshotContainerForm').hide();
-
-        $('#buttonMoveContainer').hide();
-        $('#buttonCloneContainer').hide();
-        $('#buttonSnapshotContainer').hide();
-        $('#buttonExportContainer').show();
-
-        if ($('#exportContainerForm').is(':visible') && this.selectedContainer === name) {
-            $('#exportContainerForm').hide();
-        }
-        else {
-            $('#exportContainerForm').show();
-        }
-        $('#snapshotList').hide();
+        $("#exportContainerModal").modal("show");
         this.selectedContainer = name;
     },
     showSnapshotContainer: function(name) {
-        $('.modal-title').text('');
-        $('.modal-title').text('Create Snapshot from Container: ' + name);
+        $('#snapshotContainerModal .modal-title').text('');
+        $('#snapshotContainerModal .modal-title').text('Create Snapshot from Container: ' + name);
         $('#snapshotName').val('');
-        $("#myModal").modal("show");
-//        $('#selectedSnapshot').text('Create Snapshot from Container: ' + name);
-        $('#cloneContainerForm').hide();
-        $('#buttonExportContainer').hide();
-        $('#buttonCloneContainer').hide();
-        $('#buttonMoveContainer').hide();
-        $('#buttonSnapshotContainer').show();
-        $('#moveContainerForm').hide();
-        if ($('#snapshotContainerForm').is(':visible') && this.selectedContainer === name) {
-            $('#snapshotContainerForm').hide();
-        }
-        else {
-            $('#snapshotContainerForm').show();
-        }
-        $('#exportContainerForm').hide();
-        $('#snapshotList').hide();
+        $("#snapshotContainerModal").modal("show");
         this.selectedContainer = name;
     },
     showSnapshotList: function(name) {
@@ -434,10 +377,6 @@ App.containers = App.containers || {
         else {
             $('#snapshotList').show();
         }
-        $('#cloneContainerForm').hide();
-        $('#moveContainerForm').hide();
-        $('#snapshotContainerForm').hide();
-        $('#exportContainerForm').hide();
         this.selectedContainer = name;
         this.getSnapshotList(name);
     },

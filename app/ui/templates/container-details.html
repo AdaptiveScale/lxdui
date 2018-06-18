@@ -59,6 +59,7 @@
             <button id="buttonCloneContainerDetail" class="btn btn-default btn-sm"><span class="glyphicon  glyphicon-duplicate"></span> Clone</button>
             <button id="buttonMoveContainerDetail" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-share"></span> Move</button>
             <button id="buttonExportContainerDetail" class="btn btn-default btn-sm"><span class="glyphicon glyphicon-export"></span> Export</button>
+            <button id="terminalContainer" class="btn btn-default btn-sm" onClick="$.proxy(App.containers.showTerminalContainer('{{container.name}}'));" title="Terminal to this Container"><span class="glyphicon glyphicon-console"></span> Terminal</button>
 
 
 
@@ -308,9 +309,8 @@
 </div>
 
 <!-- Modal -->
-<div class="modal fade" id="containerDetailModal" role="dialog" tabindex="-1">
+<div class="modal fade" id="cloneContainerModal" role="dialog" tabindex="-1">
     <div class="modal-dialog">
-
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
@@ -318,108 +318,158 @@
                 <h4 class="modal-title"></h4>
             </div>
             <div class="modal-body">
-
-           <div id="cloneContainerForm" hidden>
-
-    <form id="cloneForm" class="form-horizontal">
-        <div class="form-group">
-            <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
-            <div class="col-sm-8">
-                <input id="newContainerClone" name="newContainer" class="form-control" type="text" placeholder="Clone Name" title="Clone Name" required/>
+                <form id="cloneContainerForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="newContainerClone" class="col-sm-3 control-label">Clone Name</label>
+                        <div class="col-sm-8">
+                            <input id="newContainerClone" name="newContainer" class="form-control" type="text" placeholder="Clone Name" title="Clone Name" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
+                        </div>
+                    </div>
+                </form>
             </div>
-        </div>
-        <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
-                <!--<button id="buttonCloneContainer" class="btn btn-primary">Clone Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
+            <div class="modal-footer">
+                <button type="submit" id="cloneContainerSubmit" class="btn btn-primary">Clone <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
-        </div>
-    </form>
-</div>
-
-<div id="moveContainerForm" hidden>
-
-    <form id="moveForm" class="form-horizontal">
-        <div class="form-group">
-            <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
-            <div class="col-sm-8">
-                <input id="newContainerMove" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Move Container Name" required/>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
-
-            </div>
-        </div>
-    </form>
-</div>
-
-<div id="createContainerSnapshotForm" hidden>
-
-    <form id="newContainerForm" class="form-horizontal">
-        <div class="form-group">
-            <label for="newContainerSnapshot" class="col-sm-3 control-label">New Container Name</label>
-            <div class="col-sm-8">
-                <input id="newContainerSnapshot" name="newContainer" class="form-control" type="text" placeholder="Container Name" title="Create Container Name" required/>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
-
-            </div>
-        </div>
-    </form>
-</div>
-
-<div id="exportContainerForm" hidden>
-
-    <form id="exportForm" class="form-horizontal">
-        <div class="form-group">
-            <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
-            <div class="col-sm-8">
-                <input id="imageAlias" name="imageAlias" class="form-control" type="text" placeholder="Image Alias" title="Image Alias" required/>
-            </div>
-        </div>
-        <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
-
-            </div>
-        </div>
-    </form>
-</div>
-
-<div id="snapshotContainerForm" hidden>
-
-    <form id="snapshotForm" class="form-horizontal">
-        <div class="form-group">
-            <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
-            <div class="col-sm-8">
-                <input id="snapshotName" name="snapshotName" class="form-control" type="text" placeholder="Snapshot Name" title="Snapshot Name" required/>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="snapshotStateful" class="col-sm-3 control-label">Stateful</label>
-            <input type="checkbox" class="form-check-input" id="snapshotStateful" name="stateful">
-        </div>
-        <div class="form-group">
-            <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
-
-            </div>
-        </div>
-    </form>
-</div>
-        </div>
-        <div class="modal-footer">
-             <button id="buttonExportContainer2" class="btn btn-primary">Export <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-             <button id="buttonSnapshotContainer2" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-             <button id="buttonMoveContainer2" class="btn btn-primary">Move <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-            <button id="buttonCloneContainer2" class="btn btn-primary">Clone <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-            <button id="buttonNewContainerSnapshot2" class="btn btn-primary">New Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
       </div>
-
     </div>
   </div>
+</div>
 
+<!-- Modal -->
+<div class="modal fade" id="moveContainerModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="moveContainerForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="newContainerMove" class="col-sm-3 control-label">Move Container Name</label>
+                        <div class="col-sm-8">
+                            <input id="newContainerMove" name="newContainer" class="form-control" type="text" placeholder="Move Container Name" title="Move Container Name" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="moveContainerSubmit" class="btn btn-primary">Move <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="exportContainerModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="exportContainerForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="imageAlias" class="col-sm-3 control-label">Image Alias</label>
+                        <div class="col-sm-8">
+                            <input id="imageAlias" name="imageAlias" class="form-control" type="text" placeholder="Image Alias" title="Image Alias" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
+
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="exportContainerSubmit" class="btn btn-primary">Export <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="snapshotContainerModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="snapshotContainerForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="snapshotName" class="col-sm-3 control-label">Snapshot Name</label>
+                        <div class="col-sm-8">
+                            <input id="snapshotName" name="snapshotName" class="form-control" type="text" placeholder="Snapshot Name" title="Snapshot Name" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="snapshotStateful" class="col-sm-3 control-label">Stateful</label>
+                        <input type="checkbox" class="form-check-input" id="snapshotStateful" name="stateful">
+                    </div>
+                    <div class="form-group">
+                        <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="snapshotContainerSubmit" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="containerFromSnapshotModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="containerFromSnapshotForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="newContainerSnapshot" class="col-sm-3 control-label">New Container Name</label>
+                        <div class="col-sm-8">
+                            <input id="newContainerSnapshot" name="newContainer" class="form-control" type="text" placeholder="Container Name" title="Create Container Name" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-inline col-md-offset-3 col-md-3" class="mgtop-10">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="containerFromSnapshotSubmit" class="btn btn-primary">New Container <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endblock %}

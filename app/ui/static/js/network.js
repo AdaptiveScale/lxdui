@@ -16,7 +16,7 @@ App.network = App.network || {
         ],
         dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-4'i><'col-sm-5 text-right'l><'col-sm-3 text-right'p>>",
+        "<'row'<'col-sm-4'i><'col-sm-1 text-right'l><'col-sm-7 text-right'p>>",
         "oLanguage": {
           "sLengthMenu": "List _MENU_ ",
         },
@@ -99,12 +99,14 @@ App.network = App.network || {
         $('#newUpdateNetwork').show();
         $('#networkList').hide();
         $('#buttonUpdateNetwork').show();
+        $('.updateWarningText').show();
         $('#buttonCreateNetwork').hide();
     },
     showNewUpdateNetwork: function() {
         $('#newUpdateNetwork').show();
         $('#networkList').hide();
         $('#buttonUpdateNetwork').hide();
+        $('.updateWarningText').hide();
         $('#buttonCreateNetwork').show();
     },
     backToNetworks: function() {

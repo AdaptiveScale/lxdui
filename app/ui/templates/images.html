@@ -135,6 +135,23 @@
                                     <button id="buttonDownloadNightly" class="btn btn-success left" disabled><span
                                             class="glyphicon glyphicon-download-alt"></span> Download
                                     </button>
+                                    <div class="left">
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <select class="form-control" name="architectureNightly" id="architectureNightly">
+                                                    <option value="" selected>All</option>
+                                                    <option value="amd64">amd64/x86-64</option>
+                                                    <option value="i386">i386</option>
+                                                    <option value="arm64">arm64</option>
+                                                    <option value="armhf">armhf</option>
+                                                    <option value="armel">armel</option>
+                                                    <option value="s390x">s390x</option>
+                                                    <option value="ppc64el">ppc64el</option>
+                                                </select>
+                                                <!--<input id="driver" name="driver" class="form-control" type="text" placeholder="Storage Pool Driver" title="Storage Pool Driver" required/>-->
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
 
                             </div>
@@ -206,6 +223,23 @@
                                         <p class="remote-link">Remote: <a target="_blank"
                                                                           href="{{ remoteImagesLink }}">{{ remoteImagesLink }}</a>
                                         </p>
+                                    </div>
+                                    <div class="left">
+                                        <div class="form-group">
+                                            <div class="col-sm-4">
+                                                <select class="form-control" name="architectureRemote" id="architectureRemote">
+                                                    <option value="" selected>All</option>
+                                                    <option value="amd64">amd64/x86-64</option>
+                                                    <option value="i386">i386</option>
+                                                    <option value="arm64">arm64</option>
+                                                    <option value="armhf">armhf</option>
+                                                    <option value="armel">armel</option>
+                                                    <option value="s390x">s390x</option>
+                                                    <option value="ppc64el">ppc64el</option>
+                                                </select>
+                                                <!--<input id="driver" name="driver" class="form-control" type="text" placeholder="Storage Pool Driver" title="Storage Pool Driver" required/>-->
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -393,7 +427,7 @@
                         </div>
                         <!--col-lg-12 main-div end-->
 
-                        <div class="col-lg-12">
+                        <div class="col-lg-12 mg-bottom40">
                             <form id="newContainerForm">
                                 <div class="form-group" id="multiContainerSection">
 
@@ -443,7 +477,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button type="button" class="close" data-dismiss="modnewContainerFormal">&times;</button>
                 <h4 class="modal-title">Add remote <label class="imageName"></label></h4>
             </div>
             <div class="modal-body" id="modalAddRemoteBody">
