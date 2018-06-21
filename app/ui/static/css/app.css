@@ -555,11 +555,11 @@ color: #000 !important;
 }
 
 .popover {
-    max-width: 100%;
+    min-width: 400px;
 }
 
 .popover-content {
-    width: 300px !important;
+    width: 100%;
 }
 
 .btn-json {
