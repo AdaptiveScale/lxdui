@@ -37,6 +37,7 @@ App.containerDetails = App.containerDetails || {
             selector: 'td:first-child'
         },
     },
+
     loading:false,
     rawJson:null,
     init: function(){
@@ -55,6 +56,22 @@ App.containerDetails = App.containerDetails || {
         $('#buttonBackDetail').on('click', $.proxy(this.switchView, this, 'list'));
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
+
+        $("#tree").fancytree({
+       checkbox: true,
+       source: [
+           {title: "Node 1"},
+           {title: "Node 2", key: "id2"},
+           {title: "Folder 3", folder: true, children: [
+               {title: "Node 3.1"},
+               {title: "Node 3.2"}
+           ]},
+           {title: "Folder 2", folder: true}
+       ],
+       activate: function(event, data){
+           $("#status").text("Activate: " + data.node);
+       }
+   });
         App.setActiveLink('');
 
         $('#buttonCloneContainerDetail').on('click', $.proxy(this.showCloneContainer, this));
@@ -81,6 +98,15 @@ App.containerDetails = App.containerDetails || {
         $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
         $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
         $('#buttonNewContainerSnapshot').on('click', $.proxy(this.createContainerSnapshot, this));
+
+        $('#file-btn-new').on('click', $.proxy(this.createNewFile, this));
+        $('#file-btn-edit').on('click', $.proxy(this.editFile, this));
+        $('#file-btn-view').on('click', $.proxy(this.viewFile, this));
+        $('#file-btn-upload').on('click', $.proxy(this.uploadFile, this));
+        $('#file-btn-delete').on('click', $.proxy(this.deleteFile, this));
+//         $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
+
+
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
@@ -384,6 +410,31 @@ App.containerDetails = App.containerDetails || {
         $('#newContainerMove').val('');
         $("#containerFromSnapshotModal").modal("show");
 //        $('#cloneContainerForm').hide();
+    },
+    createNewFile: function() {
+        $('#newFileManagerModal .modal-title').text('');
+        $('#newFileManagerModal .modal-title').text('New File > home/user/folder');
+        $("#newFileManagerModal").modal("show");
+    },
+    editFile: function() {
+        $('#editFileModal .modal-title').text('');
+        $('#editFileModal .modal-title').text('New File > home/user/folder');
+        $("#editFileModal").modal("show");
+    },
+    deleteFile: function() {
+//        $('#deleteFileModal .modal-title').text('');
+//        $('#deleteFileModal .modal-title').text('New File > home/user/folder');
+        $("#deleteFileModal").modal("show");
+    },
+    viewFile: function() {
+        $('#viewFileModal .modal-title').text('');
+        $('#viewFileModal .modal-title').text('home/user/folder/something.txt');
+        $("#viewFileModal").modal("show");
+    },
+    uploadFile: function() {
+//        $('#uploadFileModal .modal-title').text('');
+//        $('#uploadFileModal .modal-title').text('N');
+        $("#uploadFileModal").modal("show");
     },
     newContainerFromSnapshotDetail: function() {
          this.dataTable.rows( { selected: true } ).data().map(function(row){
