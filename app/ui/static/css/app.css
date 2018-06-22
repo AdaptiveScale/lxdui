@@ -188,6 +188,10 @@
     margin-left: 60px;
 }
 
+.text-center {
+    text-align: center !important;
+}
+
 .no-right-padding {
  padding-right:0;
 }
