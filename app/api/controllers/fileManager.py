@@ -5,6 +5,8 @@ from flask_jwt import jwt_required
 from app.api.models.LXCFileManager import LXCFileManager
 from app.api.utils import response
 
+import json
+
 file_manager_api = Blueprint('file_manager_api', __name__)
 
 
@@ -18,6 +20,7 @@ def list():
         return response.replyFailed(ex.__str__())
 
 
+#List directory or open file
 @file_manager_api.route('/container/<string:name>', methods=['PUT'])
 @jwt_required()
 def download(name):
@@ -26,7 +29,13 @@ def download(name):
 
     try:
         fileManager = LXCFileManager(input)
-        return response.reply(fileManager.download())
+
+        try:
+            result = json.loads(fileManager.download().decode('utf-8'))['metadata']
+        except:
+            result = fileManager.download()
+
+        return response.reply(result)
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
 

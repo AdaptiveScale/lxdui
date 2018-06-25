@@ -11,6 +11,7 @@ App.containerDetails = App.containerDetails || {
     selectedSnapshot: null,
     dataTable:null,
     initiated:false,
+    treeSource: [],
     tableSettings: {
         rowId:'name',
         searching:false,
@@ -57,21 +58,21 @@ App.containerDetails = App.containerDetails || {
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
 
-        $("#tree").fancytree({
-       checkbox: true,
-       source: [
-           {title: "Node 1"},
-           {title: "Node 2", key: "id2"},
-           {title: "Folder 3", folder: true, children: [
-               {title: "Node 3.1"},
-               {title: "Node 3.2"}
-           ]},
-           {title: "Folder 2", folder: true}
-       ],
-       activate: function(event, data){
-           $("#status").text("Activate: " + data.node);
-       }
-   });
+//       $("#tree").fancytree({
+//           checkbox: true,
+//           source: [
+//               {title: "Node 1"},
+//               {title: "Node 2", key: "id2"},
+//               {title: "Folder 3", folder: true, children: [
+//                   {title: "Node 3.1"},
+//                   {title: "Node 3.2"}
+//               ]},
+//               {title: "Folder 2", folder: true}
+//           ],
+//           activate: function(event, data){
+//               $("#status").text("Activate: " + data.node);
+//           }
+//       });
         App.setActiveLink('');
 
         $('#buttonCloneContainerDetail').on('click', $.proxy(this.showCloneContainer, this));
@@ -111,9 +112,43 @@ App.containerDetails = App.containerDetails || {
 
         this.initKeyValuePairs();
     },
+    listDirectory: function(path) {
+        return $.ajax({
+            url: App.baseAPI+'file/container/' + this.name,
+            type: 'PUT',
+            data: JSON.stringify({
+                path: path
+            }),
+            success: $.proxy(this.onFileListSuccess, this)
+        });
+    },
+    onFileListSuccess: function(response) {
+        source = [];
+        for (var d in response.data) {
+            source.push({
+                'title': response.data[d]
+            });
+        }
+        this.treeSource = source;
+        $("#tree").fancytree({
+           checkbox: true,
+           source: this.treeSource,
+           dblclick: function(event, data) {
+               console.log(data);
+               this.updateTreeSource(data);
+           },
+           activate: function(event, data){
+               $("#status").text("Activate: " + data.node);
+           }
+       });
+    },
     initContainerDetails: function(name) {
         this.name = name;
         this.getSnapshotList();
+        this.listDirectory('/');
+    },
+    updateTreeSource: function(data) {
+        this.listDirectory(data.node.title);
     },
     initKeyValuePairs: function() {
         for (key in App.properties.keyValues) {

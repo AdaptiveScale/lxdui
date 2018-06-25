@@ -19,7 +19,7 @@ class LXCFileManager(LXDModule):
             logging.info('Download file {} from container {}'.format(self.input.get('path'), self.input.get('name')))
             container = self.client.containers.get(self.input.get('name'))
             file = container.files.get(self.input.get('path'))
-            return str(file)
+            return file
         except Exception as e:
             logging.error('Download file {} from container {} failed.'.format(self.input.get('path'), self.input.get('name')))
             logging.exception(e)
