@@ -112,9 +112,22 @@ App.containerDetails = App.containerDetails || {
 
         this.initKeyValuePairs();
     },
+    readFileContent: function(path) {
+        $.ajax({
+            url: App.baseAPI+'file/content/container/' + this.name + '?path='+path,
+            type: 'GET',
+            success: $.proxy(this.onFileContentSuccess, this, path)
+        });
+    },
+    onFileContentSuccess: function(path, response) {
+        console.log(response);
+        console.log(response.data);
+        console.log(path);
+        this.viewFile(response.data, path);
+    },
     listDirectory: function(path) {
         return $.ajax({
-            url: App.baseAPI+'file/container/' + this.name + '?path='+path,
+            url: App.baseAPI+'file/list/container/' + this.name + '?path='+path,
             type: 'GET',
             success: $.proxy(this.onFileListSuccess, this)
         });
@@ -124,18 +137,20 @@ App.containerDetails = App.containerDetails || {
         console.log(this.name);
         var name = this.name;
         $("#tree").fancytree({
-           checkbox: true,
            source: this.treeSource,
            lazyLoad: function(event, data) {
                 var node = data.node;
                 data.result = {
-                    url: App.baseAPI+'file/container/' + name + '?path=/'+node.key,
-                    data: {mode: 'childre', parent: node.key},
+                    url: App.baseAPI+'file/list/container/' + name + '?path='+node.getKeyPath(),
+                    data: {mode: 'children', parent: node.key},
                     cache: false,
                 }
            },
            dblclick: function(event, data) {
-               console.log(data);
+               var node = data.node;
+               if (!node.folder) {
+                    $.proxy(App.containerDetails.readFileContent(node.getKeyPath()));
+               }
            },
            activate: function(event, data){
                $("#status").text("Activate: " + data.node);
@@ -461,9 +476,9 @@ App.containerDetails = App.containerDetails || {
 //        $('#deleteFileModal .modal-title').text('New File > home/user/folder');
         $("#deleteFileModal").modal("show");
     },
-    viewFile: function() {
-        $('#viewFileModal .modal-title').text('');
-        $('#viewFileModal .modal-title').text('home/user/folder/something.txt');
+    viewFile: function(text, path) {
+        $('#viewFileModal .modal-title').text(path);
+        $('#viewText').text(text);
         $("#viewFileModal").modal("show");
     },
     uploadFile: function() {

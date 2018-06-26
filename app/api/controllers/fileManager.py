@@ -10,7 +10,34 @@ import json
 file_manager_api = Blueprint('file_manager_api', __name__)
 
 
-@file_manager_api.route('/container/<string:name>')
+@file_manager_api.route('/content/container/<string:name>')
+@jwt_required()
+def content(name):
+    path = request.args.get('path')
+    if path == None:
+        return jsonify([])
+        #return response.replyFailed('Path is missing')
+
+    input = {}
+    input['name'] = name
+    input['path'] = path
+
+    try:
+
+        try:
+            #Folder
+            fileManager = LXCFileManager(input)
+            items = json.loads(fileManager.download().decode('utf-8'))['metadata']
+            return response.replyFailed('Please enter a valid file path')
+        except:
+            #File
+            result = fileManager.download()
+            return response.reply(result)
+
+    except ValueError as ex:
+        return response.replyFailed(ex.__str__())
+
+@file_manager_api.route('/list/container/<string:name>')
 @jwt_required()
 def list(name):
     path = request.args.get('path')
