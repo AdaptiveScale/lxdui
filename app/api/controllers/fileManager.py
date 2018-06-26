@@ -12,12 +12,52 @@ file_manager_api = Blueprint('file_manager_api', __name__)
 
 @file_manager_api.route('/container/<string:name>')
 @jwt_required()
-def list():
+def list(name):
+    path = request.args.get('path')
+    if path == None:
+        return jsonify([])
+        #return response.replyFailed('Path is missing')
+
+    input = {}
+    input['name'] = name
+    input['path'] = path
+
     try:
-        fileManager = LXCFileManager()
-        return response.reply(fileManager.list())
+        fileManager = LXCFileManager(input)
+        try:
+            results = []
+            #Folder
+            items = json.loads(fileManager.download().decode('utf-8'))['metadata']
+            for item in items:
+                input['path'] = path + '/' + item
+                results.append({
+                    'title': item,
+                    'key': item,
+                    'folder': isFolder(LXCFileManager(input)),
+                    'lazy': isFolder(LXCFileManager(input)),
+                })
+
+            return jsonify(results)
+            return response.reply(results)
+        except:
+            #File
+            return jsonify([])
+            return response.replyFailed('Please enter a valid directory path')
+            #result = fileManager.download()
+
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
+
+
+def isFolder(fileManager):
+    try:
+        # Folder
+        result = json.loads(fileManager.download().decode('utf-8'))['metadata']
+        return True
+    except:
+        # File
+        result = fileManager.download()
+        return False
 
 
 #List directory or open file
@@ -31,8 +71,10 @@ def download(name):
         fileManager = LXCFileManager(input)
 
         try:
+            # Folder
             result = json.loads(fileManager.download().decode('utf-8'))['metadata']
         except:
+            # File
             result = fileManager.download()
 
         return response.reply(result)

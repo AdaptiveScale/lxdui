@@ -114,28 +114,28 @@ App.containerDetails = App.containerDetails || {
     },
     listDirectory: function(path) {
         return $.ajax({
-            url: App.baseAPI+'file/container/' + this.name,
-            type: 'PUT',
-            data: JSON.stringify({
-                path: path
-            }),
+            url: App.baseAPI+'file/container/' + this.name + '?path='+path,
+            type: 'GET',
             success: $.proxy(this.onFileListSuccess, this)
         });
     },
     onFileListSuccess: function(response) {
-        source = [];
-        for (var d in response.data) {
-            source.push({
-                'title': response.data[d]
-            });
-        }
-        this.treeSource = source;
+        this.treeSource = response;
+        console.log(this.name);
+        var name = this.name;
         $("#tree").fancytree({
            checkbox: true,
            source: this.treeSource,
+           lazyLoad: function(event, data) {
+                var node = data.node;
+                data.result = {
+                    url: App.baseAPI+'file/container/' + name + '?path=/'+node.key,
+                    data: {mode: 'childre', parent: node.key},
+                    cache: false,
+                }
+           },
            dblclick: function(event, data) {
                console.log(data);
-               this.updateTreeSource(data);
            },
            activate: function(event, data){
                $("#status").text("Activate: " + data.node);
