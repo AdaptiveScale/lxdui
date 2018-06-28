@@ -41,6 +41,7 @@ App.containerDetails = App.containerDetails || {
 
     loading:false,
     rawJson:null,
+    activeNode: null,
     init: function(){
         this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
         this.rawJson = ace.edit('rawJson');
@@ -106,12 +107,29 @@ App.containerDetails = App.containerDetails || {
         $('#file-btn-upload').on('click', $.proxy(this.uploadFile, this));
         $('#file-btn-delete').on('click', $.proxy(this.deleteFile, this));
         $('#uploadFileSubmit').on('click', $.proxy(this.uploadFile2, this));
+        $('#deleteFileSubmit').on('click', $.proxy(this.deleteFile2, this));
 //         $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
 
 
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
+    },
+    deleteFile2: function() {
+        var node = this.activeNode;
+        $.ajax({
+            url: App.baseAPI+'file/container/' + this.name,
+            type: 'DELETE',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'path': node.getKeyPath(),
+            }),
+            success: $.proxy(this.onFileDeletedSuccess, this)
+        });
+    },
+    onFileDeletedSuccess: function() {
+        $("#deleteFileModal").modal("hide");
+        this.listDirectory('/');
     },
     uploadFile2: function() {
         $.ajax({
@@ -495,9 +513,15 @@ App.containerDetails = App.containerDetails || {
         $("#editFileModal").modal("show");
     },
     deleteFile: function() {
-//        $('#deleteFileModal .modal-title').text('');
-//        $('#deleteFileModal .modal-title').text('New File > home/user/folder');
-        $("#deleteFileModal").modal("show");
+        var node = $("#tree").fancytree('getActiveNode');
+        if (node) {
+            $('#deleteFileModal .modal-title').text('');
+            $('#deleteFileModal .modal-body').text('Delete file '+node.getKeyPath());
+            $("#deleteFileModal").modal("show");
+            this.activeNode = node;
+        }
+
+
     },
     viewFile: function(text, path) {
         $('#viewFileModal .modal-title').text(path);
