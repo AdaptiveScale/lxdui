@@ -102,7 +102,7 @@ App.containerDetails = App.containerDetails || {
 
         $('#file-btn-new').on('click', $.proxy(this.createNewFile, this));
         $('#file-btn-edit').on('click', $.proxy(this.editFile, this));
-        $('#file-btn-view').on('click', $.proxy(this.viewFile, this));
+        $('#file-btn-view').on('click', $.proxy(this.viewSelectedFile, this));
         $('#file-btn-upload').on('click', $.proxy(this.uploadFile, this));
         $('#file-btn-delete').on('click', $.proxy(this.deleteFile, this));
 //         $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
@@ -111,6 +111,15 @@ App.containerDetails = App.containerDetails || {
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
+    },
+    viewSelectedFile: function() {
+        var node = $("#tree").fancytree('getActiveNode');
+        if (node) {
+            if (!node.folder) {
+                this.readFileContent(node.getKeyPath());
+            }
+        }
+
     },
     readFileContent: function(path) {
         $.ajax({
