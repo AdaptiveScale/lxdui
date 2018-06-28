@@ -105,12 +105,29 @@ App.containerDetails = App.containerDetails || {
         $('#file-btn-view').on('click', $.proxy(this.viewSelectedFile, this));
         $('#file-btn-upload').on('click', $.proxy(this.uploadFile, this));
         $('#file-btn-delete').on('click', $.proxy(this.deleteFile, this));
+        $('#uploadFileSubmit').on('click', $.proxy(this.uploadFile2, this));
 //         $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
 
 
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
+    },
+    uploadFile2: function() {
+        $.ajax({
+            url: App.baseAPI+'file/container/' + this.name,
+            type: 'POST',
+            dataType: false,
+            contentType: false,
+            data: JSON.stringify({
+                'path': $('#pathName').val(),
+                'file': $('#uploadFile')[0].files[0]
+            }),
+            success: $.proxy(this.onFileUploadSuccess, this)
+        });
+    },
+    onFileUploadSuccess: function() {
+        this.listDirectory('/');
     },
     viewSelectedFile: function() {
         var node = $("#tree").fancytree('getActiveNode');
@@ -129,9 +146,6 @@ App.containerDetails = App.containerDetails || {
         });
     },
     onFileContentSuccess: function(path, response) {
-        console.log(response);
-        console.log(response.data);
-        console.log(path);
         this.viewFile(response.data, path);
     },
     listDirectory: function(path) {
