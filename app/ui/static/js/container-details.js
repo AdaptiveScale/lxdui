@@ -11,6 +11,7 @@ App.containerDetails = App.containerDetails || {
     selectedSnapshot: null,
     dataTable:null,
     initiated:false,
+    treeSource: [],
     tableSettings: {
         rowId:'name',
         searching:false,
@@ -40,6 +41,7 @@ App.containerDetails = App.containerDetails || {
 
     loading:false,
     rawJson:null,
+    activeNode: null,
     init: function(){
         this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
         this.rawJson = ace.edit('rawJson');
@@ -57,21 +59,21 @@ App.containerDetails = App.containerDetails || {
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
 
-        $("#tree").fancytree({
-       checkbox: true,
-       source: [
-           {title: "Node 1"},
-           {title: "Node 2", key: "id2"},
-           {title: "Folder 3", folder: true, children: [
-               {title: "Node 3.1"},
-               {title: "Node 3.2"}
-           ]},
-           {title: "Folder 2", folder: true}
-       ],
-       activate: function(event, data){
-           $("#status").text("Activate: " + data.node);
-       }
-   });
+//       $("#tree").fancytree({
+//           checkbox: true,
+//           source: [
+//               {title: "Node 1"},
+//               {title: "Node 2", key: "id2"},
+//               {title: "Folder 3", folder: true, children: [
+//                   {title: "Node 3.1"},
+//                   {title: "Node 3.2"}
+//               ]},
+//               {title: "Folder 2", folder: true}
+//           ],
+//           activate: function(event, data){
+//               $("#status").text("Activate: " + data.node);
+//           }
+//       });
         App.setActiveLink('');
 
         $('#buttonCloneContainerDetail').on('click', $.proxy(this.showCloneContainer, this));
@@ -101,9 +103,11 @@ App.containerDetails = App.containerDetails || {
 
         $('#file-btn-new').on('click', $.proxy(this.createNewFile, this));
         $('#file-btn-edit').on('click', $.proxy(this.editFile, this));
-        $('#file-btn-view').on('click', $.proxy(this.viewFile, this));
+        $('#file-btn-view').on('click', $.proxy(this.viewSelectedFile, this));
         $('#file-btn-upload').on('click', $.proxy(this.uploadFile, this));
         $('#file-btn-delete').on('click', $.proxy(this.deleteFile, this));
+        $('#uploadFileSubmit').on('click', $.proxy(this.uploadFile2, this));
+        $('#deleteFileSubmit').on('click', $.proxy(this.deleteFile2, this));
 //         $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
 
 
@@ -111,9 +115,96 @@ App.containerDetails = App.containerDetails || {
 
         this.initKeyValuePairs();
     },
+    deleteFile2: function() {
+        var node = this.activeNode;
+        $.ajax({
+            url: App.baseAPI+'file/container/' + this.name,
+            type: 'DELETE',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'path': node.getKeyPath(),
+            }),
+            success: $.proxy(this.onFileDeletedSuccess, this)
+        });
+    },
+    onFileDeletedSuccess: function() {
+        $("#deleteFileModal").modal("hide");
+        this.listDirectory('/');
+    },
+    uploadFile2: function() {
+        $.ajax({
+            url: App.baseAPI+'file/container/' + this.name,
+            type: 'POST',
+            dataType: false,
+            contentType: false,
+            data: JSON.stringify({
+                'path': $('#pathName').val(),
+                'file': $('#uploadFile')[0].files[0]
+            }),
+            success: $.proxy(this.onFileUploadSuccess, this)
+        });
+    },
+    onFileUploadSuccess: function() {
+        this.listDirectory('/');
+    },
+    viewSelectedFile: function() {
+        var node = $("#tree").fancytree('getActiveNode');
+        if (node) {
+            if (!node.folder) {
+                this.readFileContent(node.getKeyPath());
+            }
+        }
+
+    },
+    readFileContent: function(path) {
+        $.ajax({
+            url: App.baseAPI+'file/content/container/' + this.name + '?path='+path,
+            type: 'GET',
+            success: $.proxy(this.onFileContentSuccess, this, path)
+        });
+    },
+    onFileContentSuccess: function(path, response) {
+        this.viewFile(response.data, path);
+    },
+    listDirectory: function(path) {
+        return $.ajax({
+            url: App.baseAPI+'file/list/container/' + this.name + '?path='+path,
+            type: 'GET',
+            success: $.proxy(this.onFileListSuccess, this)
+        });
+    },
+    onFileListSuccess: function(response) {
+        this.treeSource = response;
+        console.log(this.name);
+        var name = this.name;
+        $("#tree").fancytree({
+           source: this.treeSource,
+           lazyLoad: function(event, data) {
+                var node = data.node;
+                data.result = {
+                    url: App.baseAPI+'file/list/container/' + name + '?path='+node.getKeyPath(),
+                    data: {mode: 'children', parent: node.key},
+                    cache: false,
+                }
+           },
+           dblclick: function(event, data) {
+               var node = data.node;
+               if (!node.folder) {
+                    $.proxy(App.containerDetails.readFileContent(node.getKeyPath()));
+               }
+           },
+           activate: function(event, data){
+               $("#status").text("Activate: " + data.node);
+           }
+       });
+    },
     initContainerDetails: function(name) {
         this.name = name;
         this.getSnapshotList();
+        this.listDirectory('/');
+    },
+    updateTreeSource: function(data) {
+        this.listDirectory(data.node.title);
     },
     initKeyValuePairs: function() {
         for (key in App.properties.keyValues) {
@@ -422,13 +513,19 @@ App.containerDetails = App.containerDetails || {
         $("#editFileModal").modal("show");
     },
     deleteFile: function() {
-//        $('#deleteFileModal .modal-title').text('');
-//        $('#deleteFileModal .modal-title').text('New File > home/user/folder');
-        $("#deleteFileModal").modal("show");
+        var node = $("#tree").fancytree('getActiveNode');
+        if (node) {
+            $('#deleteFileModal .modal-title').text('');
+            $('#deleteFileModal .modal-body').text('Delete file '+node.getKeyPath());
+            $("#deleteFileModal").modal("show");
+            this.activeNode = node;
+        }
+
+
     },
-    viewFile: function() {
-        $('#viewFileModal .modal-title').text('');
-        $('#viewFileModal .modal-title').text('home/user/folder/something.txt');
+    viewFile: function(text, path) {
+        $('#viewFileModal .modal-title').text(path);
+        $('#viewText').text(text);
         $("#viewFileModal").modal("show");
     },
     uploadFile: function() {
