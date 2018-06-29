@@ -112,12 +112,16 @@ def download(name):
 @file_manager_api.route('/container/<string:name>', methods=['POST'])
 @jwt_required()
 def upload_file(name):
-    input = request.get_json(silent=True)
-    #validation = doValidate(input)
-    # if validation:
-    #     return response.replyFailed(message=validation.message)
-
-    input['name'] = name
+    input = None
+    try:
+        file = request.files.get('file')
+        input = {
+            'name':name,
+            'path':request.form.get('path')+file.filename,
+            'file':file
+        }
+    except:
+        return  response.replyFailed(message='Missing one the required fields: [path,file]')
 
     try:
         fileManager = LXCFileManager(input)
