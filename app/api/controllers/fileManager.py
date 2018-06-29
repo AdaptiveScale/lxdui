@@ -130,6 +130,20 @@ def upload_file(name):
         return response.replyFailed(ex.__str__())
 
 
+@file_manager_api.route('/new/container/<string:name>', methods=['POST'])
+@jwt_required()
+def new_file(name):
+    input = request.get_json(silent=True)
+
+    input['name'] = name
+
+    try:
+        fileManager = LXCFileManager(input)
+        return response.reply(fileManager.push())
+    except ValueError as ex:
+        return response.replyFailed(ex.__str__())
+
+
 @file_manager_api.route('/container/<string:name>', methods=['DELETE'])
 @jwt_required()
 def delete_profile(name):

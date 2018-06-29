@@ -108,12 +108,29 @@ App.containerDetails = App.containerDetails || {
         $('#file-btn-delete').on('click', $.proxy(this.deleteFile, this));
         $('#uploadFileSubmit').on('click', $.proxy(this.uploadFile2, this));
         $('#deleteFileSubmit').on('click', $.proxy(this.deleteFile2, this));
+        $('#newFileSubmit').on('click', $.proxy(this.newFile, this));
 //         $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
 
 
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
+    },
+    newFile: function() {
+        $.ajax({
+            url: App.baseAPI+'file/new/container/' + this.name,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'path': $("#fileName").val(),
+                'file': $('#fileContent').val()
+            }),
+            success: $.proxy(this.onNewFileSuccess, this)
+        });
+    },
+    onNewFileSuccess: function() {
+        $("#newFileManagerModal").modal("hide");
+        this.listDirectory('/');
     },
     deleteFile2: function() {
         var node = this.activeNode;
@@ -198,6 +215,7 @@ App.containerDetails = App.containerDetails || {
                $("#status").text("Activate: " + data.node);
                if(data.node.folder){
                 $('#pathName').val(data.node.getKeyPath()+'/');
+                $('#path').val(data.node.getKeyPath() + '/');
                }
            }
        });
@@ -508,7 +526,7 @@ App.containerDetails = App.containerDetails || {
     },
     createNewFile: function() {
         $('#newFileManagerModal .modal-title').text('');
-        $('#newFileManagerModal .modal-title').text('New File > home/user/folder');
+        $('#newFileManagerModal .modal-title').text('New File');
         $("#newFileManagerModal").modal("show");
     },
     editFile: function() {
