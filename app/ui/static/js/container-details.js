@@ -101,6 +101,7 @@ App.containerDetails = App.containerDetails || {
         $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
         $('#buttonNewContainerSnapshot').on('click', $.proxy(this.createContainerSnapshot, this));
 
+        $('#file-btn-home').on('click', $.proxy(this.home, this));
         $('#file-btn-new').on('click', $.proxy(this.createNewFile, this));
         $('#file-btn-edit').on('click', $.proxy(this.viewSelectedFile, this, true));
         $('#file-btn-view').on('click', $.proxy(this.viewSelectedFile, this, false));
@@ -116,6 +117,16 @@ App.containerDetails = App.containerDetails || {
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
+    },
+    home: function() {
+        $("#tree").fancytree('getTree').visit(function(node) {
+            if (node.getKeyPath() == '/home') {
+                node.setExpanded(true);
+            }
+            else {
+                node.setExpanded(false);
+            }
+        });
     },
     editFile: function() {
         var activeNode = this.activeNode;
