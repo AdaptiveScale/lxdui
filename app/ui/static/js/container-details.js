@@ -102,19 +102,37 @@ App.containerDetails = App.containerDetails || {
         $('#buttonNewContainerSnapshot').on('click', $.proxy(this.createContainerSnapshot, this));
 
         $('#file-btn-new').on('click', $.proxy(this.createNewFile, this));
-        $('#file-btn-edit').on('click', $.proxy(this.editFile, this));
-        $('#file-btn-view').on('click', $.proxy(this.viewSelectedFile, this));
+        $('#file-btn-edit').on('click', $.proxy(this.viewSelectedFile, this, true));
+        $('#file-btn-view').on('click', $.proxy(this.viewSelectedFile, this, false));
         $('#file-btn-upload').on('click', $.proxy(this.uploadFile, this));
         $('#file-btn-delete').on('click', $.proxy(this.deleteFile, this));
         $('#uploadFileSubmit').on('click', $.proxy(this.uploadFile2, this));
         $('#deleteFileSubmit').on('click', $.proxy(this.deleteFile2, this));
         $('#newFileSubmit').on('click', $.proxy(this.newFile, this));
+        $('#editFileSubmit').on('click', $.proxy(this.editFile, this));
 //         $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
 
 
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
+    },
+    editFile: function() {
+        var activeNode = this.activeNode;
+        $.ajax({
+            url: App.baseAPI+'file/edit/container/' + this.name,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'path': activeNode.getKeyPath(),
+                'file': $('#editText').val()
+            }),
+            success: $.proxy(this.onEditFileSuccess, this)
+        });
+    },
+    onEditFileSuccess: function() {
+        $("#editFileModal").modal("hide");
+        this.listDirectory('/');
     },
     newFile: function() {
         $.ajax({
@@ -166,24 +184,24 @@ App.containerDetails = App.containerDetails || {
         $('#uploadFileModal').modal("hide");
         $('#uploadFile').val(''); //clear file selection value
     },
-    viewSelectedFile: function() {
+    viewSelectedFile: function(edit) {
         var node = $("#tree").fancytree('getActiveNode');
         if (node) {
             if (!node.folder) {
-                this.readFileContent(node.getKeyPath());
+                this.readFileContent(node.getKeyPath(), edit);
             }
         }
 
     },
-    readFileContent: function(path) {
+    readFileContent: function(path, edit) {
         $.ajax({
             url: App.baseAPI+'file/content/container/' + this.name + '?path='+path,
             type: 'GET',
-            success: $.proxy(this.onFileContentSuccess, this, path)
+            success: $.proxy(this.onFileContentSuccess, this, path, edit)
         });
     },
-    onFileContentSuccess: function(path, response) {
-        this.viewFile(response.data, path);
+    onFileContentSuccess: function(path, edit, response) {
+        this.viewFile(response.data, path, edit);
     },
     listDirectory: function(path) {
         return $.ajax({
@@ -529,9 +547,9 @@ App.containerDetails = App.containerDetails || {
         $('#newFileManagerModal .modal-title').text('New File');
         $("#newFileManagerModal").modal("show");
     },
-    editFile: function() {
-        $('#editFileModal .modal-title').text('');
-        $('#editFileModal .modal-title').text('New File > home/user/folder');
+    editSelectedFile: function(text, path) {
+        $('#editFileModal .modal-title').text(path);
+        $('#editText').text(text);
         $("#editFileModal").modal("show");
     },
     deleteFile: function() {
@@ -545,10 +563,16 @@ App.containerDetails = App.containerDetails || {
 
 
     },
-    viewFile: function(text, path) {
-        $('#viewFileModal .modal-title').text(path);
-        $('#viewText').text(text);
-        $("#viewFileModal").modal("show");
+    viewFile: function(text, path, edit) {
+        this.activeNode = $("#tree").fancytree('getActiveNode');
+        if (edit) {
+            this.editSelectedFile(text, path);
+        }
+        else {
+            $('#viewFileModal .modal-title').text(path);
+            $('#viewText').text(text);
+            $("#viewFileModal").modal("show");
+        }
     },
     uploadFile: function() {
 //        $('#uploadFileModal .modal-title').text('');
