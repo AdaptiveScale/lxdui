@@ -64,7 +64,7 @@ var App = App || {
             $.ajaxSetup({
                 headers:{
                     Authorization:'JWT '+sessionStorage.getItem('authToken'),
-                    'Content-Type':'application/json'
+//                    'Content-Type':'application/json' //commented for file upload as temporary workaround
                 },
                 beforeSend: function(xhr, settings) {
                     App.ongoingOperation +=1;

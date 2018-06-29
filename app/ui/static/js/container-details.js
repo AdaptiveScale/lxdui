@@ -132,20 +132,22 @@ App.containerDetails = App.containerDetails || {
         this.listDirectory('/');
     },
     uploadFile2: function() {
+        var tempData = new FormData();
+        tempData.append('path', $('#pathName').val());
+        tempData.append('file', $('#uploadFile')[0].files[0]);
         $.ajax({
             url: App.baseAPI+'file/container/' + this.name,
             type: 'POST',
-            dataType: false,
             contentType: false,
-            data: JSON.stringify({
-                'path': $('#pathName').val(),
-                'file': $('#uploadFile')[0].files[0]
-            }),
+            processData: false,
+            data: tempData,
             success: $.proxy(this.onFileUploadSuccess, this)
         });
     },
     onFileUploadSuccess: function() {
         this.listDirectory('/');
+        $('#uploadFileModal').modal("hide");
+        $('#uploadFile').val(''); //clear file selection value
     },
     viewSelectedFile: function() {
         var node = $("#tree").fancytree('getActiveNode');
@@ -175,7 +177,6 @@ App.containerDetails = App.containerDetails || {
     },
     onFileListSuccess: function(response) {
         this.treeSource = response;
-        console.log(this.name);
         var name = this.name;
         $("#tree").fancytree({
            source: this.treeSource,
@@ -195,6 +196,9 @@ App.containerDetails = App.containerDetails || {
            },
            activate: function(event, data){
                $("#status").text("Activate: " + data.node);
+               if(data.node.folder){
+                $('#pathName').val(data.node.getKeyPath()+'/');
+               }
            }
        });
     },
@@ -531,6 +535,7 @@ App.containerDetails = App.containerDetails || {
     uploadFile: function() {
 //        $('#uploadFileModal .modal-title').text('');
 //        $('#uploadFileModal .modal-title').text('N');
+        $('#uploadFolderLocation').text($('#pathName').val());
         $("#uploadFileModal").modal("show");
     },
     newContainerFromSnapshotDetail: function() {
