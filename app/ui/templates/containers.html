@@ -149,11 +149,11 @@
                     <div class="col-md-5">
                         <select class="form-control" id="containerImage" name="image">
                             {% for image in images %}
-                            {% if image.properties.get('description') == None %}
-                            <option value="{{image.fingerprint}}">{{image.aliases[0].name}}</option>
-                            {% else %}
-                            <option value="{{image.fingerprint}}">{{image.properties.description}}</option>
-                            {% endif %}
+                                {% if image.properties.get('description') == None %}
+                                    <option value="{{image.fingerprint}}">{{image.aliases[0].name if image.aliases[0] else 'N/A'}}</option>
+                                {% else %}
+                                    <option value="{{image.fingerprint}}">{{image.properties.description if image.properties.description else 'N/A'}}</option>
+                                {% endif %}
                             {% endfor %}
                         </select>
                     </div>
