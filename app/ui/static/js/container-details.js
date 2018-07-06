@@ -258,8 +258,9 @@ App.containerDetails = App.containerDetails || {
         this.listDirectory(data.node.title);
     },
     initKeyValuePairs: function() {
+        $('#advancedSettings .manuallyAdded').remove()
         for (key in App.properties.keyValues) {
-            $('#advancedSettings').append('<div class="row">' +
+            $('#advancedSettings').append('<div class="row manuallyAdded">' +
                     '<div class="col-lg-1"></div>'+
                     '<div class="col-lg-4">'+
                         '<div class="form-group row">' +
@@ -272,13 +273,13 @@ App.containerDetails = App.containerDetails || {
                     '<div class="col-lg-1"></div>'+
                     '<div class="col-lg-4">' +
                         '<div class="form-group row">' +
-                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="'+((this.data.config)?this.data.config[key] || '':'')+'" '+((this.data.config && this.data.config[key])?'':'disabled')+' />' +
                         '</div>' +
                     '</div>' +
                      '<div class="col-lg-2">' +
                          '<div class="btn-group" role="group">' +
-                            '<button type="button" id="" class="formModifier btn btn-sm btn-default" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
-                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-'+((this.data.config && this.data.config[key])?'success':'default')+'" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-'+((this.data.config && this.data.config[key])?'default':'danger')+'" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
                         '</div>' +
                      '</div>' +
                 '</div>');

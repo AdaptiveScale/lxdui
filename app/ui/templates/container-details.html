@@ -10,6 +10,7 @@
         $(function () {
             $.proxy(App.containerDetails.initContainerDetails('{{container.name}}'));
             App.containerDetails.data = {{container|tojson}};
+            App.containerDetails.initKeyValuePairs.call(App.containerDetails);
             App.containerDetails.setInitialData.call(App.containerDetails);
         });
     </script>
