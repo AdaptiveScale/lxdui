@@ -89,11 +89,16 @@
                                     <tr id="{{image.fingerprint}}">
                                         <td></td>
                                         {% if image.properties.get('description') == None %}
-                                        <td>
-                                            <a class="pointer"
-                                               onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
-                                        </td>
-                                        <td>{{image.aliases[0].description}}</td>
+                                            {% if image.aliases %}
+                                                <td>
+                                                    <a class="pointer"
+                                                       onClick="App.images.launchContainer('{{image.fingerprint}}');">{{image.aliases[0].name}}</a>
+                                                </td>
+                                                <td>{{image.aliases[0].description}}</td>
+                                            {% else %}
+                                                <td>N/A</td>
+                                                <td>N/A</td>
+                                            {% endif %}
                                         {% else %}
                                         <td>
                                             <a class="pointer"
@@ -102,12 +107,16 @@
                                         <td>{{ image.properties.description }}</td>
                                         {% endif %}
                                         <td>
-                                            {% for alias in image.aliases %}
-                                            <li>{{alias.name}}</li>
-                                            {% endfor %}
+                                            {% if not image.aliases %}
+                                                N/A
+                                            {% else %}
+                                                {% for alias in image.aliases %}
+                                                <li>{{alias.name}}</li>
+                                                {% endfor %}
+                                            {% endif %}
                                         </td>
-                                        <td>{{ image.properties.release }}</td>
-                                        <td>{{ image.properties.architecture }}</td>
+                                        <td>{{ image.properties.release if image.properties.release else 'N/A' }}</td>
+                                        <td>{{ image.properties.architecture if image.properties.architecture else 'N/A' }}</td>
                                         <td class="imageSize">{{ image.size }}</td>
                                     </tr>
                                     {% endfor %}
