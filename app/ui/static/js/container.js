@@ -14,7 +14,7 @@ App.containers = App.containers || {
         select: true,
         dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-4'i><'col-sm-1 text-right'l><'col-sm-7 text-right'p>>",
+        "<'row'<'col-sm-4'i><'col-sm-2 text-right'l><'col-sm-6 text-right'p>>",
         "oLanguage": {
           "sLengthMenu": "List _MENU_ ",
         },
