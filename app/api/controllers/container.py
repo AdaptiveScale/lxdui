@@ -183,3 +183,43 @@ def unfreezeContainer(name):
         return response.replySuccess(container.info(), message='Container {} is unfrozen.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
+
+
+@container_api.route('/network/<name>/add', methods=['POST'])
+@jwt_required()
+def addNetwork(name):
+    input = request.get_json(silent=True)
+    try:
+        container = LXCContainer({'name': name})
+        return response.replySuccess(container.addNetwork(input))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
+@container_api.route('/network/<name>/remove/<network>', methods=['DELETE'])
+@jwt_required()
+def removeNetwork(name, network):
+    try:
+        container = LXCContainer({'name': name})
+        return response.replySuccess(container.removeNetwork(network))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+@container_api.route('/proxy/<name>/add/<proxy>', methods=['POST'])
+@jwt_required()
+def addProxy(name, proxy):
+    input = request.get_json(silent=True)
+    try:
+        container = LXCContainer({'name': name})
+        return response.replySuccess(container.addProxy(proxy, input))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+@container_api.route('/proxy/<name>/remove/<proxy>', methods=['DELETE'])
+@jwt_required()
+def removeProxy(name, proxy):
+    try:
+        container = LXCContainer({'name': name})
+        return response.replySuccess(container.removeProxy(proxy))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())

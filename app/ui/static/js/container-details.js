@@ -117,6 +117,17 @@ App.containerDetails = App.containerDetails || {
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
+        this.extractIPs();
+        this.extractPorts();
+        $('#addProxyForm').on('submit', $.proxy(this.addProxy, this));
+        $('#addProxy').on('click', $.proxy(this.addProxy, this));
+        $('.showAddProxyDialog').on('click', $.proxy(this.showAddProxy, this));
+    },
+    extractPorts: function(){
+        $('.portToExtract').each((key,val)=> $(val).text(App.helpers.extractPort($(val).text())));
+    },
+    extractIPs: function() {
+        $('.ipToExtract').each((key,val)=> $(val).text(App.helpers.extractIP($(val).text())));
     },
     home: function() {
         $("#tree").fancytree('getTree').visit(function(node) {
@@ -733,9 +744,45 @@ App.containerDetails = App.containerDetails || {
              $('#buttonAutostartInactive').removeClass('btn-default');
              $('#buttonAutostartInactive').addClass('btn-success');
         }
+    },
+    removeProxy: function(name){
+        $.ajax({
+            url:App.baseAPI+'container/proxy/'+this.data.name+'/remove/'+name,
+            type:'DELETE',
+            dataType:'json',
+            contentType:'application/json',
+            success:$.proxy(this.removeProxySuccess, this)
+        });
+    },
+    removeProxySuccess: function(){
+        return window.location.reload();
+    },
+    showAddProxy: function(){
+        $('#addProxyModal').modal('show');
+        $('#container').val(_.get(this, 'data.network.eth0.addresses[0].address', '0.0.0.0'));
+    },
+    addProxy: function(e){
+        var isValid = $('#addProxyForm')[0].checkValidity();
+        if(e){
+           e.preventDefault();
+        }
+        if(!isValid){
+            return false;
+        }
+        var input = $('#addProxyForm').serializeJSON();
+        $.ajax({
+            url:App.baseAPI+'container/proxy/'+this.data.name+'/add/'+input.name,
+            type:'POST',
+            dataType:'json',
+            data:JSON.stringify({
+                listen:input.protocol+':'+input.host+':'+input.hostPort,
+                connect:input.protocol +':'+input.container+':'+input.containerPort,
+                type:'proxy'
+            }),
+            contentType:'application/json',
+            success:$.proxy(this.removeProxySuccess, this)
+        });
+
+        return false;
     }
-//    ,
-//    showTerminalContainer: function(container) {
-//        window.open('/terminal/new/' + container + '/' + sessionStorage.getItem('authToken'), '_blank');
-//    }
 }
