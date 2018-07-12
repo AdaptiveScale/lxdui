@@ -17,7 +17,9 @@ class LXCContainer(LXDModule):
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
         if self.client.containers.exists(self.data.get('name')):
-            self.data['config'] = self.info()['config'];
+            existing = self.info()
+            self.data['config'] = existing['config'];
+            self.data['devices'] = existing['devices']
 
         if input.get('image'):
             self.setImageType(input.get('image'))
@@ -348,4 +350,51 @@ class LXCContainer(LXDModule):
             logging.exception(e)
             raise ValueError(e)
 
+    def initNetwork(self):
+        print(self.data.get('devices'))
+        if not self.data.get('devices', None):
+            self.data['devices']={}
 
+    def addNetwork(self, network):
+        self.initNetwork()
+        self.data['devices'][network['name']]=network
+        try:
+            container = self.client.containers.get(self.data['name'])
+            container.devices = self.data['devices']
+            container.save()
+            return self.info()
+        except Exception as e:
+            raise ValueError(e)
+
+    def removeNetwork(self, networkName):
+        self.initNetwork()
+        del self.data['devices'][networkName]
+        try:
+            container = self.client.containers.get(self.data['name'])
+            container.devices = self.data['devices']
+            container.save()
+            return self.info()
+        except Exception as e:
+            raise ValueError(e)
+
+    def addProxy(self, name, proxy):
+        self.initNetwork()
+        self.data['devices'][name] = proxy
+        try:
+            container = self.client.containers.get(self.data['name'])
+            container.devices = self.data['devices']
+            container.save()
+            return self.info()
+        except Exception as e:
+            raise ValueError(e)
+
+    def removeProxy(self, name):
+        self.initNetwork()
+        del self.data['devices'][name]
+        try:
+            container = self.client.containers.get(self.data['name'])
+            container.devices = self.data['devices']
+            container.save()
+            return self.info()
+        except Exception as e:
+            raise ValueError(e)

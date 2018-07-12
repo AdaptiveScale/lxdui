@@ -147,6 +147,14 @@ var App = App || {
             var base64Url = token.split('.')[1];
             var base64 = base64Url.replace('-', '+').replace('_', '/');
             return JSON.parse(window.atob(base64));
+        },
+        extractIP(value){
+            result = value.match(/\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b/);
+            return (result)?result[0]:'N/A';
+        },
+        extractPort(value){
+            result = value.substring(value.lastIndexOf(':')+1, value.length);
+            return result || 'N/A';
         }
     }
 };
