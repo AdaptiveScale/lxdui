@@ -31,7 +31,7 @@ def content(name):
             return response.replyFailed('Please enter a valid file path')
         except:
             #File
-            result = fileManager.download()
+            result = fileManager.download().decode('utf-8')
             return response.reply(result)
 
     except ValueError as ex:
