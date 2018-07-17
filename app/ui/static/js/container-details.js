@@ -259,6 +259,10 @@ App.containerDetails = App.containerDetails || {
                if(data.node.folder){
                 $('#pathName').val(data.node.getKeyPath()+'/');
                 $('#path').val(data.node.getKeyPath() + '/');
+                $('#file-btn-download,#file-btn-view,#file-btn-edit').attr("disabled", "disabled");
+               }
+               else {
+                $('#file-btn-download,#file-btn-view,#file-btn-edit').removeAttr("disabled");
                }
            }
        });
