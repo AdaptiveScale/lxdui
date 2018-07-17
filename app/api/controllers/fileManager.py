@@ -1,10 +1,11 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, send_from_directory, Response, make_response, send_file
 from flask import jsonify
 from flask_jwt import jwt_required
 
 from app.api.models.LXCFileManager import LXCFileManager
 from app.api.utils import response
 
+import io
 import json
 
 file_manager_api = Blueprint('file_manager_api', __name__)
@@ -105,6 +106,33 @@ def download(name):
             result = fileManager.download()
 
         return response.reply(result)
+    except ValueError as ex:
+        return response.replyFailed(ex.__str__())
+
+
+@file_manager_api.route('/download/container/<string:name>', methods=['GET'])
+#@jwt_required()
+def download_file(name):
+    path = request.args.get('path')
+    if path == None:
+        return jsonify([])
+
+    input = {}
+    input['name'] = name
+    input['path'] = path
+
+    try:
+        try:
+            #Folder
+            fileManager = LXCFileManager(input)
+            items = json.loads(fileManager.download().decode('utf-8'))['metadata']
+            return response.replyFailed('Please select a file for download')
+        except:
+            #File
+            fileManager = LXCFileManager(input)
+            file = io.BytesIO(fileManager.download())
+            return send_file(file, attachment_filename=path.rsplit("/").pop(), mimetype="application/octet-stream", as_attachment=True)
+
     except ValueError as ex:
         return response.replyFailed(ex.__str__())
 
