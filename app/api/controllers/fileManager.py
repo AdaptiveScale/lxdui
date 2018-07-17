@@ -4,9 +4,11 @@ from flask_jwt import jwt_required
 
 from app.api.models.LXCFileManager import LXCFileManager
 from app.api.utils import response
+from app.api.utils.authentication import jwt_decode_handler
 
 import io
 import json
+
 
 file_manager_api = Blueprint('file_manager_api', __name__)
 
@@ -111,9 +113,13 @@ def download(name):
 
 
 @file_manager_api.route('/download/container/<string:name>', methods=['GET'])
-#@jwt_required()
 def download_file(name):
     path = request.args.get('path')
+    token = request.args.get('token')
+    print (token)
+    if not checkAuthentication(token):
+        return response.replyFailed('Not authorized')
+
     if path == None:
         return jsonify([])
 
@@ -203,3 +209,10 @@ def delete_profile(name):
         return response.reply()
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())
+
+
+def checkAuthentication(token):
+    try:
+        return jwt_decode_handler(token)
+    except Exception as e:
+        return False
