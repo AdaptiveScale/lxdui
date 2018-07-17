@@ -122,6 +122,9 @@ App.containerDetails = App.containerDetails || {
         $('#addProxyForm').on('submit', $.proxy(this.addProxy, this));
         $('#addProxy').on('click', $.proxy(this.addProxy, this));
         $('.showAddProxyDialog').on('click', $.proxy(this.showAddProxy, this));
+        $('.showAddNetworkInterfaceDialog').on('click', $.proxy(this.showAddNetworkInterface, this));
+        $('#addNetworkInterfaceForm').on('submit', $.proxy(this.addNetworkInterface, this));
+        $('#addNetwork').on('click', $.proxy(this.addNetworkInterface, this))
     },
     extractPorts: function(){
         $('.portToExtract').each((key,val)=> $(val).text(App.helpers.extractPort($(val).text())));
@@ -784,5 +787,42 @@ App.containerDetails = App.containerDetails || {
         });
 
         return false;
+    },
+    showAddNetworkInterface: function(){
+        $('#addNetworkInterfaceModal').modal('show');
+//        $('#container').val(_.get(this, 'data.network.eth0.addresses[0].address', '0.0.0.0'));
+    },
+     removeProxySuccess: function(){
+        return window.location.reload();
+    },
+    addNetworkInterface: function(e) {
+        var isValid = $('#addNetworkInterfaceForm')[0].checkValidity();
+        if(e){
+           e.preventDefault();
+        }
+        if(!isValid){
+            return false;
+        }
+        var input = $('#addNetworkInterfaceForm').serializeJSON();
+        console.log('input', input);
+        $.ajax({
+            url:App.baseAPI+'container/network/'+this.data.name+'/add',
+            type:'POST',
+            dataType:'json',
+            data: JSON.stringify(input),
+            contentType:'application/json',
+            success:$.proxy(this.removeProxySuccess, this)
+        });
+
+        return false;
+    },
+    deleteInterface: function(ifaceName){
+        $.ajax({
+            url: App.baseAPI+'container/network/'+this.data.name+'/remove/'+ifaceName,
+            type:'DELETE',
+            dataType:'json',
+            contentType:'application/json',
+            success:$.proxy(this.removeProxySuccess, this)
+        });
     }
 }

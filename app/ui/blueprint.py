@@ -50,6 +50,7 @@ def containerDetails(name):
         return render_template('container-details.html', currentpage='Container Details',
                                container=container.info(),
                                profiles = getProfiles(),
+                               networks = LXDModule().listNetworks(),
                                lxdui_current_version=VERSION)
     except ValueError as ex:
         return render_template('container-details.html', currentpage='Container Details',
