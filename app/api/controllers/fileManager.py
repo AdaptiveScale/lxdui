@@ -1,11 +1,14 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, send_file
 from flask import jsonify
 from flask_jwt import jwt_required
 
 from app.api.models.LXCFileManager import LXCFileManager
 from app.api.utils import response
+from app.api.utils.authentication import jwt_decode_handler
 
+import io
 import json
+
 
 file_manager_api = Blueprint('file_manager_api', __name__)
 
@@ -109,6 +112,37 @@ def download(name):
         return response.replyFailed(ex.__str__())
 
 
+@file_manager_api.route('/download/container/<string:name>', methods=['GET'])
+def download_file(name):
+    path = request.args.get('path')
+    token = request.args.get('token')
+    print (token)
+    if not checkAuthentication(token):
+        return response.replyFailed('Not authorized')
+
+    if path == None:
+        return jsonify([])
+
+    input = {}
+    input['name'] = name
+    input['path'] = path
+
+    try:
+        try:
+            #Folder
+            fileManager = LXCFileManager(input)
+            items = json.loads(fileManager.download().decode('utf-8'))['metadata']
+            return response.replyFailed('Please select a file for download')
+        except:
+            #File
+            fileManager = LXCFileManager(input)
+            file = io.BytesIO(fileManager.download())
+            return send_file(file, attachment_filename=path.rsplit("/").pop(), mimetype="application/octet-stream", as_attachment=True)
+
+    except ValueError as ex:
+        return response.replyFailed(ex.__str__())
+
+
 @file_manager_api.route('/container/<string:name>', methods=['POST'])
 @jwt_required()
 def upload_file(name):
@@ -175,3 +209,10 @@ def delete_profile(name):
         return response.reply()
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())
+
+
+def checkAuthentication(token):
+    try:
+        return jwt_decode_handler(token)
+    except Exception as e:
+        return False

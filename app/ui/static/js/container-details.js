@@ -59,21 +59,6 @@ App.containerDetails = App.containerDetails || {
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
 
-//       $("#tree").fancytree({
-//           checkbox: true,
-//           source: [
-//               {title: "Node 1"},
-//               {title: "Node 2", key: "id2"},
-//               {title: "Folder 3", folder: true, children: [
-//                   {title: "Node 3.1"},
-//                   {title: "Node 3.2"}
-//               ]},
-//               {title: "Folder 2", folder: true}
-//           ],
-//           activate: function(event, data){
-//               $("#status").text("Activate: " + data.node);
-//           }
-//       });
         App.setActiveLink('');
 
         $('#buttonCloneContainerDetail').on('click', $.proxy(this.showCloneContainer, this));
@@ -111,7 +96,7 @@ App.containerDetails = App.containerDetails || {
         $('#deleteFileSubmit').on('click', $.proxy(this.deleteFile2, this));
         $('#newFileSubmit').on('click', $.proxy(this.newFile, this));
         $('#editFileSubmit').on('click', $.proxy(this.editFile, this));
-//         $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
+        $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
 
 
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
@@ -131,6 +116,21 @@ App.containerDetails = App.containerDetails || {
     },
     extractIPs: function() {
         $('.ipToExtract').each((key,val)=> $(val).text(App.helpers.extractIP($(val).text())));
+    },
+    downloadURI: function(uri, name) {
+        var link = document.createElement("a");
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        delete link;
+    },
+    downloadFile: function() {
+        this.activeNode = $("#tree").fancytree('getActiveNode');
+        var activeNode = this.activeNode;
+        if (!activeNode.folder)
+            this.downloadURI(App.baseAPI+'file/download/container/' + this.name + '?path=' + activeNode.getKeyPath() + "&token=" + sessionStorage.getItem('authToken'))
     },
     home: function() {
         $("#tree").fancytree('getTree').visit(function(node) {
@@ -601,8 +601,6 @@ App.containerDetails = App.containerDetails || {
         }
     },
     uploadFile: function() {
-//        $('#uploadFileModal .modal-title').text('');
-//        $('#uploadFileModal .modal-title').text('N');
         $('#uploadFolderLocation').text($('#pathName').val());
         $("#uploadFileModal").modal("show");
     },
