@@ -351,7 +351,6 @@ class LXCContainer(LXDModule):
             raise ValueError(e)
 
     def initNetwork(self):
-        print(self.data.get('devices'))
         if not self.data.get('devices', None):
             self.data['devices']={}
 
