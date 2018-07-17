@@ -10,6 +10,8 @@
         $(function () {
             $.proxy(App.containerDetails.initContainerDetails('{{container.name}}'));
             App.containerDetails.data = {{container|tojson}};
+            App.containerDetails.networks = {{networks|tojson}};
+            App.containerDetails.initKeyValuePairs.call(App.containerDetails);
             App.containerDetails.setInitialData.call(App.containerDetails);
         });
     </script>
@@ -79,6 +81,9 @@
                     <li>
                         <a href="#4" data-toggle="tab">Advanced</a>
                     </li>
+                    <li>
+                        <a href="#5" data-toggle="tab">File Manager</a>
+                    </li>
                     <li class="pull-right">
                         <button class="btn btn-default btn-rounded-corners btn-xs btn-json" href="#" id="rawJSONContainerDetails">JSON</button>
                     </li>
@@ -122,7 +127,7 @@
                                   <img src="../static/images/NIC-icon.png" alt="">
                                </div>
                               <div class="col-md-12">
-                                  <h5>Network</h5>
+                                  <h5>Network caja</h5>
                                   {% if container.network is mapping %}
                                     {% for key, value in container.network.items() %}
                                         {% if key!='lo' %}
@@ -222,34 +227,122 @@
                   </div>
               </div>
 				<div class="tab-pane network-tab col-lg-12 col-md-12 col-sm-12 add-borders" id="2">
+
                    <div class="col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group">
                                 {% if container.network is mapping %}
-                            <h5 class="bg-bottom"><b><img src="../static/images/NIC-icon.png" class="img-network-interfaces" alt="" /> Network Interfaces </b></h5>
+                            <h5 class="bg-bottom"><b><img src="../static/images/NIC-icon.png" class="img-network-interfaces" alt="" /> Network Interfaces </b><button class="btn btn-success pull-right btn-rounded-corners showAddNetworkInterfaceDialog">Add <i class="glyphicon glyphicon-plus"></i></button></h5>
                                 {% for key, value in container.network.items() %}
                                 {% if key!='lo' %}
-                                <div class="row space">
-                                    <div class="col-sm-6">
-                                        IP Interface : <span class="label label-primary"> {{ key }}</span>
-                                        <br/>
-                                        {% if value.addresses|length > 0 %}
-                                        IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>
-                                        <span class="label label-warning">/{{value.addresses.0.netmask}}</span>
+                        <div class="row borders">
+                            <div class="col-sm-1 col-md-1 col-lg-1 pd0 text-center">
+                                    <div class="col-sm-12 col-md-12 col-lg-12 status-div">
+                                        <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
+                                    </div>
+                                     <!--<div class="col-sm-12 col-md-12 col-lg-12 pd0 mgtop-50">-->
+
+                                            <!--<div class="btn-group" role="group">-->
+                                                <!--<button type="button" id="" class="formModifier btn btn-xs btn-default" onclick="">On</button>-->
+                                                <!--<button type="button" id="" class="formModifier btn btn-xs btn-danger" onclick="">Off</button>-->
+                                            <!--</div>-->
+                                     <!--</div>-->
+                            </div>
+                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                <ul class="network-list">
+                                    <li>
+                                         Interface <span class="mg-left5"> <b>{{ key }}</b></span>
+                                    </li>
+                                    <li>
+                                        Bridge <span class="mg-left5"> n/a </span>
+                                    </li>
+                                    <li>
+                                        Host IFC  <span class="mg-left5"> n/a</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <ul class="network-list">
+                                    {% if value.addresses == None %}
+                                    <li>N/A</li>
+                                    {% else %}
+                                         {% if value.addresses|length > 0 %}
+                                            IP Address <span class="mg-left5"><b>{{value.addresses.0.address}}</b></span>
+                                         {% endif %}
+                                    <li>
+                                        MAC Address  <span class="mg-left5">{{value.hwaddr}}</span>
+                                    </li>
+                                    <li>
+                                        {% if value.addresses|length > 0  %}
+                                            {% if value.addresses.0.netmask == "24" %}
+                                                    Netmask [/{{value.addresses.0.netmask}}] <span class="mg-left5">255.255.255.0</span>
+                                            {% else %}
+
+                                                 {% if value.addresses.0.netmask != "24" %}
+                                                        Netmask [/{{value.addresses.0.netmask}}] <span class="mg-left5">[/{{value.addresses.0.netmask}}]</span>
+                                                {% endif %}
+
+                                            {% endif %}
                                         {% endif %}
-                                        <br/>
-                                        MAC Address
-                                        : <b class="big-font">{{value.hwaddr}}</b>
-                                        <br/>
-                                        State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>
-                                    </div>
-                                    <div class="col-sm-5">
-                                        {% for counterkey, counterval in value.counters.items() %}
-                                            {{counterkey|upper}} :
-                                            <span class="label label-default">{{counterval}}</span>
-                                            <br/>
-                                        {% endfor %}
-                                    </div>
-                                </div>
+                                    </li>
+                                    {% endif %}
+                                </ul>
+                            </div>
+                            <div class="col-sm-3 col-md-3 col-lg-3">
+                                <table class="table table-bordered">
+                                    <tr>
+                                            <th></th>
+                                            <th>Sent</th>
+                                            <th>Received</th>
+                                    </tr>
+                                    <tbody>
+                                         <tr>
+                                             <td>Bytes</td>
+                                            <td>{{'%0.2f'|format(container.network[key]['counters']['bytes_received']/1024)}}</td>
+                                            <td>{{'%0.2f'|format(container.network[key]['counters']['bytes_sent']/1024)}}</td>
+                                        </tr>
+                                        <tr>
+                                             <td>Packets</td>
+                                            <td>{{container.network[key]['counters']['packets_sent']}}</td>
+                                            <td>{{container.network[key]['counters']['packets_received']}}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                                 <!--{% for counterkey, counterval in value.counters.items() %}-->
+                                            <!--{{counterkey|upper}} :-->
+                                            <!--<span class="label label-default">{{counterval}}</span>-->
+                                            <!--<br/>-->
+                                        <!--{% endfor %}-->
+
+                            </div>
+                            <div class="col-sm-1 col-md-1 col-lg-1 pd0">
+                                <button class="btn btn-default pull-right deleteInterfaceBtn" onclick="App.containerDetails.deleteInterface('{{key}}')"><i class="glyphicon glyphicon-trash"></i></button>
+                            </div>
+                        </div>
+
+
+                                <!--<div class="row space">-->
+                                    <!--<div class="col-sm-6">-->
+                                        <!--IP Interface : <span class="label label-primary"> {{ key }}</span>-->
+                                        <!--<br/>-->
+                                        <!--{% if value.addresses|length > 0 %}-->
+                                        <!--IP Address : <span class="label label-default">{{value.addresses.0.address}}</span>-->
+                                        <!--<span class="label label-warning">/{{value.addresses.0.netmask}}</span>-->
+                                        <!--{% endif %}-->
+                                        <!--<br/>-->
+                                        <!--MAC Address-->
+                                        <!--: <b class="big-font">{{value.hwaddr}}</b>-->
+                                        <!--<br/>-->
+                                        <!--State : <span class="label label-{% if value.state == 'up' %}success{%else%}danger{%endif%}">{{value.state|upper}}</span>-->
+                                    <!--</div>-->
+                                    <!--<div class="col-sm-5">-->
+                                        <!--{% for counterkey, counterval in value.counters.items() %}-->
+                                            <!--{{counterkey|upper}} :-->
+                                            <!--<span class="label label-default">{{counterval}}</span>-->
+                                            <!--<br/>-->
+                                        <!--{% endfor %}-->
+                                    <!--</div>-->
+                                <!--</div>-->
                                 <!--netint_data row end-->
                             {% endif %}
                             {% endfor %}
@@ -259,6 +352,63 @@
                             {% endif %}
                         </div> <!-- form-group end-->
                     </div> <!--col-sm-12 end-->
+                    <!-- Network proxy section -->
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <h4>Port Mapping
+                            <button class="btn btn-success pull-right showAddProxyDialog btn-rounded-corners">Add <i class="glyphicon glyphicon-plus"></i></button>
+                        </h4>
+
+                        <table class="table">
+                            <thead>
+                                <th>
+                                    Proxy Name
+                                </th>
+                                <th></th>
+                                <th>
+                                    Host
+                                </th>
+
+                                <th>
+                                    Protocol
+                                </th>
+
+                                <th>
+                                    Port
+                                </th>
+                                <th></th>
+                                <th>
+                                    Container
+                                </th>
+                                <th>
+                                    Protocol
+                                </th>
+                                <th>
+                                    Port
+                                </th>
+                                <th></th>
+                            </thead>
+                            <tbody>
+                            {% for key, value in container.devices.items() %}
+                                {% if value['type'] == 'proxy' %}
+                                <tr>
+                                    <td>{{key}}</td>
+                                    <td>:</td>
+                                    <td class="ipToExtract">{{value['listen']}}</td>
+                                    <td>{{value['listen'][:3]}}</td>
+                                    <td class="portToExtract">{{value['listen']}}</td>
+                                    <td><i class="glyphicon glyphicon-arrow-right"></i> </td>
+                                    <td class="ipToExtract">{{value['connect']}}</td>
+                                    <td>{{value['connect'][:3]}}</td>
+                                    <td class="portToExtract">{{value['connect']}}</td>
+                                    <td><a onClick="App.containerDetails.removeProxy('{{key}}')" class="btn btn-default btn-sm">
+                                        <i class="glyphicon glyphicon-trash"></i>
+                                    </a> </td>
+                                </tr>
+                                {% endif %}
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
 				</div>
                 <div class="tab-pane snapshots-tab col-sm-12 col-md-12 col-lg-12 pd-left0 pd-right0 add-borders" id="3">
                     <div class="col-sm-12 col-md-12 col-lg-12">
@@ -301,7 +451,31 @@
 
                         </div>
                     </div>
-			</div>
+			    </div>
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 file-manager-tab add-borders" id="5">
+                    <div class="col-lg-12 col-md-12 col-sm-12" id="fileManager">
+                        <div class="form-group mg-top15">
+                            <!--<h5 class="bg-bottom"><b>Advanced Settings : </b></h5>-->
+                             <button class="btn btn-default" id="file-btn-home">Home</button>
+                            <label>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</label>
+                             <button class="btn btn-default" id="file-btn-new">New</button>
+                             <button class="btn btn-default" id="file-btn-upload">Upload</button>
+                             <button class="btn btn-default" id="file-btn-download" disabled>Download</button>
+                             <button class="btn btn-default" id="file-btn-view" disabled>View</button>
+                             <button class="btn btn-default" id="file-btn-edit" disabled>Edit</button>
+                             <button class="btn btn-default" id="file-btn-delete">Delete</button>
+                        </div>
+                        <div class="row">
+                            <div class="form-group mg-top15 file-tree">
+                                <div id="tree"></div>
+                            </div>
+                        </div>
+
+                    </div>
+			    </div>
+
+
+
          </div>
         </div>
 </div>
@@ -471,5 +645,273 @@
       </div>
     </div>
   </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="newFileManagerModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New File > <span id="path"></span></h4>
+            </div>
+            <div class="modal-body">
+                <form id="newFileManagerForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="fileName" class="col-sm-1 control-label">Name</label>
+                        <div class="col-sm-11">
+                            <input id="fileName" name="filename" class="form-control" type="text" placeholder="File name" title="" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <textarea name="fileContent" id="fileContent" cols="68" rows="10"></textarea>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer text-center">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="submit" id="newFileSubmit" class="btn btn-primary">Save <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            </div>
+      </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="viewFileModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">home/user/folder/something.txt </h4>
+            </div>
+            <div class="modal-body">
+                 <form id="editFileManagerForm" class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <textarea name="" id="viewText" cols="68" rows="10"></textarea>
+                        </div>
+                    </div>
+                 </form>
+            </div>
+            <div class="modal-footer text-center">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+      </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="editFileModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">home/user/folder/something.txt </h4>
+            </div>
+            <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <textarea name="" id="editText" cols="68" rows="10"></textarea>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer text-center">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" id="editFileSubmit" class="btn btn-primary">Save <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            </div>
+      </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="deleteFileModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Delete File </h4>
+            </div>
+            <div class="modal-body">
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            Delete? <span class="filePathName">/home/user/folder/something.txt</span>
+                        </div>
+                    </div>
+            </div>
+            <div class="modal-footer text-center">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="submit" id="deleteFileSubmit" class="btn btn-primary">Delete <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            </div>
+      </div>
+    </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="uploadFileModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">New File > <span id="uploadFolderLocation">/</span></h4>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm" class="form-horizontal" method="POST" enctype="multipart/form-data" action="/api/file/container/{{container.name}}">
+                    <div class="form-group">
+                        <label for="Path" class="col-sm-1 control-label">Path</label>
+                        <div class="col-sm-11">
+                            <input id="pathName" name="path" class="form-control" type="text" placeholder="Path name" title="Path name" required/>
+                        </div>
+                    </div>
+                     <div class="form-group">
+                        <label class="col-sm-1 control-label">File</label>
+                        <div class="col-sm-11">
+                            <input id="uploadFile" name="file" accept="" class="form-control" type="file" placeholder="Select file to upload" title="" required/>
+                        </div>
+                    </div>
+
+                </form>
+            </div>
+            <div class="modal-footer text-center">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" id="uploadFileSubmit" class="btn btn-primary">Upload <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addProxyModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addProxyForm" class="form-horizontal" method="POST" enctype="multipart/form-data" action="/api/file/container/{{container.name}}">
+                    <div class="form-group">
+                        <label for="Name" class="col-sm-2 control-label">Name</label>
+                        <div class="col-sm-10">
+                            <input id="name" name="name" class="form-control" type="text" placeholder="Name" title="Name" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="protocol" class="col-sm-2 control-label">Protocol</label>
+                        <div class="col-sm-10">
+                            <select id="protocol" name="protocol">
+                                <option value="tcp">TCP</option>
+                                <option value="udp">UDP</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="host" class="col-sm-2 control-label">Host IP</label>
+                        <div class="col-sm-10">
+                            <input id="host" name="host" class="form-control" type="text" placeholder="Host" title="Host"
+                                   pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="hostPort" class="col-sm-2 control-label">Port</label>
+                        <div class="col-sm-10">
+                            <input id="hostPort" name="hostPort" class="form-control" type="text" placeholder="Host port" title="Host port" required/>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="container" class="col-sm-2 control-label">Container IP</label>
+                        <div class="col-sm-10">
+                            <input id="container" name="container" class="form-control" type="text" placeholder="Container" title="Container"
+                                   pattern="((^|\.)((25[0-5])|(2[0-4]\d)|(1\d\d)|([1-9]?\d))){4}$" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="container" class="col-sm-2 control-label">Container Port</label>
+                        <div class="col-sm-10">
+                            <input id="containerPort" name="containerPort" class="form-control" type="text" placeholder="Container port" title="Container port" required/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer text-center">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" id="addProxy" class="btn btn-primary">Save <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            </div>
+      </div>
+    </div>
+</div>
+
+<div class="modal fade" id="addNetworkInterfaceModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Add Network Interface</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="addNetworkInterfaceForm" class="form-horizontal" method="POST" enctype="multipart/form-data" action="/network/{{container.name}}/add'">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-4 control-label">Device Name</label>
+                        <div class="col-sm-8">
+                            <input id="nameNetwork" name="name" class="form-control width200" type="text" placeholder="Device Name" title="Name" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="interface" class="col-sm-4 control-label">Interface Type*</label>
+                        <div class="col-sm-7">
+                            <select class="width200" id="interface" name="nictype" readonly>
+                                <option value="bridged" selected>bridged</option>
+                            </select>
+                            <a
+                                    href="#"
+                                    title="Information"
+                                    data-toggle="popover"
+                                    data-trigger="hover"
+                                    html="true"
+                                    data-content="
+                                    Example for adding a bridged nic from the command line: <br />
+                                    lxc config device add c1 eth1 nic name=eth1 <br />
+                                    nictype=bridged parent=lxdbr0 <br /><br /><br /><br />
+                                    For configuration details please refer to: https://lxd.readthedocs.io/en/latest/containers/#type-nic<br />
+                                    physical: Straight physical device passthrough from the host. The targeted device will vanish from the host and appear in the container.<br /><br />
+                                    bridged: Uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the container.<br /><br />
+                                    macvlan: Sets up a new network device based on an existing one but using a different MAC address.<br /><br />
+                                    p2p: Creates a virtual device pair, putting one side in the container and leaving the other side on the host.<br /><br />
+                                    sriov: Passes a virtual function of an SR-IOV enabled physical network device into the container."
+                                    data-original-title="Information">
+                                <span class="glyphicon glyphicon-info-sign"></span>
+                             </a>
+
+                        </div>
+                        <!--<div class="col-sm-1">-->
+                            <!---->
+                        <!--</div>-->
+                    </div>
+                     <div class="form-group">
+                            <label for="name" class="col-sm-4 control-label">Connect to Bridge</label>
+                            <div class="col-sm-8">
+                                 <select class="width200" id="parent" name="parent">
+                                    {% for network in networks %}
+                                     {% if network.type == 'bridge' %}
+                                        <option value="{{network.name}}">{{network.name}}</option>
+                                     {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                     </div>
+                    <input name="type" value="nic" class="hidden" />
+                </form>
+            </div>
+            <div class="modal-footer text-center">
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" id="addNetwork" class="btn btn-primary">Save <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+            </div>
+      </div>
+    </div>
 </div>
 {% endblock %}

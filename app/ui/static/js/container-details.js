@@ -11,6 +11,7 @@ App.containerDetails = App.containerDetails || {
     selectedSnapshot: null,
     dataTable:null,
     initiated:false,
+    treeSource: [],
     tableSettings: {
         rowId:'name',
         searching:false,
@@ -21,7 +22,7 @@ App.containerDetails = App.containerDetails || {
         order: [[ 1, 'asc' ]],
         dom: "<'tbl-header'<'row'<'col-sm-4 text-left'f><'col-sm-2 refresh-list-place'><'col-sm-6 json-place'>>>" +
         "<'row'<'col-sm-12'tr>>" +
-        "<'row'<'col-sm-4'i><'col-sm-1 text-right'l><'col-sm-7 text-right'p>>",
+        "<'row'<'col-sm-4'i><'col-sm-2 text-right'l><'col-sm-6 text-right'p>>",
         "oLanguage": {
           "sLengthMenu": "List _MENU_ ",
         },
@@ -37,8 +38,10 @@ App.containerDetails = App.containerDetails || {
             selector: 'td:first-child'
         },
     },
+
     loading:false,
     rawJson:null,
+    activeNode: null,
     init: function(){
         this.dataTable = $('#tableSnapshots').DataTable(this.tableSettings);
         this.rawJson = ace.edit('rawJson');
@@ -55,6 +58,7 @@ App.containerDetails = App.containerDetails || {
         $('#buttonBackDetail').on('click', $.proxy(this.switchView, this, 'list'));
         this.dataTable.on('select', $.proxy(this.onRowSelected, this));
         this.dataTable.on('deselect', $.proxy(this.onRowSelected, this));
+
         App.setActiveLink('');
 
         $('#buttonCloneContainerDetail').on('click', $.proxy(this.showCloneContainer, this));
@@ -81,17 +85,200 @@ App.containerDetails = App.containerDetails || {
         $('#buttonDeleteSnapshot').on('click', $.proxy(this.deleteSnapshots, this));
         $('#buttonRestoreSnapshot').on('click', $.proxy(this.restoreSnapshots, this));
         $('#buttonNewContainerSnapshot').on('click', $.proxy(this.createContainerSnapshot, this));
+
+        $('#file-btn-home').on('click', $.proxy(this.home, this));
+        $('#file-btn-new').on('click', $.proxy(this.createNewFile, this));
+        $('#file-btn-edit').on('click', $.proxy(this.viewSelectedFile, this, true));
+        $('#file-btn-view').on('click', $.proxy(this.viewSelectedFile, this, false));
+        $('#file-btn-upload').on('click', $.proxy(this.uploadFile, this));
+        $('#file-btn-delete').on('click', $.proxy(this.deleteFile, this));
+        $('#uploadFileSubmit').on('click', $.proxy(this.uploadFile2, this));
+        $('#deleteFileSubmit').on('click', $.proxy(this.deleteFile2, this));
+        $('#newFileSubmit').on('click', $.proxy(this.newFile, this));
+        $('#editFileSubmit').on('click', $.proxy(this.editFile, this));
+        $('#file-btn-download').on('click', $.proxy(this.downloadFile, this));
+
+
         $('#exTab3 > ul > li:nth-child(1)').addClass('active');
 
         this.initKeyValuePairs();
+        this.extractIPs();
+        this.extractPorts();
+        $('#addProxyForm').on('submit', $.proxy(this.addProxy, this));
+        $('#addProxy').on('click', $.proxy(this.addProxy, this));
+        $('.showAddProxyDialog').on('click', $.proxy(this.showAddProxy, this));
+        $('.showAddNetworkInterfaceDialog').on('click', $.proxy(this.showAddNetworkInterface, this));
+        $('#addNetworkInterfaceForm').on('submit', $.proxy(this.addNetworkInterface, this));
+        $('#addNetwork').on('click', $.proxy(this.addNetworkInterface, this))
+    },
+    extractPorts: function(){
+        $('.portToExtract').each((key,val)=> $(val).text(App.helpers.extractPort($(val).text())));
+    },
+    extractIPs: function() {
+        $('.ipToExtract').each((key,val)=> $(val).text(App.helpers.extractIP($(val).text())));
+    },
+    downloadURI: function(uri, name) {
+        var link = document.createElement("a");
+        link.download = name;
+        link.href = uri;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        delete link;
+    },
+    downloadFile: function() {
+        this.activeNode = $("#tree").fancytree('getActiveNode');
+        var activeNode = this.activeNode;
+        if (!activeNode.folder)
+            this.downloadURI(App.baseAPI+'file/download/container/' + this.name + '?path=' + activeNode.getKeyPath() + "&token=" + sessionStorage.getItem('authToken'))
+    },
+    home: function() {
+        $("#tree").fancytree('getTree').visit(function(node) {
+            if (node.getKeyPath() == '/home') {
+                node.setExpanded(true);
+            }
+            else {
+                node.setExpanded(false);
+            }
+        });
+    },
+    editFile: function() {
+        var activeNode = this.activeNode;
+        $.ajax({
+            url: App.baseAPI+'file/edit/container/' + this.name,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'path': activeNode.getKeyPath(),
+                'file': $('#editText').val()
+            }),
+            success: $.proxy(this.onEditFileSuccess, this)
+        });
+    },
+    onEditFileSuccess: function() {
+        $("#editFileModal").modal("hide");
+        this.listDirectory('/');
+    },
+    newFile: function() {
+        $.ajax({
+            url: App.baseAPI+'file/new/container/' + this.name,
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'path': $("#fileName").val(),
+                'file': $('#fileContent').val()
+            }),
+            success: $.proxy(this.onNewFileSuccess, this)
+        });
+    },
+    onNewFileSuccess: function() {
+        $("#newFileManagerModal").modal("hide");
+        this.listDirectory('/');
+    },
+    deleteFile2: function() {
+        var node = this.activeNode;
+        $.ajax({
+            url: App.baseAPI+'file/container/' + this.name,
+            type: 'DELETE',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                'path': node.getKeyPath(),
+            }),
+            success: $.proxy(this.onFileDeletedSuccess, this)
+        });
+    },
+    onFileDeletedSuccess: function() {
+        $("#deleteFileModal").modal("hide");
+        this.listDirectory('/');
+    },
+    uploadFile2: function() {
+        var tempData = new FormData();
+        tempData.append('path', $('#pathName').val());
+        tempData.append('file', $('#uploadFile')[0].files[0]);
+        $.ajax({
+            url: App.baseAPI+'file/container/' + this.name,
+            type: 'POST',
+            contentType: false,
+            processData: false,
+            data: tempData,
+            success: $.proxy(this.onFileUploadSuccess, this)
+        });
+    },
+    onFileUploadSuccess: function() {
+        this.listDirectory('/');
+        $('#uploadFileModal').modal("hide");
+        $('#uploadFile').val(''); //clear file selection value
+    },
+    viewSelectedFile: function(edit) {
+        var node = $("#tree").fancytree('getActiveNode');
+        if (node) {
+            if (!node.folder) {
+                this.readFileContent(node.getKeyPath(), edit);
+            }
+        }
+
+    },
+    readFileContent: function(path, edit) {
+        $.ajax({
+            url: App.baseAPI+'file/content/container/' + this.name + '?path='+path,
+            type: 'GET',
+            success: $.proxy(this.onFileContentSuccess, this, path, edit)
+        });
+    },
+    onFileContentSuccess: function(path, edit, response) {
+        this.viewFile(response.data, path, edit);
+    },
+    listDirectory: function(path) {
+        return $.ajax({
+            url: App.baseAPI+'file/list/container/' + this.name + '?path='+path,
+            type: 'GET',
+            success: $.proxy(this.onFileListSuccess, this)
+        });
+    },
+    onFileListSuccess: function(response) {
+        this.treeSource = response;
+        var name = this.name;
+        $("#tree").fancytree({
+           source: this.treeSource,
+           lazyLoad: function(event, data) {
+                var node = data.node;
+                data.result = {
+                    url: App.baseAPI+'file/list/container/' + name + '?path='+node.getKeyPath(),
+                    data: {mode: 'children', parent: node.key},
+                    cache: false,
+                }
+           },
+           dblclick: function(event, data) {
+               var node = data.node;
+               if (!node.folder) {
+                    $.proxy(App.containerDetails.readFileContent(node.getKeyPath()));
+               }
+           },
+           activate: function(event, data){
+               $("#status").text("Activate: " + data.node);
+               if(data.node.folder){
+                $('#pathName').val(data.node.getKeyPath()+'/');
+                $('#path').val(data.node.getKeyPath() + '/');
+                $('#file-btn-download,#file-btn-view,#file-btn-edit').attr("disabled", "disabled");
+               }
+               else {
+                $('#file-btn-download,#file-btn-view,#file-btn-edit').removeAttr("disabled");
+               }
+           }
+       });
     },
     initContainerDetails: function(name) {
         this.name = name;
         this.getSnapshotList();
+        this.listDirectory('/');
+    },
+    updateTreeSource: function(data) {
+        this.listDirectory(data.node.title);
     },
     initKeyValuePairs: function() {
+        $('#advancedSettings .manuallyAdded').remove()
         for (key in App.properties.keyValues) {
-            $('#advancedSettings').append('<div class="row">' +
+            $('#advancedSettings').append('<div class="row manuallyAdded">' +
                     '<div class="col-lg-1"></div>'+
                     '<div class="col-lg-4">'+
                         '<div class="form-group row">' +
@@ -104,13 +291,13 @@ App.containerDetails = App.containerDetails || {
                     '<div class="col-lg-1"></div>'+
                     '<div class="col-lg-4">' +
                         '<div class="form-group row">' +
-                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                            '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="'+((this.data.config)?this.data.config[key] || '':'')+'" '+((this.data.config && this.data.config[key])?'':'disabled')+' />' +
                         '</div>' +
                     '</div>' +
                      '<div class="col-lg-2">' +
                          '<div class="btn-group" role="group">' +
-                            '<button type="button" id="" class="formModifier btn btn-sm btn-default" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
-                            '<button type="button" id="" class="formModifier btn btn-sm btn-danger" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-'+((this.data.config && this.data.config[key])?'success':'default')+'" onClick="$.proxy(App.containerDetails.enableInput(this));">On</button>' +
+                            '<button type="button" id="" class="formModifier btn btn-sm btn-'+((this.data.config && this.data.config[key])?'default':'danger')+'" onClick="$.proxy(App.containerDetails.disableInput(this));">Off</button>' +
                         '</div>' +
                      '</div>' +
                 '</div>');
@@ -385,6 +572,42 @@ App.containerDetails = App.containerDetails || {
         $("#containerFromSnapshotModal").modal("show");
 //        $('#cloneContainerForm').hide();
     },
+    createNewFile: function() {
+        $('#newFileManagerModal .modal-title').text('');
+        $('#newFileManagerModal .modal-title').text('New File');
+        $("#newFileManagerModal").modal("show");
+    },
+    editSelectedFile: function(text, path) {
+        $('#editFileModal .modal-title').text(path);
+        $('#editText').text(text);
+        $("#editFileModal").modal("show");
+    },
+    deleteFile: function() {
+        var node = $("#tree").fancytree('getActiveNode');
+        if (node) {
+            $('#deleteFileModal .modal-title').text('');
+            $('#deleteFileModal .modal-body').text('Delete file '+node.getKeyPath());
+            $("#deleteFileModal").modal("show");
+            this.activeNode = node;
+        }
+
+
+    },
+    viewFile: function(text, path, edit) {
+        this.activeNode = $("#tree").fancytree('getActiveNode');
+        if (edit) {
+            this.editSelectedFile(text, path);
+        }
+        else {
+            $('#viewFileModal .modal-title').text(path);
+            $('#viewText').text(text);
+            $("#viewFileModal").modal("show");
+        }
+    },
+    uploadFile: function() {
+        $('#uploadFolderLocation').text($('#pathName').val());
+        $("#uploadFileModal").modal("show");
+    },
     newContainerFromSnapshotDetail: function() {
          this.dataTable.rows( { selected: true } ).data().map(function(row){
             var name = this.name;
@@ -526,9 +749,82 @@ App.containerDetails = App.containerDetails || {
              $('#buttonAutostartInactive').removeClass('btn-default');
              $('#buttonAutostartInactive').addClass('btn-success');
         }
+    },
+    removeProxy: function(name){
+        $.ajax({
+            url:App.baseAPI+'container/proxy/'+this.data.name+'/remove/'+name,
+            type:'DELETE',
+            dataType:'json',
+            contentType:'application/json',
+            success:$.proxy(this.removeProxySuccess, this)
+        });
+    },
+    removeProxySuccess: function(){
+        return window.location.reload();
+    },
+    showAddProxy: function(){
+        $('#addProxyModal').modal('show');
+        $('#container').val(_.get(this, 'data.network.eth0.addresses[0].address', '0.0.0.0'));
+    },
+    addProxy: function(e){
+        var isValid = $('#addProxyForm')[0].checkValidity();
+        if(e){
+           e.preventDefault();
+        }
+        if(!isValid){
+            return false;
+        }
+        var input = $('#addProxyForm').serializeJSON();
+        $.ajax({
+            url:App.baseAPI+'container/proxy/'+this.data.name+'/add/'+input.name,
+            type:'POST',
+            dataType:'json',
+            data:JSON.stringify({
+                listen:input.protocol+':'+input.host+':'+input.hostPort,
+                connect:input.protocol +':'+input.container+':'+input.containerPort,
+                type:'proxy'
+            }),
+            contentType:'application/json',
+            success:$.proxy(this.removeProxySuccess, this)
+        });
+
+        return false;
+    },
+    showAddNetworkInterface: function(){
+        $('#addNetworkInterfaceModal').modal('show');
+//        $('#container').val(_.get(this, 'data.network.eth0.addresses[0].address', '0.0.0.0'));
+    },
+     removeProxySuccess: function(){
+        return window.location.reload();
+    },
+    addNetworkInterface: function(e) {
+        var isValid = $('#addNetworkInterfaceForm')[0].checkValidity();
+        if(e){
+           e.preventDefault();
+        }
+        if(!isValid){
+            return false;
+        }
+        var input = $('#addNetworkInterfaceForm').serializeJSON();
+        console.log('input', input);
+        $.ajax({
+            url:App.baseAPI+'container/network/'+this.data.name+'/add',
+            type:'POST',
+            dataType:'json',
+            data: JSON.stringify(input),
+            contentType:'application/json',
+            success:$.proxy(this.removeProxySuccess, this)
+        });
+
+        return false;
+    },
+    deleteInterface: function(ifaceName){
+        $.ajax({
+            url: App.baseAPI+'container/network/'+this.data.name+'/remove/'+ifaceName,
+            type:'DELETE',
+            dataType:'json',
+            contentType:'application/json',
+            success:$.proxy(this.removeProxySuccess, this)
+        });
     }
-//    ,
-//    showTerminalContainer: function(container) {
-//        window.open('/terminal/new/' + container + '/' + sessionStorage.getItem('authToken'), '_blank');
-//    }
 }

@@ -188,6 +188,10 @@
     margin-left: 60px;
 }
 
+.text-center {
+    text-align: center !important;
+}
+
 .no-right-padding {
  padding-right:0;
 }
@@ -551,11 +555,11 @@ color: #000 !important;
 }
 
 .popover {
-    max-width: 100%;
+    min-width: 400px;
 }
 
 .popover-content {
-    width: 300px !important;
+    width: 100%;
 }
 
 .btn-json {
@@ -841,3 +845,62 @@ color: #000 !important;
   text-align: left;
   vertical-align: middle;
 }
+
+.status-div {
+    color: #000 !important;
+    padding: 0px;
+    background: #5cba5b;
+    text-align: center;
+    border-radius: 4px;
+    margin-top: 7px;
+}
+
+.status-div span {
+    font-weight: bold;
+}
+
+.width200 {
+    width: 200px !important;
+}
+
+.deleteInterfaceBtn {
+    margin-right: -18px;
+}
+
+.status-div .label-success {
+    color: #000 !important;
+}
+
+.pd0 {
+    padding: 0px !important;
+}
+
+.mgtop-50 {
+    margin-top: 50px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.borders {
+    border-bottom: 1px solid #ddd;
+    padding: 10px;
+}
+
+
+.network-list {
+    padding: 0px;
+}
+
+.network-list > li{
+   list-style-type: none;
+   /*font-size: 13px;*/
+   line-height: 32px;
+}
+
+.mg-left5 {
+    margin-left: 5px;
+}
+
+
