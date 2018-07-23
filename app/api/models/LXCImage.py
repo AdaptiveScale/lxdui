@@ -65,9 +65,6 @@ class LXCImage(LXDModule):
             p2 = subprocess.Popen(["lxc", "image", "export", self.data.get('fingerprint')], stdout=subprocess.PIPE)
             output_rez = p2.stdout.read()
 
-            #Prepare YAML
-            self.prepareImageYAML(input)
-
             #Make dir for the export
             shutil.rmtree('tmp/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
             os.makedirs('tmp/{}'.format(self.data.get('fingerprint')), exist_ok=True)
@@ -75,15 +72,24 @@ class LXCImage(LXDModule):
             #Move the export - Check for both extenstion .tar.gz & .tar.xz
             if os.path.exists('{}.tar.gz'.format(self.data.get('fingerprint'))):
                 shutil.move('{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
+                input['image'] = 'tmp/{0}/{0}.tar.gz'.format(self.data.get('fingerprint'))
             if os.path.exists('{}.tar.xz'.format(self.data.get('fingerprint'))):
                 shutil.move('{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
+                input['image'] = 'tmp/{0}/{0}.tar.xz'.format(self.data.get('fingerprint'))
             if os.path.exists('meta-{}.tar.gz'.format(self.data.get('fingerprint'))):
                 shutil.move('meta-{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
+                input['metadata'] = 'tmp/{0}/meta-{0}.tar.gz'.format(self.data.get('fingerprint'))
             if os.path.exists('meta-{}.tar.xz'.format(self.data.get('fingerprint'))):
                 shutil.move('meta-{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
+                input['metadata'] = 'tmp/{0}/meta-{0}.tar.xz'.format(self.data.get('fingerprint'))
 
-            #Move the yaml file
+            #Prepare & Move the yaml file
+            self.prepareImageYAML(input)
             shutil.move('{}.yaml'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
+
+            #TODO Prepare README.md
+
+            #TODO Prepare Logo
 
             return output_rez
         except Exception as e:
@@ -92,6 +98,7 @@ class LXCImage(LXDModule):
             raise ValueError(e)
 
     def prepareImageYAML(self, input):
+        if input.get('metadata') == None: input['metadata'] = ''
         data = {
             'title': 'Wordpress 15.1',
             'description': 'Some description',
@@ -101,10 +108,13 @@ class LXCImage(LXDModule):
                 'email': 'info@adaptivescale.com'
             },
             'license': 'MIT',
-            'readme': 'Readme.md',
-            'image': '',
-            'metadata': '',
-            'tags': ['nginx', 'redis', 'python3', 'flask']
+            'readme': 'README.md',
+            'tags': ['nginx', 'redis', 'python3', 'flask'],
+            'image': input.get('image'),
+            'metadata': input.get('metadata')
         }
-        with open('/home/nuhi/lxdui/{}.yaml'.format(input.get('fingerprint')), 'w') as yamlFile:
+
+        data.update(self.client.api.images[self.data.get('fingerprint')].get().json()['metadata'])
+        
+        with open('{}.yaml'.format(self.data.get('fingerprint')), 'w') as yamlFile:
             yaml.dump(data, yamlFile, default_flow_style=False)
