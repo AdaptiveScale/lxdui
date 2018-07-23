@@ -59,6 +59,7 @@ class LXCImage(LXDModule):
             logging.exception(e)
             raise ValueError(e)
 
+    #TODO Refactor this part
     def exportImage(self, input):
         try:
             logging.info('Exporting image {}'.format(self.data.get('fingerprint')))
@@ -115,6 +116,6 @@ class LXCImage(LXDModule):
         }
 
         data.update(self.client.api.images[self.data.get('fingerprint')].get().json()['metadata'])
-        
+
         with open('{}.yaml'.format(self.data.get('fingerprint')), 'w') as yamlFile:
             yaml.dump(data, yamlFile, default_flow_style=False)
