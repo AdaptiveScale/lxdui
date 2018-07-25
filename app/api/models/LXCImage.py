@@ -1,4 +1,5 @@
 from app.api.models.LXDModule import LXDModule
+from app.lib.conf import MetaConf
 import logging
 import subprocess
 import shutil
@@ -62,37 +63,41 @@ class LXCImage(LXDModule):
     #TODO Refactor this part
     def exportImage(self, input):
         try:
+            #Check if image exists & Update the fingerprint with the full fingerprint
+            self.data['fingerprint'] = self.client.images.get(self.data.get('fingerprint')).fingerprint
+
             logging.info('Exporting image {}'.format(self.data.get('fingerprint')))
             p2 = subprocess.Popen(["lxc", "image", "export", self.data.get('fingerprint')], stdout=subprocess.PIPE)
             output_rez = p2.stdout.read()
 
             #Make dir for the export
-            shutil.rmtree('tmp/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
-            os.makedirs('tmp/{}'.format(self.data.get('fingerprint')), exist_ok=True)
+            shutil.rmtree('tmp/images/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
+            os.makedirs('tmp/images/{}'.format(self.data.get('fingerprint')), exist_ok=True)
 
             #Move the export - Check for both extenstion .tar.gz & .tar.xz
             if os.path.exists('{}.tar.gz'.format(self.data.get('fingerprint'))):
-                shutil.move('{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
-                input['image'] = 'tmp/{0}/{0}.tar.gz'.format(self.data.get('fingerprint'))
+                shutil.move('{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
+                input['image'] = 'tmp/images/{0}/{0}.tar.gz'.format(self.data.get('fingerprint'))
             if os.path.exists('{}.tar.xz'.format(self.data.get('fingerprint'))):
-                shutil.move('{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
-                input['image'] = 'tmp/{0}/{0}.tar.xz'.format(self.data.get('fingerprint'))
+                shutil.move('{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
+                input['image'] = 'tmp/images/{0}/{0}.tar.xz'.format(self.data.get('fingerprint'))
             if os.path.exists('meta-{}.tar.gz'.format(self.data.get('fingerprint'))):
-                shutil.move('meta-{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
-                input['metadata'] = 'tmp/{0}/meta-{0}.tar.gz'.format(self.data.get('fingerprint'))
+                shutil.move('meta-{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
+                input['metadata'] = 'tmp/images/{0}/meta-{0}.tar.gz'.format(self.data.get('fingerprint'))
             if os.path.exists('meta-{}.tar.xz'.format(self.data.get('fingerprint'))):
-                shutil.move('meta-{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
-                input['metadata'] = 'tmp/{0}/meta-{0}.tar.xz'.format(self.data.get('fingerprint'))
+                shutil.move('meta-{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
+                input['metadata'] = 'tmp/images/{0}/meta-{0}.tar.xz'.format(self.data.get('fingerprint'))
 
             #Prepare & Move the yaml file
             self.prepareImageYAML(input)
-            shutil.move('{}.yaml'.format(self.data.get('fingerprint')), 'tmp/{}/'.format(self.data.get('fingerprint')))
+            shutil.move('{}.yaml'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
 
             #TODO Prepare README.md
+            open('tmp/images/{}/README.md'.format(self.data.get('fingerprint')), 'a').close()
 
             #TODO Prepare Logo
 
-            return output_rez
+            return MetaConf().getConfRoot() + '/tmp/images/{}'.format(self.data.get('fingerprint'))
         except Exception as e:
             logging.error('Failed to export the image {}'.format(self.data.get('fingerprint')))
             logging.exception(e)
@@ -101,16 +106,17 @@ class LXCImage(LXDModule):
     def prepareImageYAML(self, input):
         if input.get('metadata') == None: input['metadata'] = ''
         data = {
-            'title': 'Wordpress 15.1',
-            'description': 'Some description',
+            'title': '',
+            'description': '',
             'author': {
-                'name': 'AdaptiveScale',
-                'alias': 'as',
-                'email': 'info@adaptivescale.com'
+                'name': '',
+                'alias': '',
+                'email': ''
             },
-            'license': 'MIT',
+            'license': '',
             'readme': 'README.md',
-            'tags': ['nginx', 'redis', 'python3', 'flask'],
+            'tags': [],
+            'logo': 'logo.png',
             'image': input.get('image'),
             'metadata': input.get('metadata')
         }

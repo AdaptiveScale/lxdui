@@ -5,6 +5,7 @@ from app.cli.init import Init
 from app.lib.cert import Certificate
 from app.api import core
 from app.ui.blueprint import uiPages
+from app.api.models.LXCImage import LXCImage
 import click
 import os
 import signal
@@ -38,6 +39,10 @@ lxdui user list				                #list the users in the auth file
 
 
 ''' Command Groups '''
+
+
+
+
 
 
 @click.group()
@@ -113,6 +118,27 @@ def status():
         click.echo("=============")
         for k, v in s.items():
             click.echo(' {} : {}'.format(k, v))
+
+
+#TODO Create Image Registry Group
+@lxdui.command()
+@click.argument('fingerprint', nargs=1)
+def prep(fingerprint):
+    try:
+        input = {}
+        image = LXCImage({'fingerprint': fingerprint})
+
+        # Export Image - Image registry
+        path = image.exportImage(input)
+
+        click.echo("Image prepared successfully.")
+        click.echo("The image path is: {}".format(path))
+        click.echo("Modify the image.yaml, upload the logo and update README.md")
+        click.echo("To publish the image use the command:")
+        click.echo("lxdui image push -u <uid> -p <pwd> <image_fingerprint>")
+    except Exception as e:
+        click.echo("LXDUI failed to prepare the image.")
+        click.echo(e.__str__())
 
 
 ''' 
