@@ -140,6 +140,23 @@ def prep(fingerprint):
         click.echo("LXDUI failed to prepare the image.")
         click.echo(e.__str__())
 
+@lxdui.command()
+@click.argument('fingerprint', nargs=1)
+@click.option('-u', '--username', nargs=1, help='User Name')
+@click.option('-p', '--password', nargs=1, help='Password')
+def push(fingerprint, username, password):
+    try:
+        input = {}
+
+        image = LXCImage({'fingerprint': fingerprint})
+
+        # Export Image - Image registry
+        image.pushImage(input)
+
+        click.echo("Image pushed successfully.")
+    except Exception as e:
+        click.echo("LXDUI failed to push the image.")
+        click.echo(e.__str__())
 
 ''' 
     User level group of commands 

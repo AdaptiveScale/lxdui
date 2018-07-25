@@ -1,6 +1,7 @@
 from app.api.models.LXDModule import LXDModule
 from app.lib.conf import MetaConf
 import logging
+import requests
 import subprocess
 import shutil
 import os
@@ -114,14 +115,56 @@ class LXCImage(LXDModule):
                 'email': ''
             },
             'license': '',
-            'readme': 'README.md',
+            'readme': 'tmp/images/{}/README.md'.format(self.data.get('fingerprint')),
             'tags': [],
-            'logo': 'logo.png',
+            'logo': 'tmp/images/{}/logo.png'.format(self.data.get('fingerprint')),
             'image': input.get('image'),
-            'metadata': input.get('metadata')
+            'metadata': input.get('metadata'),
+            'fingerprint': self.data.get('fingerprint')
         }
 
         data.update(self.client.api.images[self.data.get('fingerprint')].get().json()['metadata'])
 
         with open('{}.yaml'.format(self.data.get('fingerprint')), 'w') as yamlFile:
             yaml.dump(data, yamlFile, default_flow_style=False)
+
+
+    def pushImage(self, input):
+        try:
+            self.data['fingerprint'] = self.client.images.get(self.data.get('fingerprint')).fingerprint
+
+            if os.path.exists('tmp/images/{}'.format(self.data.get('fingerprint'))):
+                logging.info('Image exists. Ready for push.')
+                print ("Image exists. Ready for push.")
+
+                #Prepare the files for upload.
+                with open('tmp/images/{0}/{0}.yaml'.format(self.data.get('fingerprint'))) as stream:
+                    yamlData = yaml.load(stream)
+
+                files = {
+                    'yaml': open('tmp/images/{0}/{0}.yaml'.format(self.data.get('fingerprint'), 'rb'))
+                }
+
+                response = requests.post('http://postma-echo.com/post', files=files).json()
+
+                print (response)
+
+                return True
+
+                files = {
+                    'image': open(yamlData['image'], 'rb'),
+                    'meta-image': open(yamlData['metadata'], 'rb'),
+                    'readme': open(yamlData['readme'], 'rb'),
+                    # 'logo': open(yamlData['logo'], 'rb')
+                }
+
+                r = requests.post('http://postma-echo.com/post', files=files)
+            else:
+                logging.error('Failed to push the image {}'.format(self.data.get('fingerprint')))
+                logging.exception('Image is not prepared. Please prepare the image using the command lxdui image prep <fingerprint>')
+                raise ValueError('Image is not prepared. Please prepare the image using the command: lxdui image prep <fingerprint>')
+
+        except Exception as e:
+            logging.error('Failed to push the image {}'.format(self.data.get('fingerprint')))
+            logging.exception(e)
+            raise ValueError(e)
