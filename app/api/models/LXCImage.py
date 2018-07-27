@@ -6,6 +6,7 @@ import subprocess
 import shutil
 import os
 import yaml
+import tarfile
 
 logging = logging.getLogger(__name__)
 
@@ -172,3 +173,34 @@ class LXCImage(LXDModule):
             logging.error('Failed to push the image {}'.format(self.data.get('fingerprint')))
             logging.exception(e)
             raise ValueError(e)
+
+
+    def importImage(self, input):
+
+        logging.info('Importing image {}'.format(self.data.get('fingerprint')))
+
+        shutil.rmtree('tmp/downloaded/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
+        os.makedirs('tmp/downloaded/{}'.format(self.data.get('fingerprint')), exist_ok=True)
+
+        # Download and extract the file
+        r = requests.get('http://192.168.100.156:3000/cliDownloadRepo/{}'.format(self.data.get('fingerprint')), stream=True)
+        with open('tmp/downloaded/{}/package.tar.gz'.format(self.data.get('fingerprint')), 'wb') as f:
+            for chunk in r.iter_content(chunk_size=1024):
+                if chunk:
+                    f.write(chunk)
+
+        tfile = tarfile.open('tmp/downloaded/{}/package.tar.gz'.format(self.data.get('fingerprint')), 'r:gz')
+        tfile.extractall('tmp/downloaded/{}/'.format(self.data.get('fingerprint')))
+
+        p2 = subprocess.Popen(["lxc", "image", "import",
+                               "tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint')),
+                               "tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
+        output_rez = p2.stdout.read()
+
+        #os.remove('tmp/downloaded/{}/package.tar.gz'.format(self.data.get('fingerprint')))
+        #os.remove("tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint')))
+        #os.remove("tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint')))
+
+        # self.client.images.create(image_data='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz',
+        #                           metadata='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/meta-394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz')
+

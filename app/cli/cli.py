@@ -158,6 +158,24 @@ def push(fingerprint, username, password):
         click.echo("LXDUI failed to push the image.")
         click.echo(e.__str__())
 
+import tarfile
+@lxdui.command()
+@click.argument('fingerprint', nargs=1)
+def pull(fingerprint):
+    try:
+        input = {}
+
+        image = LXCImage({'fingerprint': fingerprint})
+
+        print("Downlaoding image with fingerprint {}".format(fingerprint))
+        # Import Image - Image registry
+        image.importImage(input)
+
+        click.echo("Image imported successfully.")
+    except Exception as e:
+        click.echo("LXDUI failed to download/import the image.")
+        click.echo(e.__str__())
+
 ''' 
     User level group of commands 
 
