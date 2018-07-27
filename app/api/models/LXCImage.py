@@ -78,23 +78,25 @@ class LXCImage(LXDModule):
             #Move the export - Check for both extenstion .tar.gz & .tar.xz
             if os.path.exists('{}.tar.gz'.format(self.data.get('fingerprint'))):
                 shutil.move('{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
-                input['image'] = 'tmp/images/{0}/{0}.tar.gz'.format(self.data.get('fingerprint'))
+                input['image'] = '{}.tar.gz'.format(self.data.get('fingerprint'))
             if os.path.exists('{}.tar.xz'.format(self.data.get('fingerprint'))):
                 shutil.move('{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
-                input['image'] = 'tmp/images/{0}/{0}.tar.xz'.format(self.data.get('fingerprint'))
+                input['image'] = '{}.tar.xz'.format(self.data.get('fingerprint'))
             if os.path.exists('meta-{}.tar.gz'.format(self.data.get('fingerprint'))):
                 shutil.move('meta-{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
-                input['metadata'] = 'tmp/images/{0}/meta-{0}.tar.gz'.format(self.data.get('fingerprint'))
+                input['metadata'] = 'meta-{}.tar.gz'.format(self.data.get('fingerprint'))
             if os.path.exists('meta-{}.tar.xz'.format(self.data.get('fingerprint'))):
                 shutil.move('meta-{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
-                input['metadata'] = 'tmp/images/{0}/meta-{0}.tar.xz'.format(self.data.get('fingerprint'))
+                input['metadata'] = 'meta-{}.tar.xz'.format(self.data.get('fingerprint'))
 
             #Prepare & Move the yaml file
             self.prepareImageYAML(input)
-            shutil.move('{}.yaml'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
+            shutil.move('image.yaml', 'tmp/images/{}/'.format(self.data.get('fingerprint')))
 
             #TODO Prepare README.md
-            open('tmp/images/{}/README.md'.format(self.data.get('fingerprint')), 'a').close()
+            file = open('tmp/images/{}/README.md'.format(self.data.get('fingerprint')), 'a')
+            file.write('#README')
+            file.close()
 
             #TODO Prepare Logo
 
@@ -115,9 +117,9 @@ class LXCImage(LXDModule):
                 'email': ''
             },
             'license': '',
-            'readme': 'tmp/images/{}/README.md'.format(self.data.get('fingerprint')),
+            'readme': 'README.md'.format(self.data.get('fingerprint')),
             'tags': [],
-            'logo': 'tmp/images/{}/logo.png'.format(self.data.get('fingerprint')),
+            'logo': 'logo.png'.format(self.data.get('fingerprint')),
             'image': input.get('image'),
             'metadata': input.get('metadata'),
             'fingerprint': self.data.get('fingerprint')
@@ -125,7 +127,7 @@ class LXCImage(LXDModule):
 
         data.update(self.client.api.images[self.data.get('fingerprint')].get().json()['metadata'])
 
-        with open('{}.yaml'.format(self.data.get('fingerprint')), 'w') as yamlFile:
+        with open('image.yaml', 'w') as yamlFile:
             yaml.dump(data, yamlFile, default_flow_style=False)
 
 
@@ -138,27 +140,29 @@ class LXCImage(LXDModule):
                 print ("Image exists. Ready for push.")
 
                 #Prepare the files for upload.
-                with open('tmp/images/{0}/{0}.yaml'.format(self.data.get('fingerprint'))) as stream:
+                with open('tmp/images/{}/image.yaml'.format(self.data.get('fingerprint'))) as stream:
                     yamlData = yaml.load(stream)
 
                 files = {
-                    'yaml': open('tmp/images/{0}/{0}.yaml'.format(self.data.get('fingerprint'), 'rb'))
+                    'yaml': open('tmp/images/{}/image.yaml'.format(self.data.get('fingerprint'), 'rb'))
                 }
 
-                response = requests.post('http://postma-echo.com/post', files=files).json()
+                response = requests.post('http://192.168.100.156:3000/cliAddPackage', files=files, data={'id': self.data.get('fingerprint')}).json()
 
-                print (response)
+                print("yaml uploaded successfully.")
 
-                return True
+                print("Uploading:")
+                for file in response['filesRequired']:
+                    for key in file:
+                        files = {}
+                        if file[key] != '':
+                            try:
+                                files['file'] = open('tmp/images/{}/{}'.format(self.data.get('fingerprint'), file[key]), 'rb')
+                                requests.post('http://192.168.100.156:3000/cliAddFile', files=files, data={'id': self.data.get('fingerprint')}).json()
+                                print('File {} uploaded successfully'.format(file[key]))
+                            except:
+                                print('File {} does not exist'.format(file[key]))
 
-                files = {
-                    'image': open(yamlData['image'], 'rb'),
-                    'meta-image': open(yamlData['metadata'], 'rb'),
-                    'readme': open(yamlData['readme'], 'rb'),
-                    # 'logo': open(yamlData['logo'], 'rb')
-                }
-
-                r = requests.post('http://postma-echo.com/post', files=files)
             else:
                 logging.error('Failed to push the image {}'.format(self.data.get('fingerprint')))
                 logging.exception('Image is not prepared. Please prepare the image using the command lxdui image prep <fingerprint>')
