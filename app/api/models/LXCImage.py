@@ -1,5 +1,6 @@
 from app.api.models.LXDModule import LXDModule
 from app.lib.conf import MetaConf
+from app.api.utils.firebaseAuthentication import firebaseLogin
 import logging
 import requests
 import subprocess
@@ -134,6 +135,13 @@ class LXCImage(LXDModule):
 
     def pushImage(self, input):
         try:
+            #Login
+            result = firebaseLogin(input.get('username'), input.get('password'))
+            if result.ok:
+                token = result.json()['idToken']
+            else:
+                raise ValueError('Login failed: {}'.format(result.json()['error']['message']))
+
             self.data['fingerprint'] = self.client.images.get(self.data.get('fingerprint')).fingerprint
 
             if os.path.exists('tmp/images/{}'.format(self.data.get('fingerprint'))):
@@ -148,7 +156,9 @@ class LXCImage(LXDModule):
                     'yaml': open('tmp/images/{}/image.yaml'.format(self.data.get('fingerprint'), 'rb'))
                 }
 
-                response = requests.post('http://192.168.100.156:3000/cliAddPackage', files=files, data={'id': self.data.get('fingerprint')}).json()
+                headers = {'Authorization': token}
+
+                response = requests.post('http://192.168.100.160:3000/cliAddPackage', headers=headers, files=files, data={'id': self.data.get('fingerprint')}).json()
 
                 print("yaml uploaded successfully.")
 
@@ -159,7 +169,7 @@ class LXCImage(LXDModule):
                         if file[key] != '':
                             try:
                                 files['file'] = open('tmp/images/{}/{}'.format(self.data.get('fingerprint'), file[key]), 'rb')
-                                requests.post('http://192.168.100.156:3000/cliAddFile', files=files, data={'id': self.data.get('fingerprint')}).json()
+                                requests.post('http://192.168.100.160:3000/cliAddFile', headers=headers, files=files, data={'id': self.data.get('fingerprint')}).json()
                                 print('File {} uploaded successfully'.format(file[key]))
                             except:
                                 print('File {} does not exist'.format(file[key]))
@@ -183,7 +193,7 @@ class LXCImage(LXDModule):
         os.makedirs('tmp/downloaded/{}'.format(self.data.get('fingerprint')), exist_ok=True)
 
         # Download and extract the file
-        r = requests.get('http://192.168.100.156:3000/cliDownloadRepo/{}'.format(self.data.get('fingerprint')), stream=True)
+        r = requests.get('http://192.168.100.160:3000/cliDownloadRepo/{}'.format(self.data.get('fingerprint')), stream=True)
         with open('tmp/downloaded/{}/package.tar.gz'.format(self.data.get('fingerprint')), 'wb') as f:
             for chunk in r.iter_content(chunk_size=1024):
                 if chunk:
@@ -204,3 +214,20 @@ class LXCImage(LXDModule):
         # self.client.images.create(image_data='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz',
         #                           metadata='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/meta-394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz')
 
+
+    def listHub(self, input):
+        try:
+            logging.info('Listing images')
+            output = "# | Title | Fingerprint | OS | Author\n"
+
+            result = requests.get('http://192.168.100.160:3000/cliListRepos')
+            i = 1
+            for r in result.json():
+                output += '{} | {} | {} | {} | {}\n'.format(i, r['title'], r['fingerprint'], r['properties'].get('name'), r['author']['name'])
+                i+=1
+
+            return output
+        except Exception as e:
+            logging.error('Failed to list images from kuti.io')
+            logging.exception(e)
+            raise ValueError(e)

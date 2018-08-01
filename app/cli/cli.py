@@ -142,11 +142,13 @@ def prep(fingerprint):
 
 @lxdui.command()
 @click.argument('fingerprint', nargs=1)
-@click.option('-u', '--username', nargs=1, help='User Name')
+@click.option('-u', '--username', nargs=1, help='Username')
 @click.option('-p', '--password', nargs=1, help='Password')
 def push(fingerprint, username, password):
     try:
         input = {}
+        input['username'] = username
+        input['password'] = password
 
         image = LXCImage({'fingerprint': fingerprint})
 
@@ -158,7 +160,6 @@ def push(fingerprint, username, password):
         click.echo("LXDUI failed to push the image.")
         click.echo(e.__str__())
 
-import tarfile
 @lxdui.command()
 @click.argument('fingerprint', nargs=1)
 def pull(fingerprint):
@@ -174,6 +175,19 @@ def pull(fingerprint):
         click.echo("Image imported successfully.")
     except Exception as e:
         click.echo("LXDUI failed to download/import the image.")
+        click.echo(e.__str__())
+
+@lxdui.command()
+def list():
+    try:
+        input = {}
+        image = LXCImage({'fingerprint': 'a'})
+
+        # List Images from kuti.io
+        print (image.listHub(input))
+
+    except Exception as e:
+        click.echo("LXDUI failed to list the images from kuti.io.")
         click.echo(e.__str__())
 
 ''' 
