@@ -58,10 +58,10 @@ class LXDModule(Base):
             logging.exception(e)
             raise ValueError(e)
 
-    def listHubImages(self, input):
+    def listHubImages(self):
         try:
             logging.info('Listing images')
-            result = requests.get('http://192.168.100.160:3000/cliListRepos')
+            result = requests.get('{}/cliListRepos'.format(meta.IMAGE_HUB))
 
             return result.json()
         except Exception as e:

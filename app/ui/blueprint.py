@@ -113,7 +113,8 @@ def images():
                            },
                            memory=memory(),
                            lxdui_current_version=VERSION,
-                           remoteImagesLink=remoteImagesLink)
+                           remoteImagesLink=remoteImagesLink,
+                           imageHubLink=meta.IMAGE_HUB)
 
 
 def getLocalImages():
@@ -147,7 +148,7 @@ def getNightlyImages():
 
 def getHubImages():
     try:
-        hubImages = LXDModule.listHubImages()
+        hubImages = LXDModule().listHubImages()
     except:
         hubImages = []
 

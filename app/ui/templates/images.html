@@ -305,6 +305,11 @@
                                     <button id="buttonDownloadPull" class="btn btn-success left" disabled><span
                                             class="glyphicon glyphicon-download-alt"></span> Download/Pull
                                     </button>
+                                    <div class="left">
+                                        <p class="remote-link">Remote: <a target="_blank"
+                                                                          href="{{ imageHubLink }}">{{ imageHubLink }}</a>
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </h5>
@@ -316,24 +321,24 @@
                                        class="table table-bordered table-responsive table-fixed width100">
                                     <thead>
                                     <th><input type="checkbox" id="selectAllHub" class="width100"/></th>
+                                    <th>Title</th>
                                     <th>OS</th>
                                     <th>Description</th>
-                                    <th>Alias</th>
                                     <th>Ver</th>
                                     <th>Arch</th>
+                                    <th>Size</th>
                                     </thead>
                                     <tbody>
-                                    {% for image in remoteImages %}
-                                    <tr id="{{image.image}}">
+                                    {% for image in hubImages %}
+                                    <tr id="{{image.fingerprint}}">
                                         <td></td>
-                                        <td><a class="pointer"
-                                               onClick="App.images.showRemoteDetails('{{image.image}}');"
-                                               data-keyboard="true">{{ image.name}}</a></td>
-                                        <td>{{ image.name|title }} {{ image.distribution }} ({{image.architecture}})
+                                        <td><a href="{{ imageHubLink }}/details/{{ image.fingerprint }}" target="_blank">{{ image.title or 'NA' }}</a></td>
+                                        <td>{{ image.properties['os'] or 'NA' }}</td>
+                                        <td>{{ image.description or 'NA' }}
                                         </td>
-                                        <td>{{ image.image }}</td>
-                                        <td>{{ image.distribution }}</td>
-                                        <td>{{ image.architecture }}</td>
+                                        <td>{{ image.properties.release or 'NA' }}</td>
+                                        <td>{{ image.architecture or 'NA' }}</td>
+                                        <td class="imageSize">{{image.size or 'NA' }}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>

@@ -8,6 +8,7 @@ AUTHOR = 'AdaptiveScale, Inc.'
 AUTHOR_URL = 'http://www.adaptivescale.com'
 AUTHOR_EMAIL = 'info@adaptivescale.com'
 KEYWORDS = 'lxc lxc-containers lxd'
+IMAGE_HUB = 'http://192.168.100.166:3000'
 
 '''
 
