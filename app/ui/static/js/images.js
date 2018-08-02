@@ -7,6 +7,7 @@ App.images = App.images || {
     tableLocal: null,
     tableRemote: null,
     tableNightly: null,
+    tableHub: null,
     tableSettings: {
         searching:true,
         responsive: {
@@ -54,11 +55,13 @@ App.images = App.images || {
         $('#btnLocalImages').on('click', $.proxy(this.switchView, this, 'localList'));
         $('#btnRemoteImages').on('click', $.proxy(this.switchView, this, 'remoteList'));
         $('#btnNightlyImages').on('click', $.proxy(this.switchView, this, 'nightlyList'));
+        $('#btnHubImages').on('click', $.proxy(this.switchView, this, 'hubList'));
 
         $('#buttonUpdate').on('click', $.proxy(this.getData, this));
         $('#buttonDelete').on('click', $.proxy(this.doDeleteLocalImages, this));
         $('#buttonDownload').on('click', $.proxy(this.doDownload, this));
         $('#buttonDownloadNightly').on('click', $.proxy(this.doDownload, this));
+        $('#buttonDownloadHub').on('click', $.proxy(this.doDownload, this));
         $('#buttonLaunchContainers').on('click', $.proxy(this.launchContainers, this));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'localList'));
         $('.image').on('click', $.proxy(this.setActive, this));
@@ -69,6 +72,7 @@ App.images = App.images || {
         this.initLocalTable();
         this.initRemoteTable();
         this.initNightlyTable();
+        this.initHubTable();
         $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
         this.itemTemplate = $('.itemTemplate').clone();
@@ -143,6 +147,14 @@ App.images = App.images || {
         this.tableNightly.on('select', $.proxy(this.onItemSelectChange, this));
         this.tableNightly.on('deselect', $.proxy(this.onItemSelectChange, this));
     },
+    initHubTable: function() {
+        this.tableHub =$('#tableImagesHub').DataTable(App.mergeProps(this.tableSettings, {rowId: 'fingerprint'}));
+        this.setHubTableEvents();
+    },
+    setHubTableEvents: function() {
+        this.tableHub.on('select', $.proxy(this.onItemSelectChange, this));
+        this.tableHub.on('deselect', $.proxy(this.onItemSelectChange, this));
+    },
     filterRemoteTable: function(e) {
         this.tableRemote.search(e.target.value).draw();
     },
@@ -170,6 +182,13 @@ App.images = App.images || {
             var visibility= !state?'attr':'removeAttr';
             $('#buttonDownloadNightly')[visibility]('disabled', 'disabled');
             $('#selectAllNightly').prop('checked',this.tableNightly.rows({selected:true}).count()==this.tableNightly.rows().count());
+            return;
+        }
+        if(this.activeTab=='hub'){
+            var state = this.tableHub.rows({selected:true}).count()>0
+            var visibility= !state?'attr':'removeAttr';
+            $('#buttonDownloadHub')[visibility]('disabled', 'disabled');
+            $('#selectAllHub').prop('checked',this.tableHub.rows({selected:true}).count()==this.tableHub.rows().count());
             return;
         }
     },
@@ -220,6 +239,20 @@ App.images = App.images || {
                 });
                 this.tableRemote.row('#'+row['image']).remove().draw(false);
             }.bind(this));
+        } else if(activeTab=='hub') {
+            this.tableHub.rows({selected: true}).data().map(function(row){
+                $.ajax({
+                    url:App.baseAPI+'image/hub',
+                    type: 'POST',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data: JSON.stringify({
+                        image:row['fingerprint']
+                    }),
+                    success: $.proxy(this.onDownloadSuccess, this, row['fingerprint'])
+                });
+                //this.tableHub.row('#'+row['image']).remove().draw(false);
+            }.bind(this));
         }
     },
     onDownloadSuccess: function(imageName, response){
@@ -241,10 +274,14 @@ App.images = App.images || {
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
        if(this.activeTab=='nightly')
             return $.get(App.baseAPI+'image/remote/nightly/list', $.proxy(this.getDataSuccess, this));
+       if(this.activeTab=='hub')
+            return $.get(App.baseAPI+'image/remote/hub/list', $.proxy(this.getDataSuccess, this));
     },
     activateScreen: function(screen){
         this.tableLocal.rows({selected:true}).deselect();
         this.tableRemote.rows({selected:true}).deselect();
+        this.tableNightly.rows({selected:true}).deselect();
+        this.tableHub.rows({selected:true}).deselect();
         $('.mg-bottom15').show();
         if(screen==='local'){
             $('#tableImagesLocalWrapper').show();
@@ -267,8 +304,12 @@ App.images = App.images || {
             this.activeTab = 'remote';
             return;
         }
-        if(screen=='nightly') {
+        if(screen==='nightly') {
             this.activeTab = 'nightly';
+            return;
+        }
+        if(screen==='hub') {
+            this.activeTab = 'hub';
             return;
         }
     },
@@ -423,6 +464,9 @@ App.images = App.images || {
         }
         if(view=='nightlyList'){
             return this.activateScreen('nightly');
+        }
+        if (view=='hubList') {
+            return this.activateScreen('hub');
         }
         $('#buttonLaunchContainers').hide();
         $('#buttonDelete').hide();

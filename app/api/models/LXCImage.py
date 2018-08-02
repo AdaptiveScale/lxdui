@@ -159,12 +159,18 @@ class LXCImage(LXDModule):
 
                 headers = {'Authorization': token}
 
-                response = requests.post('{}/cliAddPackage'.format(meta.IMAGE_HUB), headers=headers, files=files, data={'id': self.data.get('fingerprint')}).json()
+                response = requests.post('{}/cliAddPackage'.format(meta.IMAGE_HUB), headers=headers, files=files, data={'id': self.data.get('fingerprint')})
+
+                if response.ok == False:
+                    logging.error('Failed to push the image {}'.format(self.data.get('fingerprint')))
+                    raise ValueError(
+                        response.json()['message'])
+                    return
 
                 print("yaml uploaded successfully.")
 
                 print("Uploading:")
-                for file in response['filesRequired']:
+                for file in response.json()['filesRequired']:
                     for key in file:
                         files = {}
                         if file[key] != '':
@@ -203,14 +209,33 @@ class LXCImage(LXDModule):
         tfile = tarfile.open('tmp/downloaded/{}/package.tar.gz'.format(self.data.get('fingerprint')), 'r:gz')
         tfile.extractall('tmp/downloaded/{}/'.format(self.data.get('fingerprint')))
 
-        p2 = subprocess.Popen(["lxc", "image", "import",
+        with open('tmp/downloaded/{}/image.yaml'.format(self.data.get('fingerprint'))) as stream:
+            yamlData = yaml.load(stream)
+
+
+        if os.path.exists("tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint'))) and os.path.exists("tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint'))):
+            p2 = subprocess.Popen(["lxc", "image", "import",
                                "tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint')),
                                "tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
-        output_rez = p2.stdout.read()
+            output_rez = p2.stdout.read()
 
-        #os.remove('tmp/downloaded/{}/package.tar.gz'.format(self.data.get('fingerprint')))
-        #os.remove("tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint')))
-        #os.remove("tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint')))
+        elif os.path.exists("tmp/downloaded/{0}/meta-{0}.tar.gz".format(self.data.get('fingerprint'))) and os.path.exists("tmp/downloaded/{0}/{0}.tar.gz".format(self.data.get('fingerprint'))):
+            p2 = subprocess.Popen(["lxc", "image", "import",
+                               "tmp/downloaded/{0}/meta-{0}.tar.gz".format(self.data.get('fingerprint')),
+                               "tmp/downloaded/{0}/{0}.tar.gz".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
+            output_rez = p2.stdout.read()
+
+        elif os.path.exists("tmp/downloaded/{0}/meta-{0}.tar.gz".format(self.data.get('fingerprint'))) == False and os.path.exists("tmp/downloaded/{0}/{0}.tar.gz".format(self.data.get('fingerprint'))):
+            p2 = subprocess.Popen(["lxc", "image", "import",
+                               "tmp/downloaded/{0}/{0}.tar.gz".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
+            output_rez = p2.stdout.read()
+
+        elif os.path.exists("tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint'))) == False and os.path.exists("tmp/downloaded/{0}/{0}.tar.gz".format(self.data.get('fingerprint'))):
+            p2 = subprocess.Popen(["lxc", "image", "import",
+                               "tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
+            output_rez = p2.stdout.read()
+
+        #shutil.rmtree('tmp/downloaded/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
 
         # self.client.images.create(image_data='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz',
         #                           metadata='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/meta-394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz')
