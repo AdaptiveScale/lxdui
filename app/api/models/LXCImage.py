@@ -235,7 +235,7 @@ class LXCImage(LXDModule):
                                "tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
             output_rez = p2.stdout.read()
 
-        #shutil.rmtree('tmp/downloaded/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
+        shutil.rmtree('tmp/downloaded/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
 
         # self.client.images.create(image_data='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz',
         #                           metadata='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/meta-394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz')
