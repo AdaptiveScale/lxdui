@@ -58,6 +58,17 @@ class LXDModule(Base):
             logging.exception(e)
             raise ValueError(e)
 
+    def listHubImages(self, input):
+        try:
+            logging.info('Listing images')
+            result = requests.get('http://192.168.100.160:3000/cliListRepos')
+
+            return result.json()
+        except Exception as e:
+            logging.error('Failed to list images from kuti.io')
+            logging.exception(e)
+            raise ValueError(e)
+
     def detailsRemoteImage(self, alias):
         try:
             remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))

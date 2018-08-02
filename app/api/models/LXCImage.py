@@ -221,12 +221,14 @@ class LXCImage(LXDModule):
             output = "# | Title | Fingerprint | OS | Author\n"
 
             result = requests.get('http://192.168.100.160:3000/cliListRepos')
-            i = 1
-            for r in result.json():
-                output += '{} | {} | {} | {} | {}\n'.format(i, r['title'], r['fingerprint'], r['properties'].get('name'), r['author']['name'])
-                i+=1
 
-            return output
+            return result.json()
+            # i = 1
+            # for r in result.json():
+            #     output += '{} | {} | {} | {} | {}\n'.format(i, r['title'], r['fingerprint'], r['properties'].get('name'), r['author']['name'])
+            #     i+=1
+            #
+            # return output
         except Exception as e:
             logging.error('Failed to list images from kuti.io')
             logging.exception(e)
