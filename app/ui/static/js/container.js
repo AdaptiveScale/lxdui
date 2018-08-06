@@ -408,7 +408,7 @@ App.containers = App.containers || {
     onCloneSuccess: function(response){
          console.log(response);
          console.log('clonedSuccess:', 'TODO - add alert and refresh local data');
-         $("#myModal").modal("hide");
+         $("#cloneContainerModal").modal("hide");
          location.reload();
     },
     moveContainer: function() {
@@ -426,7 +426,7 @@ App.containers = App.containers || {
     onMoveSuccess: function(response){
          console.log(response);
          console.log('Moved Success:', 'TODO - add alert and refresh local data');
-         $("#myModal").modal("hide");
+         $("#moveContainerModal").modal("hide");
          location.reload();
     },
     exportContainer: function() {
@@ -445,7 +445,7 @@ App.containers = App.containers || {
     onExportSuccess: function(response){
          console.log(response);
          console.log('Export Success:', 'TODO - add alert and refresh local data');
-         $("#myModal").modal("hide");
+         $("#exportContainerModal").modal("hide");
     },
     snapshotContainer: function() {
         $.ajax({
@@ -462,7 +462,7 @@ App.containers = App.containers || {
     onSnapshotSuccess: function(response){
          console.log(response);
          console.log('Snapshot Success:', 'TODO - add alert and refresh local data');
-         $("#myModal").modal("hide");
+         $("#snapshotContainerModal").modal("hide");
     },
     toggleSelectAll(event){
         if(event.target.checked){
