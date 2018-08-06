@@ -85,3 +85,17 @@ def downloadImage():
         return response.replySuccess(client.downloadImage(input.get('image')), message='Image {} downloaded successfully.'.format(input.get('image')))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
+
+@image_api.route('/hub', methods=['POST'])
+@jwt_required()
+def downloadHubImage():
+    input = request.get_json(silent=True)
+    validation = doValidate(input)
+    if validation:
+        return response.replyFailed(message=validation.message)
+    input['fingerprint'] = input.get('image')
+    try:
+        client = LXCImage(input)
+        return response.replySuccess(client.importImage(input), message='Image {} downloaded successfully.'.format(input.get('fingerprint')))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())

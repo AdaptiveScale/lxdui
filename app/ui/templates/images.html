@@ -47,6 +47,10 @@
                     <a href="#3" class="tab-background" id="btnRemoteImages" aria-expanded="false" data-toggle="tab">Remote <span
                             class="badge">{{remoteImages|length}}</span></a>
                 </li>
+                <li>
+                    <a href="#4" class="tab-background" id="btnHubImages" aria-expanded="false" data-toggle="tab">Hub <span
+                            class="badge">{{hubImages|length}}</span></a>
+                </li>
                 <!--<a href="" class="btn btn-default btn-xs buttonAddRemoteModal" data-toggle="modal" data-target="#addRemoteModal">-->
                 <!--<span class="glyphicon glyphicon-plus-sign"></span></a>-->
             </ul>
@@ -279,6 +283,62 @@
                                         <td>{{ image.image }}</td>
                                         <td>{{ image.distribution }}</td>
                                         <td>{{ image.architecture }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!--col-sm-12 end-->
+
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="4">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-lg-12" id="loader" style="display:none;">
+                            <div class="col-lg-offset-4 col-lg-4">
+                                <img src="static/images/loader.gif" class="text-center" width="150px">
+                            </div>
+                        </div>
+                        <h5 class="bg-bottom">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <button id="buttonDownloadHub" class="btn btn-success left" disabled><span
+                                            class="glyphicon glyphicon-download-alt"></span> Download/Pull
+                                    </button>
+                                    <div class="left">
+                                        <p class="remote-link">Remote: <a target="_blank"
+                                                                          href="{{ imageHubLink }}">{{ imageHubLink }}</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </h5>
+
+                        <!--<div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">-->
+                        <div class="col-lg-12" id="tableImagesHubWrapper">
+                            <div class="">
+                                <table id="tableImagesHub"
+                                       class="table table-bordered table-responsive table-fixed width100">
+                                    <thead>
+                                    <th><input type="checkbox" id="selectAllHub" class="width100"/></th>
+                                    <th>Title</th>
+                                    <th>OS</th>
+                                    <th>Description</th>
+                                    <th>Ver</th>
+                                    <th>Arch</th>
+                                    <th>Size</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for image in hubImages %}
+                                    <tr id="{{image.fingerprint}}">
+                                        <td></td>
+                                        <td><a href="{{ imageHubLink }}/details/{{ image.fingerprint }}" target="_blank">{{ image.title or 'NA' }}</a></td>
+                                        <td>{{ image.properties['os'] or 'NA' }}</td>
+                                        <td>{{ image.description or 'NA' }}
+                                        </td>
+                                        <td>{{ image.properties.release or 'NA' }}</td>
+                                        <td>{{ image.architecture or 'NA' }}</td>
+                                        <td class="imageSize">{{image.size or 'NA' }}</td>
                                     </tr>
                                     {% endfor %}
                                     </tbody>

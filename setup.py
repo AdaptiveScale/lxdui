@@ -42,7 +42,8 @@ setup(
        'tornado==5.0.2',
        'tornado-xstatic',
        'XStatic==1.0.1',
-       'XStatic-term.js==0.0.7.0'
+       'XStatic-term.js==0.0.7.0',
+       'pyyaml==3.11'
    ],
    entry_points={
        'console_scripts': [
