@@ -66,11 +66,17 @@ App.containerDetails = App.containerDetails || {
         $('#buttonExportContainerDetail').on('click', $.proxy(this.showExportContainer, this));
         $('#buttonSnapshotContainerDetail').on('click', $.proxy(this.showSnapshotContainer, this));
 
-        $('#cloneContainerForm').on('submit', $.proxy(this.cloneContainerDetail, this));
-        $('#moveContainerForm').on('submit', $.proxy(this.moveContainerDetail, this));
-        $('#exportContainerForm').on('submit', $.proxy(this.exportContainerDetail, this));
-        $('#snapshotContainerForm').on('submit', $.proxy(this.snapshotContainerDetail, this));
+        $('#cloneContainerSubmit').on('submit', $.proxy(this.cloneContainerDetail, this));
+        $('#moveContainerSubmit').on('submit', $.proxy(this.moveContainerDetail, this));
+        $('#exportContainerSubmit').on('submit', $.proxy(this.exportContainerDetail, this));
+        $('#snapshotContainerSubmit').on('submit', $.proxy(this.snapshotContainerDetail, this));
         $('#containerFromSnapshotForm').on('submit', $.proxy(this.newContainerFromSnapshotDetail, this));
+
+         $('#cloneContainerSubmit').on('click', $.proxy(this.cloneContainerDetail, this));
+        $('#moveContainerSubmit').on('click', $.proxy(this.moveContainerDetail, this));
+        $('#exportContainerSubmit').on('click', $.proxy(this.exportContainerDetail, this));
+        $('#snapshotContainerSubmit').on('click', $.proxy(this.snapshotContainerDetail, this));
+        $('#containerFromSnapshotForm').on('click', $.proxy(this.newContainerFromSnapshotDetail, this));
 
         $('.profileTag').on('click', $.proxy(this.deleteProfile, this));
         $('#buttonAdd').on('click', $.proxy(this.onAddProfileClick, this));
