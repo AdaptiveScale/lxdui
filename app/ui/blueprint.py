@@ -6,6 +6,7 @@ from app import __metadata__ as meta
 from app.__metadata__ import VERSION
 import json
 import os
+import platform
 
 uiPages = Blueprint('uiPages', __name__, template_folder='./templates',
                     static_folder='./static')
@@ -114,7 +115,8 @@ def images():
                            memory=memory(),
                            lxdui_current_version=VERSION,
                            remoteImagesLink=remoteImagesLink,
-                           imageHubLink=meta.IMAGE_HUB)
+                           imageHubLink=meta.IMAGE_HUB,
+                           architecture=platform.machine())
 
 
 def getLocalImages():

@@ -83,6 +83,12 @@ App.images = App.images || {
         $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
 
         this.initKeyValuePairs();
+
+        if (architecture == 'x86_64') {
+            architecture = 'amd64';
+        }
+        this.tableRemote.search(architecture).draw();
+        this.tableNightly.search(architecture).draw();
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
