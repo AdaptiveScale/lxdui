@@ -210,7 +210,9 @@ App.images = App.images || {
     },
     doDownload: function(){
         activeTab = this.activeTab;
-        $('#modalDownloadButton').attr('disabled', 'disabled');
+        $('#modalDownloadButton').hide();
+        toastr.success('Image is being downloaded','Downloading');
+        $('.imageDownloadLoader').show();
         if(activeTab=='nightly') {
             this.tableNightly.rows({selected: true}).data().map(function(row){
                 $.ajax({
