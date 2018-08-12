@@ -96,8 +96,8 @@ def network():
 def images():
     localImages = getLocalImages()
     profiles = getProfiles()
-    remoteImages = getRemoteImages()
-    nightlyImages = getNightlyImages()
+    remoteImages = []
+    nightlyImages = []
     hubImages = getHubImages()
     remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
     return render_template('images.html', currentpage='Images',
