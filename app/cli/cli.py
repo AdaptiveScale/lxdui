@@ -120,10 +120,15 @@ def status():
             click.echo(' {} : {}'.format(k, v))
 
 
-#TODO Create Image Registry Group
-@lxdui.command()
+@click.group()
+def image():
+    """Work with image registry"""
+    pass
+
+@image.command()
 @click.argument('fingerprint', nargs=1)
 def prep(fingerprint):
+    """Prepare an image for upload"""
     try:
         input = {}
         image = LXCImage({'fingerprint': fingerprint})
@@ -140,11 +145,12 @@ def prep(fingerprint):
         click.echo("LXDUI failed to prepare the image.")
         click.echo(e.__str__())
 
-@lxdui.command()
+@image.command()
 @click.argument('fingerprint', nargs=1)
 @click.option('-u', '--username', nargs=1, help='Username')
 @click.option('-p', '--password', nargs=1, help='Password')
 def push(fingerprint, username, password):
+    """Push an image to hub.kuti.io"""
     try:
         input = {}
         input['username'] = username
@@ -160,9 +166,10 @@ def push(fingerprint, username, password):
         click.echo("LXDUI failed to push the image.")
         click.echo(e.__str__())
 
-@lxdui.command()
+@image.command()
 @click.argument('fingerprint', nargs=1)
 def pull(fingerprint):
+    """Pull an image from hub.kuti.io"""
     try:
         input = {}
 
@@ -177,8 +184,9 @@ def pull(fingerprint):
         click.echo("LXDUI failed to download/import the image.")
         click.echo(e.__str__())
 
-@lxdui.command()
+@image.command()
 def list():
+    """List images from hub.kuti.io"""
     try:
         input = {}
         image = LXCImage({'fingerprint': 'a'})
@@ -363,6 +371,7 @@ lxdui.add_command(status)
 lxdui.add_command(user)
 lxdui.add_command(config)
 lxdui.add_command(cert)
+lxdui.add_command(image)
 
 
 if __name__ == '__main__':

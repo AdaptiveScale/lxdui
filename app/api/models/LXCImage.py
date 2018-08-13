@@ -237,6 +237,9 @@ class LXCImage(LXDModule):
 
         shutil.rmtree('tmp/downloaded/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
 
+        image = self.client.images.get(self.data.get('fingerprint'))
+        image.add_alias(yamlData['title'], yamlData['title'])
+
         # self.client.images.create(image_data='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz',
         #                           metadata='tmp/images/394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd/meta-394986c986a778f64903fa043a3e280bda41e4793580b22c5d991ec948ced6dd.tar.xz')
 

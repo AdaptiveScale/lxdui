@@ -83,6 +83,20 @@ App.images = App.images || {
         $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
 
         this.initKeyValuePairs();
+
+        if (architecture == 'x86_64') {
+            architecture = 'amd64';
+        }
+        this.tableRemote.search(architecture).draw();
+        this.tableNightly.search(architecture).draw();
+
+
+        console.log(localImagesLength);
+        if (localImagesLength == 0){
+            this.switchView('nightlyList');
+            $('.nav-tabs li:eq(1) a').tab('show');
+            //$('#btnNightlyImages').on('click', $.proxy(this.switchView, this, 'nightlyList'));
+        }
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
