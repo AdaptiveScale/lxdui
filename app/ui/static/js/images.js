@@ -90,12 +90,9 @@ App.images = App.images || {
         this.tableRemote.search(architecture).draw();
         this.tableNightly.search(architecture).draw();
 
-
-        console.log(localImagesLength);
         if (localImagesLength == 0){
             this.switchView('nightlyList');
             $('.nav-tabs li:eq(1) a').tab('show');
-            //$('#btnNightlyImages').on('click', $.proxy(this.switchView, this, 'nightlyList'));
         }
     },
     convertImageSize:function(index, item){
@@ -281,6 +278,9 @@ App.images = App.images || {
             //return $.get(App.baseAPI+'image', $.proxy(this.getDataSuccess, this));
         if(this.activeTab=='remote')
             return $.get(App.baseAPI+'image/remote', $.proxy(this.getDataSuccess, this));
+
+        if(this.activeTab=='nightly')
+            return $.get(App.baseAPI+'image/remote/nightly/list', $.proxy(this.getDataSuccess, this));
     },
     getDataJSON: function(){
         //this.setLoading(true);
@@ -318,10 +318,12 @@ App.images = App.images || {
             $('#buttonDownload').show();
             $('#buttonDelete').hide();
             this.activeTab = 'remote';
+            this.getData();
             return;
         }
         if(screen==='nightly') {
             this.activeTab = 'nightly';
+            this.getData();
             return;
         }
         if(screen==='hub') {
@@ -352,6 +354,7 @@ App.images = App.images || {
         }));
     },
     updateRemoteTable: function(jsonData){
+        $('#remoteLength').text(jsonData.length);
         this.remoteData = jsonData;
         this.tableRemote.clear();
         this.tableRemote.destroy();
@@ -360,12 +363,78 @@ App.images = App.images || {
             data : this.remoteData,
             columns : [
                 { title:'Select', data: null, defaultContent:''},
-                { title: 'Distribution', data : 'distribution' },
-                { title: 'Architecture', data : 'architecture' },
-                { title: 'Image', data : 'image' },
-                { title: 'Name', data : 'name' }
+                { title: 'OS', data : 'image', render(field, type, full, meta) {
+                    return '<a class="pointer"'+
+                            'onClick="App.images.showRemoteDetails(\''+field+'\');"'+
+                            'data-keyboard="true">'+full.name+'</a>'
+                }},
+                { title: 'Description', data: null, render(field, type, full, meta) {
+                    return '<td>'+full.name+' '+full.distribution+' ' + full.architecture +
+                           '</td>'
+                }},
+                { title: 'Alias', data : 'image' },
+                { title: 'Ver', data : 'distribution' },
+                { title: 'Arch', data : 'architecture' }
             ]
         }));
+        this.tableRemote.search(architecture).draw();
+    },
+    updateNightlyTable: function(jsonData){
+        $('#nightlyLength').text(jsonData.length);
+        this.nightlyData = jsonData;
+        this.tableNightly.clear();
+        this.tableNightly.destroy();
+        this.tableNightly=$('#tableImagesNightly').DataTable(App.mergeProps(this.tableSettings, {
+            rowId:'fingerprint',
+            data : this.nightlyData,
+            columns : [
+                { title:'Select', data: null, defaultContent:''},
+                { title: 'OS', data : null, render(field, type, full, meta) {
+                    if(full.metadata.properties['description'] === undefined) {
+                        return '<a class="pointer"'+
+                            'onClick="App.images.showRemoteDetails(\''+full.metadata.image+'\');"'+
+                            'data-keyboard="true">'+full.metadata.name+'</a>'
+                    }
+                    else {
+                        return '<a class="pointer"'+
+                               'onClick="App.images.showNightlyDetails(\''+full.metadata.properties['os']+'/'+full.metadata.properties['release']+'/'+full.metadata.properties['architecture']+'\', \''+full.metadata.fingerprint+'\');">'+full.metadata.properties['os']+'</a>';
+                    }
+
+                }},
+                { title: 'Description', data: null, render(field, type, full, meta) {
+                    if(full.metadata.properties['description'] === undefined) {
+                        return full.metadata.aliases[0].description;
+                    }
+                    else {
+                        return full.metadata.properties.description;
+                    }
+                }},
+                { title: 'Alias', data : null, render(field, type, full, meta) {
+                    if(full.metadata.properties['description'] === undefined) {
+                        return full.metadata.aliases[0]['description'];
+                    }
+                    else {
+                        var aliases = '';
+                        for (i=0; i<full.metadata.aliases.length; i++) {
+                            aliases+= '<li>'+full.metadata.aliases[i]['name']+'</li>'
+                        }
+
+                        return aliases;
+                    }
+                } },
+                { title: 'Ver', data : null, render(field, type, full, meta) {
+                    return full.metadata.properties['release'];
+                } },
+                { title: 'Arch', data : null, render(field, type, full, meta) {
+                    return full.metadata.properties['architecture'];
+                } },
+                { title: 'Size', data: null, render(field, type, full, meta) {
+                    return '<span class="imageSize">'+full.metadata.size+'</span>';
+                }}
+            ]
+        }));
+        this.tableNightly.search(architecture).draw();
+        $('.imageSize').each(this.convertImageSize);
     },
     getDataSuccess: function(response){
         this.setLoading(false);
@@ -373,9 +442,12 @@ App.images = App.images || {
 //        if(this.activeTab=='local'){
 //            this.updateLocalTable(response.data);
 //        }
-//        if(this.activeTab == 'remote'){
-//            this.updateRemoteTable(response.data);
-//        }
+        if(this.activeTab == 'remote'){
+            this.updateRemoteTable(response.data);
+        }
+        if (this.activeTab == 'nightly') {
+            this.updateNightlyTable(response.data);
+        }
     },
     showJSON: function(e) {
         this.rawJson.setValue('');
