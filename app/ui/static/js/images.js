@@ -65,6 +65,7 @@ App.images = App.images || {
         $('#buttonLaunchContainers').on('click', $.proxy(this.launchContainers, this));
         $('#buttonBack').on('click', $.proxy(this.switchView, this, 'localList'));
         $('.image').on('click', $.proxy(this.setActive, this));
+        $('#buttonPublish').on('click', $.proxy(this.publishImage, this));
         App.setActiveLink('image');
         this.newContainerForm = $('#newContainerForm');
         this.newContainerForm.on('submit', $.proxy(this.doCreateContainer, this));
@@ -78,7 +79,7 @@ App.images = App.images || {
         this.itemTemplate = $('.itemTemplate').clone();
         $('#modalDownloadButton').on('click', $.proxy(this.doDownload, this));
         $('#exTab2 > ul > li:nth-child(1)').addClass('active');// set first tab as active
-
+        $('#exTab > ul > li:nth-child(1)').addClass('active');// set first tab as active
         $('#architectureRemote').on('change', $.proxy(this.filterRemoteTable, this));
         $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
 
@@ -696,7 +697,7 @@ App.images = App.images || {
 
       var aliasesList = $('#aliasesList');
       tempData.aliases.forEach(function(alias, index){
-            aliasesList.append('<div id="aliases" class="form-group"><b>Alias '+(index+1)+'</b></div>')
+           aliasesList.append('<div id="aliases" class="form-group"><b>Alias '+(index+1)+'</b></div>')
            aliasesList.append(this.generateItem('Description',alias.description));
            aliasesList.append(this.generateItem('Name',alias.name));
            aliasesList.append(this.generateItem('Target',alias.target));
@@ -704,5 +705,8 @@ App.images = App.images || {
       modalBody.append(aliasesList);
       $('#myModal').modal().show();
 
+    },
+    publishImage: function(e) {
+        $("#publishImageModal").modal("show");
     }
 }

@@ -97,7 +97,6 @@ App.containers = App.containers || {
         $('#containerCPUPercentage').on('change', $.proxy(this.updateValue, this, $('#cpu_percentage')));
         $('#memory_percentage').on('change', $.proxy(this.updateValue, this, $('#containerMemoryPercentage')));
         $('#containerMemoryPercentage').on('change', $.proxy(this.updateValue, this, $('#memory_percentage')));
-
         if(window.location.hash && window.location.hash=='#createContainer')
             this.switchView('form');
 

@@ -70,6 +70,9 @@
                                         <button id="buttonDelete" class="btn btn-danger" disabled><span
                                                 class="glyphicon glyphicon-remove-sign"></span> Delete
                                         </button>
+                                         &nbsp; &nbsp; | &nbsp; &nbsp;
+                                        <button id="buttonPublish" class="btn btn-primary"> Publish
+                                        </button>
                                     </div>
                                     <button class="btn btn-default rawJSONImages btn-xs btn-rounded-corners" href="#" style="display:none;">
                                         JSON
@@ -548,7 +551,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modnewContainerFormal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Add remote <label class="imageName"></label></h4>
             </div>
             <div class="modal-body" id="modalAddRemoteBody">
@@ -571,6 +574,157 @@
             </div>
             <div class="modal-footer" style="border: none;">
                 <button type="button" class="btn btn-success" id="buttonAddRemote">Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+<!-- Modal -->
+<div id="publishImageModal" class="modal fade" role="dialog" tabindex="-1">
+    <div class="modal-dialog images-modal">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add remote <label class="imageName"></label></h4>
+            </div>
+            <div class="modal-body row" id="modalPubslishImageToHub">
+                <form id="publishImageToHubForm" class="form-horizontal">
+                    <!--<div class="form-group">-->
+                        <!--<label for="" class="col-sm-2 control-label">URL</label>-->
+                        <!--<div class="col-sm-9">-->
+                            <!--<input id="inputUrl" name="inputUrlName" class="form-control" type="text" placeholder="URL"-->
+                                   <!--title="Url Name" required/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <div class="image-tabs">
+                        <div id="exTab">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a href="#5" id="btnImageDetails" class="tab-background" aria-expanded="true" data-toggle="tab">Image Details</a>
+                                </li>
+                                <li>
+                                    <a href="#6" class="tab-background" id="btnReadme" aria-expanded="false" data-toggle="tab">Readme </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders active" id="5">
+                                    <div class="col-lg-6">
+                                        <h5>Author</h5>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Name</label>
+                                            <div class="col-sm-9">
+                                                <input id="authorName" name="authorName" class="form-control" type="text"
+                                                       placeholder="Author Name" title="Name" required/>
+                                            </div>
+                                        </div>
+                                         <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Email</label>
+                                            <div class="col-sm-9">
+                                                <input id="authorEmail" name="authorEmail" class="form-control" type="text"
+                                                       placeholder="Author Email" title="Email" required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">License</label>
+                                            <div class="col-sm-9">
+                                                <select name="license" id="license" class="form-control">
+                                                    <option value="Apache 2.0">Apache 2.0</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Public</label>
+                                            <div class="col-sm-9">
+                                                <input type="checkbox" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <h5>Image</h5>
+                                         <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Image Alias</label>
+                                            <div class="col-sm-9">
+                                                <input id="imageAlias" name="ImageAlias" class="form-control" type="text"
+                                                       placeholder="Image Alias" title="Alias" required/>
+                                            </div>
+                                        </div>
+                                         <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Description</label>
+                                            <div class="col-sm-9">
+                                                <textarea id="imageDescription" name="imageDescription" class="form-control" type="text" placeholder="" title="Description">My custom configured nginx instange
+                                                </textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Logo (PNG)</label>
+                                            <div class="col-sm-9">
+                                                <select name="logo" id="logo" class="form-control">
+                                                    <option value="">nginx_logo.png</option>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Tags</label>
+                                            <div class="col-sm-9">
+                                                <input id="imageTags" name="ImageTags" class="form-control" type="text"
+                                                       placeholder="Image Tags" title="Tags" required/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 list-details">
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>LXC Version:</b></h5>
+                                            <label class="formModifier font400 lxcversion">3.3</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <h5 class="inline"><b>Fingerprint:</b></h5>
+                                            <label class="formModifier font400 fingerprint">6636262626dfe4fdsa3</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>Source:</b></h5>
+                                            <label class="formModifier font400 source">https://cloud.images.ubuntu.com</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>Size:</b></h5>
+                                            <label class="formModifier font400 size">167.6MB</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>Architecture:</b></h5>
+                                            <label class="formModifier font400 architecture">x86_64</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>OS:</b></h5>
+                                            <label class="formModifier font400 os">Ubuntu</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>Releases:</b></h5>
+                                            <label class="formModifier font400 releases">Xenial 16.04</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="6">
+                                     <div class="form-group">
+                                         <h5>Usage Documentation (Markdown) <a class="btn btn-default pull-right">Preview</a></h5>
+                                     </div>
+                                     <div class="form-group">
+                                         <textarea name="documentation" id="documentation" cols="85" rows="15"></textarea>
+                                     </div>
+
+                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                </form>
+            </div>
+            <div class="modal-footer" style="border: none;">
+                <button type="button" class="btn btn-success" id="buttonPublishNext" onclick="nextTab">Next</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
