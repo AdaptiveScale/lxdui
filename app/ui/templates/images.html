@@ -587,7 +587,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Add remote <label class="imageName"></label></h4>
+                <h4 class="modal-title">Publish image to Hub <label class="imageName"></label></h4>
             </div>
             <div class="modal-body row" id="modalPubslishImageToHub">
                 <form id="publishImageToHubForm" class="form-horizontal">
@@ -599,7 +599,7 @@
                         <!--</div>-->
                     <!--</div>-->
 
-                    <div class="image-tabs">
+                    <div class="image-tabs col-lg-12">
                         <div id="exTab">
                             <ul class="nav nav-tabs">
                                 <li class="active">
@@ -707,10 +707,10 @@
                                     </div>
                                 </div>
                                  <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="6">
-                                     <div class="form-group">
-                                         <h5>Usage Documentation (Markdown) <a class="btn btn-default pull-right">Preview</a></h5>
+                                     <div class="form-group col-lg-12">
+                                         <h4>Usage Documentation (Markdown) <a class="btn btn-default pull-right">Preview</a></h4>
                                      </div>
-                                     <div class="form-group">
+                                     <div class="form-group col-lg-12">
                                          <textarea name="documentation" id="documentation" cols="85" rows="15"></textarea>
                                      </div>
 
@@ -724,8 +724,8 @@
                 </form>
             </div>
             <div class="modal-footer" style="border: none;">
-                <button type="button" class="btn btn-success" id="buttonPublishNext" onclick="nextTab">Next</button>
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-primary" id="buttonPublishNext" onclick="nextTab">Next</button>
             </div>
         </div>
 

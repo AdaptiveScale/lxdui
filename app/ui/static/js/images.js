@@ -83,6 +83,11 @@ App.images = App.images || {
         $('#architectureRemote').on('change', $.proxy(this.filterRemoteTable, this));
         $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
 
+        new SimpleMDE({
+            element: document.getElementById("documentation"),
+            spellChecker: false,
+            hideIcons: ["side-by-side", "fullscreen"],
+        });
         this.initKeyValuePairs();
 
         if (architecture == 'x86_64') {
