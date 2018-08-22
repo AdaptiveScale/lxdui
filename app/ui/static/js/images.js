@@ -43,6 +43,7 @@ App.images = App.images || {
     },
     containerTemplate:null,
     newContainerForm:null,
+    publishImageForm: null,
     itemTemplate:null,
     rawJson:null,
     init: function(opts){
@@ -82,6 +83,9 @@ App.images = App.images || {
         $('#exTab > ul > li:nth-child(1)').addClass('active');// set first tab as active
         $('#architectureRemote').on('change', $.proxy(this.filterRemoteTable, this));
         $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
+
+        this.publishImageForm = $('#publishImageToHubForm');
+        this.publishImageForm.on('click', $.proxy(this.doPublishImage, this));
 
         new SimpleMDE({
             element: document.getElementById("documentation"),
@@ -713,5 +717,34 @@ App.images = App.images || {
     },
     publishImage: function(e) {
         $("#publishImageModal").modal("show");
-    }
+        var image = this.getImageByFingerPrint(this.data, this.tableLocal.rows({selected:true}).data()[0]['fingerprint']);
+
+        $('#lxcVersion').text(App.lxdVersion);
+        $('#fingerprint').text(image.fingerprint);
+        $('#source').text('NA');
+        $('#size').text(App.formatBytes(image.size));
+        $('#architecture').text(image.architecture);
+        $('#os').text(image.properties['os']);
+        $('#release').text(image.properties['release']);
+    },
+    doPublishImage: function(e){
+        e.preventDefault();
+        console.log("i am here");
+        var tempJSON = this.publishImageForm.serializeJSON();
+
+        console.log(tempJSON);
+
+//        $.ajax({
+//            url: App.baseAPI +'container/',
+//            type:'POST',
+//            dataType:'json',
+//            contentType: 'application/json',
+//            data: JSON.stringify(tempJSON),
+//            success: $.proxy(this.onCreateSuccess, this),
+//            error: $.proxy(this.onCreateFailed, this)
+//        });
+    },
+    onPublishSuccess: function(response){
+        console.log('success');
+    },
 }
