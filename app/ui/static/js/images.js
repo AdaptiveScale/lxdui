@@ -448,7 +448,7 @@ App.images = App.images || {
             ]
         }));
         this.tableNightly.search(architecture).draw();
-        $('.imageSize').each(this.convertImageSize);
+        $('#tableImagesNightly .imageSize').each(this.convertImageSize);
     },
     getDataSuccess: function(response){
         this.setLoading(false);
