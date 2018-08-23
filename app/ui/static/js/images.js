@@ -46,6 +46,7 @@ App.images = App.images || {
     publishImageForm: null,
     itemTemplate:null,
     rawJson:null,
+    simplemde:null,
     init: function(opts){
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
@@ -87,7 +88,7 @@ App.images = App.images || {
         this.publishImageForm = $('#publishImageToHubForm');
         this.publishImageForm.on('submit', $.proxy(this.doPublishImage, this));
 
-        new SimpleMDE({
+        this.simplemde = new SimpleMDE({
             element: document.getElementById("documentation"),
             spellChecker: false,
             hideIcons: ["side-by-side", "fullscreen"],
@@ -731,23 +732,31 @@ App.images = App.images || {
         e.preventDefault();
         var image = this.getImageByFingerPrint(this.data, this.tableLocal.rows({selected:true}).data()[0]['fingerprint']);
 
-        var tempJSON = this.publishImageForm.serializeJSON();
-        tempJSON['fingerprint'] = image.fingerprint;
+        var logoImg = $('input[name="logo"]').get(0).files[0];
 
-        console.log(tempJSON);
+        var tempJSON = this.publishImageForm.serializeJSON();
+
+        var formData = new FormData();
+        formData.append('logo', logoImg);
+
+        tempJSON['fingerprint'] = image.fingerprint;
+        tempJSON['documentation'] = this.simplemde.value();
+
+        formData.append('input', JSON.stringify(tempJSON));
 
         $.ajax({
             url: App.baseAPI +'image/hub/publish',
             type:'POST',
-            dataType:'json',
-            contentType: 'application/json',
-            data: JSON.stringify(tempJSON),
+            processData: false,
+            contentType: false,
+            enctype: 'multipart/form-data',
+            data: formData,
             success: $.proxy(this.onPublishSuccess, this),
             error: $.proxy(this.onPublishFailed, this)
         });
     },
     onPublishSuccess: function(response){
-        console.log('success');
+        location.reaload();
     },
     onPublishFailed: function(response) {
         console.log('failed');

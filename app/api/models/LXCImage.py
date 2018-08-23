@@ -65,8 +65,9 @@ class LXCImage(LXDModule):
             raise ValueError(e)
 
     #TODO Refactor this part
-    def exportImage(self, input):
+    def exportImage(self, input, logo=None):
         try:
+            print(input)
             #Check if image exists & Update the fingerprint with the full fingerprint
             self.data['fingerprint'] = self.client.images.get(self.data.get('fingerprint')).fingerprint
 
@@ -98,10 +99,13 @@ class LXCImage(LXDModule):
 
             #TODO Prepare README.md
             file = open('tmp/images/{}/README.md'.format(self.data.get('fingerprint')), 'a')
-            file.write('#README')
+            file.write('#README\n')
+            file.write(input.get('documentation'))
             file.close()
 
             #TODO Prepare Logo
+            if logo:
+                logo.save('tmp/images/{}/{}'.format(self.data.get('fingerprint'), logo.filename))
 
             return MetaConf().getConfRoot() + '/tmp/images/{}'.format(self.data.get('fingerprint'))
         except Exception as e:
@@ -112,17 +116,17 @@ class LXCImage(LXDModule):
     def prepareImageYAML(self, input):
         if input.get('metadata') == None: input['metadata'] = ''
         data = {
-            'title': '',
-            'description': '',
+            'title': input.get('imageAlias', ''),
+            'description': input.get('imageDescription', ''),
             'author': {
-                'name': '',
+                'name': input.get('authorName', ''),
                 'alias': '',
-                'email': ''
+                'email': input.get('authorEmail', '')
             },
-            'license': '',
-            'readme': 'README.md'.format(self.data.get('fingerprint')),
+            'license': input.get('license', ''),
+            'readme': 'README.md',
             'tags': [],
-            'logo': 'logo.png'.format(self.data.get('fingerprint')),
+            'logo': input.get('logo', ''),
             'image': input.get('image'),
             'metadata': input.get('metadata'),
             'fingerprint': self.data.get('fingerprint')
