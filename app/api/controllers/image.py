@@ -86,6 +86,26 @@ def downloadImage():
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 
+
+@image_api.route('/hub/publish', methods=['POST'])
+@jwt_required()
+def publishHubImage():
+    input = request.get_json(silent=True)
+    # validation = doValidate(input)
+    # if validation:
+    #     return response.replyFailed(message=validation.message)
+    #input['fingerprint'] = input.get('fingerprint')
+    input['username'] = 'nb18411@seeu.edu.mk'
+    input['password'] = 'nushi123'
+    try:
+        client = LXCImage(input)
+        client.exportImage(input)
+        client.pushImage(input)
+        return response.replySuccess(message='Image {} pushed successfully.'.format(input.get('fingerprint')))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+
 @image_api.route('/hub', methods=['POST'])
 @jwt_required()
 def downloadHubImage():

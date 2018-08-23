@@ -85,7 +85,7 @@ App.images = App.images || {
         $('#architectureNightly').on('change', $.proxy(this.filterNightlyTable, this));
 
         this.publishImageForm = $('#publishImageToHubForm');
-        this.publishImageForm.on('click', $.proxy(this.doPublishImage, this));
+        this.publishImageForm.on('submit', $.proxy(this.doPublishImage, this));
 
         new SimpleMDE({
             element: document.getElementById("documentation"),
@@ -729,22 +729,27 @@ App.images = App.images || {
     },
     doPublishImage: function(e){
         e.preventDefault();
-        console.log("i am here");
+        var image = this.getImageByFingerPrint(this.data, this.tableLocal.rows({selected:true}).data()[0]['fingerprint']);
+
         var tempJSON = this.publishImageForm.serializeJSON();
+        tempJSON['fingerprint'] = image.fingerprint;
 
         console.log(tempJSON);
 
-//        $.ajax({
-//            url: App.baseAPI +'container/',
-//            type:'POST',
-//            dataType:'json',
-//            contentType: 'application/json',
-//            data: JSON.stringify(tempJSON),
-//            success: $.proxy(this.onCreateSuccess, this),
-//            error: $.proxy(this.onCreateFailed, this)
-//        });
+        $.ajax({
+            url: App.baseAPI +'image/hub/publish',
+            type:'POST',
+            dataType:'json',
+            contentType: 'application/json',
+            data: JSON.stringify(tempJSON),
+            success: $.proxy(this.onPublishSuccess, this),
+            error: $.proxy(this.onPublishFailed, this)
+        });
     },
     onPublishSuccess: function(response){
         console.log('success');
     },
+    onPublishFailed: function(response) {
+        console.log('failed');
+    }
 }
