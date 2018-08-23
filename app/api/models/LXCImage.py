@@ -104,7 +104,7 @@ class LXCImage(LXDModule):
 
             #TODO Prepare Logo
             if logo:
-                logo.save('tmp/images/{}/{}'.format(self.data.get('fingerprint'), logo.filename))
+                logo.save('tmp/images/{}/{}'.format(self.data.get('fingerprint'), 'logo.png'))
 
             return MetaConf().getConfRoot() + '/tmp/images/{}'.format(self.data.get('fingerprint'))
         except Exception as e:
@@ -125,7 +125,7 @@ class LXCImage(LXDModule):
             'license': input.get('license', ''),
             'readme': 'README.md',
             'tags': [],
-            'logo': input.get('logo', ''),
+            'logo': 'logo.png',
             'image': input.get('image'),
             'metadata': input.get('metadata'),
             'fingerprint': self.data.get('fingerprint'),
