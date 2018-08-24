@@ -67,7 +67,6 @@ class LXCImage(LXDModule):
     #TODO Refactor this part
     def exportImage(self, input, logo=None):
         try:
-            print(input)
             #Check if image exists & Update the fingerprint with the full fingerprint
             self.data['fingerprint'] = self.client.images.get(self.data.get('fingerprint')).fingerprint
 
@@ -129,7 +128,8 @@ class LXCImage(LXDModule):
             'logo': input.get('logo', ''),
             'image': input.get('image'),
             'metadata': input.get('metadata'),
-            'fingerprint': self.data.get('fingerprint')
+            'fingerprint': self.data.get('fingerprint'),
+            'public': True
         }
 
         data.update(self.client.api.images[self.data.get('fingerprint')].get().json()['metadata'])

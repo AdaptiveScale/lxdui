@@ -101,6 +101,9 @@ App.images = App.images || {
         this.tableRemote.search(architecture).draw();
         this.tableNightly.search(architecture).draw();
 
+        $('#architectureNightly').val(architecture);
+         $('#architectureRemote').val(architecture);
+
         if (localImagesLength == 0){
             this.switchView('nightlyList');
             $('.nav-tabs li:eq(1) a').tab('show');
@@ -756,7 +759,7 @@ App.images = App.images || {
         });
     },
     onPublishSuccess: function(response){
-        location.reaload();
+        location.reload();
     },
     onPublishFailed: function(response) {
         console.log('failed');
