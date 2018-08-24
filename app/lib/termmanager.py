@@ -54,6 +54,10 @@ class NamedTermManager(TermManagerBase):
         term = self.terminals[name]
         term.kill(sig)  # This should lead to an EOF
 
+    def client_disconnected(self, websocket):
+        if (len(self.terminals[websocket.term_name].clients)==0):
+            del self.terminals[websocket.term_name]
+
     @gen.coroutine
     def terminate(self, name, force=False):
         term = self.terminals[name]
