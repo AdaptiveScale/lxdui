@@ -49,7 +49,8 @@ var App = App || {
     },
     getInfoSuccess:function(response){
         this.info = response.data;
-        $('#stamplike').text('LXD Version: ' + this.info.environment.server_version);
+        this.lxdVersion = this.info.environment.server_version;
+        $('#stamplike').text('LXD Version: ' + this.lxdVersion);
         $('#stamplike').removeClass('label-danger').addClass('label-success');
     },
     getInfoError:function(response) {

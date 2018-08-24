@@ -639,7 +639,7 @@
                                         <div class="form-group">
                                             <label for="" class="col-sm-3 control-label">Public</label>
                                             <div class="col-sm-9">
-                                                <input type="checkbox" />
+                                                <input id="public" name="public" type="checkbox" checked />
                                             </div>
                                         </div>
                                     </div>
@@ -648,29 +648,26 @@
                                          <div class="form-group">
                                             <label for="" class="col-sm-3 control-label">Image Alias</label>
                                             <div class="col-sm-9">
-                                                <input id="imageAlias" name="ImageAlias" class="form-control" type="text"
+                                                <input id="imageAlias" name="imageAlias" class="form-control" type="text"
                                                        placeholder="Image Alias" title="Alias" required/>
                                             </div>
                                         </div>
                                          <div class="form-group">
                                             <label for="" class="col-sm-3 control-label">Description</label>
                                             <div class="col-sm-9">
-                                                <textarea id="imageDescription" name="imageDescription" class="form-control" type="text" placeholder="" title="Description">My custom configured nginx instange
-                                                </textarea>
+                                                <textarea id="imageDescription" name="imageDescription" class="form-control" type="text" placeholder="" title="Description"></textarea>
                                             </div>
                                         </div>
                                         <div class="form-group">
-                                            <label for="" class="col-sm-3 control-label">Logo (PNG)</label>
+                                            <label for="logo" class="col-sm-3 control-label">Logo (PNG)</label>
                                             <div class="col-sm-9">
-                                                <select name="logo" id="logo" class="form-control">
-                                                    <option value="">nginx_logo.png</option>
-                                                </select>
+                                                <input type="file" name="logo" id="logo" accept="image/png" />
                                             </div>
                                         </div>
                                         <div class="form-group">
                                             <label for="" class="col-sm-3 control-label">Tags</label>
                                             <div class="col-sm-9">
-                                                <input id="imageTags" name="ImageTags" class="form-control" type="text"
+                                                <input id="imageTags" name="imageTags" class="form-control" type="text"
                                                        placeholder="Image Tags" title="Tags" required/>
                                             </div>
                                         </div>
@@ -678,31 +675,31 @@
                                     <div class="col-lg-12 list-details">
                                          <div class="form-group">
                                             <h5 class="inline"><b>LXC Version:</b></h5>
-                                            <label class="formModifier font400 lxcversion">3.3</label>
+                                            <label class="formModifier font400 lxcversion" id="lxcVersion">3.3</label>
                                         </div>
                                         <div class="form-group">
                                             <h5 class="inline"><b>Fingerprint:</b></h5>
-                                            <label class="formModifier font400 fingerprint">6636262626dfe4fdsa3</label>
+                                            <label class="formModifier font400 fingerprint" id="fingerprint">6636262626dfe4fdsa3</label>
                                         </div>
                                          <div class="form-group">
                                             <h5 class="inline"><b>Source:</b></h5>
-                                            <label class="formModifier font400 source">https://cloud.images.ubuntu.com</label>
+                                            <label class="formModifier font400 source" id="source">https://cloud.images.ubuntu.com</label>
                                         </div>
                                          <div class="form-group">
                                             <h5 class="inline"><b>Size:</b></h5>
-                                            <label class="formModifier font400 size">167.6MB</label>
+                                            <label class="formModifier font400 size" id="size">167.6MB</label>
                                         </div>
                                          <div class="form-group">
                                             <h5 class="inline"><b>Architecture:</b></h5>
-                                            <label class="formModifier font400 architecture">x86_64</label>
+                                            <label class="formModifier font400 architecture" id="architecture">x86_64</label>
                                         </div>
                                          <div class="form-group">
                                             <h5 class="inline"><b>OS:</b></h5>
-                                            <label class="formModifier font400 os">Ubuntu</label>
+                                            <label class="formModifier font400 os" id="os">Ubuntu</label>
                                         </div>
                                          <div class="form-group">
-                                            <h5 class="inline"><b>Releases:</b></h5>
-                                            <label class="formModifier font400 releases">Xenial 16.04</label>
+                                            <h5 class="inline"><b>Release:</b></h5>
+                                            <label class="formModifier font400 releases" id="release">Xenial 16.04</label>
                                         </div>
                                     </div>
                                 </div>
@@ -715,6 +712,8 @@
                                      </div>
 
                                  </div>
+                                    <button class="btn btn-primary">Publish <span
+                                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
                             </div>
                         </div>
                     </div>
