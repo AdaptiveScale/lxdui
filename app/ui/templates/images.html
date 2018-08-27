@@ -71,7 +71,7 @@
                                                 class="glyphicon glyphicon-remove-sign"></span> Delete
                                         </button>
                                          &nbsp; &nbsp; | &nbsp; &nbsp;
-                                        <button id="buttonPublish" class="btn btn-primary"> Publish
+                                        <button id="buttonPublish" class="btn btn-primary" disabled> Publish
                                         </button>
                                     </div>
                                     <button class="btn btn-default rawJSONImages btn-xs btn-rounded-corners" href="#" style="display:none;">
@@ -608,6 +608,9 @@
                                 <li>
                                     <a href="#6" class="tab-background" id="btnReadme" aria-expanded="false" data-toggle="tab">Readme </a>
                                 </li>
+                                <li>
+                                    <a href="#7" class="tab-background" id="btnAuthorization" aria-expanded="false" data-toggle="tab">Authorization </a>
+                                </li>
                             </ul>
 
                             <div class="tab-content">
@@ -631,9 +634,8 @@
                                         <div class="form-group">
                                             <label for="" class="col-sm-3 control-label">License</label>
                                             <div class="col-sm-9">
-                                                <select name="license" id="license" class="form-control">
-                                                    <option value="Apache 2.0">Apache 2.0</option>
-                                                </select>
+                                                <input id="license" name="license" class="form-control" type="text"
+                                                       placeholder="License" title="License" required/>
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -661,7 +663,7 @@
                                         <div class="form-group">
                                             <label for="logo" class="col-sm-3 control-label">Logo (PNG)</label>
                                             <div class="col-sm-9">
-                                                <input type="file" name="logo" id="logo" accept="image/png" />
+                                                <input type="file" name="logo" id="logo" accept="image/png" required />
                                             </div>
                                         </div>
                                         <div class="form-group">
@@ -712,20 +714,40 @@
                                      </div>
 
                                  </div>
-                                    <button class="btn btn-primary">Publish <span
-                                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="7">
+                                     <div class="form-group col-lg-12">
+                                         <h4>Authorization</h4>
+                                     </div>
+                                     <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Email</label>
+                                            <div class="col-sm-9">
+                                                <input id="username" name="username" class="form-control" type="text"
+                                                       placeholder="Email" title="Email" required/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Password</label>
+                                            <div class="col-sm-9">
+                                                <input id="password" name="password" class="form-control" type="password"
+                                                       placeholder="Password" title="Password" required/>
+                                            </div>
+                                        </div>
+                                        To create an account please go to <a href="http://hub.kuti.io/login" target="_blank">http://hub.kuti.io/login</a>
+                                 </div>
+                                    <!--<button class="btn btn-primary">Publish <span-->
+                                        <!--class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
                             </div>
                         </div>
                     </div>
 
-
-
-                </form>
             </div>
             <div class="modal-footer" style="border: none;">
                  <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                <button type="button" class="btn btn-primary" id="buttonPublishNext" onclick="nextTab">Next</button>
+                 <button class="btn btn-primary">Publish <span
+                                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <!--<button type="button" class="btn btn-primary" id="buttonPublishNext" onclick="nextTab">Next</button>-->
             </div>
+            </form>
         </div>
 
     </div>

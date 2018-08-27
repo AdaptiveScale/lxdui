@@ -95,8 +95,6 @@ def publishHubImage():
     input = json.loads(request.form.get('input'))
     logo = request.files['logo']
     input['logo'] = logo.filename
-    input['username'] = 'nb18411@seeu.edu.mk'
-    input['password'] = 'nushi123'
     try:
         client = LXCImage(input)
         client.exportImage(input, logo)
