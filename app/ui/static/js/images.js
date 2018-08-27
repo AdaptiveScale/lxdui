@@ -39,7 +39,7 @@ App.images = App.images || {
             tempButton.on('click', $.proxy(App.images.showJSON, App.images));
             $('#'+$(this).closest('table').attr('id')+'_wrapper .json-place').prepend(tempButton);
             tempButton.show();
-        },
+        }
     },
     containerTemplate:null,
     newContainerForm:null,
@@ -76,6 +76,10 @@ App.images = App.images || {
         this.initRemoteTable();
         this.initNightlyTable();
         this.initHubTable();
+
+        this.tableLocal.on('select', $.proxy(this.onRowSelected, this));
+        this.tableLocal.on('deselect', $.proxy(this.onRowSelected, this));
+
         $('#selectAllLocal').on('change', $.proxy(this.toggleSelectAll, this, 'Local'));
         $('#selectAllRemote').on('change', $.proxy(this.toggleSelectAll, this, 'Remote'));
         this.itemTemplate = $('.itemTemplate').clone();
@@ -87,6 +91,7 @@ App.images = App.images || {
 
         this.publishImageForm = $('#publishImageToHubForm');
         this.publishImageForm.on('submit', $.proxy(this.doPublishImage, this));
+        $('#publishToHub').on('click', $.proxy(this.doPublishImage, this));
 
         this.simplemde = new SimpleMDE({
             element: document.getElementById("documentation"),
@@ -185,6 +190,14 @@ App.images = App.images || {
     },
     filterNightlyTable: function(e) {
         this.tableNightly.search(e.target.value).draw();
+    },
+    onRowSelected: function(e, dt, type, indexes ){
+         if(this.tableLocal.rows({selected:true}).count() == 1){
+            $('#buttonPublish').removeAttr('disabled', 'disabled');
+          }
+          else {
+             $('#buttonPublish').attr('disabled', 'disabled');
+          }
     },
     onItemSelectChange : function(e, dt, type, indexes ){
         if(this.activeTab=='local'){
