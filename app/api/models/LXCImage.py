@@ -85,12 +85,18 @@ class LXCImage(LXDModule):
             if os.path.exists('{}.tar.xz'.format(self.data.get('fingerprint'))):
                 shutil.move('{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
                 input['image'] = '{}.tar.xz'.format(self.data.get('fingerprint'))
+            if os.path.exists('{}.squashfs'.format(self.data.get('fingerprint'))):
+                shutil.move('{}.squashfs'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
+                input['image'] = '{}.squashfs'.format(self.data.get('fingerprint'))
             if os.path.exists('meta-{}.tar.gz'.format(self.data.get('fingerprint'))):
                 shutil.move('meta-{}.tar.gz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
                 input['metadata'] = 'meta-{}.tar.gz'.format(self.data.get('fingerprint'))
             if os.path.exists('meta-{}.tar.xz'.format(self.data.get('fingerprint'))):
                 shutil.move('meta-{}.tar.xz'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
                 input['metadata'] = 'meta-{}.tar.xz'.format(self.data.get('fingerprint'))
+            if os.path.exists('meta-{}.tar.xz'.format(self.data.get('fingerprint'))):
+                shutil.move('meta-{}.squashfs'.format(self.data.get('fingerprint')), 'tmp/images/{}/'.format(self.data.get('fingerprint')))
+                input['metadata'] = 'meta-{}.squashfs'.format(self.data.get('fingerprint'))
 
             #Prepare & Move the yaml file
             self.prepareImageYAML(input)
@@ -237,6 +243,23 @@ class LXCImage(LXDModule):
         elif os.path.exists("tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint'))) == False and os.path.exists("tmp/downloaded/{0}/{0}.tar.gz".format(self.data.get('fingerprint'))):
             p2 = subprocess.Popen(["lxc", "image", "import",
                                "tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
+            output_rez = p2.stdout.read()
+
+        elif os.path.exists("tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint'))) == False and os.path.exists("tmp/downloaded/{0}/{0}.squashfs".format(self.data.get('fingerprint'))):
+            p2 = subprocess.Popen(["lxc", "image", "import",
+                               "tmp/downloaded/{0}/{0}.squashfs".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
+            output_rez = p2.stdout.read()
+
+        elif os.path.exists("tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint'))) and os.path.exists("tmp/downloaded/{0}/{0}.squashfs".format(self.data.get('fingerprint'))):
+            p2 = subprocess.Popen(["lxc", "image", "import",
+                                "tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint')),
+                                "tmp/downloaded/{0}/{0}.squashfs".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
+            output_rez = p2.stdout.read()
+
+        elif os.path.exists("tmp/downloaded/{0}/meta-{0}.squashfs".format(self.data.get('fingerprint'))) and os.path.exists("tmp/downloaded/{0}/{0}.squashfs".format(self.data.get('fingerprint'))):
+            p2 = subprocess.Popen(["lxc", "image", "import",
+                                "tmp/downloaded/{0}/meta-{0}.squashfs".format(self.data.get('fingerprint')),
+                                "tmp/downloaded/{0}/{0}.squashfs".format(self.data.get('fingerprint'))], stdout=subprocess.PIPE)
             output_rez = p2.stdout.read()
 
         shutil.rmtree('tmp/downloaded/{}/'.format(self.data.get('fingerprint')), ignore_errors=True)
