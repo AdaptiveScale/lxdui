@@ -47,6 +47,7 @@ App.images = App.images || {
     itemTemplate:null,
     rawJson:null,
     simplemde:null,
+    publishPage:0,
     init: function(opts){
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
@@ -107,12 +108,18 @@ App.images = App.images || {
         this.tableNightly.search(architecture).draw();
 
         $('#architectureNightly').val(architecture);
-         $('#architectureRemote').val(architecture);
+        $('#architectureRemote').val(architecture);
 
         if (localImagesLength == 0){
             this.switchView('nightlyList');
             $('.nav-tabs li:eq(1) a').tab('show');
         }
+        $('#buttonPublishNext').on('click', $.proxy(this.onPublishNext, this));
+        $('#buttonPublishBack').on('click', $.proxy(this.onPublishBack, this));
+
+        $('#btnImageDetails').on('click', $.proxy(this.onPublishSwitchToPage, this, 0));
+        $('#btnReadme').on('click', $.proxy(this.onPublishSwitchToPage, this, 1));
+        $('#btnAuthorization').on('click', $.proxy(this.onPublishSwitchToPage, this, 2));
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
@@ -743,6 +750,8 @@ App.images = App.images || {
         $('#architecture').text(image.architecture);
         $('#os').text(image.properties['os']);
         $('#release').text(image.properties['release']);
+        this.publishPage=0;
+        this.updatePublishButtons();
     },
     doPublishImage: function(e){
         e.preventDefault();
@@ -776,5 +785,50 @@ App.images = App.images || {
     },
     onPublishFailed: function(response) {
         console.log('failed');
+    },
+    updatePublishButtons: function(){
+        $('.tabImageDetails, .tabImageReadme, .tabImageAuthorization').removeClass('active');
+        switch(this.publishPage){
+            case 0:
+                $('#buttonPublishCancel').show();
+                $('#buttonPublishNext').show();
+                $('#buttonPublishBack').hide();
+                $('#buttonPublishToHUB').hide();
+                $('.tabImageDetails').addClass('active');
+                $('#5').show();
+                $('#6, #7').hide();
+                return;
+            case 1:
+                $('#buttonPublishCancel').hide();
+                $('#buttonPublishToHUB').hide();
+                $('#buttonPublishBack').show();
+                $('#buttonPublishNext').show();
+                $('.tabImageReadme').addClass('active');
+                $('#6').show();
+                $('#5, #7').hide();
+                return;
+            case 2:
+                $('#buttonPublishCancel').hide();
+                $('#buttonPublishNext').hide();
+                $('#buttonPublishBack').show();
+                $('#buttonPublishToHUB').show();
+                $('.tabImageAuthorization').addClass('active');
+                $('#7').show();
+                $('#6, #5').hide();
+                return;
+        }
+    },
+    onPublishBack: function(){
+        this.publishPage--;
+        this.updatePublishButtons();
+    },
+    onPublishNext: function(){
+        console.log('here');
+        this.publishPage++;
+        this.updatePublishButtons();
+    },
+    onPublishSwitchToPage:function(pageNumber){
+        this.publishPage=pageNumber;
+        this.updatePublishButtons();
     }
 }
