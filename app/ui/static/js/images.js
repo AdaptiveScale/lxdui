@@ -48,6 +48,7 @@ App.images = App.images || {
     rawJson:null,
     simplemde:null,
     publishPage:0,
+    publishFormValid:false,
     init: function(opts){
         this.data = constLocalImages || [];
         this.remoteData = constRemoteImages || [];
@@ -120,6 +121,7 @@ App.images = App.images || {
         $('#btnImageDetails').on('click', $.proxy(this.onPublishSwitchToPage, this, 0));
         $('#btnReadme').on('click', $.proxy(this.onPublishSwitchToPage, this, 1));
         $('#btnAuthorization').on('click', $.proxy(this.onPublishSwitchToPage, this, 2));
+        $('#publishImageToHubForm').parsley().on('form:validate', $.proxy(this.onPublishFormValidation, this));
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
@@ -755,6 +757,10 @@ App.images = App.images || {
     },
     doPublishImage: function(e){
         e.preventDefault();
+        if(!$("#publishImageToHubForm").parsley().validate()){
+//        if(!this.publishFormValid){
+            return false;
+        }
         var image = this.getImageByFingerPrint(this.data, this.tableLocal.rows({selected:true}).data()[0]['fingerprint']);
 
         var logoImg = $('input[name="logo"]').get(0).files[0];
@@ -830,5 +836,19 @@ App.images = App.images || {
     onPublishSwitchToPage:function(pageNumber){
         this.publishPage=pageNumber;
         this.updatePublishButtons();
+    },
+    onPublishFormValidation: function(formInstance){
+        if(!formInstance.isValid({group: 'block1'})){
+            formInstance.valiidationResult = false;
+            return this.onPublishSwitchToPage(0);
+        }
+        if(!formInstance.isValid({group: 'block2'})){
+            formInstance.valiidationResult = false;
+            return this.onPublishSwitchToPage(1);
+        }
+        if(!formInstance.isValid({group: 'block3'})){
+            formInstance.valiidationResult = false;
+            return this.onPublishSwitchToPage(2);
+        }
     }
 }

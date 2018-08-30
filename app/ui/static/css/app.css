@@ -938,3 +938,10 @@ color: #000 !important;
     padding-left: 45px;
 }
 
+.parsley-required {
+    color: red;
+}
+.parsley-errors-list {
+    list-style: none;
+    padding: 0;
+}
