@@ -154,6 +154,9 @@ App.images = App.images || {
                     '<div class="col-lg-4">' +
                         '<div class="form-group row">' +
                             '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ _.get(App,'properties.keyValues["'+key+'"].valueDescription', 'No content available') + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
                         '</div>' +
                     '</div>' +
                      '<div class="col-lg-2">' +
