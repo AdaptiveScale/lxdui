@@ -130,7 +130,7 @@ class LXCImage(LXDModule):
             },
             'license': input.get('license', ''),
             'readme': 'README.md',
-            'tags': [],
+            'tags': input.get('imageTags').split(','),
             'logo': 'logo.png',
             'image': input.get('image'),
             'metadata': input.get('metadata'),
@@ -184,11 +184,11 @@ class LXCImage(LXDModule):
                     for key in file:
                         files = {}
                         if file[key] != '':
-                            try:
+                            if os.path.exists('tmp/images/{}/{}'.format(self.data.get('fingerprint'), file[key])):
                                 files['file'] = open('tmp/images/{}/{}'.format(self.data.get('fingerprint'), file[key]), 'rb')
                                 requests.post('{}/cliAddFile'.format(meta.IMAGE_HUB), headers=headers, files=files, data={'id': self.data.get('fingerprint')}).json()
                                 print('File {} uploaded successfully'.format(file[key]))
-                            except:
+                            else:
                                 print('File {} does not exist'.format(file[key]))
 
             else:
