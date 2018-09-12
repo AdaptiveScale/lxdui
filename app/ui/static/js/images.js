@@ -122,6 +122,9 @@ App.images = App.images || {
         $('#btnReadme').on('click', $.proxy(this.onPublishSwitchToPage, this, 1));
         $('#btnAuthorization').on('click', $.proxy(this.onPublishSwitchToPage, this, 2));
         $('#publishImageToHubForm').parsley().on('form:validate', $.proxy(this.onPublishFormValidation, this));
+        $('#imageTags').tagit({
+            fieldName:'imageTags'
+        });
     },
     convertImageSize:function(index, item){
         $(item).text(App.formatBytes($(item).text()));
