@@ -781,6 +781,8 @@ App.images = App.images || {
 
         formData.append('input', JSON.stringify(tempJSON));
 
+        console.log('formData', formData);
+
         $.ajax({
             url: App.baseAPI +'image/hub/publish',
             type:'POST',
@@ -793,7 +795,7 @@ App.images = App.images || {
         });
     },
     onPublishSuccess: function(response){
-        location.reload();
+//        location.reload();
     },
     onPublishFailed: function(response) {
         console.log('failed');
