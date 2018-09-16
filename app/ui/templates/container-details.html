@@ -247,7 +247,7 @@
                                             <!--</div>-->
                                      <!--</div>-->
                             </div>
-                            <div class="col-sm-3 col-md-3 col-lg-3">
+                            <div class="col-sm-4 col-md-4 col-lg-4">
                                 <ul class="network-list">
                                     <li>
                                          Interface <span class="mg-left5"> <b>{{ key }}</b></span>
@@ -260,34 +260,27 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="col-sm-6 col-md-6 col-lg-6">
                                 <ul class="network-list">
                                     {% if value.addresses == None %}
                                     <li>N/A</li>
                                     {% else %}
-                                         {% if value.addresses|length > 0 %}
-                                            IP Address <span class="mg-left5"><b>{{value.addresses.0.address}}</b></span>
-                                         {% endif %}
-                                    <li>
-                                        MAC Address  <span class="mg-left5">{{value.hwaddr}}</span>
-                                    </li>
-                                    <li>
-                                        {% if value.addresses|length > 0  %}
-                                            {% if value.addresses.0.netmask == "24" %}
-                                                    Netmask [/{{value.addresses.0.netmask}}] <span class="mg-left5">255.255.255.0</span>
-                                            {% else %}
-
-                                                 {% if value.addresses.0.netmask != "24" %}
-                                                        Netmask [/{{value.addresses.0.netmask}}] <span class="mg-left5">[/{{value.addresses.0.netmask}}]</span>
-                                                {% endif %}
-
-                                            {% endif %}
-                                        {% endif %}
-                                    </li>
+                                         {% for address in value.addresses %}
+                                            <li>
+                                                IP{% if address.family == 'inet' %}v4{% elif address.family == 'inet6' %}v6{% endif %} Address
+                                                <span class="mg-left5"><b>{{address.address}}/{{address.netmask}}</b></span>
+                                            </li>
+                                         {% endfor %}
+                                        <li>
+                                            MAC Address  <span class="mg-left5">{{value.hwaddr}}</span>
+                                        </li>
                                     {% endif %}
                                 </ul>
                             </div>
-                            <div class="col-sm-3 col-md-3 col-lg-3">
+                            <div class="col-sm-1 col-md-1 col-lg-1 pd0">
+                                <button class="btn btn-default pull-right deleteInterfaceBtn" onclick="App.containerDetails.deleteInterface('{{key}}')"><i class="glyphicon glyphicon-trash"></i></button>
+                            </div>
+                            <div class="col-sm-3 col-md-3 col-lg-3 col-sm-offset-5 col-md-offset-5 col-lg-offset-5">
                                 <table class="table table-bordered">
                                     <tr>
                                             <th></th>
@@ -314,9 +307,6 @@
                                             <!--<br/>-->
                                         <!--{% endfor %}-->
 
-                            </div>
-                            <div class="col-sm-1 col-md-1 col-lg-1 pd0">
-                                <button class="btn btn-default pull-right deleteInterfaceBtn" onclick="App.containerDetails.deleteInterface('{{key}}')"><i class="glyphicon glyphicon-trash"></i></button>
                             </div>
                         </div>
 
