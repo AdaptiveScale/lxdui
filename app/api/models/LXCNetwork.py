@@ -14,7 +14,7 @@ class LXCNetwork(LXDModule):
 
     def __init__(self, input):
         logging.info('Connecting to LXD')
-        self.client = Client()
+        super().__init__()
         logging.debug('Setting network input to {}'.format(input))
         self.input = input
 
