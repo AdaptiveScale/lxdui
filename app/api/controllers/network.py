@@ -36,10 +36,11 @@ def updateNetwork(name):
     if validation:
         return response.replyFailed(message=validation.message)
 
+    input['name'] = name
     input['IPv6_ENABLED'] = False
 
-    network = LXCNetwork({'name': name})
-    network.updateNetwork(input, name)
+    network = LXCNetwork(input)
+    network.updateNetwork()
 
     mainConfig = network.info()
     for container in mainConfig['used_by']:
@@ -50,13 +51,14 @@ def updateNetwork(name):
 @jwt_required()
 def creatNetwork(name):
     input = request.get_json(silent=True)
+    input['name'] = name
     validation = doValidate(input)
     if validation:
         return response.replyFailed(message=validation.message)
 
     input['IPv6_ENABLED'] = False
-    network = LXCNetwork({'name': name})
-    network.createNetwork(input, name)
+    network = LXCNetwork(input)
+    network.createNetwork()
 
     mainConfig = network.info()
     return response.replySuccess(mainConfig['result'], message='Network {} created successfully.'.format(name))
