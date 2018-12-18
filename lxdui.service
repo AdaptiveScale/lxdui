@@ -1,0 +1,11 @@
+[Unit]
+Description=LXDUI web UI
+Requires=snapd.service
+
+[Service]
+ExecStart=/usr/local/bin/lxdui start
+ExecStop=/usr/local/bin/lxdui stop
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
