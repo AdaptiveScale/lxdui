@@ -848,7 +848,7 @@ color: #000 !important;
 }
 
 .status-div {
-    color: #000 !important;
+    color:fff;
     padding: 0px;
     background: #5cba5b;
     text-align: center;
@@ -868,9 +868,7 @@ color: #000 !important;
     margin-right: -18px;
 }
 
-.status-div .label-success {
-    color: #000 !important;
-}
+
 
 .pd0 {
     padding: 0px !important;
