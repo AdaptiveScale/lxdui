@@ -325,12 +325,6 @@
     border-right: 1px solid #ddd;
 }
 
-.panel > div:nth-child(6) {
-    border-bottom: 1px solid #ddd;
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-}
-
 .panel {
     border: none;
 }
@@ -902,5 +896,3 @@ color: #000 !important;
 .mg-left5 {
     margin-left: 5px;
 }
-
-
