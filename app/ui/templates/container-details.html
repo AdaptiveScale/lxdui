@@ -231,7 +231,7 @@
                    <div class="col-sm-12 col-md-12 col-lg-12">
                         <div class="form-group">
                                 {% if container.network is mapping %}
-                            <h5 class="bg-bottom"><b><img src="../static/images/NIC-icon.png" class="img-network-interfaces" alt="" /> Network Interfaces </b><button class="btn btn-success pull-right btn-rounded-corners showAddNetworkInterfaceDialog">Add <i class="glyphicon glyphicon-plus"></i></button></h5>
+                            <h5 class="bg-bottom"><b><img src="../static/images/NIC-icon.png" class="img-network-interfaces" alt="" /> Network Interfaces </b><button class="btn btn-success pull-right btn-rounded-corners showAddNetworkInterfaceDialog"><i class="glyphicon glyphicon-plus"></i> Add</button></h5>
                                 {% for key, value in container.network.items() %}
                                 {% if key!='lo' %}
                         <div class="row borders">
@@ -355,7 +355,7 @@
                     <!-- Network proxy section -->
                     <div class="col-sm-12 col-md-12 col-lg-12">
                         <h4>Port Mapping
-                            <button class="btn btn-success pull-right showAddProxyDialog btn-rounded-corners">Add <i class="glyphicon glyphicon-plus"></i></button>
+                            <button class="btn btn-success pull-right showAddProxyDialog btn-rounded-corners"><i class="glyphicon glyphicon-plus"></i> Add</button>
                         </h4>
 
                         <table class="table">
