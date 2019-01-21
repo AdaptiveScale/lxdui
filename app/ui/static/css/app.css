@@ -166,6 +166,7 @@
 
 .legend {
     padding-bottom:15px;
+    text-align:center;
 }
 
 .bootstrap-select {
@@ -740,9 +741,9 @@ color: #000 !important;
 }
 
 
-.dropdown-menu {
+/*.dropdown-menu {
     top: -95px !important;
-    left: -169px !important;
+    left: -169px !important;*/
 }
 .tbl-header {
     -webkit-border-radius: 10px 10px 0 0;
@@ -870,7 +871,9 @@ color: #000 !important;
   vertical-align: middle;
   margin-right: -4px; /* Adjusts for spacing */
 }
-
+.modal-title{
+text-align: center;
+}
 .modal-dialog {
   display: inline-block;
   text-align: left;
@@ -878,7 +881,7 @@ color: #000 !important;
 }
 
 .status-div {
-    color: #000 !important;
+    color:fff;
     padding: 0px;
     background: #5cba5b;
     text-align: center;
@@ -898,9 +901,7 @@ color: #000 !important;
     margin-right: -18px;
 }
 
-.status-div .label-success {
-    color: #000 !important;
-}
+
 
 .pd0 {
     padding: 0px !important;
