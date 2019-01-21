@@ -790,6 +790,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Port Mapping </h4>
             </div>
             <div class="modal-body">
                 <form id="addProxyForm" class="form-horizontal" method="POST" enctype="multipart/form-data" action="/api/file/container/{{container.name}}">
@@ -850,8 +851,9 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Add Network Interface</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Add Network Interface</h4>
+
             </div>
             <div class="modal-body">
                 <form id="addNetworkInterfaceForm" class="form-horizontal" method="POST" enctype="multipart/form-data" action="/network/{{container.name}}/add'">
