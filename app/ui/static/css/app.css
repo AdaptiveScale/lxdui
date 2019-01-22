@@ -208,6 +208,12 @@
     line-height:1.1;
 }
 
+/* CHANGING BUTTON LogOut BACKGROUND COLOR ON HOVER */
+#button-log-out:hover{
+    background-color:red;
+    color:#fff;
+}
+
 .profiles .label .btn {
     color: #fff;
     padding: 0px 2px;
