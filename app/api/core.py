@@ -19,6 +19,9 @@ PID = os.path.join(tempfile.gettempdir(), '{}.pid'.format(meta.APP_NAME).lower()
 # Authentication section
 initAuth(app)
 
+from app.api.controllers.auth import auth_api
+app.register_blueprint(auth_api, url_prefix='/api/user')
+
 from app.api.controllers.lxd import lxd_api
 app.register_blueprint(lxd_api, url_prefix='/api/lxd')
 

@@ -475,6 +475,6 @@ App.containers = App.containers || {
         target.val(event.target.value);
     },
     showTerminalContainer: function(container) {
-        window.open('/terminal/new/' + container + '/' + sessionStorage.getItem('authToken'), '_blank');
+        window.open('/terminal/new/' + container + '/', '_blank');
     }
 }

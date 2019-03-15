@@ -31,7 +31,7 @@ setup(
        'Click==6.7',
        'Flask==0.12.2',
        'flask-login==0.4.1',
-       'flask_jwt==0.3.2',
+       'flask_jwt_extended==3.18.0',
        'jsonschema==2.6.0',
        'requests==2.9.1',
        'netaddr==0.7.19',

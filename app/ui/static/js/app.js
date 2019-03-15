@@ -63,7 +63,7 @@ var App = App || {
         if(window.location.href!==WEB){
             $.ajaxSetup({
                 headers:{
-                    Authorization:'JWT '+sessionStorage.getItem('authToken'),
+                    Authorization:'Bearer '+sessionStorage.getItem('authToken'),
 //                    'Content-Type':'application/json' //commented for file upload as temporary workaround
                 },
                 beforeSend: function(xhr, settings) {
@@ -95,7 +95,7 @@ var App = App || {
     updateTokenExpiration: function(){
         App.tokenRefreshing = true;
         $.ajax({
-            url:App.baseAPI+'user/login',
+            url:App.baseAPI+'user/refresh',
             method:'POST',
             contentType: "application/json; charset=utf-8",
             dataType:'json',
@@ -105,6 +105,7 @@ var App = App || {
     },
     tokenUpdateSuccess:function(response){
         sessionStorage.setItem('authToken', response.access_token);
+        document.cookie = "access_token_cookie" + "=" + response.access_token;
         App.tokenRefreshing=false;
     },
     setActiveLink: function(name) {
