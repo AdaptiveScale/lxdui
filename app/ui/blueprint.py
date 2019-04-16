@@ -10,6 +10,7 @@ from functools import wraps
 
 import json
 import os
+import platform
 
 uiPages = Blueprint('uiPages', __name__, template_folder='./templates',
                     static_folder='./static')
@@ -125,22 +126,27 @@ def network():
 def images():
     localImages = getLocalImages()
     profiles = getProfiles()
-    remoteImages = getRemoteImages()
-    nightlyImages = getNightlyImages()
+    remoteImages = []
+    nightlyImages = []
+    hubImages = getHubImages()
     remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
     return render_template('images.html', currentpage='Images',
                            localImages=localImages,
                            remoteImages=remoteImages,
                            nightlyImages=nightlyImages,
+                           hubImages=hubImages,
                            profiles=profiles,
                            jsData={
                                'local': json.dumps(localImages),
                                'remote': json.dumps(remoteImages),
-                               'nightly': json.dumps(nightlyImages)
+                               'nightly': json.dumps(nightlyImages),
+                               'hub': json.dumps(hubImages)
                            },
                            memory=memory(),
                            lxdui_current_version=VERSION,
-                           remoteImagesLink=remoteImagesLink)
+                           remoteImagesLink=remoteImagesLink,
+                           imageHubLink=meta.IMAGE_HUB,
+                           architecture=platform.machine())
 
 
 def getLocalImages():
@@ -170,6 +176,15 @@ def getNightlyImages():
         nightlyImages = []
 
     return nightlyImages
+
+
+def getHubImages():
+    try:
+        hubImages = LXDModule().listHubImages()
+    except:
+        hubImages = []
+
+    return hubImages
 
 def getProfiles():
     try:

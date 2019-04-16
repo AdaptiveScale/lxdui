@@ -1,6 +1,6 @@
 APP_NAME = 'LXDUI'
 APP_CLI_CMD = 'lxdui'
-VERSION = '2.1.2'
+VERSION = '2.2'
 GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
 LXD_URL = 'http://localhost:8443'
 LICENSE = 'Apache 2.0'
@@ -8,6 +8,7 @@ AUTHOR = 'AdaptiveScale, Inc.'
 AUTHOR_URL = 'http://www.adaptivescale.com'
 AUTHOR_EMAIL = 'info@adaptivescale.com'
 KEYWORDS = 'lxc lxc-containers lxd'
+IMAGE_HUB = 'http://hub.kuti.io'
 
 '''
 

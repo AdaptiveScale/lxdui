@@ -19,10 +19,11 @@ STATIC_DIR = os.path.dirname(__file__).replace('/api/controllers','/ui/static/')
 from flask_jwt_extended import decode_token
 
 def findShellTypeOfContainer(container):
-    containerImage = container.info()['config']['image.os'].lower()
-    for image in mappings.OS_SHELL_MAPPINGS:
-        if image in containerImage:
-            return mappings.OS_SHELL_MAPPINGS[image]
+    containerImage = container.info()['config'].get('image.os')
+    if containerImage:
+        for image in mappings.OS_SHELL_MAPPINGS:
+            if image in containerImage.lower():
+                return mappings.OS_SHELL_MAPPINGS[image]
     return 'bash'
 
 class TerminalPageHandler(tornado.web.RequestHandler):

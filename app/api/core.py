@@ -46,6 +46,9 @@ app.register_blueprint(file_manager_api, url_prefix='/api/file')
 from app.api.controllers.storagePool import storage_pool_api
 app.register_blueprint(storage_pool_api, url_prefix='/api/storage_pool')
 
+from app.api.controllers.imageRegistry import image_registry_api
+app.register_blueprint(image_registry_api, url_prefix='/api/image_registry')
+
 from app.api.controllers.terminal import terminal
 
 @app.route('/')

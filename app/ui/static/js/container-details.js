@@ -66,11 +66,17 @@ App.containerDetails = App.containerDetails || {
         $('#buttonExportContainerDetail').on('click', $.proxy(this.showExportContainer, this));
         $('#buttonSnapshotContainerDetail').on('click', $.proxy(this.showSnapshotContainer, this));
 
-        $('#cloneContainerForm').on('submit', $.proxy(this.cloneContainerDetail, this));
-        $('#moveContainerForm').on('submit', $.proxy(this.moveContainerDetail, this));
-        $('#exportContainerForm').on('submit', $.proxy(this.exportContainerDetail, this));
-        $('#snapshotContainerForm').on('submit', $.proxy(this.snapshotContainerDetail, this));
+        $('#cloneContainerSubmit').on('submit', $.proxy(this.cloneContainerDetail, this));
+        $('#moveContainerSubmit').on('submit', $.proxy(this.moveContainerDetail, this));
+        $('#exportContainerSubmit').on('submit', $.proxy(this.exportContainerDetail, this));
+        $('#snapshotContainerSubmit').on('submit', $.proxy(this.snapshotContainerDetail, this));
         $('#containerFromSnapshotForm').on('submit', $.proxy(this.newContainerFromSnapshotDetail, this));
+
+         $('#cloneContainerSubmit').on('click', $.proxy(this.cloneContainerDetail, this));
+        $('#moveContainerSubmit').on('click', $.proxy(this.moveContainerDetail, this));
+        $('#exportContainerSubmit').on('click', $.proxy(this.exportContainerDetail, this));
+        $('#snapshotContainerSubmit').on('click', $.proxy(this.snapshotContainerDetail, this));
+        $('#containerFromSnapshotForm').on('click', $.proxy(this.newContainerFromSnapshotDetail, this));
 
         $('.profileTag').on('click', $.proxy(this.deleteProfile, this));
         $('#buttonAdd').on('click', $.proxy(this.onAddProfileClick, this));
@@ -292,6 +298,9 @@ App.containerDetails = App.containerDetails || {
                     '<div class="col-lg-4">' +
                         '<div class="form-group row">' +
                             '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="'+((this.data.config)?this.data.config[key] || '':'')+'" '+((this.data.config && this.data.config[key])?'':'disabled')+' />' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ _.get(App,'properties.keyValues["'+key+'"].valueDescription', 'No content available') + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
                         '</div>' +
                     '</div>' +
                      '<div class="col-lg-2">' +

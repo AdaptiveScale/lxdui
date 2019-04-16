@@ -49,7 +49,8 @@ var App = App || {
     },
     getInfoSuccess:function(response){
         this.info = response.data;
-        $('#stamplike').text('LXD Version: ' + this.info.environment.server_version);
+        this.lxdVersion = this.info.environment.server_version;
+        $('#stamplike').text('LXD Version: ' + this.lxdVersion);
         $('#stamplike').removeClass('label-danger').addClass('label-success');
     },
     getInfoError:function(response) {
@@ -75,11 +76,11 @@ var App = App || {
                     if(response.status == 401 && window.location!== WEB){
                         window.location = WEB;
                     }
-                    if((App.helpers.parseJwt(sessionStorage.getItem('authToken')).exp-App.helpers.currentAppTime())<120){
-                        if(!App.tokenRefreshing){
-                            App.updateTokenExpiration.call(App);
-                        }
-                    }
+//                    if((App.helpers.parseJwt(sessionStorage.getItem('authToken')).exp-App.helpers.currentAppTime())<120){
+//                        if(!App.tokenRefreshing){
+//                            App.updateTokenExpiration.call(App);
+//                        }
+//                    }
                     if(App.ongoingOperation ==0)
                         $('.loader').hide();
                     if(App.tokenRefreshing){

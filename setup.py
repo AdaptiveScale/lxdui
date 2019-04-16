@@ -29,7 +29,7 @@ setup(
    zip_safe=False,
    install_requires=[
        'Click==6.7',
-       'Flask==0.12.2',
+       'Flask==1.0.2',
        'flask-login==0.4.1',
        'flask_jwt_extended==3.18.0',
        'jsonschema==2.6.0',
@@ -42,7 +42,8 @@ setup(
        'tornado==5.0.2',
        'tornado-xstatic',
        'XStatic==1.0.1',
-       'XStatic-term.js==0.0.7.0'
+       'XStatic-term.js==0.0.7.0',
+       'pyyaml==3.11'
    ],
    entry_points={
        'console_scripts': [

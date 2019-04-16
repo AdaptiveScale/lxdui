@@ -5,6 +5,7 @@ from app.cli.init import Init
 from app.lib.cert import Certificate
 from app.api import core
 from app.ui.blueprint import uiPages
+from app.api.models.LXCImage import LXCImage
 import click
 import os
 import signal
@@ -38,6 +39,10 @@ lxdui user list				                #list the users in the auth file
 
 
 ''' Command Groups '''
+
+
+
+
 
 
 @click.group()
@@ -114,6 +119,84 @@ def status():
         for k, v in s.items():
             click.echo(' {} : {}'.format(k, v))
 
+
+@click.group()
+def image():
+    """Work with image registry"""
+    pass
+
+@image.command()
+@click.argument('fingerprint', nargs=1)
+def prep(fingerprint):
+    """Prepare an image for upload"""
+    try:
+        input = {}
+        image = LXCImage({'fingerprint': fingerprint})
+
+        # Export Image - Image registry
+        path = image.exportImage(input)
+
+        click.echo("Image prepared successfully.")
+        click.echo("The image path is: {}".format(path))
+        click.echo("Modify the image.yaml, upload the logo and update README.md")
+        click.echo("To publish the image use the command:")
+        click.echo("lxdui image push -u <uid> -p <pwd> <image_fingerprint>")
+    except Exception as e:
+        click.echo("LXDUI failed to prepare the image.")
+        click.echo(e.__str__())
+
+@image.command()
+@click.argument('fingerprint', nargs=1)
+@click.option('-u', '--username', nargs=1, help='Username')
+@click.option('-p', '--password', nargs=1, help='Password')
+def push(fingerprint, username, password):
+    """Push an image to hub.kuti.io"""
+    try:
+        input = {}
+        input['username'] = username
+        input['password'] = password
+
+        image = LXCImage({'fingerprint': fingerprint})
+
+        # Export Image - Image registry
+        image.pushImage(input)
+
+        click.echo("Image pushed successfully.")
+    except Exception as e:
+        click.echo("LXDUI failed to push the image.")
+        click.echo(e.__str__())
+
+@image.command()
+@click.argument('fingerprint', nargs=1)
+def pull(fingerprint):
+    """Pull an image from hub.kuti.io"""
+    try:
+        input = {}
+
+        image = LXCImage({'fingerprint': fingerprint})
+
+        print("Downlaoding image with fingerprint {}".format(fingerprint))
+        # Import Image - Image registry
+        image.importImage(input)
+
+        click.echo("Image imported successfully.")
+    except Exception as e:
+        click.echo("LXDUI failed to download/import the image.")
+        click.echo(e.__str__())
+
+@image.command()
+def list():
+    """List images from hub.kuti.io"""
+    try:
+        input = {}
+        image = LXCImage({'fingerprint': 'a'})
+
+        # List Images from kuti.io
+        print (image.listHub(input))
+
+    except Exception as e:
+        click.echo("LXDUI failed to list the images from kuti.io.")
+        click.echo(e.__str__())
 
 ''' 
     User level group of commands 
@@ -288,6 +371,7 @@ lxdui.add_command(status)
 lxdui.add_command(user)
 lxdui.add_command(config)
 lxdui.add_command(cert)
+lxdui.add_command(image)
 
 
 if __name__ == '__main__':

@@ -3,6 +3,8 @@
 <script>
     var constLocalImages = {{jsData.local|safe}} || {};
     var constRemoteImages = {{jsData.remote|safe}} || {};
+    var architecture = '{{architecture}}';
+    var localImagesLength = {{localImages|length}}
 
 
 </script>
@@ -40,12 +42,16 @@
                     <a href="#1" id="btnLocalImages" class="tab-background" aria-expanded="true" data-toggle="tab">Local <span class="badge">{{localImages|length}}</span></a>
                 </li>
                <li>
-                    <a href="#2" class="tab-background" id="btnNightlyImages" aria-expanded="false" data-toggle="tab">Nightly <span
+                    <a href="#2" class="tab-background" id="btnNightlyImages" aria-expanded="false" data-toggle="tab">Nightly <span id="nightlyLength"
                             class="badge">{{nightlyImages|length}}</span></a>
                 </li>
                 <li>
-                    <a href="#3" class="tab-background" id="btnRemoteImages" aria-expanded="false" data-toggle="tab">Remote <span
+                    <a href="#3" class="tab-background" id="btnRemoteImages" aria-expanded="false" data-toggle="tab">Remote <span id="remoteLength"
                             class="badge">{{remoteImages|length}}</span></a>
+                </li>
+                <li>
+                    <a href="#4" class="tab-background" id="btnHubImages" aria-expanded="false" data-toggle="tab">Hub <sup>BETA</sup> <span
+                            class="badge">{{hubImages|length}}</span></a>
                 </li>
                 <!--<a href="" class="btn btn-default btn-xs buttonAddRemoteModal" data-toggle="modal" data-target="#addRemoteModal">-->
                 <!--<span class="glyphicon glyphicon-plus-sign"></span></a>-->
@@ -63,6 +69,9 @@
                                         </button>
                                         <button id="buttonDelete" class="btn btn-danger" disabled><span
                                                 class="glyphicon glyphicon-remove-sign"></span> Delete
+                                        </button>
+                                         &nbsp; &nbsp; | &nbsp; &nbsp;
+                                        <button id="buttonPublish" class="btn btn-primary" disabled> Publish
                                         </button>
                                     </div>
                                     <button class="btn btn-default rawJSONImages btn-xs btn-rounded-corners" href="#" style="display:none;">
@@ -287,6 +296,62 @@
                         </div>
                     </div>
                 </div> <!--col-sm-12 end-->
+
+                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="4">
+                    <div class="col-sm-12 col-md-12 col-lg-12">
+                        <div class="col-lg-12" id="loader" style="display:none;">
+                            <div class="col-lg-offset-4 col-lg-4">
+                                <img src="static/images/loader.gif" class="text-center" width="150px">
+                            </div>
+                        </div>
+                        <h5 class="bg-bottom">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <button id="buttonDownloadHub" class="btn btn-success left" disabled><span
+                                            class="glyphicon glyphicon-download-alt"></span> Download
+                                    </button>
+                                    <div class="left">
+                                        <p class="remote-link">Remote: <a target="_blank"
+                                                                          href="{{ imageHubLink }}">{{ imageHubLink }}</a>
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </h5>
+
+                        <!--<div class="col-lg-12" id="tableImagesRemoteWrapper" style="display:none;">-->
+                        <div class="col-lg-12" id="tableImagesHubWrapper">
+                            <div class="">
+                                <table id="tableImagesHub"
+                                       class="table table-bordered table-responsive table-fixed width100">
+                                    <thead>
+                                    <th><input type="checkbox" id="selectAllHub" class="width100"/></th>
+                                    <th>Title</th>
+                                    <th>OS</th>
+                                    <th>Description</th>
+                                    <th>Ver</th>
+                                    <th>Arch</th>
+                                    <th>Size</th>
+                                    </thead>
+                                    <tbody>
+                                    {% for image in hubImages %}
+                                    <tr id="{{image.fingerprint}}">
+                                        <td></td>
+                                        <td><a href="{{ imageHubLink }}/details/{{ image.fingerprint }}" target="_blank">{{ image.title or 'NA' }}</a></td>
+                                        <td>{{ image.properties['os'] or 'NA' }}</td>
+                                        <td>{{ image.description or 'NA' }}
+                                        </td>
+                                        <td>{{ image.properties.release or 'NA' }}</td>
+                                        <td>{{ image.architecture or 'NA' }}</td>
+                                        <td class="imageSize">{{image.size or 'NA' }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div> <!--col-sm-12 end-->
                 <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="4">
                     <div class="col-sm-12 col-md-12 col-lg-12">
 
@@ -465,7 +530,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
-                <h4 class="modal-title">Remote Image: <label class="imageName"></label></h4>
+                <h4 class="modal-title">Remote Image: <label class="imageName"></label> &nbsp;<span class="glyphicon glyphicon-refresh spinning loader imageDownloadLoader"></span></h4>
             </div>
             <div class="modal-body" id="modalBody">
 
@@ -486,7 +551,7 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modnewContainerFormal">&times;</button>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Add remote <label class="imageName"></label></h4>
             </div>
             <div class="modal-body" id="modalAddRemoteBody">
@@ -511,6 +576,181 @@
                 <button type="button" class="btn btn-success" id="buttonAddRemote">Save</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
+        </div>
+
+    </div>
+</div>
+<!-- Modal -->
+<div id="publishImageModal" class="modal fade" role="dialog" tabindex="-1">
+    <div class="modal-dialog images-modal">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Publish image to Hub <sup>BETA</sup><label class="imageName"></label></h4>
+            </div>
+            <div class="modal-body row" id="modalPubslishImageToHub">
+                <form id="publishImageToHubForm" class="form-horizontal">
+                    <!--<div class="form-group">-->
+                        <!--<label for="" class="col-sm-2 control-label">URL</label>-->
+                        <!--<div class="col-sm-9">-->
+                            <!--<input id="inputUrl" name="inputUrlName" class="form-control" type="text" placeholder="URL"-->
+                                   <!--title="Url Name" required/>-->
+                        <!--</div>-->
+                    <!--</div>-->
+
+                    <div class="image-tabs col-lg-12">
+                        <div id="exTab">
+                            <ul class="nav nav-tabs">
+                                <li class="tabImageDetails active">
+                                    <a id="btnImageDetails" class="tab-background" aria-expanded="true" data-toggle="tab">Image Details</a>
+                                </li>
+                                <li class="tabImageReadme">
+                                    <a class="tab-background" id="btnReadme" aria-expanded="false" data-toggle="tab">Readme </a>
+                                </li>
+                                <li class="tabImageAuthorization">
+                                    <a class="tab-background" id="btnAuthorization" aria-expanded="false" data-toggle="tab">Authorization </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content">
+                                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders active" id="5">
+                                    <div class="col-lg-6">
+                                        <h5>Author</h5>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Name</label>
+                                            <div class="col-sm-9">
+                                                <input id="authorName" name="authorName" class="form-control" type="text"
+                                                       placeholder="Author Name" title="Name" required data-parsley-group="block1"/>
+                                            </div>
+                                        </div>
+                                         <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Email</label>
+                                            <div class="col-sm-9">
+                                                <input id="authorEmail" name="authorEmail" class="form-control" type="text"
+                                                       placeholder="Author Email" title="Email" required data-parsley-group="block1"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">License</label>
+                                            <div class="col-sm-9">
+                                                <input id="license" name="license" class="form-control" type="text"
+                                                       placeholder="License" title="License" required data-parsley-group="block1"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Public</label>
+                                            <div class="col-sm-9">
+                                                <input name="check" type="checkbox" checked disabled/>
+                                                <input id="public" name="public" type="hidden" value="on">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <h5>Image</h5>
+                                         <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Image Alias</label>
+                                            <div class="col-sm-9">
+                                                <input id="imageAlias" name="imageAlias" class="form-control" type="text"
+                                                       placeholder="Image Alias" title="Alias" required data-parsley-group="block1"/>
+                                            </div>
+                                        </div>
+                                         <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Description</label>
+                                            <div class="col-sm-9">
+                                                <textarea id="imageDescription" name="imageDescription" class="form-control" type="text" placeholder="" title="Description" data-parsley-group="block1"></textarea>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="logo" class="col-sm-3 control-label">Logo (PNG)</label>
+                                            <div class="col-sm-9">
+                                                <input type="file" name="logo" id="logo" accept="image/png" required data-parsley-group="block1"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="" class="col-sm-3 control-label">Tags</label>
+                                            <div class="col-sm-9">
+                                                <input id="imageTags" name="imageTags" class="form-control" type="text"
+                                                       placeholder="Image Tags" title="Tags" required data-parsley-group="block1"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-12 list-details">
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>LXC Version:</b></h5>
+                                            <label class="formModifier font400 lxcversion" id="lxcVersion">3.3</label>
+                                        </div>
+                                        <div class="form-group">
+                                            <h5 class="inline"><b>Fingerprint:</b></h5>
+                                            <label class="formModifier font400 fingerprint" id="fingerprint">6636262626dfe4fdsa3</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>Source:</b></h5>
+                                            <label class="formModifier font400 source" id="source">https://cloud.images.ubuntu.com</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>Size:</b></h5>
+                                            <label class="formModifier font400 size" id="size">167.6MB</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>Architecture:</b></h5>
+                                            <label class="formModifier font400 architecture" id="architecture">x86_64</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>OS:</b></h5>
+                                            <label class="formModifier font400 os" id="os">Ubuntu</label>
+                                        </div>
+                                         <div class="form-group">
+                                            <h5 class="inline"><b>Release:</b></h5>
+                                            <label class="formModifier font400 releases" id="release">Xenial 16.04</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                 <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="6">
+                                     <div class="form-group col-lg-12">
+                                         <h4>Usage Documentation (Markdown)</h4>
+                                     </div>
+                                     <div class="form-group col-lg-12">
+                                         <textarea name="documentation" id="documentation" cols="85" rows="15"></textarea>
+                                     </div>
+
+                                 </div>
+                                <div class="tab-pane col-lg-12 col-md-12 col-sm-12 add-borders" id="7">
+                                     <div class="form-group col-lg-12">
+                                         <h4>Authorization</h4>
+                                     </div>
+                                     <div class="form-group col-md-offset-3">
+                                            <label for="" class="col-sm-3 control-label">Email</label>
+                                            <div class="col-sm-9">
+                                                <input id="username" name="username" class="form-control" type="text"
+                                                       placeholder="Email" title="Email" required data-parsley-group="block3"/>
+                                            </div>
+                                        </div>
+                                        <div class="form-group col-md-offset-3">
+                                            <label for="" class="col-sm-3 control-label">Password</label>
+                                            <div class="col-sm-9">
+                                                <input id="password" name="password" class="form-control" type="password"
+                                                       placeholder="Password" title="Password" required data-parsley-group="block3"/>
+                                            </div>
+                                        </div>
+                                        To create an account please go to <a href="http://hub.kuti.io/login" target="_blank">http://hub.kuti.io/login</a>
+                                 </div>
+                                    <!--<button class="btn btn-primary">Publish <span-->
+                                        <!--class="glyphicon glyphicon-refresh spinning loader"></span></button>-->
+                            </div>
+                        </div>
+                    </div>
+
+            </div>
+            <div class="modal-footer" style="border: none;">
+                 <button type="button" class="btn btn-default" data-dismiss="modal" id="buttonPublishCancel">Cancel</button>
+                 <button type="button" class="btn btn-default" id="buttonPublishBack">Back</button>
+                 <button type="button" class="btn btn-primary" id="buttonPublishNext">Next</button>
+                 <button class="btn btn-primary" id="buttonPublishToHUB">Publish <span
+                                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <!--<button type="button" class="btn btn-primary" id="buttonPublishNext" onclick="nextTab">Next</button>-->
+            </div>
+            </form>
         </div>
 
     </div>

@@ -33,14 +33,17 @@
                     <span class="glyphicon glyphicon-remove-circle"> </span> Unfreeze
                 </button>
                 <!--- right -->
-                <a class="btn btn-success pull-right" id="buttonNewInstance">
-                    <span class="glyphicon glyphicon-plus-sign"> </span>
-                    New Instance
-                </a>
+                {% if containers|length>0 %}
+                    <a class="btn btn-success pull-right" id="buttonNewInstance">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                        New Instance
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class="col-lg-12">
+        {% if containers|length > 0 %}
         <table class="table table-bordered" id="tableContainers">
             <thead>
             <th><input id="selectAllContainers" type="checkbox"/></th>
@@ -123,6 +126,26 @@
             {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-3 col-md-offset-3">
+                    {% if images|length>0 %}
+                    <h5 style="text-align:center;">No instances available.</h5>
+                    <a class="btn btn-lg btn-success" id="buttonNewInstance">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                        Create New Instance
+                    </a>
+                    {% else %}
+                    <a class="btn btn-lg btn-success" href="/ui/images">
+                        <span class="glyphicon glyphicon-download-alt"> </span>
+                        Download image
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
