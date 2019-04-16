@@ -89,7 +89,7 @@ def downloadImage():
 
 import json
 @image_api.route('/hub/publish', methods=['POST'])
-@jwt_required()
+@jwt_required
 def publishHubImage():
     #input = request.get_json(silent=True)
     input = json.loads(request.form.get('input'))
@@ -105,7 +105,7 @@ def publishHubImage():
 
 
 @image_api.route('/hub', methods=['POST'])
-@jwt_required()
+@jwt_required
 def downloadHubImage():
     input = request.get_json(silent=True)
     validation = doValidate(input)

@@ -42,9 +42,6 @@ lxdui user list				                #list the users in the auth file
 
 
 
-
-
-
 @click.group()
 @click.version_option(version=meta.VERSION, message='{} v{} \n{}\n{}'.format(meta.APP_NAME, meta.VERSION, meta.AUTHOR, meta.AUTHOR_URL))
 # @click.version_option(message=meta.APP_NAME + ' version ' + meta.VERSION + '\n' + meta.AUTHOR + '\n' + meta.AUTHOR_URL )

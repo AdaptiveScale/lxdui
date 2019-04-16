@@ -6,7 +6,6 @@ from flask_jwt_extended import JWTManager
 from app.api.utils import converters
 import app.__metadata__ as meta
 import logging
-import requests
 
 logging = logging.getLogger(__name__)
 
