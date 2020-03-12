@@ -36,7 +36,7 @@ setup(
        'requests==2.9.1',
        'netaddr==0.7.19',
        'pyopenssl==17.5.0',
-       'psutil==5.4.5',
+       'psutil==5.6.6',
        'pylxd==2.2.7',
        'terminado==0.8.1',
        'tornado==5.0.2',
