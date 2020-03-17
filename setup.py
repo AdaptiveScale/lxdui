@@ -29,7 +29,7 @@ setup(
    zip_safe=False,
    install_requires=[
        'Click==6.7',
-       'Flask==0.12.2',
+       'Flask==1.0',
        'flask-login==0.4.1',
        'flask_jwt==0.3.2',
        'jsonschema==2.6.0',
