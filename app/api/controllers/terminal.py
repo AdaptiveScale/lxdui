@@ -63,7 +63,7 @@ class NewTerminalHandler(tornado.web.RequestHandler):
         self.app = app
 
 
-def terminal(app, port, debug=False):
+def terminal(app, host, port, debug=False):
     term_manager = NamedTermManager(shell_command=None, max_terminals=100)
     wrapped_app = WSGIContainer(app)
     handlers = [
@@ -81,5 +81,5 @@ def terminal(app, port, debug=False):
                               term_manager=term_manager,
                               debug=debug)
     http_server = HTTPServer(tornado_app)
-    http_server.listen(port, '0.0.0.0')
+    http_server.listen(port, host)
     IOLoop.instance().start()

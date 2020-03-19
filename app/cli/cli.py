@@ -71,14 +71,16 @@ def start(debug):
 
     # Private Functions
     def _start(debug=False):
+        host = '0.0.0.0'
         port = 5000
         try:
+            host = Config().get('LXDUI', 'lxdui.host')
             port = int(Config().get('LXDUI', 'lxdui.port'))
         except:
             print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
             exit()
 
-        core.start(port, debug, uiPages)
+        core.start(host, port, debug, uiPages)
 
     if debug:
         _start(debug=True)
@@ -96,12 +98,13 @@ def stop():
 @lxdui.command()
 def restart():
     """Restart LXDUI"""
+    host = Config().get('LXDUI', 'lxdui.host')
     port = int(Config().get('LXDUI', 'lxdui.port'))
     click.echo('Restarting with defaults.')
     core.stop()
     click.echo('Port = {} \nDebug = False\nMode = Foreground\n'.format(port))
     time.sleep(3)
-    core.start(port, False, uiPages)
+    core.start(host, port, False, uiPages)
 
 @lxdui.command()
 def status():

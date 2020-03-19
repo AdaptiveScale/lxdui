@@ -21,6 +21,7 @@ AUTO_LOAD_CONFIG = True
 DEFAULT_CONFIG_FORMAT = 'ini'
 __default_config__ = """
 [LXDUI]
+lxdui.host = 0.0.0.0
 lxdui.port = 15151
 lxdui.images.remote = https://images.linuxcontainers.org
 lxdui.jwt.token.expiration = 1200
