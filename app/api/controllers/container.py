@@ -223,3 +223,21 @@ def removeProxy(name, proxy):
         return response.replySuccess(container.removeProxy(proxy))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
+
+@container_api.route('/<name>/interface/<iface>/up', methods=['PUT'])
+@jwt_required()
+def ifaceUp(name, iface):
+    try:
+        container = LXCContainer({'name': name})
+        return response.replySuccess(container.interfaceUp(iface))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+@container_api.route('/<name>/interface/<iface>/down', methods=['PUT'])
+@jwt_required()
+def ifaceDown(name, iface):
+    try:
+        container = LXCContainer({'name': name})
+        return response.replySuccess(container.interfaceDown(iface))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())

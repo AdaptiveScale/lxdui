@@ -402,3 +402,19 @@ class LXCContainer(LXDModule):
             return self.info()
         except Exception as e:
             raise ValueError(e)
+
+    def interfaceUp(self, iface):
+        try:
+            container = self.client.containers.get(self.data['name'])
+            result = container.execute(['ifconfig {} up'.format(iface)])
+            return result
+        except Exception as e:
+            raise ValueError(e)
+
+    def interfaceDown(self, iface):
+        try:
+            container = self.client.containers.get(self.data['name'])
+            result = container.execute(['ifconfig {} down'.format(iface)])
+            return result
+        except Exception as e:
+            raise ValueError(e)
