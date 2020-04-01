@@ -45,7 +45,6 @@ class LXCContainer(LXDModule):
         if input.get('imageAlias'):
             self.setImageAlias(input.get('imageAlias'))
 
-        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
         if input.get('autostart') != None:
             self.setBootType(input.get('autostart'))
         else:
