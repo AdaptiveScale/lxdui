@@ -1,10 +1,9 @@
 from flask import Blueprint, request, send_file
 from flask import jsonify
-from flask_jwt import jwt_required
+from flask_jwt_extended import jwt_required
 
 from app.api.models.LXCFileManager import LXCFileManager
 from app.api.utils import response
-from app.api.utils.authentication import jwt_decode_handler
 
 import io
 import json
@@ -14,7 +13,7 @@ file_manager_api = Blueprint('file_manager_api', __name__)
 
 
 @file_manager_api.route('/content/container/<string:name>')
-@jwt_required()
+@jwt_required
 def content(name):
     path = request.args.get('path')
     if path == None:
@@ -41,7 +40,7 @@ def content(name):
         return response.replyFailed(ex.__str__())
 
 @file_manager_api.route('/list/container/<string:name>')
-@jwt_required()
+@jwt_required
 def list(name):
     path = request.args.get('path')
     if path == None:
@@ -92,7 +91,7 @@ def isFolder(fileManager):
 
 #List directory or open file
 @file_manager_api.route('/container/<string:name>', methods=['PUT'])
-@jwt_required()
+@jwt_required
 def download(name):
     input = request.get_json(silent=True)
     input['name'] = name
@@ -113,12 +112,9 @@ def download(name):
 
 
 @file_manager_api.route('/download/container/<string:name>', methods=['GET'])
+@jwt_required
 def download_file(name):
     path = request.args.get('path')
-    token = request.args.get('token')
-    print (token)
-    if not checkAuthentication(token):
-        return response.replyFailed('Not authorized')
 
     if path == None:
         return jsonify([])
@@ -144,7 +140,7 @@ def download_file(name):
 
 
 @file_manager_api.route('/container/<string:name>', methods=['POST'])
-@jwt_required()
+@jwt_required
 def upload_file(name):
     input = None
     try:
@@ -165,7 +161,7 @@ def upload_file(name):
 
 
 @file_manager_api.route('/new/container/<string:name>', methods=['POST'])
-@jwt_required()
+@jwt_required
 def new_file(name):
     input = request.get_json(silent=True)
 
@@ -179,7 +175,7 @@ def new_file(name):
 
 
 @file_manager_api.route('/edit/container/<string:name>', methods=['POST'])
-@jwt_required()
+@jwt_required
 def edit_file(name):
     input = request.get_json(silent=True)
 
@@ -194,7 +190,7 @@ def edit_file(name):
 
 
 @file_manager_api.route('/container/<string:name>', methods=['DELETE'])
-@jwt_required()
+@jwt_required
 def delete_profile(name):
     input = request.get_json(silent=True)
     # validation = doValidate(input)
@@ -210,9 +206,3 @@ def delete_profile(name):
     except ValueError as ex:
         return response.replyFailed(message=ex.__str__())
 
-
-def checkAuthentication(token):
-    try:
-        return jwt_decode_handler(token)
-    except Exception as e:
-        return False
