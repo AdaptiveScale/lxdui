@@ -12,8 +12,8 @@ IMAGE_HUB = 'http://hub.kuti.io'
 
 '''
 
-The following section is for the default configuration  
-that will be written to the lxdui.conf file if the file 
+The following section is for the default configuration
+that will be written to the lxdui.conf file if the file
 does not already exist.
 
 '''
@@ -26,7 +26,6 @@ lxdui.port = 15151
 lxdui.images.remote = https://images.linuxcontainers.org
 lxdui.jwt.token.expiration = 1200
 lxdui.jwt.secret.key = AC8d83&21Almnis710sds
-lxdui.jwt.auth.url.rule = /api/user/login
 lxdui.admin.user = admin
 lxdui.conf.dir = {{app_root}}/conf
 lxdui.conf.file = ${lxdui.conf.dir}/lxdui.conf
@@ -43,7 +42,7 @@ lxdui.profiles = ${lxdui.conf.dir}/profiles
 lxdui.zfs.pool.name = lxdpool
 lxdui.app.alias = LXDUI
 lxdui.cli = cli
-        
+
 [LXDUI_CERT]
 lxdui.cert.country = US
 lxdui.cert.state = Texas
