@@ -874,20 +874,20 @@
                                     title="Information"
                                     data-toggle="popover"
                                     data-trigger="hover"
-                                    html="true"
-                                    data-content="
-                                    Example for adding a bridged nic from the command line: <br />
-                                    lxc config device add c1 eth1 nic name=eth1 <br />
-                                    nictype=bridged parent=lxdbr0 <br /><br /><br /><br />
-                                    For configuration details please refer to: https://lxd.readthedocs.io/en/latest/containers/#type-nic<br />
-                                    physical: Straight physical device passthrough from the host. The targeted device will vanish from the host and appear in the container.<br /><br />
-                                    bridged: Uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the container.<br /><br />
-                                    macvlan: Sets up a new network device based on an existing one but using a different MAC address.<br /><br />
-                                    p2p: Creates a virtual device pair, putting one side in the container and leaving the other side on the host.<br /><br />
-                                    sriov: Passes a virtual function of an SR-IOV enabled physical network device into the container."
+                                    data-html="true"
+                                    data-content=" <div>Example for adding a bridged nic from the command line: <br />
+                                     lxc config device add c1 eth1 nic name=eth1 <br />
+                                     nictype=bridged parent=lxdbr0 <br /><br /><br /><br />
+                                     For configuration details please refer to: https://lxd.readthedocs.io/en/latest/containers/#type-nic <br />
+                                     physical: Straight physical device passthrough from the host. The targeted device will vanish from the host and appear in the container.<br /><br />
+                                     bridged: Uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the container.<br /><br />
+                                     macvlan: Sets up a new network device based on an existing one but using a different MAC address.<br /><br />
+                                     p2p: Creates a virtual device pair, putting one side in the container and leaving the other side on the host.<br /><br />
+                                     sriov: Passes a virtual function of an SR-IOV enabled physical network device into the container.</div>"
                                     data-original-title="Information">
                                 <span class="glyphicon glyphicon-info-sign"></span>
                              </a>
+
 
                         </div>
                         <!--<div class="col-sm-1">-->
