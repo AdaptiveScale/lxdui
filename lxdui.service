@@ -1,0 +1,13 @@
+[Unit]
+Description=Web UI for the native Linux container technology LXD/LXC
+After=network.target snapd.service
+Requires=snapd.service
+
+[Service]
+Type=simple
+PIDFile=/run/lxdui/lxdui.pid
+ExecStart=/usr/local/bin/lxdui start
+ExecStop=/usr/local/bin/lxdui stop
+
+[Install]
+WantedBy=multi-user.target

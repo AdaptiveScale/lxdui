@@ -4,11 +4,30 @@ from app.api.utils.containerMapper import getContainerDetails
 from app.lib.conf import Config
 from app import __metadata__ as meta
 from app.__metadata__ import VERSION
+from flask_jwt_extended import jwt_required
+from jwt.exceptions import PyJWTError
+from functools import wraps
+
 import json
 import os
+import platform
 
 uiPages = Blueprint('uiPages', __name__, template_folder='./templates',
                     static_folder='./static')
+
+def jwt_ui(func):
+    """
+    Catches JWT Errors and returns an error page
+    rather than a json encoded error.
+    """
+    @wraps(func)
+    def wrapper_function(*args, **kwargs):
+        try:
+            retval = func(*args, **kwargs)
+        except PyJWTError as e:
+            return render_template('auth_error.html', error=e)
+        return retval
+    return wrapper_function
 
 def memory():
     mem_bytes = os.sysconf('SC_PAGE_SIZE') * os.sysconf('SC_PHYS_PAGES')
@@ -19,6 +38,8 @@ def index():
     return render_template('login.html', currentpage='Login')
 
 @uiPages.route('/containers')
+@jwt_ui
+@jwt_required
 def container():
     try:
         containers = LXDModule().listContainers()
@@ -44,6 +65,8 @@ def container():
 
 
 @uiPages.route('/containers/<string:name>')
+@jwt_ui
+@jwt_required
 def containerDetails(name):
     try:
         container = LXCContainer({'name': name})
@@ -62,6 +85,8 @@ def containerDetails(name):
 
 
 @uiPages.route('/profiles')
+@jwt_ui
+@jwt_required
 def profile():
     try:
         profiles = LXDModule().listProfiles()
@@ -72,6 +97,8 @@ def profile():
                                profiles=[], lxdui_current_version=VERSION)
 
 @uiPages.route('/storage-pools')
+@jwt_ui
+@jwt_required
 def storagePools():
     try:
         storagePools = LXDModule().listStoragePools()
@@ -82,6 +109,8 @@ def storagePools():
                                storagePools=[], lxdui_current_version=VERSION)
 
 @uiPages.route('/network')
+@jwt_ui
+@jwt_required
 def network():
     try:
         network = LXDModule().listNetworks()
@@ -92,25 +121,32 @@ def network():
                                network=[], lxdui_current_version=VERSION)
 
 @uiPages.route('/images')
+@jwt_ui
+@jwt_required
 def images():
     localImages = getLocalImages()
     profiles = getProfiles()
-    remoteImages = getRemoteImages()
-    nightlyImages = getNightlyImages()
+    remoteImages = []
+    nightlyImages = []
+    hubImages = getHubImages()
     remoteImagesLink = Config().get(meta.APP_NAME, '{}.images.remote'.format(meta.APP_NAME.lower()))
     return render_template('images.html', currentpage='Images',
                            localImages=localImages,
                            remoteImages=remoteImages,
                            nightlyImages=nightlyImages,
+                           hubImages=hubImages,
                            profiles=profiles,
                            jsData={
                                'local': json.dumps(localImages),
                                'remote': json.dumps(remoteImages),
-                               'nightly': json.dumps(nightlyImages)
+                               'nightly': json.dumps(nightlyImages),
+                               'hub': json.dumps(hubImages)
                            },
                            memory=memory(),
                            lxdui_current_version=VERSION,
-                           remoteImagesLink=remoteImagesLink)
+                           remoteImagesLink=remoteImagesLink,
+                           imageHubLink=meta.IMAGE_HUB,
+                           architecture=platform.machine())
 
 
 def getLocalImages():
@@ -140,6 +176,15 @@ def getNightlyImages():
         nightlyImages = []
 
     return nightlyImages
+
+
+def getHubImages():
+    try:
+        hubImages = LXDModule().listHubImages()
+    except:
+        hubImages = []
+
+    return hubImages
 
 def getProfiles():
     try:

@@ -45,7 +45,6 @@ class LXCContainer(LXDModule):
         if input.get('imageAlias'):
             self.setImageAlias(input.get('imageAlias'))
 
-        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
         if input.get('autostart') != None:
             self.setBootType(input.get('autostart'))
         else:
@@ -299,6 +298,11 @@ class LXCContainer(LXDModule):
 
             image = container.publish(wait=True)
             image.add_alias(self.data.get('imageAlias'), self.data.get('name'))
+            try:
+                fingerprint = container.config.get('volatile.base_image')
+                self.client.api.images[image.fingerprint].put(json={'properties': self.client.api.images[fingerprint].get().json()['metadata']['properties']})
+            except:
+                logging.error('Image does not exist.')
             container.start(wait=True)
             return self.client.api.images[image.fingerprint].get().json()['metadata']
         except Exception as e:

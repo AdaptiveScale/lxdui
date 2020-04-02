@@ -97,7 +97,6 @@ App.containers = App.containers || {
         $('#containerCPUPercentage').on('change', $.proxy(this.updateValue, this, $('#cpu_percentage')));
         $('#memory_percentage').on('change', $.proxy(this.updateValue, this, $('#containerMemoryPercentage')));
         $('#containerMemoryPercentage').on('change', $.proxy(this.updateValue, this, $('#memory_percentage')));
-
         if(window.location.hash && window.location.hash=='#createContainer')
             this.switchView('form');
 
@@ -128,6 +127,9 @@ App.containers = App.containers || {
                     '<div class="col-lg-4">' +
                         '<div class="form-group row">' +
                             '<input type="text" name="'+ key +'" id="' + key + '" class="form-control" placeholder="" value="" disabled />' +
+                            '<a href="#" class="hover-info" onmouseover="$.proxy(App.containerDetails.showPopover(this));" title="Information" data-toggle="popover" data-trigger="hover" data-content="'+ _.get(App,'properties.keyValues["'+key+'"].valueDescription', 'No content available') + '" data-original-title="Information">' +
+                                 '<span class="glyphicon glyphicon-info-sign"></span>' +
+                             '</a>' +
                         '</div>' +
                     '</div>' +
                      '<div class="col-lg-2">' +
@@ -408,7 +410,7 @@ App.containers = App.containers || {
     onCloneSuccess: function(response){
          console.log(response);
          console.log('clonedSuccess:', 'TODO - add alert and refresh local data');
-         $("#myModal").modal("hide");
+         $("#cloneContainerModal").modal("hide");
          location.reload();
     },
     moveContainer: function() {
@@ -426,7 +428,7 @@ App.containers = App.containers || {
     onMoveSuccess: function(response){
          console.log(response);
          console.log('Moved Success:', 'TODO - add alert and refresh local data');
-         $("#myModal").modal("hide");
+         $("#moveContainerModal").modal("hide");
          location.reload();
     },
     exportContainer: function() {
@@ -445,7 +447,7 @@ App.containers = App.containers || {
     onExportSuccess: function(response){
          console.log(response);
          console.log('Export Success:', 'TODO - add alert and refresh local data');
-         $("#myModal").modal("hide");
+         $("#exportContainerModal").modal("hide");
     },
     snapshotContainer: function() {
         $.ajax({
@@ -462,7 +464,7 @@ App.containers = App.containers || {
     onSnapshotSuccess: function(response){
          console.log(response);
          console.log('Snapshot Success:', 'TODO - add alert and refresh local data');
-         $("#myModal").modal("hide");
+         $("#snapshotContainerModal").modal("hide");
     },
     toggleSelectAll(event){
         if(event.target.checked){
@@ -475,6 +477,6 @@ App.containers = App.containers || {
         target.val(event.target.value);
     },
     showTerminalContainer: function(container) {
-        window.open('/terminal/new/' + container + '/' + sessionStorage.getItem('authToken'), '_blank');
+        window.open('/terminal/new/' + container + '/', '_blank');
     }
 }

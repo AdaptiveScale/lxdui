@@ -8,3 +8,4 @@ LXDUI.egg-info
 logs/
 conf/lxdui.conf
 snap/
+tmp/
