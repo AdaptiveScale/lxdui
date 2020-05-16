@@ -7,7 +7,7 @@ RUN apt update && apt install -y python3
 ADD . /app
 WORKDIR /app
 
-RUN apt install -y python3-pip
+RUN apt install -y python3-pip libffi-dev libssl-dev
 RUN pip3 install setuptools
 RUN python3 setup.py install
 
