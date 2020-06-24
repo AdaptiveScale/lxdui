@@ -329,8 +329,8 @@ def create():
     """Create client certificates"""
     c = Certificate()
     key, crt = c.create()
-    c.save(key)
-    c.save(crt)
+    c.save(APP.lower(),key)
+    c.save(APP.lower(),crt)
 
 
 @cert.command()
