@@ -244,9 +244,6 @@ class LXCContainer(LXDModule):
             logging.exception(e)
             raise ValueError(e)
 
-    def move(self):
-        pass
-
     def clone(self):
         try:
             logging.info('Cloning container {}'.format(self.data.get('name')))
