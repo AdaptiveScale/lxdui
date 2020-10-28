@@ -4,6 +4,7 @@ import os
 import json
 import hashlib
 import logging
+import pam
 
 log = logging.getLogger(__name__)
 
@@ -119,12 +120,7 @@ class User(object):
         self.save(self.users)
 
     def authenticate(self, username, password):
-        account, err = self.get(username)
-
-        if account is None:
-            return 'Error', err
-
-        if account['password'] == self.sha_password(password):
+        if pam.authenticate(username,password):
             return True, 'Authenticated'
         else:
             return False, 'Incorrect password.'
