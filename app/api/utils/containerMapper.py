@@ -5,8 +5,18 @@ def getContainerDetails(container):
     if container.state().network != None:
         if  container.state().network.get('eth0') != None and len(container.state().network.get('eth0')['addresses']) > 0:
             ip = container.state().network['eth0']['addresses'][0].get('address', 'N/A')
-        if container.state().network.get('enp5s0') != None and len(container.state().network.get('enp5s0')['addresses']) > 0:
+        elif container.state().network.get('enp5s0') != None and len(container.state().network.get('enp5s0')['addresses']) > 0:
             ip = container.state().network['enp5s0']['addresses'][0].get('address', 'N/A')
+        elif ip == 'N/A':
+            found = False
+            for network in container.state().network:
+                for address in network:
+                    if address['family'] == 'inet' and address['scope'] == 'global': 
+                        ip = address['address']
+                        found = True
+                        break
+                if found:
+                    break
 
     image = 'N/A'
     if container.config.get('image.os') != None and container.config.get('image.release') != None and container.config.get('image.architecture') != None:
