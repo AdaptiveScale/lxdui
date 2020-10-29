@@ -19,6 +19,9 @@ PID = os.path.join(tempfile.gettempdir(), '{}.pid'.format(meta.APP_NAME).lower()
 # Authentication section
 initAuth(app)
 
+from app.api.controllers.auth import auth_api
+app.register_blueprint(auth_api, url_prefix='/api/user')
+
 from app.api.controllers.lxd import lxd_api
 app.register_blueprint(lxd_api, url_prefix='/api/lxd')
 
@@ -42,6 +45,9 @@ app.register_blueprint(file_manager_api, url_prefix='/api/file')
 
 from app.api.controllers.storagePool import storage_pool_api
 app.register_blueprint(storage_pool_api, url_prefix='/api/storage_pool')
+
+from app.api.controllers.imageRegistry import image_registry_api
+app.register_blueprint(image_registry_api, url_prefix='/api/image_registry')
 
 from app.api.controllers.terminal import terminal
 
@@ -112,7 +118,7 @@ def stop():
         logging.info(e)
 
 
-def start(port, debug=False, uiPages=None):
+def start(host, port, debug=False, uiPages=None):
     logging.debug('Checking UI availability.')
 
     if uiPages is not None:
@@ -130,7 +136,7 @@ def start(port, debug=False, uiPages=None):
     with open(PID, 'w') as f:
         f.write(str(pid))
 
-    print("LXDUI started. Running on http://0.0.0.0:{}".format(port))
+    print("LXDUI started. Running on http://{}:{}".format(host, port))
     print("PID={}, Press CTRL+C to quit".format(pid))
-    terminal(app, port, debug)
+    terminal(app, host, port, debug)
     # app.run(debug=debug, host='0.0.0.0', port=port)

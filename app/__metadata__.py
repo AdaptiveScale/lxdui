@@ -1,6 +1,6 @@
 APP_NAME = 'LXDUI'
 APP_CLI_CMD = 'lxdui'
-VERSION = '2.1.2'
+VERSION = '2.2'
 GIT_URL = 'https://github.com/AdaptiveScale/lxdui.git'
 LXD_URL = 'http://localhost:8443'
 LICENSE = 'Apache 2.0'
@@ -8,11 +8,12 @@ AUTHOR = 'AdaptiveScale, Inc.'
 AUTHOR_URL = 'http://www.adaptivescale.com'
 AUTHOR_EMAIL = 'info@adaptivescale.com'
 KEYWORDS = 'lxc lxc-containers lxd'
+IMAGE_HUB = 'http://hub.kuti.io'
 
 '''
 
-The following section is for the default configuration  
-that will be written to the lxdui.conf file if the file 
+The following section is for the default configuration
+that will be written to the lxdui.conf file if the file
 does not already exist.
 
 '''
@@ -20,11 +21,11 @@ AUTO_LOAD_CONFIG = True
 DEFAULT_CONFIG_FORMAT = 'ini'
 __default_config__ = """
 [LXDUI]
+lxdui.host = 0.0.0.0
 lxdui.port = 15151
 lxdui.images.remote = https://images.linuxcontainers.org
 lxdui.jwt.token.expiration = 1200
 lxdui.jwt.secret.key = AC8d83&21Almnis710sds
-lxdui.jwt.auth.url.rule = /api/user/login
 lxdui.admin.user = admin
 lxdui.conf.dir = {{app_root}}/conf
 lxdui.conf.file = ${lxdui.conf.dir}/lxdui.conf
@@ -41,7 +42,7 @@ lxdui.profiles = ${lxdui.conf.dir}/profiles
 lxdui.zfs.pool.name = lxdpool
 lxdui.app.alias = LXDUI
 lxdui.cli = cli
-        
+
 [LXDUI_CERT]
 lxdui.cert.country = US
 lxdui.cert.state = Texas

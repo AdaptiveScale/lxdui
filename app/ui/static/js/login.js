@@ -21,10 +21,7 @@ App.login = App.login || {
     },
     doLoginSuccess: function(response){
         sessionStorage.setItem('authToken', response.access_token);
-        sessionStorage.setItem('user', JSON.stringify({
-            username:$('#username').val(),
-            password:$('#password').val()
-        }));
+        document.cookie = "access_token_cookie" + "=" + response.access_token + ";path=/";
         window.location = App.baseWEB + 'containers';
     },
     doLoginError: function(error){
@@ -38,6 +35,7 @@ App.login = App.login || {
     },
     doLogout: function() {
         sessionStorage.removeItem('authToken');
+        document.cookie = "access_token_cookie=; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
         window.location = App.baseWEB;
     }
 }

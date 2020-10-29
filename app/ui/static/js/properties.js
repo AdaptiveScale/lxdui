@@ -3,187 +3,225 @@ App.properties = App.properties || {
         'boot.autostart': {
             disabled: true,
             description: 'Always start the container when LXD starts (if not set, restore last state)',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: '0 for false 1 for true'
         },
         'boot.autostart.delay': {
             disabled: true,
             description: 'Number of seconds to wait after the container started before starting the next one',
-            type: 'integer'
+            type: 'integer',
+            valueDescription: undefined
         },
         'boot.autostart.priority': {
             disabled: true,
-            description: 'What order to start the containers in (starting with highest)',
-            type: 'integer'
+            description: 'What order to start the containers in',
+            type: 'integer',
+            valueDescription: 'Starting with highest'
         },
         'boot.host_shutdown_timeout': {
             disabled: true,
             description: 'Seconds to wait for container to shutdown before it is force stopped',
-            type: 'integer'
+            type: 'integer',
+            valueDescription: undefined
         },
         'boot.stop.priority': {
             disabled: true,
-            description: 'What order to shutdown the containers (starting with highest)',
-            type: 'integer'
+            description: 'What order to shutdown the containers',
+            type: 'integer',
+            valueDescription: 'Starting with highest'
         },
         'environment.*': {
             disabled: true,
             description: 'key/value environment variables to export to the container and set on exec',
-            type: 'string'
+            type: 'string',
+            valueDescription: undefined
         },
         'limits.cpu': {
             disabled: true,
             description: 'Number or range of CPUs to expose to the container',
-            type: 'string'
+            type: 'string',
+            valueDescription: undefined
         },
         'limits.cpu.allowance': {
             disabled: true,
-            description: 'How much of the CPU can be used. Can be a percentage (e.g. 50%) for a soft limit or hard a chunk of time (25ms/100ms)',
-            type: 'string'
+            description: 'How much of the CPU can be used',
+            type: 'string',
+            valueDescription: 'Can be a percentage (e.g. 50%) for a soft limit or hard a chunk of time (25ms/100ms)'
         },
         'limits.cpu.priority': {
             disabled: true,
-            description: 'CPU scheduling priority compared to other containers sharing the same CPUs (overcommit) (integer between 0 and 10)',
-            type: 'integer'
+            description: 'CPU scheduling priority compared to other containers sharing the same CPUs (overcommit)',
+            type: 'integer',
+            valueDescription: 'Integer between 0 and 10'
         },
         'limits.disk.priority': {
             disabled: true,
-            description: 'When under load, how much priority to give to the container\'s I/O requests (integer between 0 and 10)',
-            type: 'integer'
+            description: 'When under load, how much priority to give to the container\'s I/O requests',
+            type: 'integer',
+            valueDescription: 'Integer between 0 and 10'
         },
         'limits.kernel.*': {
             disabled: true,
-            description: 'This limits kernel resources per container (e.g. number of open files)',
-            type: 'string'
+            description: 'This limits kernel resources per container',
+            type: 'string',
+            valueDescription: 'e.g. number of open files'
         },
         'limits.memory': {
             disabled: true,
-            description: 'Percentage of the host\'s memory or fixed value in bytes (supports kB, MB, GB, TB, PB and EB suffixes)',
-            type: 'string'
+            description: 'Percentage of the host\'s memory or fixed value in bytes',
+            type: 'string',
+            valueDescription: 'Supports kB, MB, GB, TB, PB and EB suffixes'
         },
         'limits.memory.enforce': {
             disabled: true,
             description: 'If hard, container can\'t exceed its memory limit. If soft, the container can exceed its memory limit when extra host memory is available.',
-            type: 'string'
+            type: 'string',
+            valueDescription: undefined
         },
         'limits.memory.swap': {
             disabled: true,
             description: 'Whether to allow some of the container\'s memory to be swapped out to disk',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
         },
         'limits.memory.swap.priority': {
             disabled: true,
-            description: 'The higher this is set, the least likely the container is to be swapped to disk (integer between 0 and 10)',
-            type: 'integer'
+            description: 'The higher this is set, the least likely the container is to be swapped to disk',
+            type: 'integer',
+            valueDescription: 'Integer between 0 and 10'
         },
         'limits.network.priority': {
             disabled: true,
-            description: 'When under load, how much priority to give to the container\'s network requests (integer between 0 and 10)',
-            type: 'integer'
+            description: 'When under load, how much priority to give to the container\'s network requests',
+            type: 'integer',
+            valueDescription: 'Integer between 0 and 10'
         },
         'limits.processes': {
             disabled: true,
             description: 'Maximum number of processes that can run in the container',
-            type: 'integer'
+            type: 'integer',
+            valueDescription: undefined
         },
         'linux.kernel_modules': {
             disabled: true,
             description: 'Comma separated list of kernel modules to load before starting the container',
-            type: 'string'
+            type: 'string',
+            valueDescription: undefined
         },
         'migration.incremental.memory': {
             disabled: true,
             description: 'Incremental memory transfer of the container\'s memory to reduce downtime.',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
         },
         'migration.incremental.memory.goal': {
             disabled: true,
             description: 'Percentage of memory to have in sync before stopping the container.',
-            type: 'integer'
+            type: 'integer',
+            valueDescription: undefined
         },
         'migration.incremental.memory.iterations': {
             disabled: true,
             description: 'Maximum number of transfer operations to go through before stopping the container.',
-            type: 'integer'
+            type: 'integer',
+            valueDescription: undefined
         },
         'nvidia.runtime': {
             disabled: true,
             description: 'Pass the host NVIDIA and CUDA runtime libraries into the container',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
+
         },
         'raw.apparmor': {
             disabled: true,
             description: 'Apparmor profile entries to be appended to the generated profile',
-            type: 'blob'
+            type: 'blob',
+            valueDescription: undefined
         },
         'raw.idmap': {
             disabled: true,
-            description: 'Raw idmap configuration (e.g. "both 1000 1000")',
-            type: 'blob'
+            description: 'Raw idmap configuration',
+            type: 'blob',
+            valueDescription: 'e.g. both 1000 1000'
         },
         'raw.lxc': {
             disabled: true,
             description: 'Raw LXC configuration to be appended to the generated one',
-            type: 'blob'
+            type: 'blob',
+            valueDescription: undefined
         },
         'raw.seccomp': {
             disabled: true,
             description: 'Raw Seccomp configuration',
-            type: 'blob'
+            type: 'blob',
+            valueDescription: undefined
         },
         'security.devlxd': {
             disabled: true,
             description: 'Controls the presence of /dev/lxd in the container',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
         },
         'security.devlxd.images': {
             disabled: true,
             description: 'Controls the availability of the /1.0/images API over devlxd',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
         },
         'security.idmap.base': {
             disabled: true,
-            description: 'The base host ID to use for the allocation (overrides auto-detection)',
-            type: 'integer'
+            description: 'The base host ID to use for the allocation',
+            type: 'integer',
+            valueDescription: 'Overrides auto-detection'
         },
         'security.idmap.isolated': {
             disabled: true,
-            description: 'Use an idmap for this container that is unique among containers with isolated set.',
-            type: 'boolean'
+            description: 'Use an idmap for this container that is unique among containers with isolated set',
+            type: 'boolean',
+            valueDescription: undefined
         },
         'security.idmap.size': {
             disabled: true,
             description: 'The size of the idmap to use',
-            type: 'integer'
+            type: 'integer',
+            valueDescription: undefined
         },
         'security.nesting': {
             disabled: true,
             description: 'Support running lxd (nested) inside the container',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
         },
         'security.privileged': {
             disabled: true,
             description: 'Runs the container in privileged mode',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
         },
         'security.syscalls.blacklist': {
             disabled: true,
             description: 'A \'\n\' separated list of syscalls to blacklist',
-            type: 'string'
+            type: 'string',
+            valueDescription: undefined
         },
         'security.syscalls.blacklist_compat': {
             disabled: true,
             description: 'On x86_64 this enables blocking of compat_* syscalls, it is a no-op on other arches',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
         },
         'security.syscalls.blacklist_default': {
             disabled: true,
             description: 'Enables the default syscall blacklist',
-            type: 'boolean'
+            type: 'boolean',
+            valueDescription: undefined
         },
         'security.syscalls.whitelist': {
             disabled: true,
             description: 'A \'\n\' separated list of syscalls to whitelist (mutually exclusive with security.syscalls.blacklist*)',
-            type: 'string'
+            type: 'string',
+            valueDescription: undefined
         },
     },
     left: [

@@ -27,23 +27,7 @@ setup(
    packages=find_packages(exclude=['conf/lxdui.conf',]) + ['conf', 'logs'],
    include_package_data=True,
    zip_safe=False,
-   install_requires=[
-       'Click==6.7',
-       'Flask==1.0',
-       'flask-login==0.4.1',
-       'flask_jwt==0.3.2',
-       'jsonschema==2.6.0',
-       'requests==2.20.0',
-       'netaddr==0.7.19',
-       'pyopenssl==17.5.0',
-       'psutil==5.6.6',
-       'pylxd==2.2.7',
-       'terminado==0.8.1',
-       'tornado==5.0.2',
-       'tornado-xstatic',
-       'XStatic==1.0.1',
-       'XStatic-term.js==0.0.7.0'
-   ],
+   install_requires=open('requirements.txt').read().splitlines(),
    entry_points={
        'console_scripts': [
            'lxdui = app.run:lxdui'
