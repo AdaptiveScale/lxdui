@@ -9,9 +9,10 @@ def getContainerDetails(container):
             ip = container.state().network['enp5s0']['addresses'][0].get('address', 'N/A')
         elif ip == 'N/A':
             found = False
-            for network in container.state().network:
-                for address in network:
-                    if address['family'] == 'inet' and address['scope'] == 'global': 
+            res = container.state().network
+            for network in res:
+                for address in res[network]["addresses"]:
+                    if address['family'] == 'inet' and address['scope'] == 'global':
                         ip = address['address']
                         found = True
                         break
