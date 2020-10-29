@@ -167,7 +167,14 @@ class LXCContainer(LXDModule):
 
     def create(self, waitIt=True):
         try:
+            instanceType = ''
+            for image in LXDModule().listLocalImages():
+                if(image["fingerprint"] == self.data['source']['fingerprint']):
+                    instanceType = image["type"]
+                    break
+                
             logging.info('Creating container {}'.format(self.data.get('name')))
+            self.data['type'] = instanceType
             self.client.instances.create(self.data, wait=waitIt)
             if self.data['config']['boot.autostart'] == '1':
                 self.start(waitIt)
