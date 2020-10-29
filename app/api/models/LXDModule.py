@@ -26,7 +26,7 @@ class LXDModule(Base):
                 self.client = Client(endpoint=remoteHost,
                     cert=(sslCert, sslKey), verify=sslVerify)
             else:
-                self.client = Client(endpoint=remoteHost, verify=sslVerify)
+                self.client = Client(endpoint=remoteHost, verify=False)
         except:
             logging.info('using local socket')
             self.client = Client()
