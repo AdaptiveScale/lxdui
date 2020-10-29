@@ -40,9 +40,17 @@ For more detailed instructions please refer to the [wiki page](https://github.co
 
 **4.** Run Setup
 
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To install with pip:
+
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `cd lxdui`
 
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `python3 setup.py install`
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `pip3 install . --user`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; To install with setuptools:
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `cd lxdui`
+
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; `python3 setup.py install --user`
 
 
 ### Start LXDUI
