@@ -21,6 +21,10 @@ schema = {
                     'type':'string',
                     'description':'Image alias or hash'
                 },
+                'type':{
+                    'type':'string',
+                    'description':'Type of instance'
+                },
                 'newName': {
                     'type': 'string',
                     'description': 'New Container name'
