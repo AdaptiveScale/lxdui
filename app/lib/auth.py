@@ -128,10 +128,7 @@ class User(object):
             gid = pwd.getpwnam(username).pw_gid
             groups.append(grp.getgrgid(gid).gr_name)
 
-            # get group of lxdui
-            lxdui_info= os.stat('/usr/local/bin/lxdui')
-            lxdui_gid = lxdui_info.st_gid
-            lxdui_group = grp.getgrgid(lxdui_gid)[0]
+            lxdui_group = conf.Config().get(meta.APP_NAME,'lxdui.group')
 
             for g in groups:
                 if g == lxdui_group:
