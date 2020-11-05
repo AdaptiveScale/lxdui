@@ -5,6 +5,8 @@ import json
 import hashlib
 import logging
 import pam
+import grp
+import pwd
 
 log = logging.getLogger(__name__)
 
@@ -121,6 +123,20 @@ class User(object):
 
     def authenticate(self, username, password):
         if pam.authenticate(username,password):
-            return True, 'Authenticated'
+            # get user groups
+            groups = [g.gr_name for g in grp.getgrall() if username in g.gr_mem]
+            gid = pwd.getpwnam(username).pw_gid
+            groups.append(grp.getgrgid(gid).gr_name)
+
+            # get group of lxdui
+            lxdui_info= os.stat('/usr/local/bin/lxdui')
+            lxdui_gid = lxdui_info.st_gid
+            lxdui_group = grp.getgrgid(lxdui_gid)[0]
+
+            for g in groups:
+                if g == lxdui_group:
+                    return True, 'Authenticated'
+
+            return False, 'No required permissions.'
         else:
             return False, 'Incorrect password.'
