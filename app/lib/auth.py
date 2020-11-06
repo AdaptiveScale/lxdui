@@ -122,18 +122,41 @@ class User(object):
         self.save(self.users)
 
     def authenticate(self, username, password):
-        if pam.authenticate(username,password):
-            # get user groups
-            groups = [g.gr_name for g in grp.getgrall() if username in g.gr_mem]
-            gid = pwd.getpwnam(username).pw_gid
-            groups.append(grp.getgrgid(gid).gr_name)
+        try:
+            pam_auth = conf.Config().get(meta.APP_NAME,'lxdui.pam')
+            if pam_auth == 'true':
+                if pam.authenticate(username,password):
+                    try:
+                        lxdui_group = conf.Config().get(meta.APP_NAME,'lxdui.group')
 
-            lxdui_group = conf.Config().get(meta.APP_NAME,'lxdui.group')
+                        # get user groups
+                        groups = [g.gr_name for g in grp.getgrall() if username in g.gr_mem]
+                        gid = pwd.getpwnam(username).pw_gid
+                        groups.append(grp.getgrgid(gid).gr_name)
 
-            for g in groups:
-                if g == lxdui_group:
-                    return True, 'Authenticated'
+                        for g in groups:
+                            if g == lxdui_group:
+                                return True, 'Authenticated'
 
-            return False, 'No required permissions.'
+                        return False, 'No required permissions.'
+                    except:
+                        # lxdui_group authentication was not chosen
+                        return True, 'Authenticated'
+                else:
+                    return False, 'Incorrect password.'
+            else:
+                return self.authenticate_sha(username, password)
+        except:
+            # PAM authentication was not chosen
+            return self.authenticate_sha(username, password)
+        
+    def authenticate_sha(self, username, password):
+        account, err = self.get(username)
+
+        if account is None:
+            return 'Error', err
+
+        if account['password'] == self.sha_password(password):
+            return True, 'Authenticated'
         else:
             return False, 'Incorrect password.'
