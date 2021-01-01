@@ -37,7 +37,8 @@ class TestConfig(unittest.TestCase):
             os.remove(empty_file)
 
     def test_logger(self):
-        l = logger.Log('test')
+        conf_file = '../conf/log.conf'
+        l = logger.Log('test', conf_file)
         self.assertIsInstance(l, logger.Log)
 
     def test_external_config_fnf(self):
@@ -74,22 +75,6 @@ class TestConfig(unittest.TestCase):
         c = conf.Config()
         self.assertIsInstance(c, conf.Config)
 
-    def test_envGet(self):
-        c = conf.Config()
-        log_path = c.log_file
-        conf_path = c.config_file
-        d1 = c.envGet()
-        d2 = {'LXDUI_CONF': conf_path, 'LXDUI_LOG': log_path}
-        self.assertDictEqual(d1, d2)
-
-    def test_envSet(self):
-        c = conf.Config()
-        log_path = '/path/to/log/file'
-        conf_path = '/path/to/conf/file'
-        c.envSet(log=log_path, conf=conf_path)
-        d1 = c.envGet()
-        d2 = {'LXDUI_CONF': conf_path, 'LXDUI_LOG': log_path}
-        self.assertDictEqual(d1, d2)
 
     def test_config_show(self):
         print('='*120)

@@ -77,6 +77,11 @@ class Config(object):
 
         self.config = None
         self.config_file = m.config_file
+        # conf file specified by the caller
+        if kwargs and kwargs.get('conf'):
+            self.config_file = kwargs.get('conf')
+            if not Path(self.config_file).exists():
+                raise FileNotFoundError(self.config_file)
 
         if Path(self.config_file).exists():
             log.info('Using config file path = {}'.format(self.config_file))
