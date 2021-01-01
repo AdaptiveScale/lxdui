@@ -24,11 +24,11 @@ def identity(payload):
     return payload
 
 
-def initAuth(app):
+def initAuth(app, config):
     APP = meta.APP_NAME
-    tokenExpiration = int(Config().get(APP, '{}.jwt.token.expiration'.format(APP.lower())))
-    secretKey = Config().get(APP, '{}.jwt.secret.key'.format(APP.lower()))
-    authUrlRule = Config().get(APP, '{}.jwt.auth.url.rule'.format(APP.lower()))
+    tokenExpiration = int(config.get(APP, '{}.jwt.token.expiration'.format(APP.lower())))
+    secretKey = config.get(APP, '{}.jwt.secret.key'.format(APP.lower()))
+    authUrlRule = config.get(APP, '{}.jwt.auth.url.rule'.format(APP.lower()))
     if (tokenExpiration == None):
         tokenExpiration = 1200
 

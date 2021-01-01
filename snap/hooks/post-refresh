@@ -1,0 +1,34 @@
+#!/bin/sh
+set -x
+
+# Create conf and logs directories
+logs_dir=$SNAP_COMMON/logs
+config_dir="/var/snap/$SNAP_INSTANCE_NAME/current/conf"
+mkdir -p $config_dir
+mkdir -p $logs_dir
+
+# Config file paths
+setup_complete_flag="$config_dir/setup_complete"
+default_config_file_path=$SNAP/default_conf/snap_lxdui.conf 
+config_file_path="$config_dir/lxdui.conf"
+default_log_config_path=$SNAP/default_conf/snap_log.conf
+log_config_path="$config_dir/log.conf"
+auth_conf_path="$config_dir/auth.conf"
+
+# If the setup has not been completed, copy default config files to SNAP_DATA
+if [ ! -f "$setup_complete_flag" ]; then
+    JWT_SECRET_KEY=$(dd if=/dev/urandom count=1024 | base64 | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1)
+    export JWT_SECRET_KEY
+    envsubst < $default_config_file_path > $config_file_path
+    cp $default_log_config_path $log_config_path
+    echo '[]' > $auth_conf_path
+    touch $setup_complete_flag
+    touch $setup_complete_flag
+fi
+
+
+# Contains a secret key
+chmod 600 $config_file_path
+
+
+

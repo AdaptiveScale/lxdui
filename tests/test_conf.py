@@ -91,9 +91,6 @@ class TestConfig(unittest.TestCase):
         d2 = {'LXDUI_CONF': conf_path, 'LXDUI_LOG': log_path}
         self.assertDictEqual(d1, d2)
 
-    def test_envShow(self):
-        conf.Config().envShow()
-
     def test_config_show(self):
         print('='*120)
         conf.Config().show()

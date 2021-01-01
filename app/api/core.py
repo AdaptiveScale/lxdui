@@ -10,14 +10,18 @@ import signal
 import tempfile
 import psutil
 import logging
+from app import __metadata__ as m
+from app.lib import conf
 
-Log(__name__)
+config = conf.Config()
+log_conf = config.get(m.APP_NAME, '{}.log.conf'.format(m.APP_NAME.lower()))
+Log(__name__, log_conf)
 app = Flask(__name__)
 HAS_UI = False
 PID = os.path.join(tempfile.gettempdir(), '{}.pid'.format(meta.APP_NAME).lower())
 
 # Authentication section
-initAuth(app)
+initAuth(app, config)
 
 from app.api.controllers.lxd import lxd_api
 app.register_blueprint(lxd_api, url_prefix='/api/lxd')
