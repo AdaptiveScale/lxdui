@@ -59,9 +59,9 @@ class Init(object):
         self.key_file = c.get(self.APP, '{}.ssl.key'.format(self.APP.lower()))
         self.key, self.cert = cert.Certificate().create()
         self.account = [{'username': self.username, 'password': self.password}]
-        #self.create('auth', self.auth_file)
-        #self.create('key', self.key_file)
-        #self.create('cert', self.cert_file)
+        self.create('auth', self.auth_file)
+        self.create('key', self.key_file)
+        self.create('cert', self.cert_file)
         log.debug('Initializing auth file with: username = {}, password = {}'.format(self.username, self.password))
         print('LXDUI is now configured.  You can now use '
               'the admin account to log in to the app.')
@@ -87,7 +87,7 @@ class Init(object):
         reply = input("Do you want to delete it and create a new one? [[y]/n] ")
         if reply == 'y' or reply == '':
             # os.rename(file_path, file_path + '.bak')
-            os.remove(file_path)
+            #os.remove(file_path)
             self.createFile(file_type)
         else:
             print("Aborting...")
@@ -102,10 +102,10 @@ class Init(object):
             auth.User().save(self.account)
 
         if file_type == 'key':
-            cert.Certificate().save(self.key)
+            cert.Certificate().save(self.key_file, self.key)
 
         if file_type == 'cert':
-            cert.Certificate().save(self.cert)
+            cert.Certificate().save(self.cert_file, self.cert)
 
     def checkPrerequisites(self):
         '''

@@ -1,4 +1,4 @@
-from app.api.lib import cert, log as logger
+from app.lib import cert, log as logger
 import os
 import pathlib
 import unittest
@@ -11,7 +11,7 @@ class TestConfig(unittest.TestCase):
 
     @classmethod
     def setUp(cls):
-        logger.Log('test')
+        logger.Log('test', "../conf/log.conf")
         pass
 
     @classmethod
@@ -19,7 +19,7 @@ class TestConfig(unittest.TestCase):
         pass
 
     def test_logger(self):
-        l = logger.Log('test')
+        l = logger.Log('test', "../conf/log.conf")
         self.assertIsInstance(l, logger.Log)
 
     def test_cert(self):
@@ -28,8 +28,8 @@ class TestConfig(unittest.TestCase):
         print('cert file = {}'.format(c.cert_file))
         print('key = {}'.format(c.key))
         print('cert = {}'.format(c.cert))
-        self.assertEqual(c.key_file, 'client.key')
-        self.assertEqual(c.cert_file, 'client.crt')
+        self.assertEqual( os.path.basename(c.key_file), 'client.key')
+        self.assertEqual(os.path.basename(c.cert_file), 'client.crt')
         self.assertRegex(bytes.decode(c.key), r'^-----BEGIN PRIVATE KEY-----.*')
         self.assertRegex(bytes.decode(c.cert), r'^-----BEGIN CERTIFICATE-----.*')
 

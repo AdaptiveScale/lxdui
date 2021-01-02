@@ -1,0 +1,48 @@
+name: lxdui
+base: core18
+version: '0.1'
+summary: A web UI for Linux containers based on LXD/LXC.
+description: |
+      LXDUI leverages LXD's Python client library, pylxd, for interacting with the 
+      LXD REST API. It allows for rapid provisioning and management of large number 
+      of containers from a web browser, and you can simultaneously create any number
+      of containers, even from multiple images, in one step.
+
+grade: devel
+confinement: strict
+
+apps:
+  lxdui:
+    command: usr/bin/python3 $SNAP/bin/lxdui
+    plugs:
+      - network
+      - network-bind
+      - lxd
+    environment:
+      APP_ROOT: $SNAP_DATA
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
+      
+  daemon:
+    command: usr/bin/python3 $SNAP/bin/lxdui start
+    daemon: simple
+    plugs:
+      - network
+      - network-bind
+      - lxd
+    environment:
+      APP_ROOT: $SNAP_DATA
+      LC_ALL: C.UTF-8
+      LANG: C.UTF-8
+
+
+parts:
+  lxdui:
+    plugin: python
+    source: .
+    stage-packages: [libffi-dev, libssl-dev, language-pack-en-base ]
+
+  static:
+    source: snap/local
+    plugin: dump
+    stage-packages: [gettext-base]
