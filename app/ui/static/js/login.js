@@ -20,6 +20,8 @@ App.login = App.login || {
         });
     },
     doLoginSuccess: function(response){
+        sessionStorage.removeItem('authToken');
+        document.cookie = 'access_token_cookie' + '=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT;';
         sessionStorage.setItem('authToken', response.access_token);
         document.cookie = "access_token_cookie" + "=" + response.access_token + ";path=/";
         window.location = App.baseWEB + 'containers';
