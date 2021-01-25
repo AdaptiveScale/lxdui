@@ -13,6 +13,8 @@ logging = logging.getLogger(__name__)
 class LXCNetwork(LXDModule):
 
     def __init__(self, input):
+        logging.info('Connecting to LXD')
+        super().__init__()
         logging.debug('Setting network input to {}'.format(input))
         self.input = input
         logging.debug('Setting network name to {}'.format(input.get('name')))

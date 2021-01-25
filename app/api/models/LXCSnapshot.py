@@ -43,7 +43,7 @@ class LXCSnapshot(LXDModule):
     def snapshotList(self):
         try:
             logging.info('Reading snapshot list for container {}'.format(self.data.get('container')))
-            container = self.client.containers.get(self.data.get('container'))
+            container = self.client.instances.get(self.data.get('container'))
             result = []
             for snap in container.snapshots.all():
                 result.append(getSnapshotData(snap))
@@ -57,7 +57,7 @@ class LXCSnapshot(LXDModule):
     def snapshotInfo(self):
         try:
             logging.info('Reading snapshot {} info for container {}'.format(self.data.get('name'), self.data.get('container')))
-            return self.client.api.containers[self.data.get('container')].snapshots[self.data.get('name')].get().json()['metadata']
+            return self.client.api.instances[self.data.get('container')].snapshots[self.data.get('name')].get().json()['metadata']
         except Exception as e:
             logging.error('Failed to retrieve snapshot {} info for container {}'.format(self.data.get('name'), self.data.get('container')))
             logging.exception(e)
@@ -67,13 +67,13 @@ class LXCSnapshot(LXDModule):
         try:
             logging.info(
                 'Creating snapshot {} for container {}'.format(self.data.get('name'), self.data.get('container')))
-            container = self.client.containers.get(self.data.get('container'))
+            container = self.client.instances.get(self.data.get('container'))
             snapName = self.data.get('name')
             if self._checkSnapshot(container) == False:
                 logging.error('Failed to create snapshot {}. Snapshot with name {} already exists.'.format(self.data.get('name'), snapName))
                 raise ValueError('Snapshot with name {} already exists.'.format(snapName))
             container.snapshots.create(snapName, stateful=s, wait=True)
-            return self.client.api.containers[self.data.get('container')].snapshots.get().json()['metadata']
+            return self.client.api.instances[self.data.get('container')].snapshots.get().json()['metadata']
         except Exception as e:
             logging.error('Failed to create snapshot {}'.format(self.data.get('name')))
             logging.exception(e)
@@ -82,7 +82,7 @@ class LXCSnapshot(LXDModule):
     def snapshotDelete(self):
         try:
             logging.info('Deleting snapshot {} for container {}'.format(self.data.get('name'), self.data.get('container')))
-            container = self.client.containers.get(self.data.get('container'))
+            container = self.client.instances.get(self.data.get('container'))
             container.snapshots.get(self.data.get('name')).delete()
         except Exception as e:
             logging.error('Failed to delete snapshot {} for container {}'.format(self.data.get('name'), self.data.get('container')))
@@ -94,7 +94,7 @@ class LXCSnapshot(LXDModule):
         try:
             logging.info(
                 'Restoring snapshot {} for container {}'.format(self.data.get('name'), self.data.get('container')))
-            return self.client.api.containers[self.data.get('container')].put(json={'restore': self.data.get('name')}).json()['metadata']
+            return self.client.api.instances[self.data.get('container')].put(json={'restore': self.data.get('name')}).json()['metadata']
         except Exception as e:
             logging.error('Failed to restore snapshot {} for container {}'.format(self.data.get('name'),
                                                                                  self.data.get('container')))
@@ -105,7 +105,7 @@ class LXCSnapshot(LXDModule):
         try:
             logging.info(
                 'Publishing snapshot {} for container {}'.format(self.data.get('name'), self.data.get('container')))
-            container = self.client.containers.get(self.data.get('container'))
+            container = self.client.instances.get(self.data.get('container'))
             image = container.snapshots.get(self.data.get('name')).publish(wait=True)
             image.add_alias(self.data.get('name'), self.data.get('name'))
             return self.client.api.images[image.fingerprint].get().json()['metadata']
@@ -119,11 +119,11 @@ class LXCSnapshot(LXDModule):
         try:
             logging.info(
                 'Creating container {} from snapshot {}'.format(self.data.get('newContainer'), self.data.get('name')))
-            container = self.client.containers.get(self.data.get('container'))
+            container = self.client.instances.get(self.data.get('container'))
             image = container.snapshots.get(self.data.get('name')).publish(wait=True)
             image.add_alias(self.data.get('name'), self.data.get('name'))
             config = {'name': self.data.get('newContainer'), 'source': {'type': 'image', 'alias': self.data.get('name')}}
-            self.client.containers.create(config, wait=True)
+            self.client.instances.create(config, wait=True)
 
             newImage = self.client.images.get(image.fingerprint)
             newImage.delete(wait=True)
