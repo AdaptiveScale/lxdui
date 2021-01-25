@@ -8,7 +8,7 @@ class LXCFileManager(LXDModule):
 
     def __init__(self, input):
         logging.info('Connecting to LXD')
-        self.client = Client()
+        super().__init__()
         self.input = input
 
     def list(self):
