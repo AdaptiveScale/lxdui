@@ -10,6 +10,7 @@ psutil==5.4.5
 pylxd==2.2.7
 terminado==0.8.1
 tornado==5.0.2
+python-pam==1.8.4
 tornado-xstatic
 XStatic==1.0.1
 XStatic-term.js==0.0.7.0
