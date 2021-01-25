@@ -16,7 +16,7 @@ class LXCContainer(LXDModule):
         logging.info('Connecting to LXD')
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
-        if self.client.instances.exists(self.data.get('name')):
+        if self.instances.instances.exists(self.data.get('name')):
             existing = self.info()
             self.data['config'] = existing['config']
             self.data['devices'] = existing['devices']

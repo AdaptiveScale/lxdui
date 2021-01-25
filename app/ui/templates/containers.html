@@ -77,7 +77,7 @@
                 {% else %}
                 <td>Persistent</td>
                 {% endif %}
-                <td>{{container.type}}</td>>
+                <td>{{container.type}}</td>
                 <td>{{container.image}}</td>
                 <!--<td>{{container.created_at}}</td>-->
                 <td class="td-width-action text-center">
@@ -175,10 +175,9 @@
                         <select class="form-control" id="containerImage" name="image">
                             {% for image in images %}
                                 {% if image.properties.get('description') == None %}
-                                    <option value="{{image.fingerprint}}">{{(image.aliases[0].name + " - " + image.type) if image.aliases[0] else 'N/A'}}</option> -->
-                                    <!-- <option value="{{image.fingerprint}}">{{image.type if image.aliases[0] else 'N/A'}}</option> -->
+                                    <option value="{{image.fingerprint}}">{{(image.aliases[0].name + " - " + ('Container' if (image.type == 'container') else 'Virtual Machine')) if image.aliases[0] else 'N/A'}}</option> -->
                                 {% else %}
-                                    <option value="{{image.fingerprint}}">{{(image.properties.description + " - " + image.type)if image.properties.description else 'N/A'}}</option>
+                                    <option value="{{image.fingerprint}}">{{(image.properties.description + " - " + ('Container' if (image.type == 'container') else 'Virtual Machine'))if image.properties.description else 'N/A'}}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
