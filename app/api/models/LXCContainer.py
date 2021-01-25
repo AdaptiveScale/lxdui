@@ -61,7 +61,8 @@ class LXCContainer(LXDModule):
         if input.get('config'):
             self.setConfig(input.get('config'))
 
-
+        if input.get('devices'):
+            self.setDevices(input.get('devices'))
 
     def setImageType(self, input):
         # Detect image type (alias or fingerprint)
@@ -121,6 +122,9 @@ class LXCContainer(LXDModule):
     def setNewContainer(self, input):
         self.data['newContainer'] = input
 
+    def setDevices(self, input):
+        self.data['devices'] = input
+        
     def setImageAlias(self, input):
         logging.debug('Setting image alias as {}'.format(input))
         self.data['imageAlias'] = input

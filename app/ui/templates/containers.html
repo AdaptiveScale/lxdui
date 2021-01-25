@@ -258,6 +258,23 @@
                         </div>
                     </div>
                 </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="containerStoragePool">Storage Pool:</label>
+                        <div class="col-sm-3">
+                            <select class="selectpicker" id="containerStoragePool" name="storagePool[name]">
+                                {% for storagePool in storagePools %}
+                                <option>{{storagePool.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" id="storagePoolSize" name="storagePool[size]"
+                                   min="0.2" max="100" value="0" step="0.1">
+                            (Size in GB)
+                        </div>
+                    </div>
+                </div>
                 <div class="panel-body advanced-settings-accordion">
                     <div class="panel-group" id="accordion">
                         <div class="panel-default">
