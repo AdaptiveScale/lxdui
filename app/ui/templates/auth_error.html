@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" style="height:100%">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="refresh" content="1; URL='/" />
+    <title>LXD-UI {{lxdui_current_version}} / Authentication Error</title>
+    <link href="{{ url_for('.static', filename='css/bootstrap.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('.static', filename='css/app.css') }}" rel="stylesheet">
+</head>
+
+<body style="height:100%">
+    <div class="col-lg-12" style="height:100%">
+        <div class="col-lg-offset-5 col-lg-3" style="position:relative;top: 50%;margin-top:-230px;border:1px solid black;padding:20px 50px 20px 50px;box-shadow: 5px 5px 2px rgba(232, 232, 232, 0.9);" >
+            <img src="{{ url_for('.static', filename='images/logo.png')}}" width="100%"/>
+            <div class="text-center red">
+                {{ error }}
+                <br>
+                Redirecting to Login Page...
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

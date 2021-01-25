@@ -42,9 +42,6 @@ lxdui user list				                #list the users in the auth file
 
 
 
-
-
-
 @click.group()
 @click.version_option(version=meta.VERSION, message='{} v{} \n{}\n{}'.format(meta.APP_NAME, meta.VERSION, meta.AUTHOR, meta.AUTHOR_URL))
 # @click.version_option(message=meta.APP_NAME + ' version ' + meta.VERSION + '\n' + meta.AUTHOR + '\n' + meta.AUTHOR_URL )
@@ -74,14 +71,16 @@ def start(debug):
 
     # Private Functions
     def _start(debug=False):
+        host = '0.0.0.0'
         port = 5000
         try:
+            host = Config().get('LXDUI', 'lxdui.host')
             port = int(Config().get('LXDUI', 'lxdui.port'))
         except:
             print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
             exit()
 
-        core.start(port, debug, uiPages)
+        core.start(host, port, debug, uiPages)
 
     if debug:
         _start(debug=True)
@@ -99,12 +98,13 @@ def stop():
 @lxdui.command()
 def restart():
     """Restart LXDUI"""
+    host = Config().get('LXDUI', 'lxdui.host')
     port = int(Config().get('LXDUI', 'lxdui.port'))
     click.echo('Restarting with defaults.')
     core.stop()
     click.echo('Port = {} \nDebug = False\nMode = Foreground\n'.format(port))
     time.sleep(3)
-    core.start(port, False, uiPages)
+    core.start(host, port, False, uiPages)
 
 @lxdui.command()
 def status():
@@ -329,8 +329,8 @@ def create():
     """Create client certificates"""
     c = Certificate()
     key, crt = c.create()
-    c.save(key)
-    c.save(crt)
+    c.save(APP.lower(),key)
+    c.save(APP.lower(),crt)
 
 
 @cert.command()
