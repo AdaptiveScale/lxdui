@@ -16,7 +16,7 @@ class LXCContainer(LXDModule):
         logging.info('Connecting to LXD')
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
-        if self.instances.instances.exists(self.data.get('name')):
+        if self.client.instances.exists(self.data.get('name')):
             existing = self.info()
             self.data['config'] = existing['config']
             self.data['devices'] = existing['devices']
@@ -45,7 +45,6 @@ class LXCContainer(LXDModule):
         if input.get('imageAlias'):
             self.setImageAlias(input.get('imageAlias'))
 
-        super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
         if input.get('autostart') != None:
             self.setBootType(input.get('autostart'))
         else:
@@ -168,7 +167,14 @@ class LXCContainer(LXDModule):
 
     def create(self, waitIt=True):
         try:
+            instanceType = ''
+            for image in LXDModule().listLocalImages():
+                if(image["fingerprint"] == self.data['source']['fingerprint']):
+                    instanceType = image["type"]
+                    break
+                
             logging.info('Creating container {}'.format(self.data.get('name')))
+            self.data['type'] = instanceType
             self.client.instances.create(self.data, wait=waitIt)
             if self.data['config']['boot.autostart'] == '1':
                 self.start(waitIt)
@@ -244,9 +250,6 @@ class LXCContainer(LXDModule):
             logging.error('Failed to restart container {}'.format(self.data.get('name')))
             logging.exception(e)
             raise ValueError(e)
-
-    def move(self):
-        pass
 
     def clone(self):
         try:
