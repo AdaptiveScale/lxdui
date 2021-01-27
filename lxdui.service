@@ -1,7 +1,7 @@
 [Unit]
 Description=Web UI for the native Linux container technology LXD/LXC
 After=network.target snap.lxd.daemon.unix.socket
-Requires=snap.lxd.daemon.unix.socket
+Wants=snap.lxd.daemon.unix.socket
 
 [Service]
 Type=simple
