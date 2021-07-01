@@ -52,7 +52,7 @@ class Init(object):
 
     def __init__(self, password):
         c = conf.Config()
-        self.password = auth.User.sha_password(password)
+        self.password = auth.User.bcrypt_password(password)
         self.username = c.get(self.APP, '{}.admin.user'.format(self.APP.lower()))
         self.auth_file = c.get(self.APP, '{}.auth.conf'.format(self.APP.lower()))
         self.cert_file = c.get(self.APP, '{}.ssl.cert'.format(self.APP.lower()))

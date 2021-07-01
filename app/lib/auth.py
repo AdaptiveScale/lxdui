@@ -4,6 +4,7 @@ import os
 import json
 import hashlib
 import logging
+import bcrypt
 
 log = logging.getLogger(__name__)
 
@@ -65,6 +66,11 @@ class User(object):
         sha1_password = hashlib.sha1(password.encode('utf-8')).hexdigest()
         return sha1_password
 
+    @classmethod
+    def bcrypt_password(cls, password):
+        hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+        return hashed_password
+
     def show(self):
         # retrieve just the user names
         counter = 0
@@ -82,8 +88,7 @@ class User(object):
                 exit()
 
         data = self.users
-        sha1_password = hashlib.sha1(password.encode('utf-8')).hexdigest()
-        data.append({'username': username, 'password': sha1_password})
+        data.append({'username': username, 'password': self.bcrypt_password(password)})
         self.save(data)
 
     def delete(self, username):
@@ -112,7 +117,7 @@ class User(object):
         if account is None:
             return err
 
-        account['password'] = self.sha_password(password)
+        account['password'] = self.bcrypt_password(password)
         self.users.remove(account)
         self.users.append(account)
         # save the new auth state when done
@@ -124,7 +129,13 @@ class User(object):
         if account is None:
             return 'Error', err
 
-        if account['password'] == self.sha_password(password):
+        if len(account['password']) == 40:
+            # Can't just `and` this in the above conditional because then incorrect SHA passwords get passed to bcrypt
+            if account['password'] == self.sha_password(password):
+                # Migrate to bcrypt
+                self.update(username, password)
+                return True, 'Authenticated'
+        elif bcrypt.checkpw(password.encode('utf-8'), account['password'].encode('utf-8')):
             return True, 'Authenticated'
-        else:
-            return False, 'Incorrect password.'
+
+        return False, 'Incorrect password.'
