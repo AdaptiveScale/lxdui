@@ -91,6 +91,7 @@
                                     <th>Alias</th>
                                     <th>Ver</th>
                                     <th>Arch</th>
+                                    <th>Image Type</th>
                                     <th>Size</th>
                                     </thead>
                                     <tbody>
@@ -126,6 +127,7 @@
                                         </td>
                                         <td>{{ image.properties.release if image.properties.release else 'N/A' }}</td>
                                         <td>{{ image.properties.architecture if image.properties.architecture else 'N/A' }}</td>
+                                        <td>{{ 'Container' if (image.type == 'container') else 'Virtual Machine' }}</td>>
                                         <td class="imageSize">{{ image.size }}</td>
                                     </tr>
                                     {% endfor %}

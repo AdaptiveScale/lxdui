@@ -247,7 +247,7 @@
                                             <!--</div>-->
                                      <!--</div>-->
                             </div>
-                            <div class="col-sm-3 col-md-3 col-lg-3">
+                            <div class="col-sm-2 col-md-2 col-lg-2">
                                 <ul class="network-list">
                                     <li>
                                          Interface <span class="mg-left5"> <b>{{ key }}</b></span>
@@ -260,50 +260,73 @@
                                     </li>
                                 </ul>
                             </div>
-                            <div class="col-sm-4 col-md-4 col-lg-4">
+                            <div class="col-sm-5 col-md-5 col-lg-5">
                                 <ul class="network-list">
                                     {% if value.addresses == None %}
                                     <li>N/A</li>
                                     {% else %}
-                                         {% if value.addresses|length > 0 %}
-                                            IP Address <span class="mg-left5"><b>{{value.addresses.0.address}}</b></span>
-                                         {% endif %}
-                                    <li>
-                                        MAC Address  <span class="mg-left5">{{value.hwaddr}}</span>
-                                    </li>
-                                    <li>
-                                        {% if value.addresses|length > 0  %}
-                                            {% if value.addresses.0.netmask == "24" %}
-                                                    Netmask [/{{value.addresses.0.netmask}}] <span class="mg-left5">255.255.255.0</span>
-                                            {% else %}
-
-                                                 {% if value.addresses.0.netmask != "24" %}
-                                                        Netmask [/{{value.addresses.0.netmask}}] <span class="mg-left5">[/{{value.addresses.0.netmask}}]</span>
-                                                {% endif %}
-
-                                            {% endif %}
-                                        {% endif %}
-                                    </li>
+                                        <li>
+                                            MAC Address  <span class="mg-left5">{{value.hwaddr}}</span>
+                                        </li>
+                                         {% for address in value.addresses %}
+                                            <li>
+                                                IP{% if address.family == 'inet' %}v4{% elif address.family == 'inet6' %}v6{% endif %} Address
+                                                <span class="mg-left5"><b>{{address.address}}/{{address.netmask}}</b></span>
+                                            </li>
+                                         {% endfor %}
                                     {% endif %}
                                 </ul>
                             </div>
                             <div class="col-sm-3 col-md-3 col-lg-3">
                                 <table class="table table-bordered">
                                     <tr>
-                                            <th></th>
                                             <th>Sent</th>
                                             <th>Received</th>
                                     </tr>
                                     <tbody>
                                          <tr>
-                                             <td>Bytes</td>
-                                            <td>{{'%0.2f'|format(container.network[key]['counters']['bytes_received']/1024)}}</td>
-                                            <td>{{'%0.2f'|format(container.network[key]['counters']['bytes_sent']/1024)}}</td>
+                                            <td>{% if container.network[key]['counters']['bytes_sent'] > 1610612736 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['bytes_sent']/1073741824)}}&nbsp;GiB
+                                             {% elif container.network[key]['counters']['bytes_sent'] > 1572864 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['bytes_sent']/1048576)}}&nbsp;MiB
+                                             {% elif container.network[key]['counters']['bytes_sent'] > 1536 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['bytes_sent']/1024)}}&nbsp;kiB
+                                             {% else %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['bytes_sent'])}}&nbsp;B
+                                             {% endif %}
+                                            </td>
+                                            <td>{% if container.network[key]['counters']['bytes_received'] > 1610612736 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['bytes_received']/1073741824)}}&nbsp;GiB
+                                             {% elif container.network[key]['counters']['bytes_received'] > 1572864 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['bytes_received']/1048576)}}&nbsp;MiB
+                                             {% elif container.network[key]['counters']['bytes_received'] > 1536 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['bytes_received']/1024)}}&nbsp;kiB
+                                             {% else %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['bytes_received'])}}&nbsp;B
+                                             {% endif %}
+                                            </td>
                                         </tr>
                                         <tr>
-                                             <td>Packets</td>
-                                            <td>{{container.network[key]['counters']['packets_sent']}}</td>
-                                            <td>{{container.network[key]['counters']['packets_received']}}</td>
+                                            <td>{% if container.network[key]['counters']['packets_sent'] > 1500000000 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['packets_sent']/1500000000)}}&nbsp;Gpkts
+                                             {% elif container.network[key]['counters']['packets_sent'] > 1500000 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['packets_sent']/1000000)}}&nbsp;Mpkts
+                                             {% elif container.network[key]['counters']['packets_sent'] > 1500 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['packets_sent']/1000)}}&nbsp;kpkts
+                                             {% else %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['packets_sent'])}}&nbsp;pkts
+                                             {% endif %}
+                                            </td>
+                                            <td>{% if container.network[key]['counters']['packets_received'] > 1500000000 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['packets_received']/1500000000)}}&nbsp;Gpkts
+                                             {% elif container.network[key]['counters']['packets_received'] > 1500000 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['packets_received']/1000000)}}&nbsp;Mpkts
+                                             {% elif container.network[key]['counters']['packets_received'] > 1500 %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['packets_received']/1000)}}&nbsp;kpkts
+                                             {% else %}
+                                                    {{'%0.2f'|format(container.network[key]['counters']['packets_received'])}}&nbsp;pkts
+                                             {% endif %}
+                                            </td>
                                         </tr>
                                     </tbody>
                                 </table>
