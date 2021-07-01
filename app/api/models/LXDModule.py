@@ -33,12 +33,10 @@ class LXDModule(Base):
             self.client = Client()
 
 
-
-
     def listContainers(self):
         try:
             logging.info('Reading container list')
-            return self.client.containers.all()
+            return self.client.instances.all()
         except Exception as e:
             logging.error('Failed to read container list: ')
             logging.exception(e)
@@ -189,7 +187,7 @@ class LXDModule(Base):
         lxdModule = LXDModule()
         try:
             logging.info('Checking if container exists.')
-            container = self.client.containers.get(containerName)
+            container = self.client.instances.get(containerName)
             return True
         except Exception as e:
             logging.error('Failed to verify container:')
