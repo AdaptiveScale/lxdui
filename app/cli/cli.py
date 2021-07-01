@@ -75,7 +75,7 @@ def init():
 # @click.otion('-b', '--daemon', default=False, help='Run in background as a daemon.')
 # @click.otion('-c', '--conf', default=False, help='Config file.')
 # @click.otion('-p', '--port', default=False, help='TCP Port number.')
-@click.option('-d', '--debug', default=False, help='Run the app in debug mode')
+@click.option('-d', '--debug', is_flag=True, default=False, help='Run the app in debug mode')
 def start(debug):
     """Start LXDUI"""
 
