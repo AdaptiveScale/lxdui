@@ -23,13 +23,15 @@ class LXDModule(Base):
 
             if sslVerify.lower in ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly']:
                 sslVerify = True
-                self.client = Client(endpoint=remoteHost,
-                    cert=(sslCert, sslKey), verify=sslVerify)
             else:
-                self.client = Client(endpoint=remoteHost, verify=False)
+                sslVerify = False
+
+            self.client = Client(endpoint=remoteHost,
+                cert=(sslCert, sslKey), verify=sslVerify)
         except:
             logging.info('using local socket')
             self.client = Client()
+
 
     def listContainers(self):
         try:
