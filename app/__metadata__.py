@@ -28,7 +28,6 @@ lxdui.images.remote = https://images.linuxcontainers.org
 #lxdui.lxd.sslverify = true
 #lxdui.lxd.remote.name = host
 lxdui.jwt.token.expiration = 1200
-lxdui.jwt.secret.key = AC8d83&21Almnis710sds
 lxdui.admin.user = admin
 lxdui.conf.dir = {{app_root}}/conf
 lxdui.conf.file = ${lxdui.conf.dir}/lxdui.conf
