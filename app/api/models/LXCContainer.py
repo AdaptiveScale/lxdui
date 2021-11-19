@@ -255,6 +255,10 @@ class LXCContainer(LXDModule):
             logging.exception(e)
             raise ValueError(e)
 
+    def createMacAddress(self):
+        mac = [ 0x00, 0x24, 0x81,random.randint(0x00, 0x7f),random.randint(0x00, 0xff),random.randint(0x00, 0xff) ]
+        return ':'.join(map(lambda x: "%02x" % x, mac))            
+            
     def clone(self):
         try:
             logging.info('Cloning container {}'.format(self.data.get('name')))
@@ -263,6 +267,9 @@ class LXCContainer(LXDModule):
                 container.stop(wait=True)
 
             copyData = container.generate_migration_data()
+            for c in copyData["config"].keys():
+                if "hwaddr" in c:
+                    copyData["config"][c]=self.createMacAddress()
             copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
             copyData['name'] = self.data.get('newContainer')
 
