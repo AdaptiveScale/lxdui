@@ -529,7 +529,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" id="cloneContainerSubmit" class="btn btn-primary">Clone <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="submit" id="cloneContainerSubmit" form="cloneContainerForm" class="btn btn-primary">Clone <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
       </div>
@@ -561,7 +561,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" id="moveContainerSubmit" class="btn btn-primary">Move <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="submit" id="moveContainerSubmit" form="moveContainerForm" class="btn btn-primary">Move <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
       </div>
@@ -594,7 +594,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" id="exportContainerSubmit" class="btn btn-primary">Export <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="submit" id="exportContainerSubmit" form="exportContainerForm" class="btn btn-primary">Export <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
       </div>
@@ -630,7 +630,7 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <button type="submit" id="submit" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="submit" id="snapshotContainerSubmit" form="snapshotContainerForm" class="btn btn-primary">Snapshot <span class="glyphicon glyphicon-refresh spinning loader"></span></button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
       </div>
@@ -897,20 +897,20 @@
                                     title="Information"
                                     data-toggle="popover"
                                     data-trigger="hover"
-                                    html="true"
-                                    data-content="
-                                    Example for adding a bridged nic from the command line: <br />
-                                    lxc config device add c1 eth1 nic name=eth1 <br />
-                                    nictype=bridged parent=lxdbr0 <br /><br /><br /><br />
-                                    For configuration details please refer to: https://lxd.readthedocs.io/en/latest/containers/#type-nic<br />
-                                    physical: Straight physical device passthrough from the host. The targeted device will vanish from the host and appear in the container.<br /><br />
-                                    bridged: Uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the container.<br /><br />
-                                    macvlan: Sets up a new network device based on an existing one but using a different MAC address.<br /><br />
-                                    p2p: Creates a virtual device pair, putting one side in the container and leaving the other side on the host.<br /><br />
-                                    sriov: Passes a virtual function of an SR-IOV enabled physical network device into the container."
+                                    data-html="true"
+                                    data-content=" <div>Example for adding a bridged nic from the command line: <br />
+                                     lxc config device add c1 eth1 nic name=eth1 <br />
+                                     nictype=bridged parent=lxdbr0 <br /><br /><br /><br />
+                                     For configuration details please refer to: https://lxd.readthedocs.io/en/latest/containers/#type-nic <br />
+                                     physical: Straight physical device passthrough from the host. The targeted device will vanish from the host and appear in the container.<br /><br />
+                                     bridged: Uses an existing bridge on the host and creates a virtual device pair to connect the host bridge to the container.<br /><br />
+                                     macvlan: Sets up a new network device based on an existing one but using a different MAC address.<br /><br />
+                                     p2p: Creates a virtual device pair, putting one side in the container and leaving the other side on the host.<br /><br />
+                                     sriov: Passes a virtual function of an SR-IOV enabled physical network device into the container.</div>"
                                     data-original-title="Information">
                                 <span class="glyphicon glyphicon-info-sign"></span>
                              </a>
+
 
                         </div>
                         <!--<div class="col-sm-1">-->

@@ -136,7 +136,7 @@ App.containerDetails = App.containerDetails || {
         this.activeNode = $("#tree").fancytree('getActiveNode');
         var activeNode = this.activeNode;
         if (!activeNode.folder)
-            this.downloadURI(App.baseAPI+'file/download/container/' + this.name + '?path=' + activeNode.getKeyPath() + "&token=" + sessionStorage.getItem('authToken'))
+            this.downloadURI(App.baseAPI+'file/download/container/' + this.name + '?path=' + activeNode.getKeyPath())
     },
     home: function() {
         $("#tree").fancytree('getTree').visit(function(node) {

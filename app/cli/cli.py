@@ -6,6 +6,7 @@ from app.lib.cert import Certificate
 from app.api import core
 from app.ui.blueprint import uiPages
 from app.api.models.LXCImage import LXCImage
+from getpass import getpass
 import click
 import os
 import signal
@@ -31,17 +32,22 @@ lxdui cert add     				            #add existing certs from file path
 lxdui cert create				                #generate new SSL certs (overwrite old files)
 lxdui cert list				                #list SSL certs
 lxdui cert delete 				            #remove SSL certs
-lxdui user add -u <username> -p <password>    #create a new user that can access the UI
-lxdui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
+lxdui user add -u <username>                  #create a new user that can access the UI
+lxdui user update -u <username>                #the user specified in lxdui.admin.user can't be deleted
 lxdui user delete -u <username>			    #remove a user from the auth file
 lxdui user list				                #list the users in the auth file
 '''
 
 
+def getuserpass():
+    """Securely retrieve a user password from the environment or from console"""
+    if 'LXDUI_PASSWORD' in os.environ:
+        return os.environ['LXDUI_PASSWORD']
+    else:
+        return getpass()
+
+
 ''' Command Groups '''
-
-
-
 
 
 
@@ -54,10 +60,14 @@ def lxdui():
 
 ''' lxdui root level group of commands '''
 @lxdui.command()
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Password')
-def init(password):
-    """Initialize and configure LXDUI"""
+def init():
+    """Initialize and configure LXDUI
+
+    The password is taken from the LXDUI_PASSWORD environment variable or read from console if not set."""
     click.echo("Initialize and configure %s" % APP)
+
+    password = getuserpass()
+
     Init(password)
 
 
@@ -65,7 +75,7 @@ def init(password):
 # @click.otion('-b', '--daemon', default=False, help='Run in background as a daemon.')
 # @click.otion('-c', '--conf', default=False, help='Config file.')
 # @click.otion('-p', '--port', default=False, help='TCP Port number.')
-@click.option('-d', '--debug', default=False, help='Run the app in debug mode')
+@click.option('-d', '--debug', is_flag=True, default=False, help='Run the app in debug mode')
 def start(debug):
     """Start LXDUI"""
 
@@ -74,14 +84,16 @@ def start(debug):
 
     # Private Functions
     def _start(debug=False):
+        host = '0.0.0.0'
         port = 5000
         try:
+            host = Config().get('LXDUI', 'lxdui.host')
             port = int(Config().get('LXDUI', 'lxdui.port'))
         except:
             print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
             exit()
 
-        core.start(port, debug, uiPages)
+        core.start(host, port, debug, uiPages)
 
     if debug:
         _start(debug=True)
@@ -99,12 +111,13 @@ def stop():
 @lxdui.command()
 def restart():
     """Restart LXDUI"""
+    host = Config().get('LXDUI', 'lxdui.host')
     port = int(Config().get('LXDUI', 'lxdui.port'))
     click.echo('Restarting with defaults.')
     core.stop()
     click.echo('Port = {} \nDebug = False\nMode = Foreground\n'.format(port))
     time.sleep(3)
-    core.start(port, False, uiPages)
+    core.start(host, port, False, uiPages)
 
 @lxdui.command()
 def status():
@@ -117,7 +130,7 @@ def status():
     else:
         click.echo("=============")
         for k, v in s.items():
-            click.echo(' {} : {}'.format(k, v))
+             click.echo(' {} : {}'.format(k, v))
 
 
 @click.group()
@@ -148,13 +161,14 @@ def prep(fingerprint):
 @image.command()
 @click.argument('fingerprint', nargs=1)
 @click.option('-u', '--username', nargs=1, help='Username')
-@click.option('-p', '--password', nargs=1, help='Password')
-def push(fingerprint, username, password):
-    """Push an image to hub.kuti.io"""
+def push(fingerprint, username):
+    """Push an image to hub.kuti.io
+
+    The password is taken from the LXDUI_PASSWORD environment variable or read from console if not set."""
     try:
         input = {}
         input['username'] = username
-        input['password'] = password
+        input['password'] = getuserpass()
 
         image = LXCImage({'fingerprint': fingerprint})
 
@@ -201,10 +215,10 @@ def list():
 ''' 
     User level group of commands 
 
-    lxdui user list				                #list the users in the auth file
-    lxdui user add -u <username> -p <password>    #create a new user that can access the UI
-    lxdui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
-    lxdui user delete -u <username>			    #remove a user from the auth file
+    lxdui user list                  #list the users in the auth file
+    lxdui user add -u <username>     #create a new user that can access the UI
+    lxdui user update -u <username>  #the user specified in lxdui.admin.user can't be deleted
+    lxdui user delete -u <username>  #remove a user from the auth file
 
 '''
 
@@ -225,19 +239,21 @@ def list():
 
 @user.command()
 @click.option('-u', '--username', help='User Name')
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Password')
-def add(username, password):
-    """Create a new user account"""
-    User().add(username, password)
+def add(username):
+    """Create a new user account
+
+    The password is taken from the LXDUI_PASSWORD environment variable or read from console if not set."""
+    User().add(username, getuserpass())
 
 
 @user.command()
 @click.option('-u', '--username', nargs=1, help='User Name')
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Password')
-def update(username, password):
-    """Change user password"""
+def update(username):
+    """Change user password
+
+    The password is taken from the LXDUI_PASSWORD environment variable or read from console if not set."""
     click.echo("Change user password")
-    User().update(username, password)
+    User().update(username, getuserpass())
 
 
 @user.command()
@@ -329,8 +345,8 @@ def create():
     """Create client certificates"""
     c = Certificate()
     key, crt = c.create()
-    c.save(key)
-    c.save(crt)
+    c.save(APP.lower(),key)
+    c.save(APP.lower(),crt)
 
 
 @cert.command()

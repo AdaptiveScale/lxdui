@@ -302,6 +302,14 @@ App.containers = App.containers || {
                 sizeInMB: Number(formData.memory.sizeInMB),
                 hardLimitation: formData.memory['hardLimitation']?true:false
             },
+            devices:{
+                root:{
+                    path: '/',
+                    pool: formData.storagePool['name'],
+                    size: formData.storagePool['size']+'GB',
+                    type: 'disk',
+                }
+            },
             profiles:formData.profiles
         };
     },
@@ -477,6 +485,6 @@ App.containers = App.containers || {
         target.val(event.target.value);
     },
     showTerminalContainer: function(container) {
-        window.open('/terminal/new/' + container + '/' + sessionStorage.getItem('authToken'), '_blank');
+        window.open('/terminal/new/' + container + '/', '_blank');
     }
 }

@@ -1,0 +1,27 @@
+[Unit]
+Description=Web UI for the native Linux container technology LXD/LXC
+After=network.target snap.lxd.daemon.unix.socket
+Wants=snap.lxd.daemon.unix.socket
+
+[Service]
+Type=simple
+PIDFile=/run/lxdui/lxdui.pid
+ExecStart=/usr/local/bin/lxdui start
+ExecStop=/usr/local/bin/lxdui stop
+
+PrivateTmp=true
+PrivateDevices=true
+# XXX this should have ProtectSystem= set but LXDUI likes to put logfiles in the source code dir
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+ProtectHome=true
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=true
+LockPersonality=true
+RestrictRealtime=true
+CapabilityBoundingSet=
+NoNewPrivileges=true
+
+[Install]
+WantedBy=multi-user.target
