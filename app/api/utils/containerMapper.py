@@ -1,3 +1,5 @@
+import re
+
 def getContainerDetails(container):
     ip = []
 
@@ -51,3 +53,12 @@ def getContainerDetails(container):
         'image': image,
         'created_at': container.created_at,
     }
+
+def isIPV4(address):
+
+    valid = re.match('[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+', address)
+
+    if valid:
+        return True
+    else:
+        return False
