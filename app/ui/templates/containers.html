@@ -108,6 +108,12 @@
                                     <i class="glyphicon glyphicon-duplicate"></i>Clone</a>
                             </li>
                             <li>
+                                <a id="cloneInstanceConfiguration"
+                                   onClick="$.proxy(App.containers.showCloneInstanceConfiguration('{{container.name}}'));"
+                                   title="Clone Instance Configuration">
+                                    <i class="glyphicon glyphicon-duplicate"></i>Clone</a>
+                            </li>
+                            <li>
                                 <a id="moveContainer"
                                    onClick="$.proxy(App.containers.showMoveContainer('{{container.name}}'));"
                                    title="Move Container">
@@ -353,6 +359,39 @@
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="cloneInstanceConfigurationModal" role="dialog" tabindex="-1">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title"></h4>
+            </div>
+            <div class="modal-body">
+                <form id="cloneConfigurationForm" class="form-horizontal">
+                    <div class="form-group">
+                        <label for="newInstanceConfigurationClone" class="col-sm-3 control-label">Clone Name</label>
+                        <div class="col-sm-8">
+                            <input id="newInstanceConfigurationClone" name="newInstance" class="form-control" type="text"
+                                   placeholder="Clone Name" title="Clone Name" required/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-inline col-md-offset-3 col-md-3 mgtop-10">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="submit" id="buttonCloneInstanceConfiguration" class="btn btn-primary">Clone Instance Configuration <span
+                        class="glyphicon glyphicon-refresh spinning loader"></span></button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <div class="modal fade" id="moveContainerModal" role="dialog" tabindex="-1">
     <div class="modal-dialog">
