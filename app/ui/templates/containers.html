@@ -53,6 +53,9 @@
             <th>Type</th>
             <th>Instance Type</th>
             <th>OS image</th>
+            <th>Memory</th>
+            <th>CPU</th>
+            <th>Disk size</th>
             <!--<th>Created On</th>-->
             <th>Actions</th>
             </thead>
@@ -71,7 +74,15 @@
                     {% endif %}
                     {{container.status}}
                 </td>
-                <td>{{container.ip}}</td>
+                {% if container.ip == 'N/A' %}
+                    <td>{{container.ip}}</td>
+                {% else %}
+                    <td>
+                    {% for ip in container.ip %}
+                        {{ip}}</br>
+                    {% endfor %}
+                    </td>
+                {% endif %}
                 {% if container.ephemeral %}
                 <td>Ephemeral</td>
                 {% else %}
@@ -79,6 +90,9 @@
                 {% endif %}
                 <td>{{container.type}}</td>
                 <td>{{container.image}}</td>
+                <td>{{container.memory}}</td>
+                <td>{{container.cpu}}</td>
+                <td>{{container.disk}}</td>
                 <!--<td>{{container.created_at}}</td>-->
                 <td class="td-width-action text-center">
                     <div class="dropdown action-dropdown">
