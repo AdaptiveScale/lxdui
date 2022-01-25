@@ -64,6 +64,9 @@ class LXCContainer(LXDModule):
         if input.get('devices'):
             self.setDevices(input.get('devices'))
 
+        if input.get('newInstance'):
+            self.setNewInstance(input.get('newInstance'))
+
     def setImageType(self, input):
         # Detect image type (alias or fingerprint)
         logging.debug('Checking if image {} exists'.format(input))
@@ -149,6 +152,9 @@ class LXCContainer(LXDModule):
         self.initConfig()
         for key in input.keys():
             self.data['config'][key] = input[key]
+
+    def setNewInstance(self, input):
+        self.data['newInstance'] = input
 
     def info(self):
         try:
