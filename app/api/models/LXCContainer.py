@@ -275,6 +275,31 @@ class LXCContainer(LXDModule):
             logging.exception(e)
             raise ValueError(e)
 
+    def cloneConfiguration(self):
+        try:
+            logging.info('Cloning instance {} configuration'.format(self.data.get('name')))
+            instance = self.client.instances.get(self.data.get('name'))
+            newInstanceData = {}
+            image_fingerprint = instance.config['volatile.base_image']
+            newInstanceConfig = extractConfig(instance.config)
+
+            # To avoid calling the 'generate_migration_data' method from pylxd we manually set the data fields
+            # The 'generate_migration_data' method requires the original instance to be stopped which should not be necessary
+            # when cloning only the configuration options
+            newInstanceData['config'] = newInstanceConfig
+            newInstanceData['profiles'] = instance.profiles
+            newInstanceData['devices'] = instance.devices
+            newInstanceData['name'] = self.data.get('newInstance')
+            newInstanceData['source'] = {'type': 'image', 'fingerprint': image_fingerprint}
+
+            newInstance = self.client.instances.create(newInstanceData, wait=True)
+            newInstance.start(wait=True)
+            return self.client.api.instances[self.data.get('newInstance')].get().json()['metadata']
+        except Exception as e:
+            logging.error('Failed to clone instance {}'.format(self.data.get('name')))
+            logging.exception(e)
+            raise ValueError(e)
+
     def move(self):
         try:
             logging.info('Moving container {}'.format(self.data.get('name')))
@@ -409,3 +434,14 @@ class LXCContainer(LXDModule):
             return self.info()
         except Exception as e:
             raise ValueError(e)
+
+    def extractConfig(config):
+        config_options = ['boot.autostart', 'boot.autostart.delay', 'boot.autostart.priority', 'boot.host_shutdown_timeout', 'boot.stop.priority', 'environment.*', 'limits.cpu', 'limits.cpu.allowance', 'limits.cpu.priority', 'limits.disk.priority', 'limits.kernel.*', 'limits.memory', 'limits.memory.enforce', 'limits.memory.swap', 'limits.memory.swap.priority', 'limits.network.priority', 'limits.processes','linux.kernel_modules', 'migration.incremental.memory', 'migration.incremental.memory.goal', 'migration.incremental.memory.iterations', 'nvidia.runtime', 'raw.apparmor', 'raw.idmap', 'raw.lxc', 'raw.seccomp', 'security.devkxd', 'security.devlxd.images', 'security.idmap.base','security.idmap.isolated', 'security.idmap.size', 'security.nesting', 'security.privileged', 'security.secureboot', 'security.syscalls.blacklist', 'security.syscalls.blacklist_compat', 'security.syscalls.blacklist_default', 'security.syscalls.whitelist']
+     
+        # remove all instance specific config options leaving only the configurable configuration options
+        newInstanceConfig = config
+        for option in list(newInstanceConfig):
+            if option not in config_options:
+                newInstanceConfig.pop(option, None)
+     
+        return newInstanceConfig
