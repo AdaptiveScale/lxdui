@@ -435,13 +435,13 @@ class LXCContainer(LXDModule):
         except Exception as e:
             raise ValueError(e)
 
-    def extractConfig(config):
-        config_options = ['boot.autostart', 'boot.autostart.delay', 'boot.autostart.priority', 'boot.host_shutdown_timeout', 'boot.stop.priority', 'environment.*', 'limits.cpu', 'limits.cpu.allowance', 'limits.cpu.priority', 'limits.disk.priority', 'limits.kernel.*', 'limits.memory', 'limits.memory.enforce', 'limits.memory.swap', 'limits.memory.swap.priority', 'limits.network.priority', 'limits.processes','linux.kernel_modules', 'migration.incremental.memory', 'migration.incremental.memory.goal', 'migration.incremental.memory.iterations', 'nvidia.runtime', 'raw.apparmor', 'raw.idmap', 'raw.lxc', 'raw.seccomp', 'security.devkxd', 'security.devlxd.images', 'security.idmap.base','security.idmap.isolated', 'security.idmap.size', 'security.nesting', 'security.privileged', 'security.secureboot', 'security.syscalls.blacklist', 'security.syscalls.blacklist_compat', 'security.syscalls.blacklist_default', 'security.syscalls.whitelist']
-     
-        # remove all instance specific config options leaving only the configurable configuration options
-        newInstanceConfig = config
-        for option in list(newInstanceConfig):
-            if option not in config_options:
-                newInstanceConfig.pop(option, None)
-     
-        return newInstanceConfig
+def extractConfig(config):
+    config_options = ['boot.autostart', 'boot.autostart.delay', 'boot.autostart.priority', 'boot.host_shutdown_timeout', 'boot.stop.priority', 'environment.*', 'limits.cpu', 'limits.cpu.allowance', 'limits.cpu.priority', 'limits.disk.priority', 'limits.kernel.*', 'limits.memory', 'limits.memory.enforce', 'limits.memory.swap', 'limits.memory.swap.priority', 'limits.network.priority', 'limits.processes','linux.kernel_modules', 'migration.incremental.memory', 'migration.incremental.memory.goal', 'migration.incremental.memory.iterations', 'nvidia.runtime', 'raw.apparmor', 'raw.idmap', 'raw.lxc', 'raw.seccomp', 'security.devkxd', 'security.devlxd.images', 'security.idmap.base','security.idmap.isolated', 'security.idmap.size', 'security.nesting', 'security.privileged', 'security.secureboot', 'security.syscalls.blacklist', 'security.syscalls.blacklist_compat', 'security.syscalls.blacklist_default', 'security.syscalls.whitelist']
+ 
+    # remove all instance specific config options leaving only the configurable configuration options
+    newInstanceConfig = config
+    for option in list(newInstanceConfig):
+        if option not in config_options:
+            newInstanceConfig.pop(option, None)
+ 
+    return newInstanceConfig
