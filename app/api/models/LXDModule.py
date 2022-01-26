@@ -134,6 +134,14 @@ class LXDModule(Base):
         except Exception as e:
             raise ValueError(e)
 
+    def setLimitsCPU(self):
+        conf = Config()
+        set_cpu = conf.get(meta.APP_NAME, '{}.set_limits_cpu'.format(meta.APP_NAME.lower()))
+        if set_cpu == 'true':
+            return True
+        else:
+            return False
+               
     def createProfile(self):
         pass
 

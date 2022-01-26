@@ -50,12 +50,14 @@ def container():
         images = LXDModule().listLocalImages()
         profiles = LXDModule().listProfiles()
         storagePools = LXDModule().listStoragePools()
+        limitsCpu = LXDModule().setLimitsCpu()
         return render_template('containers.html', currentpage='Containers',
                                containers=result,
                                images = images,
                                profiles = profiles,
                                memory = memory(),
                                storagePools = storagePools,
+                               limitsCpu = limitsCpu,
                                lxdui_current_version=VERSION)
     except:
         return render_template('containers.html', currentpage='Containers',
@@ -64,6 +66,7 @@ def container():
                                profiles=[],
                                memory=memory(),
                                storagePools = [],
+                               limitsCpu = limitsCpu,
                                lxdui_current_version=VERSION)
 
 
