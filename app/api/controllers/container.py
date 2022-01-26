@@ -37,7 +37,7 @@ def getContainer(name):
 @jwt_required
 def createContainer():
     input = request.get_json(silent=True)
-    validation = doValidate(input)
+    validation = doValidate(input, LXDModule().setLimitsCPU())
     if validation:
         return response.reply(message=validation.message, status=403)
 

@@ -57,6 +57,8 @@ def container():
                                images = images,
                                profiles = profiles,
                                memory = memory(),
+                               limitsCPU = limitsCPU,
+                               cpu = os.cpu_count(),
                                storagePools = storagePools,
                                limitsCpu = limitsCpu,
                                lxdui_current_version=VERSION)
@@ -67,7 +69,7 @@ def container():
                                profiles=[],
                                memory=memory(),
                                storagePools = [],
-                               limitsCpu = limitsCpu,
+                               limitsCPU = limitsCPU,
                                lxdui_current_version=VERSION)
 
 

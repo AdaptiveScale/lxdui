@@ -207,6 +207,16 @@
                         </div>
                     </div>
                 </div>
+                {% if limitsCPU  %}
+                <div class="panel-body">
+                    <label class="col-md-3 control-label" for="containerCPUCount">CPU cores:</label>
+                    <div class="col-md-2">
+                        <input type="number" class="form-control" id="containerCPUcount" name="cpu[cores]"
+                               min="1" max="{{cpu}}" value="1">
+                        (Max: {{cpu}} cores)
+                    </div>
+                </div>
+                {% else %}
                 <div class="panel-body">
                     <div class="form-group">
                         <label class="col-md-3 control-label" for="containerCPUPercentage">CPU allocation (%):</label>
@@ -225,6 +235,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
                 <div class="panel-body">
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Memory usage in MB:</label>
