@@ -50,7 +50,8 @@ def container():
         images = LXDModule().listLocalImages()
         profiles = LXDModule().listProfiles()
         storagePools = LXDModule().listStoragePools()
-        limitsCpu = LXDModule().setLimitsCpu()
+        limitsCpu = LXDModule().setLimitsCPU()
+
         return render_template('containers.html', currentpage='Containers',
                                containers=result,
                                images = images,
