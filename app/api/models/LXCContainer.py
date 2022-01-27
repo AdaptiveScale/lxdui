@@ -101,7 +101,6 @@ class LXCContainer(LXDModule):
     def setCPU(self, input):
         self.initConfig()
         if LXDModule().setLimitsCPU():
-            print('test')
             if input.get('cores'):
                 logging.debug('Set CPU count to {}'.format(input.get('cores')))
                 self.data['config']['limits.cpu']='{}'.format(input.get('cores'))
