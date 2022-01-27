@@ -11,6 +11,7 @@ from functools import wraps
 import json
 import os
 import platform
+import subprocess
 
 uiPages = Blueprint('uiPages', __name__, template_folder='./templates',
                     static_folder='./static')
