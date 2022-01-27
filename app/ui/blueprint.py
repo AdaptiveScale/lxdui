@@ -69,6 +69,7 @@ def container():
                                profiles=[],
                                memory=memory(),
                                storagePools = [],
+                               cpu = os.cpu_count(),
                                limitsCPU = limitsCPU,
                                lxdui_current_version=VERSION)
 
