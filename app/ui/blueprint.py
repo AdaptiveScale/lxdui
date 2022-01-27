@@ -66,7 +66,7 @@ def container():
                                limitsCPU = limitsCPU,
                                cpu = cpuCount,
                                storagePools = storagePools,
-                               limitsCpu = limitsCpu,
+                               limitsCpu = limitsCPU,
                                lxdui_current_version=VERSION)
     except:
         return render_template('containers.html', currentpage='Containers',
