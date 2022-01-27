@@ -50,7 +50,12 @@ def container():
         images = LXDModule().listLocalImages()
         profiles = LXDModule().listProfiles()
         storagePools = LXDModule().listStoragePools()
-        limitsCpu = LXDModule().setLimitsCPU()
+        limitsCPU = LXDModule().setLimitsCPU()
+        # While Python does offer a cpu_count() function in their os library this function returns 
+        # the number of CPU cores allocated to the UI container if LXDUI is installed in a container.
+        # To get the number of cores of the host we have to execute 'lscpu' through the shell which 
+        # returns all the data regarding the hosts physical CPU from which we can extract the maximum number of cores.
+        cpuCount = subprocess.check_output("lscpu | grep 'CPU(s):' | head -1 | grep -o -E '[0-9]+' | tr -d '\n'", shell=True, text=True)
 
         return render_template('containers.html', currentpage='Containers',
                                containers=result,
@@ -58,7 +63,7 @@ def container():
                                profiles = profiles,
                                memory = memory(),
                                limitsCPU = limitsCPU,
-                               cpu = os.cpu_count(),
+                               cpu = cpuCount,
                                storagePools = storagePools,
                                limitsCpu = limitsCpu,
                                lxdui_current_version=VERSION)
@@ -69,7 +74,7 @@ def container():
                                profiles=[],
                                memory=memory(),
                                storagePools = [],
-                               cpu = os.cpu_count(),
+                               cpu = cpuCount,
                                limitsCPU = limitsCPU,
                                lxdui_current_version=VERSION)
 
