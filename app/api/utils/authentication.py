@@ -6,6 +6,7 @@ from flask_jwt_extended import JWTManager
 from app.api.utils import converters
 import app.__metadata__ as meta
 import logging
+import secrets
 
 logging = logging.getLogger(__name__)
 
@@ -21,7 +22,8 @@ def authenticate(username, password):
 def initAuth(app):
     APP = meta.APP_NAME
     tokenExpiration = int(Config().get(APP, '{}.jwt.token.expiration'.format(APP.lower())))
-    secretKey = Config().get(APP, '{}.jwt.secret.key'.format(APP.lower()))
+    # create a new secretKet whenever the system is started
+    secretKey = secrets.token_urlsafe(32) 
     if (tokenExpiration == None):
         tokenExpiration = 1200
 
