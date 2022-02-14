@@ -12,6 +12,9 @@ from terminado import TermSocket
 from app.api.models.LXCContainer import LXCContainer
 from app.lib.termmanager import NamedTermManager
 from app.api.utils import mappings
+from app.lib.conf import Config
+from app import __metadata__ as meta
+
 
 TEMPLATE_DIR = os.path.dirname(__file__).replace('/api/controllers','/ui/templates/')
 STATIC_DIR = os.path.dirname(__file__).replace('/api/controllers','/ui/static/')
@@ -56,7 +59,12 @@ class NewTerminalHandler(tornado.web.RequestHandler):
           except:
             raise tornado.web.HTTPError(403)
         shellType = findShellTypeOfContainer(LXCContainer({'name': name}))
-        shell = ['bash', '-c', 'lxc exec {} -- /bin/{}'.format(name, shellType)]
+        try:
+            hostName = Config().get(meta.APP_NAME,'lxdui.lxd.remote.name')
+            shell = ['bash', '-c', 'lxc exec {}:{} -- /bin/{}'.format(hostName, name, shellType)]
+        except:
+            shell = ['bash', '-c', 'lxc exec {} -- /bin/{}'.format(name, shellType)]
+        
         name, terminal = self.application.settings['term_manager'].new_named_terminal(shell_command=shell)
         self.redirect("/terminal/open/" + name+'/', permanent=False)
     def initialize(self,app):

@@ -302,6 +302,14 @@ App.containers = App.containers || {
                 sizeInMB: Number(formData.memory.sizeInMB),
                 hardLimitation: formData.memory['hardLimitation']?true:false
             },
+            devices:{
+                root:{
+                    path: '/',
+                    pool: formData.storagePool['name'],
+                    size: formData.storagePool['size']+'GB',
+                    type: 'disk',
+                }
+            },
             profiles:formData.profiles
         };
     },

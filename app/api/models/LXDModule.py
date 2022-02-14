@@ -12,13 +12,31 @@ logging = logging.getLogger(__name__)
 class LXDModule(Base):
     # Default 127.0.0.1 -> Move to Config
     def __init__(self, remoteHost='127.0.0.1'):
+
+        conf = Config()
         logging.info('Accessing PyLXD client')
-        self.client = Client()
+        try:
+            remoteHost = Config().get(meta.APP_NAME, '{}.lxd.remote'.format(meta.APP_NAME.lower()))
+            sslKey = conf.get(meta.APP_NAME, '{}.ssl.key'.format(meta.APP_NAME.lower()))
+            sslCert = conf.get(meta.APP_NAME, '{}.ssl.cert'.format(meta.APP_NAME.lower()))
+            sslVerify = conf.get(meta.APP_NAME, '{}.lxd.sslverify'.format(meta.APP_NAME.lower()))
+
+            if sslVerify.lower in ['true', '1', 't', 'y', 'yes', 'yeah', 'yup', 'certainly']:
+                sslVerify = True
+            else:
+                sslVerify = False
+
+            self.client = Client(endpoint=remoteHost,
+                cert=(sslCert, sslKey), verify=sslVerify)
+        except:
+            logging.info('using local socket')
+            self.client = Client()
+
 
     def listContainers(self):
         try:
             logging.info('Reading container list')
-            return self.client.containers.all()
+            return self.client.instances.all()
         except Exception as e:
             logging.error('Failed to read container list: ')
             logging.exception(e)
@@ -169,7 +187,7 @@ class LXDModule(Base):
         lxdModule = LXDModule()
         try:
             logging.info('Checking if container exists.')
-            container = self.client.containers.get(containerName)
+            container = self.client.instances.get(containerName)
             return True
         except Exception as e:
             logging.error('Failed to verify container:')
