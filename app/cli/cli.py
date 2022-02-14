@@ -160,7 +160,7 @@ def prep(fingerprint):
 
 @image.command()
 @click.argument('fingerprint', nargs=1)
-@click.option('-u', '--username', nargs=1, help='Username')
+@click.option('-u', '--username', required=True, nargs=1, help='Username')
 def push(fingerprint, username):
     """Push an image to hub.kuti.io
 
@@ -238,7 +238,7 @@ def list():
 
 
 @user.command()
-@click.option('-u', '--username', help='User Name')
+@click.option('-u', '--username', required=True, help='User Name')
 def add(username):
     """Create a new user account
 
@@ -247,7 +247,7 @@ def add(username):
 
 
 @user.command()
-@click.option('-u', '--username', nargs=1, help='User Name')
+@click.option('-u', '--username', required=True, nargs=1, help='User Name')
 def update(username):
     """Change user password
 
@@ -257,7 +257,7 @@ def update(username):
 
 
 @user.command()
-@click.option('-u', '--username', nargs=1, help='User Name')
+@click.option('-u', '--username', required=True, nargs=1, help='User Name')
 def delete(username):
     """Delete a user account"""
     click.echo("Delete user account")
