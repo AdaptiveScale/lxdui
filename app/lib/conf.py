@@ -155,6 +155,7 @@ class Config(object):
         :return:
         """
         self.config.set(section, key, value)
+        self.save()
 
     def show(self):
         """
