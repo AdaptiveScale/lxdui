@@ -227,7 +227,7 @@ def doValidateCloneMove(input):
     except ValidationError as e:
         return e
 
-def doValidate(input, setCPU):
+def doValidate(input, setCPU = False):
     try:
         if setCPU:
             validate(input, set_cpu_limit_schema)
