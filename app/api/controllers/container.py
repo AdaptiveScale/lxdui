@@ -1,6 +1,6 @@
 from flask import Blueprint, request
 from flask_jwt_extended import jwt_required
-from app.api.schemas.container_schema import doValidate, doValidateCloneMove, doValidateImageExport
+from app.api.schemas.container_schema import doValidate, doValidateCloneMove, doValidateImageExport, doValidateInstanceConfigurationClone
 
 from app.api.models.LXCContainer import LXCContainer
 from app.api.models.LXDModule import LXDModule
@@ -127,6 +127,21 @@ def cloneContainer(name):
     try:
         container = LXCContainer(input)
         return response.replySuccess(container.clone(), message='Container {} cloned successfully.'.format(name))
+    except ValueError as e:
+        return response.replyFailed(message=e.__str__())
+
+@container_api.route('/cloneConfiguration/<string:name>', methods=['POST'])
+@jwt_required
+def cloneInstanceConfiguration(name):
+    input = request.get_json(silent=True)
+    validation = doValidateInstanceConfigurationClone(input)
+    if validation:
+        return response.reply(message=validation.message, status=403)
+
+    input['name'] = name
+    try:
+        container = LXCContainer(input)
+        return response.replySuccess(container.cloneConfiguration(), message='Instance {} cloned successfully.'.format(name))
     except ValueError as e:
         return response.replyFailed(message=e.__str__())
 

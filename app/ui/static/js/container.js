@@ -78,6 +78,10 @@ App.containers = App.containers || {
         $('#buttonCloneContainer').on('click', $.proxy(this.cloneContainer, this));
         $('#cloneForm').on('submit', $.proxy(this.cloneContainer, this));
 
+        $('#buttonCloneInstanceConfiguration').on('click', $.proxy(this.cloneInstanceConfiguration, this));
+        $('#cloneConfigurationForm').on('submit', $.proxy(this.cloneInstanceConfiguration, this));
+
+
         $('#buttonMoveContainer').on('click', $.proxy(this.moveContainer, this));
         $('#moveForm').on('submit', $.proxy(this.moveContainer, this));
 
@@ -279,6 +283,7 @@ App.containers = App.containers || {
     },
     switchView: function(view){
         $('#cloneContainerForm').hide();
+        $('#cloneInstanceConfigurationForm').hide();
         $('#moveContainerForm').hide();
         $('#snapshotContainerForm').hide();
         $('#exportContainerForm').hide();
@@ -358,6 +363,13 @@ App.containers = App.containers || {
         $("#cloneContainerModal").modal("show");
         this.selectedContainer = name;
     },
+    showCloneInstanceConfiguration: function(name) {
+        $('#cloneInstanceConfigurationModal .modal-title').text('');
+        $('#newInstanceConfigurationClone').val('');
+        $('#cloneInstanceConfigurationModal .modal-title').text('Clone Instance Configuration: ' + name);
+        $("#cloneInstanceConfigurationModal").modal("show");
+        this.selectedContainer = name;
+    },
     showMoveContainer: function(name) {
         $('#moveContainerModal .modal-title').text('');
         $('#moveContainerModal .modal-title').text('Move Container: ' + name);
@@ -419,6 +431,23 @@ App.containers = App.containers || {
          console.log(response);
          console.log('clonedSuccess:', 'TODO - add alert and refresh local data');
          $("#cloneContainerModal").modal("hide");
+         location.reload();
+    },
+    cloneInstanceConfiguration: function() {
+        $.ajax({
+            url:App.baseAPI+'container/cloneConfiguration/'+this.selectedContainer,
+            type: 'POST',
+            dataType: 'json',
+            contentType: 'application/json',
+            data: JSON.stringify({
+                newInstance: $('#newInstanceConfigurationClone').val()
+            }),
+            success: $.proxy(this.onCloneConfigurationSuccess, this)
+        });
+    },
+    onCloneConfigurationSuccess: function(response){
+         console.log(response);
+         $("#cloneInstanceConfigurationModal").modal("hide");
          location.reload();
     },
     moveContainer: function() {

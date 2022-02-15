@@ -91,6 +91,24 @@ schema = {
     }
 }
 
+instanceConfigurationSchema = {
+    "oneOf": [
+        {"$ref": "#/definitions/singleObject"}, # plain object
+    ],
+    "definitions": {
+        "singleObject": {
+            'type':'object',
+            'required': ['newInstance'],
+            'properties':{
+                'newInstance':{
+                    'type':'string',
+                    'description':'newInstance (name)'
+                }
+            }
+        }
+    }
+}
+
 copyMoveSchema = {
     "oneOf": [
         {"$ref": "#/definitions/singleObject"}, # plain object
@@ -137,6 +155,13 @@ def doValidateImageExport(input):
 def doValidateCloneMove(input):
     try:
         validate(input, copyMoveSchema)
+        return None
+    except ValidationError as e:
+        return e
+
+def doValidateInstanceConfigurationClone(input):
+    try:
+        validate(input, instanceConfigurationSchema)
         return None
     except ValidationError as e:
         return e
