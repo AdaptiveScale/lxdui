@@ -297,6 +297,7 @@ App.containers = App.containers || {
             cpu:{
                 percentage: Number(formData.cpu.percentage),
                 hardLimitation: formData.cpu['hardLimitation']?true:false,
+                cores: Number(formData.cpu.cores),
             },
             memory:{
                 sizeInMB: Number(formData.memory.sizeInMB),

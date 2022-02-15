@@ -11,6 +11,7 @@ from functools import wraps
 import json
 import os
 import platform
+import subprocess
 
 uiPages = Blueprint('uiPages', __name__, template_folder='./templates',
                     static_folder='./static')
@@ -50,11 +51,20 @@ def container():
         images = LXDModule().listLocalImages()
         profiles = LXDModule().listProfiles()
         storagePools = LXDModule().listStoragePools()
+        limitsCPU = LXDModule().setLimitsCPU()
+        # While Python does offer a cpu_count() function in their os library this function returns 
+        # the number of CPU cores allocated to the UI container if LXDUI is installed in a container.
+        # To get the number of cores of the host we have to execute 'lscpu' through the shell which 
+        # returns all the data regarding the hosts physical CPU from which we can extract the maximum number of cores.
+        cpuCount = subprocess.check_output("lscpu | grep 'CPU(s):' | head -1 | grep -o -E '[0-9]+' | tr -d '\n'", shell=True, text=True)
+
         return render_template('containers.html', currentpage='Containers',
                                containers=result,
                                images = images,
                                profiles = profiles,
                                memory = memory(),
+                               limitsCPU = limitsCPU,
+                               cpu = cpuCount,
                                storagePools = storagePools,
                                lxdui_current_version=VERSION)
     except:
@@ -64,6 +74,8 @@ def container():
                                profiles=[],
                                memory=memory(),
                                storagePools = [],
+                               cpu = cpuCount,
+                               limitsCPU = limitsCPU,
                                lxdui_current_version=VERSION)
 
 

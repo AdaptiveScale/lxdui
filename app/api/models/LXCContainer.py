@@ -100,15 +100,17 @@ class LXCContainer(LXDModule):
 
     def setCPU(self, input):
         self.initConfig()
-        if input.get('count'):
-            logging.debug('Set CPU count to {}'.format(input.get('count')))
-            self.data['config']['limits.cpu']=input.get('count')
-        if input.get('percentage'):
-            if input.get('hardLimitation'):
-                self.data['config']['limits.cpu.allowance']='{}ms/100ms'.format(input.get('percentage'))
-            else:
-                self.data['config']['limits.cpu.allowance'] = '{}%'.format(input.get('percentage'))
-            logging.debug('CPU allowance limit set to {}'.format(self.data['config']['limits.cpu.allowance']))
+        if LXDModule().setLimitsCPU():
+            if input.get('cores'):
+                logging.debug('Set CPU count to {}'.format(input.get('cores')))
+                self.data['config']['limits.cpu']='{}'.format(input.get('cores'))
+        else:
+            if input.get('percentage'):
+                if input.get('hardLimitation'):
+                    self.data['config']['limits.cpu.allowance']='{}ms/100ms'.format(input.get('percentage'))
+                else:
+                    self.data['config']['limits.cpu.allowance'] = '{}%'.format(input.get('percentage'))
+                logging.debug('CPU allowance limit set to {}'.format(self.data['config']['limits.cpu.allowance']))
 
     def setMemory(self, input):
         self.initConfig()

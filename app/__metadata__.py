@@ -44,6 +44,7 @@ lxdui.profiles = ${lxdui.conf.dir}/profiles
 lxdui.zfs.pool.name = lxdpool
 lxdui.app.alias = LXDUI
 lxdui.cli = cli
+lxdui.set_limits_cpu = false
 
 [LXDUI_CERT]
 lxdui.cert.country = US
