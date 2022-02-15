@@ -15,4 +15,4 @@ tornado-xstatic
 XStatic==1.0.1
 XStatic-term.js==0.0.7.0
 bcrypt==3.2.0
-pyyaml==5.4
+pyyaml==3.11

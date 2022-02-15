@@ -32,7 +32,6 @@ class LXDModule(Base):
             logging.info('using local socket')
             self.client = Client()
 
-
     def listContainers(self):
         try:
             logging.info('Reading container list')
