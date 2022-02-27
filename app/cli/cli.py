@@ -5,6 +5,8 @@ from app.cli.init import Init
 from app.lib.cert import Certificate
 from app.api import core
 from app.ui.blueprint import uiPages
+from app.api.models.LXCImage import LXCImage
+from getpass import getpass
 import click
 import os
 import signal
@@ -30,14 +32,23 @@ lxdui cert add     				            #add existing certs from file path
 lxdui cert create				                #generate new SSL certs (overwrite old files)
 lxdui cert list				                #list SSL certs
 lxdui cert delete 				            #remove SSL certs
-lxdui user add -u <username> -p <password>    #create a new user that can access the UI
-lxdui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
+lxdui user add -u <username>                  #create a new user that can access the UI
+lxdui user update -u <username>                #the user specified in lxdui.admin.user can't be deleted
 lxdui user delete -u <username>			    #remove a user from the auth file
 lxdui user list				                #list the users in the auth file
 '''
 
 
+def getuserpass():
+    """Securely retrieve a user password from the environment or from console"""
+    if 'LXDUI_PASSWORD' in os.environ:
+        return os.environ['LXDUI_PASSWORD']
+    else:
+        return getpass()
+
+
 ''' Command Groups '''
+
 
 
 @click.group()
@@ -49,10 +60,14 @@ def lxdui():
 
 ''' lxdui root level group of commands '''
 @lxdui.command()
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Password')
-def init(password):
-    """Initialize and configure LXDUI"""
+def init():
+    """Initialize and configure LXDUI
+
+    The password is taken from the LXDUI_PASSWORD environment variable or read from console if not set."""
     click.echo("Initialize and configure %s" % APP)
+
+    password = getuserpass()
+
     Init(password)
 
 
@@ -60,7 +75,7 @@ def init(password):
 # @click.otion('-b', '--daemon', default=False, help='Run in background as a daemon.')
 # @click.otion('-c', '--conf', default=False, help='Config file.')
 # @click.otion('-p', '--port', default=False, help='TCP Port number.')
-@click.option('-d', '--debug', default=False, help='Run the app in debug mode')
+@click.option('-d', '--debug', is_flag=True, default=False, help='Run the app in debug mode')
 def start(debug):
     """Start LXDUI"""
 
@@ -69,14 +84,16 @@ def start(debug):
 
     # Private Functions
     def _start(debug=False):
+        host = '0.0.0.0'
         port = 5000
         try:
+            host = Config().get('LXDUI', 'lxdui.host')
             port = int(Config().get('LXDUI', 'lxdui.port'))
         except:
             print('Please initialize {} first.  e.g: {} init '.format(meta.APP_NAME, meta.APP_CLI_CMD))
             exit()
 
-        core.start(port, debug, uiPages)
+        core.start(host, port, debug, uiPages)
 
     if debug:
         _start(debug=True)
@@ -94,12 +111,13 @@ def stop():
 @lxdui.command()
 def restart():
     """Restart LXDUI"""
+    host = Config().get('LXDUI', 'lxdui.host')
     port = int(Config().get('LXDUI', 'lxdui.port'))
     click.echo('Restarting with defaults.')
     core.stop()
     click.echo('Port = {} \nDebug = False\nMode = Foreground\n'.format(port))
     time.sleep(3)
-    core.start(port, False, uiPages)
+    core.start(host, port, False, uiPages)
 
 @lxdui.command()
 def status():
@@ -112,16 +130,95 @@ def status():
     else:
         click.echo("=============")
         for k, v in s.items():
-            click.echo(' {} : {}'.format(k, v))
+             click.echo(' {} : {}'.format(k, v))
 
+
+@click.group()
+def image():
+    """Work with image registry"""
+    pass
+
+@image.command()
+@click.argument('fingerprint', nargs=1)
+def prep(fingerprint):
+    """Prepare an image for upload"""
+    try:
+        input = {}
+        image = LXCImage({'fingerprint': fingerprint})
+
+        # Export Image - Image registry
+        path = image.exportImage(input)
+
+        click.echo("Image prepared successfully.")
+        click.echo("The image path is: {}".format(path))
+        click.echo("Modify the image.yaml, upload the logo and update README.md")
+        click.echo("To publish the image use the command:")
+        click.echo("lxdui image push -u <uid> -p <pwd> <image_fingerprint>")
+    except Exception as e:
+        click.echo("LXDUI failed to prepare the image.")
+        click.echo(e.__str__())
+
+@image.command()
+@click.argument('fingerprint', nargs=1)
+@click.option('-u', '--username', required=True, nargs=1, help='Username')
+def push(fingerprint, username):
+    """Push an image to hub.kuti.io
+
+    The password is taken from the LXDUI_PASSWORD environment variable or read from console if not set."""
+    try:
+        input = {}
+        input['username'] = username
+        input['password'] = getuserpass()
+
+        image = LXCImage({'fingerprint': fingerprint})
+
+        # Export Image - Image registry
+        image.pushImage(input)
+
+        click.echo("Image pushed successfully.")
+    except Exception as e:
+        click.echo("LXDUI failed to push the image.")
+        click.echo(e.__str__())
+
+@image.command()
+@click.argument('fingerprint', nargs=1)
+def pull(fingerprint):
+    """Pull an image from hub.kuti.io"""
+    try:
+        input = {}
+
+        image = LXCImage({'fingerprint': fingerprint})
+
+        print("Downlaoding image with fingerprint {}".format(fingerprint))
+        # Import Image - Image registry
+        image.importImage(input)
+
+        click.echo("Image imported successfully.")
+    except Exception as e:
+        click.echo("LXDUI failed to download/import the image.")
+        click.echo(e.__str__())
+
+@image.command()
+def list():
+    """List images from hub.kuti.io"""
+    try:
+        input = {}
+        image = LXCImage({'fingerprint': 'a'})
+
+        # List Images from kuti.io
+        print (image.listHub(input))
+
+    except Exception as e:
+        click.echo("LXDUI failed to list the images from kuti.io.")
+        click.echo(e.__str__())
 
 ''' 
     User level group of commands 
 
-    lxdui user list				                #list the users in the auth file
-    lxdui user add -u <username> -p <password>    #create a new user that can access the UI
-    lxdui user update -u <username> -p <password> #the user specified in lxdui.admin.user can't be deleted
-    lxdui user delete -u <username>			    #remove a user from the auth file
+    lxdui user list                  #list the users in the auth file
+    lxdui user add -u <username>     #create a new user that can access the UI
+    lxdui user update -u <username>  #the user specified in lxdui.admin.user can't be deleted
+    lxdui user delete -u <username>  #remove a user from the auth file
 
 '''
 
@@ -141,24 +238,26 @@ def list():
 
 
 @user.command()
-@click.option('-u', '--username', help='User Name')
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Password')
-def add(username, password):
-    """Create a new user account"""
-    User().add(username, password)
+@click.option('-u', '--username', required=True, help='User Name')
+def add(username):
+    """Create a new user account
+
+    The password is taken from the LXDUI_PASSWORD environment variable or read from console if not set."""
+    User().add(username, getuserpass())
 
 
 @user.command()
-@click.option('-u', '--username', nargs=1, help='User Name')
-@click.option('-p', '--password', prompt=True, hide_input=True, confirmation_prompt=True, help='Password')
-def update(username, password):
-    """Change user password"""
+@click.option('-u', '--username', required=True, nargs=1, help='User Name')
+def update(username):
+    """Change user password
+
+    The password is taken from the LXDUI_PASSWORD environment variable or read from console if not set."""
     click.echo("Change user password")
-    User().update(username, password)
+    User().update(username, getuserpass())
 
 
 @user.command()
-@click.option('-u', '--username', nargs=1, help='User Name')
+@click.option('-u', '--username', required=True, nargs=1, help='User Name')
 def delete(username):
     """Delete a user account"""
     click.echo("Delete user account")
@@ -246,8 +345,8 @@ def create():
     """Create client certificates"""
     c = Certificate()
     key, crt = c.create()
-    c.save(key)
-    c.save(crt)
+    c.save(APP.lower(),key)
+    c.save(APP.lower(),crt)
 
 
 @cert.command()
@@ -288,6 +387,7 @@ lxdui.add_command(status)
 lxdui.add_command(user)
 lxdui.add_command(config)
 lxdui.add_command(cert)
+lxdui.add_command(image)
 
 
 if __name__ == '__main__':

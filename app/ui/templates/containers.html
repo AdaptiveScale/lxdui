@@ -33,14 +33,17 @@
                     <span class="glyphicon glyphicon-remove-circle"> </span> Unfreeze
                 </button>
                 <!--- right -->
-                <a class="btn btn-success pull-right" id="buttonNewInstance">
-                    <span class="glyphicon glyphicon-plus-sign"> </span>
-                    New Instance
-                </a>
+                {% if containers|length>0 %}
+                    <a class="btn btn-success pull-right" id="buttonNewInstance">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                        New Instance
+                    </a>
+                {% endif %}
             </div>
         </div>
     </div>
     <div class="col-lg-12">
+        {% if containers|length > 0 %}
         <table class="table table-bordered" id="tableContainers">
             <thead>
             <th><input id="selectAllContainers" type="checkbox"/></th>
@@ -48,7 +51,11 @@
             <th>Status</th>
             <th>IP Address</th>
             <th>Type</th>
+            <th>Instance Type</th>
             <th>OS image</th>
+            <th>Memory</th>
+            <th>CPU</th>
+            <th>Disk size</th>
             <!--<th>Created On</th>-->
             <th>Actions</th>
             </thead>
@@ -67,13 +74,25 @@
                     {% endif %}
                     {{container.status}}
                 </td>
-                <td>{{container.ip}}</td>
+                {% if container.ip == 'N/A' %}
+                    <td>{{container.ip}}</td>
+                {% else %}
+                    <td>
+                    {% for ip in container.ip %}
+                        {{ip}}</br>
+                    {% endfor %}
+                    </td>
+                {% endif %}
                 {% if container.ephemeral %}
                 <td>Ephemeral</td>
                 {% else %}
                 <td>Persistent</td>
                 {% endif %}
+                <td>{{container.type}}</td>
                 <td>{{container.image}}</td>
+                <td>{{container.memory}}</td>
+                <td>{{container.cpu}}</td>
+                <td>{{container.disk}}</td>
                 <!--<td>{{container.created_at}}</td>-->
                 <td class="td-width-action text-center">
                     <div class="dropdown action-dropdown">
@@ -123,6 +142,26 @@
             {% endfor %}
             </tbody>
         </table>
+        {% else %}
+        <div class="row">
+            <div class="col-md-12">
+                <div class="col-md-3 col-md-offset-3">
+                    {% if images|length>0 %}
+                    <h5 style="text-align:center;">No instances available.</h5>
+                    <a class="btn btn-lg btn-success" id="buttonNewInstance">
+                        <span class="glyphicon glyphicon-plus-sign"> </span>
+                        Create New Instance
+                    </a>
+                    {% else %}
+                    <a class="btn btn-lg btn-success" href="/ui/images">
+                        <span class="glyphicon glyphicon-download-alt"> </span>
+                        Download image
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endif %}
     </div>
 </div>
 
@@ -150,9 +189,9 @@
                         <select class="form-control" id="containerImage" name="image">
                             {% for image in images %}
                                 {% if image.properties.get('description') == None %}
-                                    <option value="{{image.fingerprint}}">{{image.aliases[0].name if image.aliases[0] else 'N/A'}}</option>
+                                    <option value="{{image.fingerprint}}">{{(image.aliases[0].name + " - " + ('Container' if (image.type == 'container') else 'Virtual Machine')) if image.aliases[0] else 'N/A'}}</option> -->
                                 {% else %}
-                                    <option value="{{image.fingerprint}}">{{image.properties.description if image.properties.description else 'N/A'}}</option>
+                                    <option value="{{image.fingerprint}}">{{(image.properties.description + " - " + ('Container' if (image.type == 'container') else 'Virtual Machine'))if image.properties.description else 'N/A'}}</option>
                                 {% endif %}
                             {% endfor %}
                         </select>
@@ -182,6 +221,16 @@
                         </div>
                     </div>
                 </div>
+                {% if limitsCPU  %}
+                <div class="panel-body">
+                    <label class="col-md-3 control-label" for="containerCPUCount">CPU cores:</label>
+                    <div class="col-md-2">
+                        <input type="number" class="form-control" id="containerCPUcount" name="cpu[cores]"
+                               min="1" max="{{cpu}}" value="1">
+                        (Max: {{cpu}} cores)
+                    </div>
+                </div>
+                {% else %}
                 <div class="panel-body">
                     <div class="form-group">
                         <label class="col-md-3 control-label" for="containerCPUPercentage">CPU allocation (%):</label>
@@ -200,6 +249,7 @@
                         </div>
                     </div>
                 </div>
+                {% endif %}
                 <div class="panel-body">
                     <div class="form-group">
                         <label class="col-sm-3 control-label">Memory usage in MB:</label>
@@ -230,6 +280,23 @@
                                 <option>{{profile.name}}</option>
                                 {% endfor %}
                             </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="form-group">
+                        <label class="col-md-2 control-label" for="containerStoragePool">Storage Pool:</label>
+                        <div class="col-sm-3">
+                            <select class="selectpicker" id="containerStoragePool" name="storagePool[name]">
+                                {% for storagePool in storagePools %}
+                                <option>{{storagePool.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="number" class="form-control" id="storagePoolSize" name="storagePool[size]"
+                                   min="0.2" max="100" value="0" step="0.1">
+                            (Size in GB)
                         </div>
                     </div>
                 </div>

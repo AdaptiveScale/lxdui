@@ -16,9 +16,9 @@ class LXCContainer(LXDModule):
         logging.info('Connecting to LXD')
         super(LXCContainer, self).__init__(remoteHost=self.remoteHost)
 
-        if self.client.containers.exists(self.data.get('name')):
+        if self.client.instances.exists(self.data.get('name')):
             existing = self.info()
-            self.data['config'] = existing['config'];
+            self.data['config'] = existing['config']
             self.data['devices'] = existing['devices']
 
         if input.get('image'):
@@ -61,7 +61,8 @@ class LXCContainer(LXDModule):
         if input.get('config'):
             self.setConfig(input.get('config'))
 
-
+        if input.get('devices'):
+            self.setDevices(input.get('devices'))
 
     def setImageType(self, input):
         # Detect image type (alias or fingerprint)
@@ -99,15 +100,17 @@ class LXCContainer(LXDModule):
 
     def setCPU(self, input):
         self.initConfig()
-        if input.get('count'):
-            logging.debug('Set CPU count to {}'.format(input.get('count')))
-            self.data['config']['limits.cpu']=input.get('count')
-        if input.get('percentage'):
-            if input.get('hardLimitation'):
-                self.data['config']['limits.cpu.allowance']='{}ms/100ms'.format(input.get('percentage'))
-            else:
-                self.data['config']['limits.cpu.allowance'] = '{}%'.format(input.get('percentage'))
-            logging.debug('CPU allowance limit set to {}'.format(self.data['config']['limits.cpu.allowance']))
+        if LXDModule().setLimitsCPU():
+            if input.get('cores'):
+                logging.debug('Set CPU count to {}'.format(input.get('cores')))
+                self.data['config']['limits.cpu']='{}'.format(input.get('cores'))
+        else:
+            if input.get('percentage'):
+                if input.get('hardLimitation'):
+                    self.data['config']['limits.cpu.allowance']='{}ms/100ms'.format(input.get('percentage'))
+                else:
+                    self.data['config']['limits.cpu.allowance'] = '{}%'.format(input.get('percentage'))
+                logging.debug('CPU allowance limit set to {}'.format(self.data['config']['limits.cpu.allowance']))
 
     def setMemory(self, input):
         self.initConfig()
@@ -121,6 +124,9 @@ class LXCContainer(LXDModule):
     def setNewContainer(self, input):
         self.data['newContainer'] = input
 
+    def setDevices(self, input):
+        self.data['devices'] = input
+        
     def setImageAlias(self, input):
         logging.debug('Setting image alias as {}'.format(input))
         self.data['imageAlias'] = input
@@ -149,9 +155,9 @@ class LXCContainer(LXDModule):
     def info(self):
         try:
             logging.info('Reading container {} information'.format(self.data.get('name')))
-            c = self.client.containers.get(self.data.get('name'))
+            c = self.client.instances.get(self.data.get('name'))
 
-            container = self.client.api.containers[self.data.get('name')].get().json()['metadata']
+            container = self.client.api.instances[self.data.get('name')].get().json()['metadata']
             container['cpu'] = c.state().cpu
             container['memory'] = c.state().memory
             container['network'] = c.state().network
@@ -167,8 +173,15 @@ class LXCContainer(LXDModule):
 
     def create(self, waitIt=True):
         try:
+            instanceType = ''
+            for image in LXDModule().listLocalImages():
+                if(image["fingerprint"] == self.data['source']['fingerprint']):
+                    instanceType = image["type"]
+                    break
+                
             logging.info('Creating container {}'.format(self.data.get('name')))
-            self.client.containers.create(self.data, wait=waitIt)
+            self.data['type'] = instanceType
+            self.client.instances.create(self.data, wait=waitIt)
             if self.data['config']['boot.autostart'] == '1':
                 self.start(waitIt)
             return self.info()
@@ -180,7 +193,7 @@ class LXCContainer(LXDModule):
     def delete(self, force=False):
         try:
             logging.info('Deleting container with {} enforcement set to {}'.format(self.data.get('name'), force))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             if self.info().get('ephemeral'):
                 container.stop(wait=True)
                 return
@@ -195,7 +208,7 @@ class LXCContainer(LXDModule):
     def update(self):
         try:
             logging.info('Updating container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             if self.data.get('config'):
                 container.config = self.data.get('config')
 
@@ -217,7 +230,7 @@ class LXCContainer(LXDModule):
     def start(self, waitIt=True):
         try:
             logging.info('Starting container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             container.start(wait=waitIt)
         except Exception as e:
             logging.error('Failed to start container {}'.format(self.data.get('name')))
@@ -227,7 +240,7 @@ class LXCContainer(LXDModule):
     def stop(self, waitIt=True):
         try:
             logging.info('Stopping container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             container.stop(wait=waitIt)
         except Exception as e:
             logging.error('Failed to stop container {}'.format(self.data.get('name')))
@@ -237,20 +250,17 @@ class LXCContainer(LXDModule):
     def restart(self, waitIt=True):
         try:
             logging.info('Restarting container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             container.restart(wait=waitIt)
         except Exception as e:
             logging.error('Failed to restart container {}'.format(self.data.get('name')))
             logging.exception(e)
             raise ValueError(e)
 
-    def move(self):
-        pass
-
     def clone(self):
         try:
             logging.info('Cloning container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             if container.status == 'Running':
                 container.stop(wait=True)
 
@@ -258,10 +268,10 @@ class LXCContainer(LXDModule):
             copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
             copyData['name'] = self.data.get('newContainer')
 
-            newContainer = self.client.containers.create(copyData, wait=True)
+            newContainer = self.client.instances.create(copyData, wait=True)
             container.start(wait=True)
             newContainer.start(wait=True)
-            return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
+            return self.client.api.instances[self.data.get('newContainer')].get().json()['metadata']
         except Exception as e:
             logging.error('Failed to clone container {}'.format(self.data.get('name')))
             logging.exception(e)
@@ -270,7 +280,7 @@ class LXCContainer(LXDModule):
     def move(self):
         try:
             logging.info('Moving container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             if container.status == 'Running':
                 container.stop(wait=True)
 
@@ -278,11 +288,11 @@ class LXCContainer(LXDModule):
             copyData['source'] = {'type': 'copy', 'source': self.data.get('name')}
             copyData['name'] = self.data.get('newContainer')
 
-            newContainer = self.client.containers.create(copyData, wait=True)
+            newContainer = self.client.instances.create(copyData, wait=True)
             newContainer.start(wait=True)
 
             container.delete(wait=True)
-            return self.client.api.containers[self.data.get('newContainer')].get().json()['metadata']
+            return self.client.api.instances[self.data.get('newContainer')].get().json()['metadata']
         except Exception as e:
             logging.error('Failed to move container {}'.format(self.data.get('name')))
             logging.exception(e)
@@ -292,12 +302,17 @@ class LXCContainer(LXDModule):
     def export(self, force=False):
         try:
             logging.info('Exporting container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             if force and container.status == 'Running':
                 container.stop(wait=True)
 
             image = container.publish(wait=True)
             image.add_alias(self.data.get('imageAlias'), self.data.get('name'))
+            try:
+                fingerprint = container.config.get('volatile.base_image')
+                self.client.api.images[image.fingerprint].put(json={'properties': self.client.api.images[fingerprint].get().json()['metadata']['properties']})
+            except:
+                logging.error('Image does not exist.')
             container.start(wait=True)
             return self.client.api.images[image.fingerprint].get().json()['metadata']
         except Exception as e:
@@ -311,7 +326,7 @@ class LXCContainer(LXDModule):
             if self.data.get('newName'):
                 if self.containerExists(self.data.get('newName')):
                     raise ValueError('Container with that name already exists')
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             previousState = container.status
             if previousState == 'Running':
                 if force == False:
@@ -331,7 +346,7 @@ class LXCContainer(LXDModule):
     def freeze(self, waitIt=True):
         try:
             logging.info('Freezing container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             container.freeze(wait=waitIt)
         except Exception as e:
             logging.error('Failed to freeze container {}'.format(self.data.get('name')))
@@ -342,7 +357,7 @@ class LXCContainer(LXDModule):
     def unfreeze(self, waitIt=True):
         try:
             logging.info('Unfreezing container {}'.format(self.data.get('name')))
-            container = self.client.containers.get(self.data.get('name'))
+            container = self.client.instances.get(self.data.get('name'))
             container.unfreeze(wait=waitIt)
         except Exception as e:
             logging.error('Failed to unfreeze container {}'.format(self.data.get('name')))
@@ -357,7 +372,7 @@ class LXCContainer(LXDModule):
         self.initNetwork()
         self.data['devices'][network['name']]=network
         try:
-            container = self.client.containers.get(self.data['name'])
+            container = self.client.instances.get(self.data['name'])
             container.devices = self.data['devices']
             container.save()
             return self.info()
@@ -368,7 +383,7 @@ class LXCContainer(LXDModule):
         self.initNetwork()
         del self.data['devices'][networkName]
         try:
-            container = self.client.containers.get(self.data['name'])
+            container = self.client.instances.get(self.data['name'])
             container.devices = self.data['devices']
             container.save()
             return self.info()
@@ -379,7 +394,7 @@ class LXCContainer(LXDModule):
         self.initNetwork()
         self.data['devices'][name] = proxy
         try:
-            container = self.client.containers.get(self.data['name'])
+            container = self.client.instances.get(self.data['name'])
             container.devices = self.data['devices']
             container.save()
             return self.info()
@@ -390,7 +405,7 @@ class LXCContainer(LXDModule):
         self.initNetwork()
         del self.data['devices'][name]
         try:
-            container = self.client.containers.get(self.data['name'])
+            container = self.client.instances.get(self.data['name'])
             container.devices = self.data['devices']
             container.save()
             return self.info()
