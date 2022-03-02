@@ -1,6 +1,4 @@
-from pprint import pprint
 from flask import Blueprint, request, jsonify
-from app.api.utils import response
 from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 from app.api.utils.authentication import authenticate
 
@@ -18,7 +16,7 @@ def login():
       return '{ "access_token": "'+access_token+'" }'
 
 @auth_api.route('/refresh', methods=['POST'])
-@jwt_required
+@jwt_required()
 def refresh():
     current_user = get_jwt_identity()
     access_token = create_access_token(identity=current_user)

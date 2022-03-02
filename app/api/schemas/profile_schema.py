@@ -118,9 +118,7 @@ schema = {
         },
         'used_by': {
             'type': 'array',
-            'items': [
-                {'type': 'string'}
-            ]
+            'items': {'type': 'string'}
         },
         'new_name': {
             'type': 'string',

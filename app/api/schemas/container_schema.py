@@ -34,16 +34,12 @@ schema = {
                     'description':'Stateful container'
                 },
                 'profiles':{
-                    'type':'array',
-                    'items':[
-                        {'type':'string'}
-                    ]
+                    'type': 'array',
+                    'items': {'type': 'string'}
                 },
                 'network': {
                     'type': 'array',
-                    'items': [
-                        {'type': 'string'}
-                    ]
+                    'items': {'type': 'string'}
                 },
                 'cpu': {
                     'type': 'object',
@@ -125,16 +121,12 @@ set_cpu_limit_schema = {
                     'description':'Stateful container'
                 },
                 'profiles':{
-                    'type':'array',
-                    'items':[
-                        {'type':'string'}
-                    ]
+                    'type': 'array',
+                    'items': {'type': 'string'}
                 },
                 'network': {
                     'type': 'array',
-                    'items': [
-                        {'type': 'string'}
-                    ]
+                    'items': {'type': 'string'}
                 },
                 'cpu': {
                     'type': 'object',

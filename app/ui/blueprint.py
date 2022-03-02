@@ -40,7 +40,7 @@ def index():
 
 @uiPages.route('/containers')
 @jwt_ui
-@jwt_required
+@jwt_required()
 def container():
     try:
         containers = LXDModule().listContainers()
@@ -81,7 +81,7 @@ def container():
 
 @uiPages.route('/containers/<string:name>')
 @jwt_ui
-@jwt_required
+@jwt_required()
 def containerDetails(name):
     try:
         container = LXCContainer({'name': name})
@@ -101,7 +101,7 @@ def containerDetails(name):
 
 @uiPages.route('/profiles')
 @jwt_ui
-@jwt_required
+@jwt_required()
 def profile():
     try:
         profiles = LXDModule().listProfiles()
@@ -113,7 +113,7 @@ def profile():
 
 @uiPages.route('/storage-pools')
 @jwt_ui
-@jwt_required
+@jwt_required()
 def storagePools():
     try:
         storagePools = LXDModule().listStoragePools()
@@ -125,7 +125,7 @@ def storagePools():
 
 @uiPages.route('/network')
 @jwt_ui
-@jwt_required
+@jwt_required()
 def network():
     try:
         network = LXDModule().listNetworks()
@@ -137,7 +137,7 @@ def network():
 
 @uiPages.route('/images')
 @jwt_ui
-@jwt_required
+@jwt_required()
 def images():
     localImages = getLocalImages()
     profiles = getProfiles()

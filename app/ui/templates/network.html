@@ -48,9 +48,11 @@
                         </ul>
                     </td>
                     <td>
+                     {% if net.used_by %}
                      {% for used in net.used_by %}
                         <li>{{used.split('/')[-1]}}</li>
                      {% endfor %}
+                     {% endif %}
                     </td>
                     <td>
                         <button class="btn btn-default" id="{{net.name}}" name="updateBridge" onClick="$.proxy(App.network.showUpdateNetwork('{{net.name}}'));">

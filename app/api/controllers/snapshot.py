@@ -8,7 +8,7 @@ from app.api.utils import response
 snapshot_api = Blueprint('snapshot_api', __name__)
 
 @snapshot_api.route('/container/<string:container>')
-@jwt_required
+@jwt_required()
 def containerSnapshots(container):
     try:
         snapshot = LXCSnapshot({'container': container})
@@ -18,7 +18,7 @@ def containerSnapshots(container):
 
 
 @snapshot_api.route('/<string:name>/container/<string:container>')
-@jwt_required
+@jwt_required()
 def snapshotInfo(name, container):
     print(name)
     try:
@@ -30,7 +30,7 @@ def snapshotInfo(name, container):
 
 
 @snapshot_api.route('/<string:name>/container/<string:container>', methods=['POST'])
-@jwt_required
+@jwt_required()
 def createSnapshot(name, container):
     try:
         input = request.get_json(silent=True)
@@ -46,7 +46,7 @@ def createSnapshot(name, container):
 
 
 @snapshot_api.route('/<string:name>/container/<string:container>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def restoreSnapshot(name, container):
     try:
         snapshot = LXCSnapshot({'name': name, 'container': container})
@@ -56,7 +56,7 @@ def restoreSnapshot(name, container):
 
 
 @snapshot_api.route('/<string:name>/container/<string:container>/publish', methods=['POST'])
-@jwt_required
+@jwt_required()
 def publishSnapshot(name, container):
     try:
         snapshot = LXCSnapshot({'name': name, 'container': container})
@@ -65,7 +65,7 @@ def publishSnapshot(name, container):
         return response.replyFailed(message=e.__str__())
 
 @snapshot_api.route('/<string:name>/container/<string:container>/create', methods=['POST'])
-@jwt_required
+@jwt_required()
 def createContainerSnapshot(name, container):
     input = request.get_json(silent=True)
     validation = doValidateCloneMove(input)
@@ -82,7 +82,7 @@ def createContainerSnapshot(name, container):
 
 
 @snapshot_api.route('/<string:name>/container/<string:container>', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def deleteSnapshot(name, container):
     try:
         snapshot = LXCSnapshot({'name': name, 'container': container})
