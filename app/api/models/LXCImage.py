@@ -161,10 +161,10 @@ class LXCImage(LXDModule):
 
                 #Prepare the files for upload.
                 with open('tmp/images/{}/image.yaml'.format(self.data.get('fingerprint'))) as stream:
-                    yamlData = yaml.load(stream)
+                    yamlData = yaml.safe_load(stream)
 
                 files = {
-                    'yaml': open('tmp/images/{}/image.yaml'.format(self.data.get('fingerprint'), 'rb'))
+                    'yaml': open('tmp/images/{}/image.yaml'.format(self.data.get('fingerprint')), 'rb')
                 }
 
                 headers = {'Authorization': token}
@@ -173,9 +173,7 @@ class LXCImage(LXDModule):
 
                 if response.ok == False:
                     logging.error('Failed to push the image {}'.format(self.data.get('fingerprint')))
-                    raise ValueError(
-                        response.json()['message'])
-                    return
+                    raise ValueError(response.json()['message'])
 
                 print("yaml uploaded successfully.")
 
@@ -220,7 +218,7 @@ class LXCImage(LXDModule):
         tfile.extractall('tmp/downloaded/{}/'.format(self.data.get('fingerprint')))
 
         with open('tmp/downloaded/{}/image.yaml'.format(self.data.get('fingerprint'))) as stream:
-            yamlData = yaml.load(stream)
+            yamlData = yaml.safe_load(stream)
 
 
         if os.path.exists("tmp/downloaded/{0}/meta-{0}.tar.xz".format(self.data.get('fingerprint'))) and os.path.exists("tmp/downloaded/{0}/{0}.tar.xz".format(self.data.get('fingerprint'))):

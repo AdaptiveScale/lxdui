@@ -10,7 +10,7 @@ from app.api.utils.containerMapper import getContainerDetails
 container_api = Blueprint('container_api', __name__)
 
 @container_api.route('/')
-@jwt_required
+@jwt_required()
 def containers():
     client = LXDModule()
     result = []
@@ -23,7 +23,7 @@ def containers():
 
 
 @container_api.route('/<string:name>')
-@jwt_required
+@jwt_required()
 def getContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -34,7 +34,7 @@ def getContainer(name):
 
 
 @container_api.route('/', methods=['POST'])
-@jwt_required
+@jwt_required()
 def createContainer():
     input = request.get_json(silent=True)
     validation = doValidate(input, LXDModule().setLimitsCPU())
@@ -53,7 +53,7 @@ def createContainer():
         return response.reply(message=ex.__str__(), status=403)
 
 @container_api.route('/', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def updateContainer():
     input = request.get_json(silent=True)
     validation = doValidate(input, LXDModule().setLimitsCPU())
@@ -68,7 +68,7 @@ def updateContainer():
 
 
 @container_api.route('/<string:name>', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def deleteContainer(name):
     input = request.get_json(silent=True)
     force = False if input == None else input.get('force')
@@ -81,7 +81,7 @@ def deleteContainer(name):
 
 
 @container_api.route('/start/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def startContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -92,7 +92,7 @@ def startContainer(name):
 
 
 @container_api.route('/stop/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def stopContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -106,7 +106,7 @@ def stopContainer(name):
 
 
 @container_api.route('/restart/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def restartContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -116,7 +116,7 @@ def restartContainer(name):
         return response.replyFailed(message=e.__str__())
 
 @container_api.route('/clone/<string:name>', methods=['POST'])
-@jwt_required
+@jwt_required()
 def cloneContainer(name):
     input = request.get_json(silent=True)
     validation = doValidateCloneMove(input)
@@ -131,7 +131,7 @@ def cloneContainer(name):
         return response.replyFailed(message=e.__str__())
 
 @container_api.route('/move/<string:name>', methods=['POST'])
-@jwt_required
+@jwt_required()
 def moveContainer(name):
     input = request.get_json(silent=True)
     validation = doValidateCloneMove(input)
@@ -147,7 +147,7 @@ def moveContainer(name):
 
 
 @container_api.route('/export/<string:name>', methods=['POST'])
-@jwt_required
+@jwt_required()
 def exportContainer(name):
     input = request.get_json(silent=True)
     validation = doValidateImageExport(input)
@@ -164,7 +164,7 @@ def exportContainer(name):
 
 
 @container_api.route('/freeze/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def freezeContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -175,7 +175,7 @@ def freezeContainer(name):
 
 
 @container_api.route('/unfreeze/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def unfreezeContainer(name):
     try:
         container = LXCContainer({'name': name})
@@ -186,7 +186,7 @@ def unfreezeContainer(name):
 
 
 @container_api.route('/network/<name>/add', methods=['POST'])
-@jwt_required
+@jwt_required()
 def addNetwork(name):
     input = request.get_json(silent=True)
     try:
@@ -197,7 +197,7 @@ def addNetwork(name):
 
 
 @container_api.route('/network/<name>/remove/<network>', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def removeNetwork(name, network):
     try:
         container = LXCContainer({'name': name})
@@ -206,7 +206,7 @@ def removeNetwork(name, network):
         return response.replyFailed(message=e.__str__())
 
 @container_api.route('/proxy/<name>/add/<proxy>', methods=['POST'])
-@jwt_required
+@jwt_required()
 def addProxy(name, proxy):
     input = request.get_json(silent=True)
     try:
@@ -216,7 +216,7 @@ def addProxy(name, proxy):
         return response.replyFailed(message=e.__str__())
 
 @container_api.route('/proxy/<name>/remove/<proxy>', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def removeProxy(name, proxy):
     try:
         container = LXCContainer({'name': name})

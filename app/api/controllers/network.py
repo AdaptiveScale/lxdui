@@ -10,7 +10,7 @@ from app.api.utils import response
 network_api = Blueprint('network_api', __name__)
 
 @network_api.route('/')
-@jwt_required
+@jwt_required()
 def network():
     try:
         client = LXDModule()
@@ -19,7 +19,7 @@ def network():
         return response.replyFailed(message=e.__str__())
 
 @network_api.route('/<string:name>')
-@jwt_required
+@jwt_required()
 def networkInfo(name):
     network = LXCNetwork({'name': name})
     mainConfig = network.info()
@@ -29,7 +29,7 @@ def networkInfo(name):
     return response.replySuccess(mainConfig['result'])
 
 @network_api.route('/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def updateNetwork(name):
     input = request.get_json(silent=True)
     validation = doValidate(input)
@@ -48,7 +48,7 @@ def updateNetwork(name):
     return response.replySuccess(mainConfig['result'], message='Network {} updated successfully.'.format(name))
 
 @network_api.route('/<string:name>', methods=['POST'])
-@jwt_required
+@jwt_required()
 def creatNetwork(name):
     input = request.get_json(silent=True)
     input['name'] = name
@@ -64,7 +64,7 @@ def creatNetwork(name):
     return response.replySuccess(mainConfig['result'], message='Network {} created successfully.'.format(name))
 
 @network_api.route('/<string:name>', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def deleteNetwork(name):
     network = LXCNetwork({'name': name})
     network.deleteNetwork()

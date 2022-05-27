@@ -1,5 +1,4 @@
 from flask import Blueprint, request
-from flask import jsonify
 from flask_jwt_extended import jwt_required
 
 from app.api.models.LXDModule import LXDModule
@@ -11,7 +10,7 @@ storage_pool_api = Blueprint('storage_pool_api', __name__)
 
 
 @storage_pool_api.route('/')
-@jwt_required
+@jwt_required()
 def storagePools():
     try:
         client = LXDModule()
@@ -21,7 +20,7 @@ def storagePools():
 
 
 @storage_pool_api.route('/', methods=['POST'])
-@jwt_required
+@jwt_required()
 def create_storage_pool():
     input = request.get_json(silent=True)
     validation = doValidate(input)
@@ -36,7 +35,7 @@ def create_storage_pool():
 
 
 @storage_pool_api.route('/<string:name>')
-@jwt_required
+@jwt_required()
 def get_storage_pool(name):
     try:
         storagePool = LXCStoragePool({'name': name})
@@ -46,7 +45,7 @@ def get_storage_pool(name):
 
 
 @storage_pool_api.route('/<string:name>', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def delete_storage_pool(name):
     try:
         storagePool = LXCStoragePool({'name': name})
@@ -57,7 +56,7 @@ def delete_storage_pool(name):
 
 
 @storage_pool_api.route('/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def update_storage_pool(name):
     data = request.get_json()
     data['name'] = name

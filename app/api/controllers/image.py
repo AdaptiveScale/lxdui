@@ -10,7 +10,7 @@ from app.api.schemas.download_image_schema import doValidate
 image_api = Blueprint('image_api', __name__)
 
 @image_api.route('/')
-@jwt_required
+@jwt_required()
 def images():
     try:
         client = LXDModule()
@@ -20,7 +20,7 @@ def images():
 
 
 @image_api.route('/<string:fingerprint>')
-@jwt_required
+@jwt_required()
 def image(fingerprint):
     try:
         image = LXCImage({'fingerprint': fingerprint})
@@ -30,7 +30,7 @@ def image(fingerprint):
 
 
 @image_api.route('/<string:fingerprint>', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def delete(fingerprint):
     try:
         image = LXCImage({'fingerprint': fingerprint})
@@ -40,7 +40,7 @@ def delete(fingerprint):
 
 
 @image_api.route('/remote')
-@jwt_required
+@jwt_required()
 def remote():
     try:
         client = LXDModule()
@@ -50,7 +50,7 @@ def remote():
 
 
 @image_api.route('/remote/details')
-@jwt_required
+@jwt_required()
 def remoteDetails():
     try:
         alias = ''
@@ -64,7 +64,7 @@ def remoteDetails():
 
 
 @image_api.route('/remote/nightly/list')
-@jwt_required
+@jwt_required()
 def nightly():
     try:
         client = LXDModule()
@@ -74,7 +74,7 @@ def nightly():
 
 
 @image_api.route('/remote', methods=['POST'])
-@jwt_required
+@jwt_required()
 def downloadImage():
     input = request.get_json(silent=True)
     validation = doValidate(input)
@@ -89,7 +89,7 @@ def downloadImage():
 
 import json
 @image_api.route('/hub/publish', methods=['POST'])
-@jwt_required
+@jwt_required()
 def publishHubImage():
     #input = request.get_json(silent=True)
     input = json.loads(request.form.get('input'))
@@ -105,7 +105,7 @@ def publishHubImage():
 
 
 @image_api.route('/hub', methods=['POST'])
-@jwt_required
+@jwt_required()
 def downloadHubImage():
     input = request.get_json(silent=True)
     validation = doValidate(input)

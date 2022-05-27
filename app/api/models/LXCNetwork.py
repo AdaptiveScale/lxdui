@@ -1,9 +1,5 @@
 from app.api.models.LXDModule import LXDModule
-from pylxd import Client
-import subprocess
-from itertools import takewhile
 from netaddr import IPAddress
-import time
 import socket
 import struct
 import logging
@@ -45,7 +41,7 @@ class LXCNetwork(LXDModule):
                 config['IPv4_DHCP_START'] = self.network.config.get('ipv4.dhcp.ranges').split('-')[0]
                 config['IPv4_DHCP_END'] = self.network.config.get('ipv4.dhcp.ranges').split('-')[1]
             
-            used_by = [ c[18:].strip() for c in self.network.used_by ]
+            used_by = [ c[18:].strip() for c in self.network.used_by ] if self.network.used_by else []
             return {'error': False, "result": config, 'used_by': used_by}
         except Exception as e:
             logging.error('Failed to retrieve information for network {}'.format(self.name))

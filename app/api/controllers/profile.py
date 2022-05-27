@@ -11,7 +11,7 @@ profile_api = Blueprint('profile_api', __name__)
 
 
 @profile_api.route('/')
-@jwt_required
+@jwt_required()
 def profiles():
     try:
         client = LXDModule()
@@ -21,7 +21,7 @@ def profiles():
 
 
 @profile_api.route('/', methods=['POST'])
-@jwt_required
+@jwt_required()
 def create_profile():
     input = request.get_json(silent=True)
     validation = doValidate(input)
@@ -36,7 +36,7 @@ def create_profile():
 
 
 @profile_api.route('/<string:name>')
-@jwt_required
+@jwt_required()
 def get_profile(name):
     try:
         profile = LXCProfile({'name': name})
@@ -46,7 +46,7 @@ def get_profile(name):
 
 
 @profile_api.route('/<string:name>', methods=['DELETE'])
-@jwt_required
+@jwt_required()
 def delete_profile(name):
     try:
         profile = LXCProfile({'name': name})
@@ -57,7 +57,7 @@ def delete_profile(name):
 
 
 @profile_api.route('/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def update_profile(name):
     data = request.get_json()
     data['name'] = name
@@ -72,7 +72,7 @@ def update_profile(name):
 
 
 @profile_api.route('/rename/<string:name>', methods=['PUT'])
-@jwt_required
+@jwt_required()
 def rename(name):
     data = request.get_json()
     validation = doValidateRename(data)

@@ -10,7 +10,7 @@ image_registry_api = Blueprint('image_registry_api', __name__)
 
 
 @image_registry_api.route('/<string:fingerprint>', methods=['POST'])
-@jwt_required
+@jwt_required()
 def publishImage(fingerprint):
     input = request.get_json(silent=True)
     validation = doValidate(input)
